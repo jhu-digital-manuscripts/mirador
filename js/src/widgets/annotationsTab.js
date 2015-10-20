@@ -176,9 +176,12 @@
 
             if (state.visible) {
                 this.element.show();
-            } else {
-                this.element.hide();
             }
+
+            // TODO why is state.visible ALWAYS false(or undefined) only after changing manifests??
+            //else {
+            //    this.element.hide();
+            //}
         },
         template: Handlebars.compile([
             '<div class="annotationsPanel">',
