@@ -817,6 +817,13 @@ li.highlight {
   border-top: 1px lightgray solid;
 }
 
+.editorPanel .resizer-bottom {
+  cursor: row-resize;
+  height: 5px;
+  border-bottom: 1px solid lightgrey;
+  background-color: #676767;
+}
+
 .editorPanel.minimized {
   transform:translateY(230px);
 }

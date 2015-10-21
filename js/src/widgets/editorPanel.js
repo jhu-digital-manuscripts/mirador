@@ -245,10 +245,49 @@
             _this.bindEvents();
             this.element.css({'display':openValue});
 
+          var resizer_selector = ".resizer-" + this.state().position,
+            editor_elem = jQuery(".editorPanel");
 
+          jQuery(resizer_selector).mousedown(function(event) {
+            event.preventDefault();
+
+            var editor_height = parseInt(editor_elem.css('height')),
+              //editor_width = parseInt(editor_elem.css('width')),
+              //mouseX = event.pageX,
+              mouseY = event.pageY;
+
+            jQuery(document).mousemove(function(event) {
+              var position = _this.state().position;
+              var diff = 0;
+
+              if (position === 'bottom') {
+                diff = mouseY - event.pageY + 5;  // Take size of resizer into account
+                mouseY = mouseY - diff;
+                editor_height = editor_height + diff;
+
+                jQuery(".editorPanel").css('height', editor_height);
+                // Account for vertical margin/padding around annotation list in panel
+                jQuery(".editorPanel form ul.annotations").css('height', editor_height - 50);
+              }
+              //else if (position === 'right') {
+              //  diff = mouseX - event.pageX + 5;
+              //  mouseX = mouseX - diff;
+              //  editor_width = editor_width - diff;
+              //
+              //  jQuery(".editorPanel").css('width', editor_width);
+              //  // Account for margins/padding around annotation list in panel
+              //  jQuery(".editorPanel form ul.annotations").css('width', editor_width - 20);
+              //}
+            });
+          });
+
+          jQuery(document).mouseup(function(event) {
+            jQuery(document).unbind('mousemove');
+          });
         },
         template: Handlebars.compile([
             '<div class="editorPanel {{position}}">',
+            '<div class="resizer-{{position}}"></div>',
             '<form>',
             '<ul class="annotations">',
             '{{#each annotations}}',
