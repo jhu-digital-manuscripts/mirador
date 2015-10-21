@@ -253,24 +253,14 @@
             _this.bindEvents();
             this.element.css({'display':openValue});
 
-          var editor_elem = jQuery("#editorPanel-" + _this.windowId),
-            annotation_list_elem = editor_elem.find("form ul.annotations");
-
-          // Make sure annotation list contents fills editorPanel
-          if (_this.onBottom) {
-            console.log("[] Setting initial annotation list height=" + (parseInt(editor_elem.css('height'))-50));
-            annotation_list_elem.css('height', parseInt(editor_elem.css('height')) - 50);
-          }
-          //else if (_this.onRight) {
-          //  annotation_list_elem.css('width', parseInt(editor_elem.css('width')) - 20);
-          //}
+          var editor_elem = jQuery("#editorPanel-" + _this.windowId);
 
           jQuery("#resizer-" + _this.windowId).mousedown(function(event) {
             event.preventDefault();
 
             var editor_height = parseInt(editor_elem.css('height')),
-              //editor_width = parseInt(editor_elem.css('width')),
-              //mouseX = event.pageX,
+              editor_width = parseInt(editor_elem.css('width')),
+              mouseX = event.pageX,
               mouseY = event.pageY;
 
             jQuery(document).mousemove(function(event) {
@@ -282,18 +272,14 @@
                 editor_height = editor_height + diff;
 
                 editor_elem.css('height', editor_height);
-                // Account for vertical margin/padding around annotation list in panel
-                annotation_list_elem.css('height', editor_height - 50);
+
+              } else if (_this.onRight()) {
+                diff = mouseX - event.pageX + 5;
+                mouseX = mouseX - diff;
+                editor_width = editor_width + diff;
+
+                editor_elem.css('width', editor_width);
               }
-              //else if (position === 'right') {
-              //  diff = mouseX - event.pageX + 5;
-              //  mouseX = mouseX - diff;
-              //  editor_width = editor_width - diff;
-              //
-              //  jQuery(".editorPanel").css('width', editor_width);
-              //  // Account for margins/padding around annotation list in panel
-              //  jQuery(".editorPanel form ul.annotations").css('width', editor_width - 20);
-              //}
             });
           });
 

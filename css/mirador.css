@@ -816,6 +816,14 @@ li.highlight {
   color: white;
   border-top: 1px lightgray solid;
 }
+.editorPanel .resizer-right{
+  cursor: col-resize;
+  width: 5px;
+  height: 100%;
+  border-right: 1px solid lightgrey;
+  background-color: #676767;
+  float: left;
+}
 
 .editorPanel .resizer-bottom {
   cursor: row-resize;
