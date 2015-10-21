@@ -216,6 +216,12 @@
 
 
         },
+        onRight: function() {
+          return this.state().position === 'right';
+        },
+        onBottom: function() {
+          return this.state().position === 'bottom';
+        },
         render: function(state) {
             var _this = this;
             var templateData = _this.getTemplateData(state);
@@ -250,6 +256,15 @@
           var editor_elem = jQuery("#editorPanel-" + _this.windowId),
             annotation_list_elem = editor_elem.find("form ul.annotations");
 
+          // Make sure annotation list contents fills editorPanel
+          if (_this.onBottom) {
+            console.log("[] Setting initial annotation list height=" + (parseInt(editor_elem.css('height'))-50));
+            annotation_list_elem.css('height', parseInt(editor_elem.css('height')) - 50);
+          }
+          //else if (_this.onRight) {
+          //  annotation_list_elem.css('width', parseInt(editor_elem.css('width')) - 20);
+          //}
+
           jQuery("#resizer-" + _this.windowId).mousedown(function(event) {
             event.preventDefault();
 
@@ -259,10 +274,9 @@
               mouseY = event.pageY;
 
             jQuery(document).mousemove(function(event) {
-              var position = _this.state().position;
               var diff = 0;
 
-              if (position === 'bottom') {
+              if (_this.onBottom()) {
                 diff = mouseY - event.pageY + 5;  // Take size of resizer into account
                 mouseY = mouseY - diff;
                 editor_height = editor_height + diff;
