@@ -15,6 +15,7 @@
             var _this = this;
 
             this.state({
+                windowId: _this.windowId,
                 position: 'bottom',
                 title: 'untitled',
                 annotations: [],
@@ -114,6 +115,7 @@
         },
         getTemplateData: function(state) {
             return {
+                windowId: state.windowId,
                 annotations: state.annotations,
                 selected: state.selectedAnno,
                 position: state.position,
@@ -245,10 +247,10 @@
             _this.bindEvents();
             this.element.css({'display':openValue});
 
-          var resizer_selector = ".resizer-" + this.state().position,
-            editor_elem = jQuery(".editorPanel");
+          var editor_elem = jQuery("#editorPanel-" + _this.windowId),
+            annotation_list_elem = editor_elem.find("form ul.annotations");
 
-          jQuery(resizer_selector).mousedown(function(event) {
+          jQuery("#resizer-" + _this.windowId).mousedown(function(event) {
             event.preventDefault();
 
             var editor_height = parseInt(editor_elem.css('height')),
@@ -265,9 +267,9 @@
                 mouseY = mouseY - diff;
                 editor_height = editor_height + diff;
 
-                jQuery(".editorPanel").css('height', editor_height);
+                editor_elem.css('height', editor_height);
                 // Account for vertical margin/padding around annotation list in panel
-                jQuery(".editorPanel form ul.annotations").css('height', editor_height - 50);
+                annotation_list_elem.css('height', editor_height - 50);
               }
               //else if (position === 'right') {
               //  diff = mouseX - event.pageX + 5;
@@ -286,8 +288,8 @@
           });
         },
         template: Handlebars.compile([
-            '<div class="editorPanel {{position}}">',
-            '<div class="resizer-{{position}}"></div>',
+            '<div id="editorPanel-{{windowId}}" class="editorPanel {{position}}">',
+            '<div id="resizer-{{windowId}}" class="resizer-{{position}}"></div>',
             '<form>',
             '<ul class="annotations">',
             '{{#each annotations}}',
