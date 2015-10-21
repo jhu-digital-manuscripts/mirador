@@ -16,7 +16,7 @@
 
             this.state({
                 windowId: _this.windowId,
-                position: 'bottom',
+                position: 'right',
                 title: 'untitled',
                 annotations: [],
                 selectedAnno: null,
