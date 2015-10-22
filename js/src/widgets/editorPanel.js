@@ -15,6 +15,7 @@
             var _this = this;
 
             this.state({
+                windowId: _this.windowId,
                 position: _this.editorPanel ? _this.editorPanel.position : 'right',
                 title: 'untitled',
                 annotations: [],
@@ -115,6 +116,7 @@
         },
         getTemplateData: function(state) {
             return {
+                windowId: state.windowId,
                 annotations: state.annotations,
                 selected: state.selectedAnno,
                 position: state.position,
@@ -196,8 +198,9 @@
         bindEvents: function() {
             var _this = this,
                 fullpage = _this.element.find('.fullpage'),
-                annoItems = _this.element.find('.annotationItem');
-            state = this.state();
+                annoItems = _this.element.find('.annotationItem'),
+                resizer = _this.element.find('.resizer-' + _this.state().position);
+            //state = this.state();
 
             annoItems.on('click', function(event) {
               var annoClicked = jQuery(this).data('id');
@@ -213,8 +216,60 @@
               jQuery.publish('fullPageSelected.' + _this.windowId);
             });
 
+          // ----- Handle EditorPanel resizing -----
+            var window = $.viewer.workspace.windows
+              .filter(function(window) { return window.id == _this.windowId; }
+            )[0];
 
+            var max_width = -1,
+              max_height = -1;
+            if (typeof window !== 'undefined') {
+              max_width = window.width;
+              max_height = window.height;
+            }
 
+            resizer.mousedown(function(event) {
+              event.preventDefault();
+
+              var editor_height = parseInt(_this.element.css('height')),
+                editor_width = parseInt(_this.element.css('width')),
+                mouseX = event.pageX,
+                mouseY = event.pageY;
+
+              jQuery(document).mousemove(function(event) {
+                var diff = 0;
+
+                if (_this.onBottom()) {
+                  diff = mouseY - event.pageY;
+                  mouseY = mouseY - diff;
+                  editor_height = editor_height + diff;
+
+                  if (max_height > 0 && editor_height < max_height && editor_height > 0) {
+                    _this.element.css('height', editor_height);
+                  }
+
+                } else if (_this.onRight()) {
+                  diff = mouseX - event.pageX;
+                  mouseX = mouseX - diff;
+                  editor_width = editor_width + diff;
+
+                  if (max_width > 0 && editor_width < max_width && editor_width > 0) {
+                    _this.element.css('width', editor_width);
+                  }
+                }
+              });
+            });
+
+            jQuery(document).mouseup(function(event) {
+              jQuery(document).unbind('mousemove');
+            });
+
+        },
+        onRight: function() {
+          return this.state().position === 'right';
+        },
+        onBottom: function() {
+          return this.state().position === 'bottom';
         },
         render: function(state) {
             var _this = this;
@@ -247,10 +302,10 @@
             _this.bindEvents();
             this.element.css({'display':openValue});
 
-
         },
         template: Handlebars.compile([
             '<div class="editorPanel {{position}}">',
+            '<div class="resizer-{{position}}"></div>',
             '<form>',
             '<ul class="annotations">',
             '{{#each annotations}}',
