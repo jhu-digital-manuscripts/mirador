@@ -194,7 +194,8 @@
         bindEvents: function() {
             var _this = this,
                 fullpage = _this.element.find('.fullpage'),
-                annoItems = _this.element.find('.annotationItem');
+                annoItems = _this.element.find('.annotationItem'),
+                positionToggle = _this.element.find('.position-toggle');
             state = this.state();
 
             annoItems.on('click', function(event) {
@@ -211,7 +212,21 @@
               jQuery.publish('fullPageSelected.' + _this.windowId);
             });
 
+            positionToggle.click(function(event) {
+              var state = _this.state();
 
+              if (state.position === 'bottom') {
+                state.position = 'right';
+                _this.element.removeClass('bottom');
+                _this.element.addClass('right');
+              } else if (state.position === 'right') {
+                state.position = 'bottom';
+                _this.element.removeClass('right');
+                _this.element.addClass('bottom');
+              }
+
+              _this.state(state);
+            });
 
         },
         render: function(state) {
@@ -249,6 +264,7 @@
         },
         template: Handlebars.compile([
             '<div class="editorPanel {{position}}">',
+            '<div class="position-toggle"><i class="fa fa-exchange"></i></div>',
             '<form>',
             '<ul class="annotations">',
             '{{#each annotations}}',
