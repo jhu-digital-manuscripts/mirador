@@ -133,11 +133,17 @@
     },
 
     /**
-     * Property: 'showEditorTools' : boolean
-     *    Show the editor tools on the editor panel (transcription display).
-     *    [Pencil icon + "Start transcription"]
+     * Configuration properties for the editor panel (transcription display panel)
+     * {
+     *  'showTools' : TRUE|FALSE,       // show or hide the 'editorTools' (start transcription tool bar)
+     *  'position' : 'bottom|right',    // position of the editor panel
+     * }
      */
-    'showEditorTools' : false
+    'editorPanel': {
+      'showTools' : false,
+      'position' : 'right'
+    }
+
   };
 
 }(Mirador));

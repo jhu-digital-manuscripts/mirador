@@ -15,7 +15,7 @@
             var _this = this;
 
             this.state({
-                position: 'right',
+                position: _this.editorPanel ? _this.editorPanel.position : 'right',
                 title: 'untitled',
                 annotations: [],
                 selectedAnno: null,
@@ -26,7 +26,7 @@
                 locked: true,
                 size: 280,
                 open: false,
-                showEditorTools: _this.showEditorTools
+                editorPanel: _this.editorPanel
             }, true);
 
             this.listenForActions();
@@ -120,7 +120,7 @@
                 position: state.position,
                 open: state.open,
                 size:  state.size,
-                showEditorTools: state.showEditorTools
+                showEditorTools: state.editorPanel.showTools
             };
         },
         getEditorContent: function(){

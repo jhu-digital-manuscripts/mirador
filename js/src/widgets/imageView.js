@@ -59,7 +59,7 @@
         annotationLayerAvailable: this.annotationLayerAvailable,
         annotationCreationAvailable: this.annotationCreationAvailable,
         annoEndpointAvailable: this.annoEndpointAvailable,
-        showEditorTools: this.showEditorTools
+        editorPanel: this.editorPanel
       });
     },
 

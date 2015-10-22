@@ -179,7 +179,7 @@
         new $.EditorPanel({
           windowId: this.windowId,
           appendTo: this.element.parent().parent(), // appending to .view-container
-          showEditorTools: this.showEditorTools
+          editorPanel: this.editorPanel
         });
     },
     createStateMachine: function() {

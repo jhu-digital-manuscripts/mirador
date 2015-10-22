@@ -79,7 +79,7 @@
         layoutDescription: this.layout.charAt(0) === '{' ? JSON.parse(this.layout) : $.layoutDescriptionFromGridString(this.layout), 
         parent: this, 
         appendTo: this.element.find('.mirador-viewer'),
-        showEditorTools: this.showEditorTools
+        editorPanel: _this.editorPanel
       });
       
       this.workspacePanel = new $.WorkspacePanel({

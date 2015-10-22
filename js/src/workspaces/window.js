@@ -455,7 +455,7 @@
           annotationLayerAvailable: this.annotationLayerAvailable,
           annotationCreationAvailable: this.annotationCreationAvailable,
           annoEndpointAvailable: this.annoEndpointAvailable,
-          showEditorTools: this.showEditorTools} );
+          editorPanel: this.editorPanel} );
       } else {
         var view = this.focusModules.ImageView;
         view.updateImage(canvasID);
