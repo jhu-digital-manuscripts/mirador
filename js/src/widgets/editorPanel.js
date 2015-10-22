@@ -199,8 +199,8 @@
             var _this = this,
                 fullpage = _this.element.find('.fullpage'),
                 annoItems = _this.element.find('.annotationItem'),
-                resizer = _this.element.find('.resizer-' + _this.state().position);
-            //state = this.state();
+                resizer = _this.element.find('.resizer-' + _this.state().position),
+                positionToggle = _this.element.find('.position-toggle');
 
             annoItems.on('click', function(event) {
               var annoClicked = jQuery(this).data('id');
@@ -216,54 +216,69 @@
               jQuery.publish('fullPageSelected.' + _this.windowId);
             });
 
+            positionToggle.click(function(event) {
+              var state = _this.state();
+
+              if (state.position === 'bottom') {
+                state.position = 'right';
+                _this.element.removeClass('bottom');
+                _this.element.addClass('right');
+              } else if (state.position === 'right') {
+                state.position = 'bottom';
+                _this.element.removeClass('right');
+                _this.element.addClass('bottom');
+              }
+
+              _this.state(state);
+            });
+
           // ----- Handle EditorPanel resizing -----
-            var window = $.viewer.workspace.windows
-              .filter(function(window) { return window.id == _this.windowId; }
-            )[0];
+          var window = $.viewer.workspace.windows
+            .filter(function(window) { return window.id == _this.windowId; }
+          )[0];
 
-            var max_width = -1,
-              max_height = -1;
-            if (typeof window !== 'undefined') {
-              max_width = window.width;
-              max_height = window.height;
-            }
+          var max_width = -1,
+            max_height = -1;
+          if (typeof window !== 'undefined') {
+            max_width = window.width;
+            max_height = window.height;
+          }
 
-            resizer.mousedown(function(event) {
-              event.preventDefault();
+          resizer.mousedown(function(event) {
+            event.preventDefault();
 
-              var editor_height = parseInt(_this.element.css('height')),
-                editor_width = parseInt(_this.element.css('width')),
-                mouseX = event.pageX,
-                mouseY = event.pageY;
+            var editor_height = parseInt(_this.element.css('height')),
+              editor_width = parseInt(_this.element.css('width')),
+              mouseX = event.pageX,
+              mouseY = event.pageY;
 
-              jQuery(document).mousemove(function(event) {
-                var diff = 0;
+            jQuery(document).mousemove(function(event) {
+              var diff = 0;
 
-                if (_this.onBottom()) {
-                  diff = mouseY - event.pageY;
-                  mouseY = mouseY - diff;
-                  editor_height = editor_height + diff;
+              if (_this.onBottom()) {
+                diff = mouseY - event.pageY;
+                mouseY = mouseY - diff;
+                editor_height = editor_height + diff;
 
-                  if (max_height > 0 && editor_height < max_height && editor_height > 0) {
-                    _this.element.css('height', editor_height);
-                  }
-
-                } else if (_this.onRight()) {
-                  diff = mouseX - event.pageX;
-                  mouseX = mouseX - diff;
-                  editor_width = editor_width + diff;
-
-                  if (max_width > 0 && editor_width < max_width && editor_width > 0) {
-                    _this.element.css('width', editor_width);
-                  }
+                if (max_height > 0 && editor_height < max_height && editor_height > 0) {
+                  _this.element.css('height', editor_height);
                 }
-              });
-            });
 
-            jQuery(document).mouseup(function(event) {
-              jQuery(document).unbind('mousemove');
-            });
+              } else if (_this.onRight()) {
+                diff = mouseX - event.pageX;
+                mouseX = mouseX - diff;
+                editor_width = editor_width + diff;
 
+                if (max_width > 0 && editor_width < max_width && editor_width > 0) {
+                  _this.element.css('width', editor_width);
+                }
+              }
+            });
+          });
+
+          jQuery(document).mouseup(function(event) {
+            jQuery(document).unbind('mousemove');
+          });
         },
         onRight: function() {
           return this.state().position === 'right';
@@ -306,6 +321,7 @@
         template: Handlebars.compile([
             '<div class="editorPanel {{position}}">',
             '<div class="resizer-{{position}}"></div>',
+            '<div class="position-toggle"><i class="fa fa-exchange"></i></div>',
             '<form>',
             '<ul class="annotations">',
             '{{#each annotations}}',

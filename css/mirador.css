@@ -876,8 +876,7 @@ li.highlight {
 .editorPanel ul.annotations {
   list-style-type: none;
   padding:5px 10px;
-  /*overflow-y: auto;*/
-  /*height: 190px;*/
+  margin-top: 20px;
 }
 
 .editorPanel li.annotationItem {
@@ -891,6 +890,15 @@ li.highlight {
 
 .editorPanel li.annotationItem p {
   margin:0 0 10px 0;
+}
+
+.position-toggle {
+  position: absolute;
+  top: 0;
+  right: 35px;
+  text-align: center;
+  padding: 3px 5px;
+  cursor: pointer;
 }
 
 .italic {
