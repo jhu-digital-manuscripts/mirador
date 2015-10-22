@@ -42,6 +42,8 @@
       },
       focusOptions: null,
       id : null,
+      width : 0,
+      height : 0,
       sidePanel: null,
       bottomPanel: null,
       bottomPanelVisible: true,
@@ -163,6 +165,11 @@
 
       if (this.imagesList.length === 1) {
         this.bottomPanelVisibility(false);
+      }
+
+      if (this.element) {
+        this.width = this.element.width();
+        this.height = this.element.height();
       }
     },
 

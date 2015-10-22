@@ -215,6 +215,17 @@
             });
 
           // ----- Handle EditorPanel resizing -----
+            var window = $.viewer.workspace.windows
+              .filter(function(window) { return window.id == _this.windowId; }
+            )[0];
+
+            var max_width = -1,
+              max_height = -1;
+            if (typeof window !== 'undefined') {
+              max_width = window.width;
+              max_height = window.height;
+            }
+
             resizer.mousedown(function(event) {
               event.preventDefault();
 
@@ -231,14 +242,18 @@
                   mouseY = mouseY - diff;
                   editor_height = editor_height + diff;
 
-                  _this.element.css('height', editor_height);
+                  if (max_height > 0 && editor_height < max_height && editor_height > 0) {
+                    _this.element.css('height', editor_height);
+                  }
 
                 } else if (_this.onRight()) {
                   diff = mouseX - event.pageX;
                   mouseX = mouseX - diff;
                   editor_width = editor_width + diff;
 
-                  _this.element.css('width', editor_width);
+                  if (max_width > 0 && editor_width < max_width && editor_width > 0) {
+                    _this.element.css('width', editor_width);
+                  }
                 }
               });
             });
