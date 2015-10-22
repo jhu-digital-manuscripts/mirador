@@ -18,7 +18,7 @@
 
     init: function(config) {
       var _this = this;
-      
+
       // Don't want to save session, therefore don't set up save controller
       if (config.saveSession === false) {
         this.currentConfig = config;
@@ -82,6 +82,10 @@
         history.replaceState(this.currentConfig, "Mirador Session", cleanURL);
       } else {
         history.replaceState(this.currentConfig, "Mirador Session", cleanURL+"#"+this.sessionID);
+      }
+
+      if (config.showEditorTools) {
+        this.currentConfig.showEditorTools = config.showEditorTools;
       }
 
       this.bindEvents();

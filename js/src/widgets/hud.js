@@ -178,7 +178,8 @@
     loadHudComponents: function () {
         new $.EditorPanel({
           windowId: this.windowId,
-          appendTo: this.element.parent().parent() // appending to .view-container
+          appendTo: this.element.parent().parent(), // appending to .view-container
+          showEditorTools: this.showEditorTools
         });
     },
     createStateMachine: function() {

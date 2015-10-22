@@ -130,7 +130,9 @@
     'lockController' : {
       'lockProfile' : 'lazyZoom',
       'notifyMaxMin' : true
-    }
+    },
+
+    'showEditorTools' : false
   };
 
 }(Mirador));

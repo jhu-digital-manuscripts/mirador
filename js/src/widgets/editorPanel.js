@@ -25,7 +25,8 @@
                 allowEditing: true,
                 locked: true,
                 size: 280,
-                open: false
+                open: false,
+                showEditorTools: _this.showEditorTools
             }, true);
 
             this.listenForActions();
@@ -118,7 +119,8 @@
                 selected: state.selectedAnno,
                 position: state.position,
                 open: state.open,
-                size:  state.size
+                size:  state.size,
+                showEditorTools: state.showEditorTools
             };
         },
         getEditorContent: function(){
@@ -258,9 +260,11 @@
             '{{/each}}',
             '</ul>',
             '</form>',
+            '{{#if showEditorTools}}',
             '<div class="editorTools">',
             '<span class="fullpage"><i class="fa fa-edit fa-fw"></i> start transcription</span>',
             '</div>',
+            '{{/if}}',
             '</div>'
         ].join('')),
         toggle: function () {}

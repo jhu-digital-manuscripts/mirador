@@ -427,6 +427,10 @@
         
         jQuery.publish("windowAdded", {id: windowConfig.id, slotAddress: windowConfig.slotAddress});
 
+        if (_this.showEditorTools) {
+          windowConfig.showEditorTools = _this.showEditorTools;
+        }
+
         newWindow = new $.Window(windowConfig);
         _this.windows.push(newWindow);
 

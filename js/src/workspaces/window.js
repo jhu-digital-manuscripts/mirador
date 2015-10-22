@@ -454,7 +454,8 @@
           bottomPanelAvailable: this.bottomPanelAvailable,
           annotationLayerAvailable: this.annotationLayerAvailable,
           annotationCreationAvailable: this.annotationCreationAvailable,
-          annoEndpointAvailable: this.annoEndpointAvailable} );
+          annoEndpointAvailable: this.annoEndpointAvailable,
+          showEditorTools: this.showEditorTools} );
       } else {
         var view = this.focusModules.ImageView;
         view.updateImage(canvasID);
