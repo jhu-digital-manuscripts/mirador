@@ -132,6 +132,11 @@
       'notifyMaxMin' : true
     },
 
+    /**
+     * Property: 'showEditorTools' : boolean
+     *    Show the editor tools on the editor panel (transcription display).
+     *    [Pencil icon + "Start transcription"]
+     */
     'showEditorTools' : false
   };
 
