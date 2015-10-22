@@ -196,8 +196,9 @@
         bindEvents: function() {
             var _this = this,
                 fullpage = _this.element.find('.fullpage'),
-                annoItems = _this.element.find('.annotationItem');
-            state = this.state();
+                annoItems = _this.element.find('.annotationItem'),
+                resizer = _this.element.find('.resizer-' + _this.state().position);
+            //state = this.state();
 
             annoItems.on('click', function(event) {
               var annoClicked = jQuery(this).data('id');
@@ -213,7 +214,38 @@
               jQuery.publish('fullPageSelected.' + _this.windowId);
             });
 
+          // ----- Handle EditorPanel resizing -----
+            resizer.mousedown(function(event) {
+              event.preventDefault();
 
+              var editor_height = parseInt(_this.element.css('height')),
+                editor_width = parseInt(_this.element.css('width')),
+                mouseX = event.pageX,
+                mouseY = event.pageY;
+
+              jQuery(document).mousemove(function(event) {
+                var diff = 0;
+
+                if (_this.onBottom()) {
+                  diff = mouseY - event.pageY;
+                  mouseY = mouseY - diff;
+                  editor_height = editor_height + diff;
+
+                  _this.element.css('height', editor_height);
+
+                } else if (_this.onRight()) {
+                  diff = mouseX - event.pageX;
+                  mouseX = mouseX - diff;
+                  editor_width = editor_width + diff;
+
+                  _this.element.css('width', editor_width);
+                }
+              });
+            });
+
+            jQuery(document).mouseup(function(event) {
+              jQuery(document).unbind('mousemove');
+            });
 
         },
         onRight: function() {
@@ -253,43 +285,10 @@
             _this.bindEvents();
             this.element.css({'display':openValue});
 
-          var editor_elem = jQuery("#editorPanel-" + _this.windowId);
-
-          jQuery("#resizer-" + _this.windowId).mousedown(function(event) {
-            event.preventDefault();
-
-            var editor_height = parseInt(editor_elem.css('height')),
-              editor_width = parseInt(editor_elem.css('width')),
-              mouseX = event.pageX,
-              mouseY = event.pageY;
-
-            jQuery(document).mousemove(function(event) {
-              var diff = 0;
-
-              if (_this.onBottom()) {
-                diff = mouseY - event.pageY + 5;  // Take size of resizer into account
-                mouseY = mouseY - diff;
-                editor_height = editor_height + diff;
-
-                editor_elem.css('height', editor_height);
-
-              } else if (_this.onRight()) {
-                diff = mouseX - event.pageX + 5;
-                mouseX = mouseX - diff;
-                editor_width = editor_width + diff;
-
-                editor_elem.css('width', editor_width);
-              }
-            });
-          });
-
-          jQuery(document).mouseup(function(event) {
-            jQuery(document).unbind('mousemove');
-          });
         },
         template: Handlebars.compile([
-            '<div id="editorPanel-{{windowId}}" class="editorPanel {{position}}">',
-            '<div id="resizer-{{windowId}}" class="resizer-{{position}}"></div>',
+            '<div class="editorPanel {{position}}">',
+            '<div class="resizer-{{position}}"></div>',
             '<form>',
             '<ul class="annotations">',
             '{{#each annotations}}',
