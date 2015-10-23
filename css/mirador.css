@@ -901,6 +901,10 @@ li.highlight {
   cursor: pointer;
 }
 
+.position-toggle .bottom {
+  padding-top: 8px;
+}
+
 .italic {
   font-style: italic;
 }

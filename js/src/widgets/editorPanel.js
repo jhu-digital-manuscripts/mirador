@@ -34,6 +34,9 @@
             this.render(this.state());
             this.bindEvents();
 
+            if (_this.onBottom()) {
+              _this.element.find('.position-toggle').addClass('bottom');
+            }
         },
         loadEditorPanelComponents: function() {
             var _this = this;
@@ -221,10 +224,16 @@
 
               if (state.position === 'bottom') {
                 state.position = 'right';
+
+                positionToggle.css('padding-top', '3px');
+                _this.element.css('height', '').removeAttr('height');
                 _this.element.removeClass('bottom');
                 _this.element.addClass('right');
               } else if (state.position === 'right') {
                 state.position = 'bottom';
+
+                positionToggle.css('padding-top', '8px');
+                _this.element.css('width', '').removeAttr('width');
                 _this.element.removeClass('right');
                 _this.element.addClass('bottom');
               }
