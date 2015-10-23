@@ -205,7 +205,6 @@
 
           this.maxWidth = jQuery(_this.element).parent().parent().width();
           this.maxHeight = jQuery(_this.element).parent().parent().height();
-          console.log("[EditorPanel] new dimensions (" + this.maxWidth + "x" + this.maxHeight + ")");
         },
         bindEvents: function() {
             var _this = this,
@@ -243,7 +242,7 @@
             if (typeof window !== 'undefined') {
               _this.updateDimensions();
             }
-// TODO: debounce this to prevent performance degredation
+
             resizer.mousedown(function(event) {
               event.preventDefault();
 
