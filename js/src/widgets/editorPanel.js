@@ -4,7 +4,9 @@
         jQuery.extend(true, this, {
             element:           null,
             appendTo:          null,
-            windowId:          null
+            windowId:          null,
+            maxWidth:          -1,
+            maxHeight:         -1
         }, options);
 
         this.init();
@@ -198,12 +200,25 @@
             });
 
         },
+        getCurrentWindow: function() {
+          var _this = this;
+          return $.viewer.workspace.windows
+            .filter(function(window) { return window.id === _this.windowId; })[0];
+        },
+        updateDimensions: function() {
+          var _this = this;
+
+          this.maxWidth = jQuery(_this.element).parent().parent().width();
+          this.maxHeight = jQuery(_this.element).parent().parent().height();
+        },
         bindEvents: function() {
             var _this = this,
                 fullpage = _this.element.find('.fullpage'),
                 annoItems = _this.element.find('.annotationItem'),
                 resizer = _this.element.find('.resizer-' + _this.state().position),
-                positionToggle = _this.element.find('.position-toggle');
+                positionToggle = _this.element.find('.position-toggle'),
+                window = this.getCurrentWindow();
+            //state = this.state();
 
             annoItems.on('click', function(event) {
               var annoClicked = jQuery(this).data('id');
@@ -242,52 +257,56 @@
             });
 
           // ----- Handle EditorPanel resizing -----
-          var window = $.viewer.workspace.windows
-            .filter(function(window) { return window.id == _this.windowId; }
-          )[0];
+            // ----- Track window size changes -----
+            jQuery.subscribe('windowResize', $.debounce(function() {
+              _this.updateDimensions();
+            }, 300));
 
-          var max_width = -1,
-            max_height = -1;
-          if (typeof window !== 'undefined') {
-            max_width = window.width;
-            max_height = window.height;
-          }
-
-          resizer.mousedown(function(event) {
-            event.preventDefault();
-
-            var editor_height = parseInt(_this.element.css('height')),
-              editor_width = parseInt(_this.element.css('width')),
-              mouseX = event.pageX,
-              mouseY = event.pageY;
-
-            jQuery(document).mousemove(function(event) {
-              var diff = 0;
-
-              if (_this.onBottom()) {
-                diff = mouseY - event.pageY;
-                mouseY = mouseY - diff;
-                editor_height = editor_height + diff;
-
-                if (max_height > 0 && editor_height < max_height && editor_height > 0) {
-                  _this.element.css('height', editor_height);
-                }
-
-              } else if (_this.onRight()) {
-                diff = mouseX - event.pageX;
-                mouseX = mouseX - diff;
-                editor_width = editor_width + diff;
-
-                if (max_width > 0 && editor_width < max_width && editor_width > 0) {
-                  _this.element.css('width', editor_width);
-                }
-              }
+            jQuery.subscribe('layoutChanged', function(event, layoutRoot) {
+              _this.updateDimensions();
             });
-          });
 
-          jQuery(document).mouseup(function(event) {
-            jQuery(document).unbind('mousemove');
-          });
+          // ----- Handle EditorPanel resizing -----
+            // Get initial window size
+            if (typeof window !== 'undefined') {
+              _this.updateDimensions();
+            }
+
+            resizer.mousedown(function(event) {
+              event.preventDefault();
+
+              var editor_height = parseInt(_this.element.css('height')),
+                editor_width = parseInt(_this.element.css('width')),
+                mouseX = event.pageX,
+                mouseY = event.pageY;
+
+              jQuery(document).mousemove(function(event) {
+                var diff = 0;
+
+                if (_this.onBottom()) {
+                  diff = mouseY - event.pageY;
+                  mouseY = mouseY - diff;
+                  editor_height = editor_height + diff;
+
+                  if (_this.maxHeight > 0 && editor_height < _this.maxHeight && editor_height > 5) {
+                    _this.element.css('height', editor_height);
+                  }
+
+                } else if (_this.onRight()) {
+                  diff = mouseX - event.pageX;
+                  mouseX = mouseX - diff;
+                  editor_width = editor_width + diff;
+
+                    if (_this.maxWidth > 0 && editor_width < _this.maxWidth && editor_width > 5) {
+                      _this.element.css('width', editor_width);
+                    }
+                  }
+                });
+              });
+
+            jQuery(document).mouseup(function(event) {
+              jQuery(document).unbind('mousemove');
+            });
         },
         onRight: function() {
           return this.state().position === 'right';
