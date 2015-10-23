@@ -4,7 +4,9 @@
         jQuery.extend(true, this, {
             element:           null,
             appendTo:          null,
-            windowId:          null
+            windowId:          null,
+            maxWidth:          -1,
+            maxHeight:         -1
         }, options);
 
         this.init();
@@ -193,11 +195,24 @@
             });
 
         },
+        getCurrentWindow: function() {
+          var _this = this;
+          return $.viewer.workspace.windows
+            .filter(function(window) { return window.id === _this.windowId; })[0];
+        },
+        updateDimensions: function() {
+          var _this = this;
+
+          this.maxWidth = jQuery(_this.element).parent().parent().width();
+          this.maxHeight = jQuery(_this.element).parent().parent().height();
+          console.log("[EditorPanel] new dimensions (" + this.maxWidth + "x" + this.maxHeight + ")");
+        },
         bindEvents: function() {
             var _this = this,
                 fullpage = _this.element.find('.fullpage'),
                 annoItems = _this.element.find('.annotationItem'),
-                resizer = _this.element.find('.resizer-' + _this.state().position);
+                resizer = _this.element.find('.resizer-' + _this.state().position),
+                window = this.getCurrentWindow();
             //state = this.state();
 
             annoItems.on('click', function(event) {
@@ -214,18 +229,21 @@
               jQuery.publish('fullPageSelected.' + _this.windowId);
             });
 
+          // ----- Track window size changes -----
+            jQuery.subscribe('windowResize', $.debounce(function() {
+              _this.updateDimensions();
+            }, 300));
+
+            jQuery.subscribe('layoutChanged', function(event, layoutRoot) {
+              _this.updateDimensions();
+            });
+
           // ----- Handle EditorPanel resizing -----
-            var window = $.viewer.workspace.windows
-              .filter(function(window) { return window.id == _this.windowId; }
-            )[0];
-
-            var max_width = -1,
-              max_height = -1;
+            // Get initial window size
             if (typeof window !== 'undefined') {
-              max_width = window.width;
-              max_height = window.height;
+              _this.updateDimensions();
             }
-
+// TODO: debounce this to prevent performance degredation
             resizer.mousedown(function(event) {
               event.preventDefault();
 
@@ -242,7 +260,7 @@
                   mouseY = mouseY - diff;
                   editor_height = editor_height + diff;
 
-                  if (max_height > 0 && editor_height < max_height && editor_height > 0) {
+                  if (_this.maxHeight > 0 && editor_height < _this.maxHeight && editor_height > 0) {
                     _this.element.css('height', editor_height);
                   }
 
@@ -251,7 +269,7 @@
                   mouseX = mouseX - diff;
                   editor_width = editor_width + diff;
 
-                  if (max_width > 0 && editor_width < max_width && editor_width > 0) {
+                  if (_this.maxWidth > 0 && editor_width < _this.maxWidth && editor_width > 0) {
                     _this.element.css('width', editor_width);
                   }
                 }
