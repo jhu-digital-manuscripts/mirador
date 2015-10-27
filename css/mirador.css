@@ -1013,6 +1013,20 @@ li.highlight {
   font-weight: normal;
 }
 
+.mirador-osd-rotate-left {
+  position: absolute;
+  bottom: 3px;
+  right: 40px;
+  font-size: 33%;
+}
+
+.mirador-osd-rotate-right {
+  position: absolute;
+  bottom: 3px;
+  right: 0;
+  font-size: 33%;
+}
+
 /* image view
 ---------------------------------------------------------------------------- */
 
