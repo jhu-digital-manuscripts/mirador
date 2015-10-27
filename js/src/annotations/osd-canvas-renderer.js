@@ -53,6 +53,7 @@
         region = _this.parseRegion(annotation.on),
         osdOverlay = document.createElement('div');
         osdOverlay.className = 'annotation';
+        if(annotation.selected){ osdOverlay.className = osdOverlay.className + ' selected'; }
         osdOverlay.id = annotation['@id'];
         _this.osdViewer.addHandler("add-overlay", function() {
           deferred.resolve();
@@ -144,6 +145,7 @@
       });
     },
 
+// <<<<<<< HEAD
     showTooltipsFromMousePosition: function(event) {
       var overlays = this.getOverlaysFromMousePosition(event);
       var api = jQuery(this.osdViewer.element).qtip('api');
@@ -161,21 +163,21 @@
     },
 
     getOverlaysFromMousePosition: function(event) {
-      var position = OpenSeadragon.getMousePosition(event);
-      var _this = this,
-      overlays = jQuery(_this.osdViewer.canvas).find('.annotation').map(function() {
-        var self = jQuery(this),
-        offset = self.offset(),
-        l = offset.left,
-        t = offset.top,
-        h = self.height(),
-        w = self.width(),
-        x = position.x,
-        y = position.y,
-        maxx = l+w,
-        maxy = t+h;
-        return (y <= maxy && y >= t) && (x <= maxx && x >= l) ? this : null;
-      });
+      var position = OpenSeadragon.getMousePosition(event),
+        _this = this,
+        overlays = jQuery(_this.osdViewer.canvas).find('.annotation').map(function() {
+          var self = jQuery(this),
+          offset = self.offset(),
+          l = offset.left,
+          t = offset.top,
+          h = self.height(),
+          w = self.width(),
+          x = position.x,
+          y = position.y,
+          maxx = l+w,
+          maxy = t+h;
+          return (y <= maxy && y >= t) && (x <= maxx && x >= l) ? this : null;
+        });
       return overlays;
     },
     getOverlaysFromElement: function(element, event) {
@@ -201,7 +203,7 @@
     *
     * H runs from 0 to 360 degrees
     * S and V run from 0 to 100
-    * 
+    *
     * Ported from the excellent java algorithm by Eugene Vishnevsky at:
     * http://www.cs.rit.edu/~ncs/color/t_convert.html
     */
@@ -259,13 +261,13 @@
       g = q;
       b = v;
       break;
-      
+
     case 4:
       r = t;
       g = p;
       b = v;
       break;
-      
+
     default: // case 5:
       r = v;
       g = p;
@@ -291,13 +293,12 @@
       jQuery.subscribe('removeTooltips.' + _this.parent.windowId, function() {
         jQuery(_this.osdViewer.canvas).find('.annotation').qtip('destroy', true);
       });
-
+// -------------------------------------------------------------------------------
       jQuery.subscribe('disableTooltips.' + _this.parent.windowId, function() {
         _this.inEditOrCreateMode = true;
-      });
-
-      jQuery.subscribe('enableTooltips.' + _this.parent.windowId, function() {
-        _this.inEditOrCreateMode = false;
+        jQuery.each(_this.tooltips, function(index, value) {
+          value.qtip('disable', true);
+        });
       });
 
       jQuery.subscribe('removeOverlay.' + _this.parent.windowId, function(event, annoId) {
@@ -305,10 +306,47 @@
         _this.osdViewer.removeOverlay(jQuery(_this.osdViewer.element).find(".annotation#"+annoId)[0]);
       });
 
+      jQuery.subscribe('enableTooltips.' + _this.parent.windowId, function() {
+        _this.inEditOrCreateMode = false;
+        jQuery.each(_this.tooltips, function(index, value) {
+          value.qtip('disable', false);
+        });
+      });
+// -------------------------------------------------------------------------------
+/*
+ jQuery.subscribe('disableTooltips.' + _this.parent.windowId, function() {
+ <<<<<<< HEAD
+ _this.inEditOrCreateMode = true;
+ });
+
+ jQuery.subscribe('enableTooltips.' + _this.parent.windowId, function() {
+ _this.inEditOrCreateMode = false;
+ });
+
+ jQuery.subscribe('removeOverlay.' + _this.parent.windowId, function(event, annoId) {
+ //remove this annotation's overlay from osd
+ _this.osdViewer.removeOverlay(jQuery(_this.osdViewer.element).find(".annotation#"+annoId)[0]);
+ =======
+ jQuery.each(_this.tooltips, function(index, value) {
+ value.qtip('disable', true);
+ });
+ });
+
+ jQuery.subscribe('enableTooltips.' + _this.parent.windowId, function() {
+ jQuery.each(_this.tooltips, function(index, value) {
+ value.qtip('disable', false);
+ });
+ >>>>>>> sdellis/master
+ });
+ */
+
     },
 
     hideVisibleTooltips: function() {
       jQuery('.qtip-viewer').qtip('hide');
+    },
+    checkMousePosition: function() {
+      jQuery('.qtip').qtip('hide');
     },
 
     update: function() {
@@ -353,10 +391,10 @@
         this.osdViewer.zoomPerClick = 1;
         this.osdViewer.zoomPerScroll = 1;
     },
-    
+
     //reenable all other qtips
     //update content of this qtip to make it a viewer, not editor
-    //and reset hide event       
+    //and reset hide event
     unFreezeQtip: function(api, oaAnno, annoTooltip) {
       this.inEditOrCreateMode = false;
       jQuery.publish('enableRectTool.'+this.parent.windowId);
@@ -366,7 +404,7 @@
       this.osdViewer.zoomPerClick = 2;
       this.osdViewer.zoomPerScroll = 1.2;
     },
-    
+
     removeAnnotationEvents: function(tooltipevent, api) {
       var _this = this,
       editorSelector = '#annotation-editor-'+_this.parent.windowId,
@@ -383,16 +421,20 @@
       selector = '#annotation-viewer-'+_this.parent.windowId;
       jQuery(selector+' a.delete').on("click", function(event) {
         event.preventDefault();
-        
-        if (!window.confirm("Do you want to delete this annotation?")) { 
+
+        if (!window.confirm("Do you want to delete this annotation?")) {
           return false;
         }
 
         var display = jQuery(this).parents('.annotation-display'),
-        id = display.attr('data-anno-id');
-        //oaAnno = _this.getAnnoFromRegion(id)[0];
-        jQuery.publish('annotationDeleted.'+_this.parent.windowId, [id]);
-        
+        id = display.attr('data-anno-id'),
+        oaAnno = _this.getAnnoFromRegion(id)[0];
+        jQuery.publish('annotationDeleted.'+_this.parent.windowId, [oaAnno]);
+
+        //remove this annotation's overlay from osd
+        //should there be some sort of check that it was successfully deleted? or pass when publishing?
+        _this.osdViewer.removeOverlay(jQuery(_this.osdViewer.element).find(".annotation#"+id)[0]);
+
         //hide tooltip so event handlers don't get messed up
         api.hide();
         display.remove(); //remove this annotation display from dom
@@ -400,15 +442,15 @@
 
       jQuery(selector+' a.edit').on("click", function(event) {
         event.preventDefault();
-        
+
         var display = jQuery(this).parents('.annotation-display'),
         id = display.attr('data-anno-id'),
         oaAnno = _this.getAnnoFromRegion(id)[0];
-       
+
         _this.freezeQtip(api, oaAnno, annoTooltip);
       });
     },
-    
+
     annotationSaveEvent: function(event, api) {
       var _this = this,
       annoTooltip = new $.AnnotationTooltip({"windowId" : _this.parent.windowId}),
@@ -421,11 +463,11 @@
 
       jQuery(selector+' a.save').on("click", function(event) {
         event.preventDefault();
-                  
+
         var display = jQuery(this).parents('.annotation-tooltip'),
         id = display.attr('data-anno-id'),
         oaAnno = _this.getAnnoFromRegion(id)[0];
-                  
+
         //check if new resourceText is empty??
         var tagText = jQuery(this).parents('.annotation-editor').find('.tags-editor').val(),
         resourceText = tinymce.activeEditor.getContent(),
@@ -443,7 +485,7 @@
                   
         var motivation = [],
         resource = [];
-                  
+
         //remove all tag-related content in annotation
         oaAnno.motivation = jQuery.grep(oaAnno.motivation, function(value) {
             return value !== "oa:tagging";
@@ -455,7 +497,7 @@
         if (tags.length > 0) {
             oaAnno.motivation.push("oa:tagging");
             jQuery.each(tags, function(index, value) {
-                oaAnno.resource.push({      
+                oaAnno.resource.push({
                     "@type":"oa:Tag",
                      "chars":value
                 });
@@ -477,7 +519,7 @@
           var display = jQuery(this).parents('.annotation-tooltip'),
           id = display.attr('data-anno-id'),
           oaAnno = _this.getAnnoFromRegion(id)[0];
-   
+
         _this.unFreezeQtip(api, oaAnno, annoTooltip);
         });
 

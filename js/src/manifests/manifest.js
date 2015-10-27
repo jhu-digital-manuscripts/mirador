@@ -110,6 +110,10 @@
 
       if (canvas && canvas.otherContent) {
         return canvas.otherContent[0]['@id'];
+      } else if (canvas) {
+        // console.log(canvas);
+        // return canvas.otherContent[0]['@id'];
+        return false;
       } else { return false; }
     },
     getStructures: function() {

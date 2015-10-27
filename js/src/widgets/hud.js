@@ -17,11 +17,11 @@
 
   $.Hud.prototype = {
 
-    init: function() {   
+    init: function() {
       this.createStateMachine();
 
       this.element = jQuery(this.template({
-        showNextPrev : this.parent.imagesList.length !== 1, 
+        showNextPrev : this.parent.imagesList.length !== 1,
         showBottomPanel : typeof this.bottomPanelAvailable === 'undefined' ? true : this.bottomPanelAvailable,
         showAnno : this.annotationLayerAvailable,
         showFullScreen : this.fullScreenAvailable
@@ -38,7 +38,10 @@
         });
       }
 
+      this.loadHudComponents();
+
       this.bindEvents();
+      this.listenForActions();
 
       if (typeof this.bottomPanelAvailable !== 'undefined' && !this.bottomPanelAvailable) {
         this.parent.parent.bottomPanelVisibility(false);
@@ -46,7 +49,24 @@
         this.parent.parent.bottomPanelVisibility(this.parent.parent.bottomPanelVisible);
       }
     },
+    listenForActions: function() {
+        var _this = this;
 
+        jQuery.subscribe('editorPanelStateUpdated' + _this.windowId, function(_, editorPanelState) {
+
+          if (editorPanelState.open){
+            if (_this.annoState.current === 'annoOff') {
+              _this.annoState.displayOn(this);
+            }
+          } else {
+            if (_this.annoState.current === 'annoOn') {
+              _this.annoState.displayOff(this);
+            }
+          }
+
+        });
+
+    },
     bindEvents: function() {
       var _this = this,
       firstCanvasId = _this.parent.imagesList[0]['@id'],
@@ -162,7 +182,12 @@
         // If it is the last canvas, hide the "go to previous" button, otherwise show it.
       });
     },
-
+    loadHudComponents: function () {
+        new $.EditorPanel({
+          windowId: this.windowId,
+          appendTo: this.element.parent().parent() // appending to .view-container
+        });
+    },
     createStateMachine: function() {
       //add more to these as AnnoState becomes more complex
       var _this = this,
@@ -185,7 +210,7 @@
               annotationState: to
             });
           },
-          ondisplayOn: function(event, from, to) { 
+          ondisplayOn: function(event, from, to) {
             if (_this.annoEndpointAvailable) {
               _this.parent.element.find('.mirador-osd-annotations-layer').fadeOut(duration, function() {      
                 _this.contextControls.show();
@@ -233,7 +258,7 @@
               annotationState: to
             });
           },
-          oncreateOff: function(event, from, to) { 
+          oncreateOff: function(event, from, to) {
             _this.parent.element.find('.mirador-osd-edit-mode').removeClass("selected");
             jQuery.publish('modeChange.' + _this.windowId, 'displayAnnotations');
             jQuery.publish(('windowUpdated'), {
@@ -241,7 +266,7 @@
               annotationState: to
             });
           },
-          ondisplayOff: function(event, from, to) { 
+          ondisplayOff: function(event, from, to) {
             if (_this.annoEndpointAvailable) {
               _this.parent.element.find('.mirador-osd-edit-mode').removeClass("selected");
               _this.contextControls.hide(function() {
