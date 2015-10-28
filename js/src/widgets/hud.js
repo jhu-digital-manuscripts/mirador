@@ -155,6 +155,23 @@
         _this.parent.parent.bottomPanelVisibility(visible);
       });
 
+      /**
+       * TODO BUG! panning around is kind of broken when image is rotated 90 deg./270 deg. 180 deg is fine.
+       * This bug is caused by a bug in OpenSeadragon, as yet unresolved.
+       * It is perhaps due to a failure to re-calculate viewport coords on rotate?
+       * See: https://github.com/openseadragon/openseadragon/issues/567
+       */
+      this.parent.element.find('.mirador-osd-rotate-left').on('click', function() {
+        var osd = _this.parent.osd;
+        var current_rotation = osd.viewport.getRotation();
+        osd.viewport.setRotation(current_rotation - 90);
+      });
+      this.parent.element.find('.mirador-osd-rotate-right').on('click', function() {
+        var osd = _this.parent.osd;
+        var current_rotation = osd.viewport.getRotation();
+        osd.viewport.setRotation(current_rotation + 90);
+      });
+
       jQuery.subscribe('bottomPanelSet.' + _this.windowId, function(event, visible) {
         var dodgers = _this.parent.element.find('.mirador-osd-toggle-bottom-panel, .mirador-pan-zoom-controls');
         var arrows = _this.parent.element.find('.mirador-osd-next, .mirador-osd-previous');
@@ -362,6 +379,12 @@
                                  '</a>',
                                  '<a class="mirador-osd-go-home hud-control">',
                                  '<i class="fa fa-home"></i>',
+                                 '<a class="mirador-osd-rotate-left hud-control ">',
+                                 '<i class="fa fa-3x fa-rotate-left "></i>',    // Rotate right icon
+                                 '</a>',
+                                 '<a class="mirador-osd-rotate-right hud-control ">',
+                                 '<i class="fa fa-3x fa-rotate-right "></i>',    // Rotate right icon
+                                 '</a>',
                                  '</a>',
                                  '</div>'
     ].join(''))
