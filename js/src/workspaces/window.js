@@ -521,7 +521,8 @@
           annotationCreationAvailable: this.annotationCreationAvailable,
           annoEndpointAvailable: this.annoEndpointAvailable,
           annotationState : this.annotationState,
-          fullScreenAvailable: this.fullScreenAvailable
+          fullScreenAvailable: this.fullScreenAvailable,
+          editorPanelConfig: this.editorPanelConfig
         });
       } else {
         var view = this.focusModules.ImageView;

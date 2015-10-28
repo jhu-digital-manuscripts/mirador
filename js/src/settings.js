@@ -142,7 +142,20 @@
     'lockController' : {
       'lockProfile' : 'lazyZoom',
       'notifyMaxMin' : true
+    },
+
+    /**
+     * Configuration properties for the editor panel (transcription display panel)
+     * {
+     *  'showTools' : TRUE|FALSE,       // show or hide the 'editorTools' (start transcription tool bar)
+     *  'position' : 'bottom|right',    // position of the editor panel
+     * }
+     */
+    'editorPanelConfig': {
+      'showTools' : false,
+      'position' : 'right'
     }
+
   };
 
 }(Mirador));

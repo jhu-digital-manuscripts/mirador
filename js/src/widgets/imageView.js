@@ -60,7 +60,8 @@
         annotationLayerAvailable: this.annotationLayerAvailable,
         annotationCreationAvailable: this.annotationCreationAvailable,
         annoEndpointAvailable: this.annoEndpointAvailable,
-        fullScreenAvailable : this.fullScreenAvailable
+        fullScreenAvailable : this.fullScreenAvailable,
+        editorPanelConfig: this.editorPanelConfig
       });
 
       this.bindEvents();

@@ -420,6 +420,10 @@
       windowConfig.appendTo = targetSlot.element;
       windowConfig.parent = targetSlot;
 
+      if (_this.editorPanelConfig) {
+        windowConfig.editorPanelConfig = _this.editorPanelConfig;
+      }
+
       if (!targetSlot.window) {
         windowConfig.slotAddress = targetSlot.layoutAddress;
         windowConfig.id = windowConfig.id || $.genUUID();

@@ -4,7 +4,9 @@
         jQuery.extend(true, this, {
             element:           null,
             appendTo:          null,
-            windowId:          null
+            windowId:          null,
+            maxWidth:          -1,
+            maxHeight:         -1
         }, options);
 
         this.init();
@@ -15,7 +17,8 @@
             var _this = this;
 
             this.state({
-                position: 'bottom',
+                windowId: _this.windowId,
+                position: _this.editorPanelConfig ? _this.editorPanelConfig.position : 'right',
                 title: 'untitled',
                 annotations: [],
                 selectedAnno: null,
@@ -25,13 +28,17 @@
                 allowEditing: true,
                 locked: true,
                 size: 280,
-                open: false
+                open: false,
+                editorPanelConfig: _this.editorPanelConfig
             }, true);
 
             this.listenForActions();
             this.render(this.state());
             this.bindEvents();
 
+            if (_this.onBottom()) {
+              _this.element.find('.position-toggle').addClass('bottom');
+            }
         },
         loadEditorPanelComponents: function() {
             var _this = this;
@@ -51,9 +58,10 @@
           var _this = this,
               state = this.state();
 
-          var window = $.viewer.workspace.windows.map(function(window){
-                if(window.id == _this.windowId){ return window; }
-              });
+          var window = $.viewer.workspace.windows
+            // Return array of only those 'windows' whose ID matches the current window ID
+            .filter(function(window) { return window.id == _this.windowId; }
+          );
 
           if(listId === null){
             state.annotations = window[0].annotationsList;
@@ -113,11 +121,13 @@
         },
         getTemplateData: function(state) {
             return {
+                windowId: state.windowId,
                 annotations: state.annotations,
                 selected: state.selectedAnno,
-                postion: state.position,
+                position: state.position,
                 open: state.open,
-                size:  state.size
+                size:  state.size,
+                showEditorTools: state.editorPanelConfig.showTools
             };
         },
         getEditorContent: function(){
@@ -190,11 +200,25 @@
             });
 
         },
+        getCurrentWindow: function() {
+          var _this = this;
+          return $.viewer.workspace.windows
+            .filter(function(window) { return window.id === _this.windowId; })[0];
+        },
+        updateDimensions: function() {
+          var _this = this;
+
+          this.maxWidth = jQuery(_this.element).parent().parent().width();
+          this.maxHeight = jQuery(_this.element).parent().parent().height();
+        },
         bindEvents: function() {
             var _this = this,
                 fullpage = _this.element.find('.fullpage'),
-                annoItems = _this.element.find('.annotationItem');
-            state = this.state();
+                annoItems = _this.element.find('.annotationItem'),
+                resizer = _this.element.find('.resizer-' + _this.state().position),
+                positionToggle = _this.element.find('.position-toggle'),
+                window = this.getCurrentWindow();
+            //state = this.state();
 
             annoItems.on('click', function(event) {
               var annoClicked = jQuery(this).data('id');
@@ -210,8 +234,85 @@
               jQuery.publish('fullPageSelected.' + _this.windowId);
             });
 
+            positionToggle.click(function(event) {
+              var state = _this.state();
 
+              if (state.position === 'bottom') {
+                state.position = 'right';
 
+                positionToggle.css('padding-top', '3px');
+                _this.element.css('height', '').removeAttr('height');
+                _this.element.removeClass('bottom');
+                _this.element.addClass('right');
+              } else if (state.position === 'right') {
+                state.position = 'bottom';
+
+                positionToggle.css('padding-top', '8px');
+                _this.element.css('width', '').removeAttr('width');
+                _this.element.removeClass('right');
+                _this.element.addClass('bottom');
+              }
+
+              _this.state(state);
+            });
+
+          // ----- Handle EditorPanel resizing -----
+            // ----- Track window size changes -----
+            jQuery.subscribe('windowResize', $.debounce(function() {
+              _this.updateDimensions();
+            }, 300));
+
+            jQuery.subscribe('layoutChanged', function(event, layoutRoot) {
+              _this.updateDimensions();
+            });
+
+          // ----- Handle EditorPanel resizing -----
+            // Get initial window size
+            if (typeof window !== 'undefined') {
+              _this.updateDimensions();
+            }
+
+            resizer.mousedown(function(event) {
+              event.preventDefault();
+
+              var editor_height = parseInt(_this.element.css('height')),
+                editor_width = parseInt(_this.element.css('width')),
+                mouseX = event.pageX,
+                mouseY = event.pageY;
+
+              jQuery(document).mousemove(function(event) {
+                var diff = 0;
+
+                if (_this.onBottom()) {
+                  diff = mouseY - event.pageY;
+                  mouseY = mouseY - diff;
+                  editor_height = editor_height + diff;
+
+                  if (_this.maxHeight > 0 && editor_height < _this.maxHeight && editor_height > 5) {
+                    _this.element.css('height', editor_height);
+                  }
+
+                } else if (_this.onRight()) {
+                  diff = mouseX - event.pageX;
+                  mouseX = mouseX - diff;
+                  editor_width = editor_width + diff;
+
+                    if (_this.maxWidth > 0 && editor_width < _this.maxWidth && editor_width > 5) {
+                      _this.element.css('width', editor_width);
+                    }
+                  }
+                });
+              });
+
+            jQuery(document).mouseup(function(event) {
+              jQuery(document).unbind('mousemove');
+            });
+        },
+        onRight: function() {
+          return this.state().position === 'right';
+        },
+        onBottom: function() {
+          return this.state().position === 'bottom';
         },
         render: function(state) {
             var _this = this;
@@ -244,10 +345,11 @@
             _this.bindEvents();
             this.element.css({'display':openValue});
 
-
         },
         template: Handlebars.compile([
             '<div class="editorPanel {{position}}">',
+            '<div class="resizer-{{position}}"></div>',
+            '<div class="position-toggle"><i class="fa fa-exchange"></i></div>',
             '<form>',
             '<ul class="annotations">',
             '{{#each annotations}}',
@@ -257,9 +359,11 @@
             '{{/each}}',
             '</ul>',
             '</form>',
+            '{{#if showEditorTools}}',
             '<div class="editorTools">',
             '<span class="fullpage"><i class="fa fa-edit fa-fw"></i> start transcription</span>',
             '</div>',
+            '{{/if}}',
             '</div>'
         ].join('')),
         toggle: function () {}

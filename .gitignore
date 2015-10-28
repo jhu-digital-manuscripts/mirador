@@ -12,3 +12,5 @@ data/ecodices
 data/BnF
 data/Harvard
 build/
+bower_components/
+.idea/

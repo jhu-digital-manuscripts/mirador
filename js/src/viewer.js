@@ -76,7 +76,8 @@
       this.workspace = new $.Workspace({
         layoutDescription: this.layout.charAt(0) === '{' ? JSON.parse(this.layout) : $.layoutDescriptionFromGridString(this.layout), 
         parent: this, 
-        appendTo: this.element.find('.mirador-viewer')
+        appendTo: this.element.find('.mirador-viewer'),
+        editorPanelConfig: _this.editorPanelConfig
       });
       
       this.workspacePanel = new $.WorkspacePanel({
