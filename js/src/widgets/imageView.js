@@ -30,7 +30,7 @@
 
   $.ImageView.prototype = {
 
-    init: function() {    
+    init: function() {
       // check (for thumbnail view) if the canvasID is set. 
       // If not, make it page/item 1.
       if (this.canvasID !== null) {
@@ -160,7 +160,9 @@
             _this.setBounds();
           }
 
-          _this.addAnnotationsLayer(_this.elemAnno);
+          if (_this.annotationLayerAvailable) {
+            _this.addAnnotationsLayer(_this.elemAnno);
+          }
             
           // if current annoState is 'none' that means it has been initialized but not used
           // use annotationState to choose event
