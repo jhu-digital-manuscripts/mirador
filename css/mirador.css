@@ -972,39 +972,30 @@ li.highlight {
 .editorPanelControls {
   position: absolute;
   top: 0;
-  left: 0;
+  left: 5px;
   text-align: center;
-  padding: 3px 5px;
+  padding: 3px 5px 3px 0;
   cursor: pointer;
+  border-radius: 3px;
+  background-color: rgba(0,0,0,0.5);
 }
 
 .editorPanelControls.bottom {
   top: 5px;
+  left: 0;
 }
 
-.editorPanelControls .close {
-  position: absolute;
-  left: 10px;
+.editorPanelControls .button {
+  float: left;
+  margin-left: 5px;
+  padding: 0 3px 3px 3px;
 }
 
-.editorPanelControls .close:hover {
+.editorPanelControls .button:hover {
   color: lightgrey;
 }
 
-.editorPanelControls .close:active {
-  color: grey;
-}
-
-.editorPanelControls .position-toggle {
-  position: absolute;
-  left: 30px;
-}
-
-.editorPanelControls .position-toggle:hover {
-  color: lightgrey;
-}
-
-.editorPanelControls .position-toggle:active {
+.editorPanelControls .button:active {
   color: grey;
 }
 
