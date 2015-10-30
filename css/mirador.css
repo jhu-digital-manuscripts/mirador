@@ -882,6 +882,7 @@ li.highlight {
   transform:translateY(130px);
 }
 
+/* ----- Editor Panel ----- */
 .editorPanel {
   background-color: rgba(0,0,0,0.7);
   position: absolute;
@@ -914,7 +915,7 @@ li.highlight {
   overflow-y: auto;
 }
 
-.right {
+.editorPanel.right {
   position:absolute;
   right:0;
   bottom:0;
@@ -952,7 +953,7 @@ li.highlight {
 .editorPanel ul.annotations {
   list-style-type: none;
   padding:5px 10px;
-  margin-top: 20px;
+  margin-top: 25px;
 }
 
 .editorPanel li.annotationItem {
@@ -968,17 +969,43 @@ li.highlight {
   margin:0 0 10px 0;
 }
 
-.position-toggle {
+.editorPanelControls {
   position: absolute;
   top: 0;
-  right: 35px;
+  left: 0;
   text-align: center;
   padding: 3px 5px;
   cursor: pointer;
 }
 
-.position-toggle .bottom {
-  padding-top: 8px;
+.editorPanelControls.bottom {
+  top: 5px;
+}
+
+.editorPanelControls .close {
+  position: absolute;
+  left: 10px;
+}
+
+.editorPanelControls .close:hover {
+  color: lightgrey;
+}
+
+.editorPanelControls .close:active {
+  color: grey;
+}
+
+.editorPanelControls .position-toggle {
+  position: absolute;
+  left: 30px;
+}
+
+.editorPanelControls .position-toggle:hover {
+  color: lightgrey;
+}
+
+.editorPanelControls .position-toggle:active {
+  color: grey;
 }
 
 .italic {
@@ -992,6 +1019,8 @@ li.highlight {
 .editorPanel .annotations li.selected {
   border: 1px solid orangered;
 }
+
+/* ----- done editor panel ----- */
 
 /* window views
 ---------------------------------------------------------------------------- */

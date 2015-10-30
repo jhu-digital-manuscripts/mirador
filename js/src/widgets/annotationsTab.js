@@ -141,6 +141,12 @@
                 _this.deselectList(listId);
             });
 
+            jQuery.subscribe('editorPanelToggled.' + _this.windowId, function(event, status) {
+                if (!status) {
+                    _this.deselectList(_this.state().selectedList);
+                }
+            });
+
         },
         bindEvents: function() {
             var _this = this,

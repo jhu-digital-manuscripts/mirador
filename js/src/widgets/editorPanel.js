@@ -1,5 +1,5 @@
 (function($) {
-
+// TODO I do think this Panel should be in the Window, instead of in the HUD.
     $.EditorPanel= function(options) {
         jQuery.extend(true, this, {
             element:           null,
@@ -217,6 +217,7 @@
                 annoItems = _this.element.find('.annotationItem'),
                 resizer = _this.element.find('.resizer-' + _this.state().position),
                 positionToggle = _this.element.find('.position-toggle'),
+                editorPanelCloser = _this.element.find('.editorPanelControls').find('.close'),
                 window = this.getCurrentWindow();
             //state = this.state();
 
@@ -254,6 +255,10 @@
               }
 
               _this.state(state);
+            });
+
+            editorPanelCloser.click(function(event) {
+              jQuery.publish('editorPanelToggled.' + _this.windowId, false);
             });
 
           // ----- Handle EditorPanel resizing -----
@@ -349,7 +354,10 @@
         template: Handlebars.compile([
             '<div class="editorPanel {{position}}">',
             '<div class="resizer-{{position}}"></div>',
-            '<div class="position-toggle"><i class="fa fa-exchange"></i></div>',
+            '<div class="editorPanelControls {{position}}">',
+            '<div class="position-toggle" title="Toggle position"><i class="fa fa-exchange fa-lg"></i></div>',
+            '<div class="close" title="Close"><i class="fa fa-times fa-lg"></i></div>',
+            '</div>',
             '<form>',
             '<ul class="annotations">',
             '{{#each annotations}}',
