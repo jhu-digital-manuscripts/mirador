@@ -149,11 +149,13 @@
      * {
      *  'showTools' : TRUE|FALSE,       // show or hide the 'editorTools' (start transcription tool bar)
      *  'position' : 'bottom|right',    // position of the editor panel
+     *  'showOverlay' : TRUE|FALSE
      * }
      */
     'editorPanelConfig': {
       'showTools' : false,
-      'position' : 'right'
+      'position' : 'right',
+      'showOverlay' : false
     }
 
   };

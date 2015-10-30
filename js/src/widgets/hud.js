@@ -23,7 +23,7 @@
       this.element = jQuery(this.template({
         showNextPrev : this.parent.imagesList.length !== 1,
         showBottomPanel : typeof this.bottomPanelAvailable === 'undefined' ? true : this.bottomPanelAvailable,
-        showAnno : this.annotationLayerAvailable,
+        showAnno : this.annotationLayerAvailable && this.editorPanelConfig.showOverlay,
         showFullScreen : this.fullScreenAvailable
       })).appendTo(this.element);
 

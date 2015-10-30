@@ -160,7 +160,7 @@
             _this.setBounds();
           }
 
-          if (_this.annotationLayerAvailable) {
+          if (_this.annotationLayerAvailable && _this.editorPanelConfig.showOverlay) {
             _this.addAnnotationsLayer(_this.elemAnno);
           }
             
