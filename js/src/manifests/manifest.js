@@ -202,14 +202,14 @@
     },
 
     /**
-     * Get the label of the a canvas by ID
+     * Get the label of the a canvas by ID, removing any region fragments
+     * if necessary
+     * 
      * @param  {[type]} canvasId ID of desired canvas
      * @return {[type]}          string
      */
     getCanvasLabel: function(canvasId) {
-      canvasId = canvasId.split('#')[0];  // Remove region fragment if necessary
-      console.log("[Manifest] getting canvas label for: " + canvasId);
-      return this.canvasMap[canvasId].label;
+      return canvasId ? this.canvasMap[canvasId.split('#')[0]].label : '';
     }
 
   };
