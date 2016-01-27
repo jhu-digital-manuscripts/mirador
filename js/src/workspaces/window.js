@@ -59,6 +59,22 @@
         "slotLeft" : true,
         "slotAbove" : true,
         "slotBelow" : true
+      },
+      search : {
+        'symbols': {
+          "label": "Symbols",
+          "class": "advanced-search-symbols",
+          "choices": ['Asterisk', 'Bisectedcircle', 'Crown', 'JC', 'HT', 'LL', 'Mars', 'Mercury', 'Moon', 'Opposite_planets', 'Saturn', 'Square', 'SS', 'Sun', 'Venus']
+        },
+        'marks': {
+          "label": "Marks",
+          "class": "advanced-search-marks",
+          "choices": [
+            'apostrophe', 'box', 'bracket', 'circumflex', 'colon', 'comma', 'dash', 'diacritic', 'dot', 'double_vertical_bar', 'equal_sign',
+            'est_mark', 'hash', 'horizontal_bar', 'page_break', 'pen_trial', 'plus_sign', 'quotation_mark', 'scribble', 'section_sign',
+            'semicolon', 'slash', 'straight_quotation_mark', 'tick', 'tilde', 'triple_dash', 'vertical_bar', 'X-sign'
+          ]
+        }
       }
     }, options);
 
@@ -787,29 +803,84 @@
         _this.displaySearchWithin(query);
     });
 
+    this.addAdvancedSearchLine();
     this.element.find(".perform-advanced-search").on('submit', function(event) {
       event.preventDefault();
-      var symbols_query = _this.element.find(".advanced-search-symbols").val();
-      var marks_query = _this.element.find(".advanced-search-marks").val();
-      var marginalia_query = _this.element.find(".advanced-search-marginalia").val();
-      var underlines_query = _this.element.find(".advanced-search-underlines").val();
 
-      var total = //(_this.validInput(all_query) ? 'all:' + all_query : '') + ' ' +
-        (_this.validInput(symbols_query) ? 'symbol:' + symbols_query : '') + ' ' +
-        (_this.validInput(marks_query) ? 'mark:' + marks_query : '') + ' ';
+      // if (!_this.advancedSearch) {
+      //   return;
+      // }
 
-      if (_this.validInput(marginalia_query)) {
-        marginalia_query.split(' ').forEach(function(fragment) {
-          total += 'marginalia:' + fragment + ' ';
-        });
-      }
-      if (_this.validInput(underlines_query)) {
-        underlines_query.split(' ').forEach(function(fragment) {
-          total += 'underline:' + fragment + ' ';
-        });
-      }
+      // var final_query = '';
+      // _this.advancedSearch.forEach(function(line) {
+        var symbols_query = _this.element.find(".advanced-search-symbols").val();
+        var marks_query = _this.element.find(".advanced-search-marks").val();
+        var marginalia_query = _this.element.find(".advanced-search-marginalia").val();
+        var underlines_query = _this.element.find(".advanced-search-underlines").val();
 
+        // var selector = line.find('advanced-search-categories');
+        // selector.on('change', function() {
+        //   switch (selector.value) {
+        //     case 'marginalia':
+        //       if (_this.validInput(line.find('.advanced-search-marginalia').val())) {
+        //         line.find('.advanced-search-marginalia').val().split(' ').forEach(function(str) {
+        //           final_query += 'marginalia:' + str + ' ';
+        //         });
+        //       }
+        //       break;
+        //     case 'underlines':
+        //       if (_this.validInput(line.find('.advanced-search-underlines').val())) {
+        //         line.find('.advanced-search-underlines').val().split(' ').forEach(function(str) {
+        //           final_query += 'underline:' + str + ' ';
+        //         });
+        //       }
+        //       break;
+        //     case 'symbols':
+        //       final_query += 'symbol:' + lines.find('.advanced-search-symbols').val();
+        //       break;
+        //     case 'marks':
+        //       final_query += 'mark:' + lines.find('.advanced-search-marks').val();
+        //       break;
+        //     default:
+        //       if (_this.validInput(line.find('.advanced-search-all').val())) {
+        //         line.find('.advanced-search-all').val().split(' ').forEach(function(str) {
+        //           final_query += 'all:' + str + ' ';
+        //         });
+        //       }
+        //       break;
+        //   }
+        // });
+
+        var total = //(_this.validInput(all_query) ? 'all:' + all_query : '') + ' ' +
+          (_this.validInput(symbols_query) ? 'symbol:' + symbols_query : '') + ' ' +
+          (_this.validInput(marks_query) ? 'mark:' + marks_query : '') + ' ';
+
+        if (_this.validInput(marginalia_query)) {
+          marginalia_query.split(' ').forEach(function(fragment) {
+            total += 'marginalia:' + fragment + ' ';
+          });
+        }
+        if (_this.validInput(underlines_query)) {
+          underlines_query.split(' ').forEach(function(fragment) {
+            total += 'underline:' + fragment + ' ';
+          });
+        }
+      // });
+
+      console.log("Final query: " + total);
       _this.displaySearchWithin(total);
+    });
+
+    this.element.find('.advanced-search-add-btn').on('click', function(e) {
+      console.log("[Window.add button click] : " + e.target.parentElement);
+      e.preventDefault();
+      _this.addAdvancedSearchLine();
+    });
+
+    this.element.find('.advanced-search-reset-btn').on('click', function(e) {
+      console.log("Resetting advanced search widget.");
+      e.preventDefault();
+      _this.advancedSearch = [];
     });
 
 // end of events added by me
@@ -853,6 +924,64 @@
       return input && input !== '';
     },
 
+    // addAdvancedSearchLine: function() {
+    //   if (!this.advancedSearch) {
+    //     this.advancedSearch = [];
+    //   }
+    //
+    //   var template = Handlebars.compile('{{> advancedSearchLine }}');
+    //
+    //   var templateData = {"search": this.search};
+    //   var line = template(templateData);
+    //
+    //   this.element.find('.advanced-search-lines table tbody').add(line);
+    //   var arr = this.element.find('.advanced-search-lines').find('tr');
+    //
+    //   line = arr[arr.length-1];
+    //
+    //   console.log("Advanced search line: " + (line));
+    //
+    //   this.advancedSearch.push(line);
+    //
+    //   // Add event handlers
+    //   JQuery.find();
+    //   var selector = line.find('.advanced-search-categories');
+    //   var all_input = line.find('.advanced-search-all');
+    //   var symbol_input = line.find('.advanced-search-symbols');
+    //   var mark_input = line.find('.advanced-search-marks');
+    //   var marg_input = line.find('.advanced-search-marginalia');
+    //   var underline_input = line.find('.advanced-search-underlines');
+    //
+    //   // Hide all inputs and clear its content
+    //   symbol_input.hide();
+    //   mark_input.hide();
+    //   marg_input.hide();
+    //   underline_input.hide();
+    //
+    //   selector.on('change', function() {
+    //     switch (selector.value) {
+    //       case 'marginalia':
+    //         marg_input.show();
+    //         break;
+    //       case 'underlines':
+    //         underline_input.show();
+    //         break;
+    //       case 'symbols':
+    //         symbol_input.show();
+    //         break;
+    //       case 'marks':
+    //         mark_input.show();
+    //         break;
+    //       default:
+    //         all_input.show();
+    //         break;
+    //     }
+    //   });
+    //
+    //
+    //
+    // },
+
     registerSearchWidget: function() {
       Handlebars.registerPartial('searchWithinButton',
         '<a href="javascript:;" class="mirador-btn mirador-icon-search-within" title="Search within this object."><i class="fa fa-search fa-lg fa-fw"></i></a>'
@@ -887,24 +1016,67 @@
       Handlebars.registerPartial('advancedSearch', [
         '<div class="advanced-search">',
           '<form id="advanced-search-form" class="perform-advanced-search">',
-            '<table><tbody>',
-              '{{#if search.symbols}}', // Symbols dropdown
-                '{{> searchDropDown search.symbols}}',
-              '{{/if}}',
-              '{{#if search.marks}}',  // Marks dropdown
-                '{{> searchDropDown search.marks }}',
-              '{{/if}}',
-              // Marginalia
-              '<tr><td>Marginalia</td><td>',
-              '<input class="advanced-search-marginalia" type="text" placeholder="Search marginalia"/></td></tr>',
-              // Underlines
-              '<tr><td>Underlines</td><td>',
-              '<input class="advanced-search-underlines" type="text" placeholder="Search underlined text"/></td></tr>',
-            '</tbody></table>',
+            '<div class="advanced-search-lines">',
+              '<table><tbody>',
+                '{{> advancedSearchLine }}',
+              '</tbody></table>',
+            '</div>',
+            '<div class="advanced-search-btn-container">',
+              '<button class="advanced-search-add-btn" value="add">Add Line</button>',
+              '<button class="advanced-search-reset-btn">Reset</button>',
+            '</div>',
             '<input type="submit" value="Search"/>',
           '</form>',
         '</div>'
       ].join(''));
+
+      Handlebars.registerPartial('advancedSearchLine', [
+        // Select search category
+        '<tr><td>',
+          '<select class="advanced-search-categories">',
+            '<option value="all">All</option>',
+            '<option value="marginalia">Marginalia</option>',
+            '<option value="underlines">Underlines</option>',
+            '<option value="symbols">Symbols</option>',
+            '<option value="marks">Marks</option>',
+          '</select>',
+        '</td>',
+        '<td>',
+          '<div class="advanced-search-line-{{search.advancedSearch.length}}">',
+            '<input class="advanced-search-all" type="text" placeholder="Search"/>',
+            '{{#if search.symbols}}',
+              '{{> searchDropDown search.symbols}}',
+            '{{/if}}',
+            '{{#if search.marks}}',
+              '{{> searchDropDown search.marks }}',
+            '{{/if}}',
+            '<input class="advanced-search-marginalia" type="text" placeholder="Search marginalia"/></td></tr>',
+            '<input class="advanced-search-underlines" type="text" placeholder="Search underlined text"/></td></tr>',
+          '</div>',
+        '</td></tr>',
+      ].join(''));
+
+      // Handlebars.registerPartial('advancedSearch', [
+      //   '<div class="advanced-search">',
+      //     '<form id="advanced-search-form" class="perform-advanced-search">',
+      //       '<table><tbody>',
+      //         '{{#if search.symbols}}', // Symbols dropdown
+      //           '{{> searchDropDown search.symbols}}',
+      //         '{{/if}}',
+      //         '{{#if search.marks}}',  // Marks dropdown
+      //           '{{> searchDropDown search.marks }}',
+      //         '{{/if}}',
+      //         // Marginalia
+      //         '<tr><td>Marginalia</td><td>',
+      //         '<input class="advanced-search-marginalia" type="text" placeholder="Search marginalia"/></td></tr>',
+      //         // Underlines
+      //         '<tr><td>Underlines</td><td>',
+      //         '<input class="advanced-search-underlines" type="text" placeholder="Search underlined text"/></td></tr>',
+      //       '</tbody></table>',
+      //       '<input type="submit" value="Search"/>',
+      //     '</form>',
+      //   '</div>'
+      // ].join(''));
 
       /*
        * A drop down used in the search within widget. Options include
@@ -919,18 +1091,26 @@
        * Example usage: {{> searchDropDown window.dropDownContext }}
        * 	where 'window.dropDownContext' is as seen above.
        */
+      // Handlebars.registerPartial('searchDropDown', [
+      //   '<tr>',
+      //     '<td>{{label}}</td>',
+      //     '<td>',
+      //       '<select class="{{class}}">',
+      //         '<option></option>',
+      //         '{{#each choices}}',
+      //           '<option value="{{this}}">{{this}}</option>',
+      //         '{{/each}}',
+      //       '</select>',
+      //     '</td>',
+      //   '</tr>',
+      // ].join(''));
       Handlebars.registerPartial('searchDropDown', [
-        '<tr>',
-          '<td>{{label}}</td>',
-          '<td>',
-            '<select class="{{class}}">',
-              '<option></option>',
-              '{{#each choices}}',
-                '<option value="{{this}}">{{this}}</option>',
-              '{{/each}}',
-            '</select>',
-          '</td>',
-        '</tr>',
+        '<select class="{{class}}">',
+          '<option></option>',
+          '{{#each choices}}',
+            '<option value="{{this}}">{{this}}</option>',
+          '{{/each}}',
+        '</select>'
       ].join(''));
     },
 
