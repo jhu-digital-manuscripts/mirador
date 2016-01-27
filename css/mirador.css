@@ -1698,3 +1698,15 @@ div.manifest-info a.mirador-btn.mirador-icon-toc {
   color: rgb( 146, 145, 145 );
   box-sizing: border-box;
 }
+.search-disclose {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+.search-disclose-btn-more,
+.search-disclose-btn-less {
+  margin-top: 10px;
+  cursor: pointer;
+  border-top: 1px solid rgb( 146, 145, 145 );
+  padding-top: 5px;
+  width: 100%;
+}

@@ -137,6 +137,20 @@
           return _this.layoutOptions[element] === false;
         });
       }
+
+      var search = {
+        'symbols': {
+          "label": "Symbols",
+          "choices": ['Mars', 'Sun', 'Crown']
+        },
+        'marks': {
+          "label": "Marks",
+          "choices": ['box', 'bracket', 'comma']
+        }
+      };
+      templateData.search = search;
+      this.registerSearchWidget();
+
       _this.element = jQuery(this.template(templateData)).appendTo(_this.appendTo);
 
       //clear any existing objects
@@ -450,7 +464,7 @@
       var _this = this;
       if (query !== ""){
         searchService = (_this.manifest.getSearchWithinService());
-        searchObject = new $.SearchWithin({
+        this.searchObject = new $.SearchWithin({
               manifest: _this.manifest,
               appendTo: _this.element.find(".search-results-list"),
               parent: _this,
@@ -749,6 +763,18 @@
       _this.element.find('.searchResults').stop().slideFadeToggle(300);
     });
 
+    this.element.find('.search-disclose-btn-more').on('click', function() {
+      _this.element.find('.search-disclose').show('fast');
+      _this.element.find('.search-disclose-btn-more').hide();
+      _this.element.find('.search-disclose-btn-less').show();
+    });
+
+    this.element.find('.search-disclose-btn-less').on('click', function() {
+      _this.element.find('.search-disclose').hide('fast');
+      _this.element.find('.search-disclose-btn-less').hide();
+      _this.element.find('.search-disclose-btn-more').show();
+    });
+
     this.element.find(".js-perform-query").on('click', function(event){
         event.preventDefault();
         var query = _this.element.find(".js-query").val();
@@ -794,12 +820,78 @@
     });
     },
 
+    registerSearchWidget: function() {
+      Handlebars.registerPartial('searchWithinButton',
+        '<a href="javascript:;" class="mirador-btn mirador-icon-search-within" title="Search within this object."><i class="fa fa-search fa-lg fa-fw"></i></a>'
+      );
+
+      /*
+       * Search within widget template
+       * Uses default Window context.
+       *
+       * Example usage: {{> searchWithinWidget }}
+       */
+      Handlebars.registerPartial('searchWithinWidget',[
+        '<div class="searchResults" style="display: none;">',
+          '<a href="javascript:;" class="mirador-btn js-close-search-within" title="close">',
+           '<i class="fa fa-times fa-lg"></i>',
+          '</a>',  // Close button
+          '<form class="js-perform-query">',
+            '<input class="js-query" type="text" placeholder="search"/>',
+            '<input type="submit"/>',
+            '<div class="search-disclose-container">',
+              '<div class="search-disclose" style="display: none;">',
+                '<table><tbody>',
+                '{{#if search.symbols}}', // Symbols dropdown
+                 '{{> searchDropDown search.symbols}}',
+                '{{/if}}',
+                '{{#if search.marks}}',  // Marks dropdown
+                 '{{> searchDropDown search.marks }}',
+                '{{/if}}',
+                '</tbody></table>',
+              '</div>',
+              '<div class="search-disclose-btn-more">More</div>',
+              '<div class="search-disclose-btn-less" style="display: none;">Less</div>',
+            '</div>',
+          '</form>',
+          '<div class="search-results-list"></div>',
+        '</div>',
+      ].join(''));
+
+      /*
+       * A drop down used in the search within widget. Options include
+       * an initial blank and the contents of the 'choices' array.
+       *
+       * Requires its own context:
+       * 	context: {
+       * 		'label': 'human readable (HTML escaped) label',
+       * 		'choices': ['array', 'of', 'dropdown', 'options']
+       * 	}
+       *
+       * Example usage: {{> searchDropDown window.dropDownContext }}
+       * 	where 'window.dropDownContext' is as seen above.
+       */
+      Handlebars.registerPartial('searchDropDown', [
+        '<tr>',
+          '<td>{{label}}</td>',
+          '<td>',
+            '<select>',
+              '<option></option>',
+              '{{#each choices}}',
+                '<option value="{{this}}">{{this}}</option>',
+              '{{/each}}',
+            '</select>',
+          '</td>',
+        '</tr>',
+      ].join(''));
+    },
+
     // template should be based on workspace type
     template: Handlebars.compile([
                                  '<div class="window">',
                                  '<div class="manifest-info">',
                                  '<div class="window-manifest-navigation">',
-                                 '<a href="javascript:;" class="mirador-btn mirador-icon-search-within" title="Search within this object."><i class="fa fa-search fa-lg fa-fw"></i></a>',
+                                 '{{> searchWithinButton}}',
                                  '<a href="javascript:;" class="mirador-btn mirador-icon-image-view"><i class="fa fa-photo fa-lg fa-fw"></i>',
                                  '<ul class="dropdown image-list">',
                                  '{{#if ImageView}}',
@@ -852,16 +944,7 @@
                                  '</div>',
                                  '<div class="content-container">',
                                  // ----- Search within widget -----
-                                 '<div class="searchResults" style="display: none;">',
-                                   '<a href="javascript:;" class="mirador-btn js-close-search-within" title="close">',
-                                    '<i class="fa fa-times fa-lg"></i>',
-                                   '</a>',  // Close button
-                                   '<form class="js-perform-query">',
-                                     '<input class="js-query" type="text" placeholder="search"/>',
-                                     '<input type="submit"/>',
-                                   '</form>',
-                                   '<div class="search-results-list"></div>',
-                                 '</div>',
+                                 '{{> searchWithinWidget }}',
                                  // ----- End search within -----
                                  '{{#if sidePanel}}',
                                  '<div class="sidePanel">',
