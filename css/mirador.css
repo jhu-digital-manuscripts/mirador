@@ -1710,3 +1710,9 @@ div.manifest-info a.mirador-btn.mirador-icon-toc {
   padding-bottom: 10px;
   width: 100%;
 }
+.advanced-search-symbols,
+.advanced-search-marks,
+.advanced-search-marginalia,
+.advanced-search-underlines {
+  margin: 5px;
+}

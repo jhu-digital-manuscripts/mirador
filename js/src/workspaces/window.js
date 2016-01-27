@@ -141,11 +141,17 @@
       var search = {
         'symbols': {
           "label": "Symbols",
-          "choices": ['Mars', 'Sun', 'Crown']
+          "class": "advanced-search-symbols",
+          "choices": ['Asterisk', 'Bisectedcircle', 'Crown', 'JC', 'HT', 'LL', 'Mars', 'Mercury', 'Moon', 'Opposite_planets', 'Saturn', 'Square', 'SS', 'Sun', 'Venus']
         },
         'marks': {
           "label": "Marks",
-          "choices": ['box', 'bracket', 'comma']
+          "class": "advanced-search-marks",
+          "choices": [
+            'apostrophe', 'box', 'bracket', 'circumflex', 'colon', 'comma', 'dash', 'diacritic', 'dot', 'double_vertical_bar', 'equal_sign',
+            'est_mark', 'hash', 'horizontal_bar', 'page_break', 'pen_trial', 'plus_sign', 'quotation_mark', 'scribble', 'section_sign',
+            'semicolon', 'slash', 'straight_quotation_mark', 'tick', 'tilde', 'triple_dash', 'vertical_bar', 'X-sign'
+          ]
         }
       };
       templateData.search = search;
@@ -775,13 +781,36 @@
       _this.element.find('.search-disclose-btn-more').show();
     });
 
-    this.element.find(".js-perform-query").on('click', function(event){
+    this.element.find(".js-perform-query").on('submit', function(event){
         event.preventDefault();
         var query = _this.element.find(".js-query").val();
         _this.displaySearchWithin(query);
     });
 
+    this.element.find(".perform-advanced-search").on('submit', function(event) {
+      event.preventDefault();
+      var symbols_query = _this.element.find(".advanced-search-symbols").val();
+      var marks_query = _this.element.find(".advanced-search-marks").val();
+      var marginalia_query = _this.element.find(".advanced-search-marginalia").val();
+      var underlines_query = _this.element.find(".advanced-search-underlines").val();
 
+      var total = //(_this.validInput(all_query) ? 'all:' + all_query : '') + ' ' +
+        (_this.validInput(symbols_query) ? 'symbol:' + symbols_query : '') + ' ' +
+        (_this.validInput(marks_query) ? 'mark:' + marks_query : '') + ' ';
+
+      if (_this.validInput(marginalia_query)) {
+        marginalia_query.split(' ').forEach(function(fragment) {
+          total += 'marginalia:' + fragment + ' ';
+        });
+      }
+      if (_this.validInput(underlines_query)) {
+        underlines_query.split(' ').forEach(function(fragment) {
+          total += 'underline:' + fragment + ' ';
+        });
+      }
+
+      _this.displaySearchWithin(total);
+    });
 
 // end of events added by me
 
@@ -820,6 +849,10 @@
     });
     },
 
+    validInput: function(input) {
+      return input && input !== '';
+    },
+
     registerSearchWidget: function() {
       Handlebars.registerPartial('searchWithinButton',
         '<a href="javascript:;" class="mirador-btn mirador-icon-search-within" title="Search within this object."><i class="fa fa-search fa-lg fa-fw"></i></a>'
@@ -836,26 +869,41 @@
           '<a href="javascript:;" class="mirador-btn js-close-search-within" title="close">',
            '<i class="fa fa-times fa-lg"></i>',
           '</a>',  // Close button
-          '<form class="js-perform-query">',
+          '<form id="search-form" class="js-perform-query">',
             '<input class="js-query" type="text" placeholder="search"/>',
             '<input type="submit"/>',
-            '<div class="search-disclose-btn-more">More</div>',
-            '<div class="search-disclose-btn-less" style="display: none;">Less</div>',
-            '<div class="search-disclose-container">',
-              '<div class="search-disclose" style="display: none;">',
-                '<table><tbody>',
-                '{{#if search.symbols}}', // Symbols dropdown
-                 '{{> searchDropDown search.symbols}}',
-                '{{/if}}',
-                '{{#if search.marks}}',  // Marks dropdown
-                 '{{> searchDropDown search.marks }}',
-                '{{/if}}',
-                '</tbody></table>',
-              '</div>',
-            '</div>',
           '</form>',
+          '<div class="search-disclose-btn-more">More</div>',
+          '<div class="search-disclose-btn-less" style="display: none;">Less</div>',
+          '<div class="search-disclose-container">',
+            '<div class="search-disclose" style="display: none;">',
+              '{{> advancedSearch }}',
+            '</div>',
+          '</div>',
           '<div class="search-results-list"></div>',
         '</div>',
+      ].join(''));
+
+      Handlebars.registerPartial('advancedSearch', [
+        '<div class="advanced-search">',
+          '<form id="advanced-search-form" class="perform-advanced-search">',
+            '<table><tbody>',
+              '{{#if search.symbols}}', // Symbols dropdown
+                '{{> searchDropDown search.symbols}}',
+              '{{/if}}',
+              '{{#if search.marks}}',  // Marks dropdown
+                '{{> searchDropDown search.marks }}',
+              '{{/if}}',
+              // Marginalia
+              '<tr><td>Marginalia</td><td>',
+              '<input class="advanced-search-marginalia" type="text" placeholder="Search marginalia"/></td></tr>',
+              // Underlines
+              '<tr><td>Underlines</td><td>',
+              '<input class="advanced-search-underlines" type="text" placeholder="Search underlined text"/></td></tr>',
+            '</tbody></table>',
+            '<input type="submit" value="Search"/>',
+          '</form>',
+        '</div>'
       ].join(''));
 
       /*
@@ -875,7 +923,7 @@
         '<tr>',
           '<td>{{label}}</td>',
           '<td>',
-            '<select>',
+            '<select class="{{class}}">',
               '<option></option>',
               '{{#each choices}}',
                 '<option value="{{this}}">{{this}}</option>',
