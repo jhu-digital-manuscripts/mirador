@@ -1699,14 +1699,14 @@ div.manifest-info a.mirador-btn.mirador-icon-toc {
   box-sizing: border-box;
 }
 .search-disclose {
-  margin-top: 20px;
+  margin-top: 10px;
   margin-bottom: 10px;
 }
 .search-disclose-btn-more,
 .search-disclose-btn-less {
-  margin-top: 10px;
+  margin-bottom: 10px;
   cursor: pointer;
-  border-top: 1px solid rgb( 146, 145, 145 );
-  padding-top: 5px;
+  border-bottom: 1px solid rgb( 146, 145, 145 );
+  padding-bottom: 10px;
   width: 100%;
 }
