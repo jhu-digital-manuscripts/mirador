@@ -61,19 +61,54 @@
         "slotBelow" : true
       },
       search : {
-        'symbols': {
-          "label": "Symbols",
-          "class": "advanced-search-symbols",
-          "choices": ['Asterisk', 'Bisectedcircle', 'Crown', 'JC', 'HT', 'LL', 'Mars', 'Mercury', 'Moon', 'Opposite_planets', 'Saturn', 'Square', 'SS', 'Sun', 'Venus']
+        'categories': {
+          'label': 'Categories',
+          'class': 'advanced-search-categories',
+          'choices': ['all', 'marginalia', 'underlines', 'symbols', 'marks']
         },
-        'marks': {
-          "label": "Marks",
-          "class": "advanced-search-marks",
-          "choices": [
-            'apostrophe', 'box', 'bracket', 'circumflex', 'colon', 'comma', 'dash', 'diacritic', 'dot', 'double_vertical_bar', 'equal_sign',
-            'est_mark', 'hash', 'horizontal_bar', 'page_break', 'pen_trial', 'plus_sign', 'quotation_mark', 'scribble', 'section_sign',
-            'semicolon', 'slash', 'straight_quotation_mark', 'tick', 'tilde', 'triple_dash', 'vertical_bar', 'X-sign'
-          ]
+        'inputs': {
+          'all': {
+            'label': 'All',
+            'class': 'advanced-search-all',
+            'type': 'text',
+            'placeholder': 'Search across all categories',
+            'query': 'all',
+            'default': true
+          },
+          'symbols': {
+            "label": "Symbols",
+            "class": "advanced-search-symbols",
+            "type": "dropdown",
+            "choices": ['Asterisk', 'Bisectedcircle', 'Crown', 'JC', 'HT', 'LL', 'Mars', 'Mercury', 'Moon', 'Opposite_planets', 'Saturn', 'Square', 'SS', 'Sun', 'Venus'],
+            'addBlank': true,
+            'query': 'symbol'
+          },
+          'marks': {
+            "label": "Marks",
+            "class": "advanced-search-marks",
+            "type": "dropdown",
+            "choices": [
+              'apostrophe', 'box', 'bracket', 'circumflex', 'colon', 'comma', 'dash', 'diacritic', 'dot', 'double_vertical_bar', 'equal_sign',
+              'est_mark', 'hash', 'horizontal_bar', 'page_break', 'pen_trial', 'plus_sign', 'quotation_mark', 'scribble', 'section_sign',
+              'semicolon', 'slash', 'straight_quotation_mark', 'tick', 'tilde', 'triple_dash', 'vertical_bar', 'X-sign'
+            ],
+            'addBlank': true,
+            'query': 'mark'
+          },
+          'marginalia': {
+            'label': "Marginalia",
+            'class': 'advanced-search-marginalia',
+            'type': 'text',
+            'placeholder': 'Search marginalia text',
+            'query': 'marginalia'
+          },
+          'underlines': {
+            'label': 'Underlines',
+            'class': 'advanced-search-underlines',
+            'type': 'text',
+            'placeholder': 'Search underlined text',
+            'query': 'underline'
+          }
         }
       }
     }, options);
@@ -888,7 +923,12 @@
       return input && input !== '';
     },
 
+    /**
+     * Add a new line to the Advanced Search widget.
+     * @return {[type]} [description]
+     */
     addAdvancedSearchLine: function() {
+      var _this = this;
       var template = Handlebars.compile('{{> advancedSearchLine }}');
 
       var templateData = {"search": this.search};
@@ -898,11 +938,13 @@
         this.element.find('.advanced-search-lines table tbody').children().last()
       );
 
-      // Hide all inputs and clear its content
-      line.find('.advanced-search-symbols').hide();
-      line.find('.advanced-search-marks').hide();
-      line.find('.advanced-search-marginalia').hide();
-      line.find('.advanced-search-underlines').hide();
+      // Hide all inputs except for the Default choice
+      Object.keys(this.search.inputs).forEach(function (key) {
+        var input = _this.search.inputs[key];
+        if (!input.default && input.class && input.class !== '') {
+          line.find(_this.classNamesToSelector(input.class)).hide();
+        }
+      });
 
       line.find('.advanced-search-categories').on('change', function(event) {
         var jSelector = jQuery(event.target);
@@ -912,25 +954,22 @@
         user_inputs.find('select').hide();
         user_inputs.find('input').hide();
 
-        switch (jSelector.val()) {
-          case 'marginalia':
-            user_inputs.find('.advanced-search-marginalia').show();
-            break;
-          case 'underlines':
-            user_inputs.find('.advanced-search-underlines').show();
-            break;
-          case 'symbols':
-            user_inputs.find('.advanced-search-symbols').show();
-            break;
-          case 'marks':
-            user_inputs.find('.advanced-search-marks').show();
-            break;
-          default:
-            user_inputs.find('.advanced-search-all').show();
-            break;
-        }
+        user_inputs.find(_this.classNamesToSelector(_this.search.inputs[jSelector.val()].class)).show();
       });
 
+    },
+
+    classNamesToSelector: function(name) {
+      // Convert class name(s) to CSS selectors
+      var selector = '';
+      name.split(/\s+/).forEach(function(str) {
+        if (str.charAt(0) !== '.') {
+          selector += '.';
+        }
+        selector += str + ' ';
+      });
+
+      return selector;
     },
 
     registerSearchWidget: function() {
@@ -984,82 +1023,59 @@
       Handlebars.registerPartial('advancedSearchLine', [
         // Select search category
         '<tr class="advanced-search-line"><td>',
-          '<select class="advanced-search-categories">',
-            '<option value="all">All</option>',
-            '<option value="marginalia">Marginalia</option>',
-            '<option value="underlines">Underlines</option>',
-            '<option value="symbols">Symbols</option>',
-            '<option value="marks">Marks</option>',
-          '</select>',
+          '{{> searchDropDown search.categories }}',
         '</td>',
         '<td>',
           '<div>',
-            '<input class="advanced-search-all" type="text" placeholder="Search"/>',
-            '{{#if search.symbols}}',
-              '{{> searchDropDown search.symbols}}',
-            '{{/if}}',
-            '{{#if search.marks}}',
-              '{{> searchDropDown search.marks }}',
-            '{{/if}}',
-            '<input class="advanced-search-marginalia" type="text" placeholder="Search marginalia"/>',
-            '<input class="advanced-search-underlines" type="text" placeholder="Search underlined text"/>',
+          '{{#each search.inputs}}',
+            '{{#ifCond type "===" "text"}}',
+              '<input type="text" class="{{class}}" placeholder="{{placeholder}}"/>',
+            '{{else}}{{#ifCond type "===" "dropdown"}}',
+              '{{> searchDropDown this}}',
+            '{{/ifCond}}{{/ifCond}}',
+          '{{/each}}',
           '</div>',
         '</td></tr>',
       ].join(''));
 
-      Handlebars.registerHelper();
+      Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
+        switch (operator) {
+          case '==':
+            return (v1 == v2) ? options.fn(this) : options.inverse(this);
+          case '===':
+            return (v1 === v2) ? options.fn(this) : options.inverse(this);
+          case '<':
+            return (v1 < v2) ? options.fn(this) : options.inverse(this);
+          case '<=':
+            return (v1 <= v2) ? options.fn(this) : options.inverse(this);
+          case '>':
+            return (v1 > v2) ? options.fn(this) : options.inverse(this);
+          case '>=':
+            return (v1 >= v2) ? options.fn(this) : options.inverse(this);
+          case '&&':
+            return (v1 && v2) ? options.fn(this) : options.inverse(this);
+          case '||':
+            return (v1 || v2) ? options.fn(this) : options.inverse(this);
+          default:
+            return options.inverse(this);
+        }
+      });
 
-      // Handlebars.registerPartial('advancedSearch', [
-      //   '<div class="advanced-search">',
-      //     '<form id="advanced-search-form" class="perform-advanced-search">',
-      //       '<table><tbody>',
-      //         '{{#if search.symbols}}', // Symbols dropdown
-      //           '{{> searchDropDown search.symbols}}',
-      //         '{{/if}}',
-      //         '{{#if search.marks}}',  // Marks dropdown
-      //           '{{> searchDropDown search.marks }}',
-      //         '{{/if}}',
-      //         // Marginalia
-      //         '<tr><td>Marginalia</td><td>',
-      //         '<input class="advanced-search-marginalia" type="text" placeholder="Search marginalia"/></td></tr>',
-      //         // Underlines
-      //         '<tr><td>Underlines</td><td>',
-      //         '<input class="advanced-search-underlines" type="text" placeholder="Search underlined text"/></td></tr>',
-      //       '</tbody></table>',
-      //       '<input type="submit" value="Search"/>',
-      //     '</form>',
-      //   '</div>'
-      // ].join(''));
-
-      /*
-       * A drop down used in the search within widget. Options include
-       * an initial blank and the contents of the 'choices' array.
-       *
-       * Requires its own context:
-       * 	context: {
-       * 		'label': 'human readable (HTML escaped) label',
-       * 		'choices': ['array', 'of', 'dropdown', 'options']
-       * 	}
-       *
-       * Example usage: {{> searchDropDown window.dropDownContext }}
-       * 	where 'window.dropDownContext' is as seen above.
+      /**
+       * Create a drop down. Required context:
+       * {
+       *   'label': human readable label for the dropdown
+       *   'class': CSS class for the dropdown
+       *   'choices': array of string options for the dropdown
+       *   'query': OPTIONAL will go in data-query attribute
+       *   'addBlank': OPTIONAL set to TRUE to add a blank option at the top
+       * }
        */
-      // Handlebars.registerPartial('searchDropDown', [
-      //   '<tr>',
-      //     '<td>{{label}}</td>',
-      //     '<td>',
-      //       '<select class="{{class}}">',
-      //         '<option></option>',
-      //         '{{#each choices}}',
-      //           '<option value="{{this}}">{{this}}</option>',
-      //         '{{/each}}',
-      //       '</select>',
-      //     '</td>',
-      //   '</tr>',
-      // ].join(''));
       Handlebars.registerPartial('searchDropDown', [
-        '<select class="{{class}}">',
-          '<option></option>',
+        '<select class="{{class}}" {{#if query}}data-query="{{query}}{{/if}}">',
+          '{{#if addBlank}}',
+            '<option></option>',
+          '{{/if}}',
           '{{#each choices}}',
             '<option value="{{this}}">{{this}}</option>',
           '{{/each}}',
