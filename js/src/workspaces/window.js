@@ -154,23 +154,23 @@
         });
       }
 
-      var search = {
-        'symbols': {
-          "label": "Symbols",
-          "class": "advanced-search-symbols",
-          "choices": ['Asterisk', 'Bisectedcircle', 'Crown', 'JC', 'HT', 'LL', 'Mars', 'Mercury', 'Moon', 'Opposite_planets', 'Saturn', 'Square', 'SS', 'Sun', 'Venus']
-        },
-        'marks': {
-          "label": "Marks",
-          "class": "advanced-search-marks",
-          "choices": [
-            'apostrophe', 'box', 'bracket', 'circumflex', 'colon', 'comma', 'dash', 'diacritic', 'dot', 'double_vertical_bar', 'equal_sign',
-            'est_mark', 'hash', 'horizontal_bar', 'page_break', 'pen_trial', 'plus_sign', 'quotation_mark', 'scribble', 'section_sign',
-            'semicolon', 'slash', 'straight_quotation_mark', 'tick', 'tilde', 'triple_dash', 'vertical_bar', 'X-sign'
-          ]
-        }
-      };
-      templateData.search = search;
+      // var search = {
+      //   'symbols': {
+      //     "label": "Symbols",
+      //     "class": "advanced-search-symbols",
+      //     "choices": ['Asterisk', 'Bisectedcircle', 'Crown', 'JC', 'HT', 'LL', 'Mars', 'Mercury', 'Moon', 'Opposite_planets', 'Saturn', 'Square', 'SS', 'Sun', 'Venus']
+      //   },
+      //   'marks': {
+      //     "label": "Marks",
+      //     "class": "advanced-search-marks",
+      //     "choices": [
+      //       'apostrophe', 'box', 'bracket', 'circumflex', 'colon', 'comma', 'dash', 'diacritic', 'dot', 'double_vertical_bar', 'equal_sign',
+      //       'est_mark', 'hash', 'horizontal_bar', 'page_break', 'pen_trial', 'plus_sign', 'quotation_mark', 'scribble', 'section_sign',
+      //       'semicolon', 'slash', 'straight_quotation_mark', 'tick', 'tilde', 'triple_dash', 'vertical_bar', 'X-sign'
+      //     ]
+      //   }
+      // };
+      templateData.search = this.search;
       this.registerSearchWidget();
 
       _this.element = jQuery(this.template(templateData)).appendTo(_this.appendTo);
@@ -458,30 +458,6 @@
 
 
 /// functions added by me
-  /*
-    toggleSearchWithinOverlay: function(focusState){
-      var _this = this;
-      var currentState = this.focusOverlaysAvailable[focusState].overlay.SearchWithin;
-      if (currentState) {
-        this.element.find('.mirador-icon-search-within').removeClass('selected');
-      } else {
-        this.element.find('.mirador-icon-search-within').addClass('selected');
-      }
-      //set overlay for all focus types to same value
-      jQuery.each(this.focusOverlaysAvailable, function(focusType, options) {
-        if (focusState !== focusType) {
-          this.overlay.SearchWithin = !currentState;
-        }
-      });
-      //and then do toggling for current focus
-      this.togglePanels('overlay', !currentState, 'SearchWithin', focusState);
-      console.log(focusState);
-      this.toggleFocus(focusState, "SearchWithin");
-      console.log('test2');
-    },
-  */
-
-
     displaySearchWithin: function(query){
       var _this = this;
       if (query !== ""){
@@ -807,72 +783,58 @@
     this.element.find(".perform-advanced-search").on('submit', function(event) {
       event.preventDefault();
 
-      // if (!_this.advancedSearch) {
-      //   return;
-      // }
+      var total = '';
+      jQuery(event.target).find('.advanced-search-line').each(function(index, line) {
+        line = jQuery(line);
+        var category = line.parent().parent().find('.advanced-search-categories').val();  // all these .parent() calls....
 
-      // var final_query = '';
-      // _this.advancedSearch.forEach(function(line) {
-        var symbols_query = _this.element.find(".advanced-search-symbols").val();
-        var marks_query = _this.element.find(".advanced-search-marks").val();
-        var marginalia_query = _this.element.find(".advanced-search-marginalia").val();
-        var underlines_query = _this.element.find(".advanced-search-underlines").val();
-
-        // var selector = line.find('advanced-search-categories');
-        // selector.on('change', function() {
-        //   switch (selector.value) {
-        //     case 'marginalia':
-        //       if (_this.validInput(line.find('.advanced-search-marginalia').val())) {
-        //         line.find('.advanced-search-marginalia').val().split(' ').forEach(function(str) {
-        //           final_query += 'marginalia:' + str + ' ';
-        //         });
-        //       }
-        //       break;
-        //     case 'underlines':
-        //       if (_this.validInput(line.find('.advanced-search-underlines').val())) {
-        //         line.find('.advanced-search-underlines').val().split(' ').forEach(function(str) {
-        //           final_query += 'underline:' + str + ' ';
-        //         });
-        //       }
-        //       break;
-        //     case 'symbols':
-        //       final_query += 'symbol:' + lines.find('.advanced-search-symbols').val();
-        //       break;
-        //     case 'marks':
-        //       final_query += 'mark:' + lines.find('.advanced-search-marks').val();
-        //       break;
-        //     default:
-        //       if (_this.validInput(line.find('.advanced-search-all').val())) {
-        //         line.find('.advanced-search-all').val().split(' ').forEach(function(str) {
-        //           final_query += 'all:' + str + ' ';
-        //         });
-        //       }
-        //       break;
-        //   }
-        // });
-
-        var total = //(_this.validInput(all_query) ? 'all:' + all_query : '') + ' ' +
-          (_this.validInput(symbols_query) ? 'symbol:' + symbols_query : '') + ' ' +
-          (_this.validInput(marks_query) ? 'mark:' + marks_query : '') + ' ';
-
-        if (_this.validInput(marginalia_query)) {
-          marginalia_query.split(' ').forEach(function(fragment) {
-            total += 'marginalia:' + fragment + ' ';
-          });
+        var data = '';
+        switch (category) {
+          case 'marginalia':
+            data = line.find('.advanced-search-marginalia').val();
+            if (_this.isValidInput(data)) {
+              data.split(/\s+/).forEach(function(str) {
+                total += 'marginalia:' + str + ' ';
+              });
+            }
+            break;
+          case 'underlines':
+            data = line.find('.advanced-search-underlines').val();
+            if (_this.isValidInput(data)) {
+              data.split(/\s+/).forEach(function(str) {
+                total += 'underline:' + str + ' ';
+              });
+            }
+            break;
+          case 'symbols':
+            data = line.find('.advanced-search-symbols').val();
+            if (_this.isValidInput(data)) {
+              total += 'symbol:' + data + ' ';
+            }
+            break;
+          case 'marks':
+            data = line.find('.advanced-search-marks').val();
+            if (_this.isValidInput(data)) {
+              total += 'mark:' + data + ' ';
+            }
+            break;
+          default:
+            data = line.find('.advanced-search-all').val();
+            if (_this.isValidInput(data)) {
+              data.split(/\s+/).forEach(function(str) {
+                total += 'all:' + data + ' ';
+              });
+            }
+            break;
         }
-        if (_this.validInput(underlines_query)) {
-          underlines_query.split(' ').forEach(function(fragment) {
-            total += 'underline:' + fragment + ' ';
-          });
-        }
-      // });
+      });
 
-      console.log("Final query: " + total);
-      _this.displaySearchWithin(total);
+      if (_this.isValidInput(total)) {
+        _this.displaySearchWithin(total);
+      }
     });
 
     this.element.find('.advanced-search-add-btn').on('click', function(e) {
-      console.log("[Window.add button click] : " + e.target.parentElement);
       e.preventDefault();
       _this.addAdvancedSearchLine();
     });
@@ -880,7 +842,7 @@
     this.element.find('.advanced-search-reset-btn').on('click', function(e) {
       console.log("Resetting advanced search widget.");
       e.preventDefault();
-      _this.advancedSearch = [];
+      // TODO
     });
 
 // end of events added by me
@@ -920,67 +882,54 @@
     });
     },
 
-    validInput: function(input) {
+    isValidInput: function(input) {
       return input && input !== '';
     },
 
-    // addAdvancedSearchLine: function() {
-    //   if (!this.advancedSearch) {
-    //     this.advancedSearch = [];
-    //   }
-    //
-    //   var template = Handlebars.compile('{{> advancedSearchLine }}');
-    //
-    //   var templateData = {"search": this.search};
-    //   var line = template(templateData);
-    //
-    //   this.element.find('.advanced-search-lines table tbody').add(line);
-    //   var arr = this.element.find('.advanced-search-lines').find('tr');
-    //
-    //   line = arr[arr.length-1];
-    //
-    //   console.log("Advanced search line: " + (line));
-    //
-    //   this.advancedSearch.push(line);
-    //
-    //   // Add event handlers
-    //   JQuery.find();
-    //   var selector = line.find('.advanced-search-categories');
-    //   var all_input = line.find('.advanced-search-all');
-    //   var symbol_input = line.find('.advanced-search-symbols');
-    //   var mark_input = line.find('.advanced-search-marks');
-    //   var marg_input = line.find('.advanced-search-marginalia');
-    //   var underline_input = line.find('.advanced-search-underlines');
-    //
-    //   // Hide all inputs and clear its content
-    //   symbol_input.hide();
-    //   mark_input.hide();
-    //   marg_input.hide();
-    //   underline_input.hide();
-    //
-    //   selector.on('change', function() {
-    //     switch (selector.value) {
-    //       case 'marginalia':
-    //         marg_input.show();
-    //         break;
-    //       case 'underlines':
-    //         underline_input.show();
-    //         break;
-    //       case 'symbols':
-    //         symbol_input.show();
-    //         break;
-    //       case 'marks':
-    //         mark_input.show();
-    //         break;
-    //       default:
-    //         all_input.show();
-    //         break;
-    //     }
-    //   });
-    //
-    //
-    //
-    // },
+    addAdvancedSearchLine: function() {
+      var template = Handlebars.compile('{{> advancedSearchLine }}');
+
+      var templateData = {"search": this.search};
+      var line = template(templateData);
+
+      line = jQuery(line).insertAfter(
+        this.element.find('.advanced-search-lines table tbody').children().last()
+      );
+
+      // Hide all inputs and clear its content
+      line.find('.advanced-search-symbols').hide();
+      line.find('.advanced-search-marks').hide();
+      line.find('.advanced-search-marginalia').hide();
+      line.find('.advanced-search-underlines').hide();
+
+      line.find('.advanced-search-categories').on('change', function(event) {
+        var jSelector = jQuery(event.target);
+        var user_inputs = jSelector.parent().parent().find('.advanced-search-line');
+
+        // Hide all input/select fields
+        user_inputs.find('select').hide();
+        user_inputs.find('input').hide();
+
+        switch (jSelector.val()) {
+          case 'marginalia':
+            user_inputs.find('.advanced-search-marginalia').show();
+            break;
+          case 'underlines':
+            user_inputs.find('.advanced-search-underlines').show();
+            break;
+          case 'symbols':
+            user_inputs.find('.advanced-search-symbols').show();
+            break;
+          case 'marks':
+            user_inputs.find('.advanced-search-marks').show();
+            break;
+          default:
+            user_inputs.find('.advanced-search-all').show();
+            break;
+        }
+      });
+
+    },
 
     registerSearchWidget: function() {
       Handlebars.registerPartial('searchWithinButton',
@@ -1018,7 +967,7 @@
           '<form id="advanced-search-form" class="perform-advanced-search">',
             '<div class="advanced-search-lines">',
               '<table><tbody>',
-                '{{> advancedSearchLine }}',
+                '<tr></tr>',
               '</tbody></table>',
             '</div>',
             '<div class="advanced-search-btn-container">',
@@ -1042,7 +991,7 @@
           '</select>',
         '</td>',
         '<td>',
-          '<div class="advanced-search-line-{{search.advancedSearch.length}}">',
+          '<div class="advanced-search-line">',
             '<input class="advanced-search-all" type="text" placeholder="Search"/>',
             '{{#if search.symbols}}',
               '{{> searchDropDown search.symbols}}',
@@ -1050,11 +999,13 @@
             '{{#if search.marks}}',
               '{{> searchDropDown search.marks }}',
             '{{/if}}',
-            '<input class="advanced-search-marginalia" type="text" placeholder="Search marginalia"/></td></tr>',
-            '<input class="advanced-search-underlines" type="text" placeholder="Search underlined text"/></td></tr>',
+            '<input class="advanced-search-marginalia" type="text" placeholder="Search marginalia"/>',
+            '<input class="advanced-search-underlines" type="text" placeholder="Search underlined text"/>',
           '</div>',
         '</td></tr>',
       ].join(''));
+
+      Handlebars.registerHelper();
 
       // Handlebars.registerPartial('advancedSearch', [
       //   '<div class="advanced-search">',
