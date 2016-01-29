@@ -784,9 +784,9 @@
       event.preventDefault();
 
       var total = '';
-      jQuery(event.target).find('.advanced-search-line').each(function(index, line) {
+      _this.element.find('.advanced-search-line').each(function(index, line) {
         line = jQuery(line);
-        var category = line.parent().parent().find('.advanced-search-categories').val();  // all these .parent() calls....
+        var category = line.find('.advanced-search-categories').val();
 
         var data = '';
         switch (category) {
@@ -840,9 +840,11 @@
     });
 
     this.element.find('.advanced-search-reset-btn').on('click', function(e) {
-      console.log("Resetting advanced search widget.");
       e.preventDefault();
-      // TODO
+      _this.element.find('.advanced-search-line').each(function(index, line) {
+        jQuery(line).remove();
+      });
+      _this.addAdvancedSearchLine();
     });
 
 // end of events added by me
@@ -904,7 +906,7 @@
 
       line.find('.advanced-search-categories').on('change', function(event) {
         var jSelector = jQuery(event.target);
-        var user_inputs = jSelector.parent().parent().find('.advanced-search-line');
+        var user_inputs = jSelector.parent().parent().find('div');
 
         // Hide all input/select fields
         user_inputs.find('select').hide();
@@ -981,7 +983,7 @@
 
       Handlebars.registerPartial('advancedSearchLine', [
         // Select search category
-        '<tr><td>',
+        '<tr class="advanced-search-line"><td>',
           '<select class="advanced-search-categories">',
             '<option value="all">All</option>',
             '<option value="marginalia">Marginalia</option>',
@@ -991,7 +993,7 @@
           '</select>',
         '</td>',
         '<td>',
-          '<div class="advanced-search-line">',
+          '<div>',
             '<input class="advanced-search-all" type="text" placeholder="Search"/>',
             '{{#if search.symbols}}',
               '{{> searchDropDown search.symbols}}',
