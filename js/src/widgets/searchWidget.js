@@ -2,12 +2,12 @@
 
 /**
  * [function description]
- * @param  {[type]} options init params
+ * @param  {[type]} options init params, required
  *                          {
  *                          	parent: parent window that contains this widget,
  *                          	appendTo: the element in the parent to attach this widget,
  *                          	manifest: the Manifest object, containing manifest data/helper functions
- *                          	search: widget configs
+ *                          	search: widget configs     ** TODO currently hardcoded below
  *                          }
  * @return {[type]}         Search Within widget
  */
@@ -194,7 +194,7 @@ $.SearchWidget.prototype = {
     var _this = this;
     if (query !== ""){
       searchService = (_this.manifest.getSearchWithinService());
-      this.searchObject = new $.SearchWithin({
+      this.searchObject = new $.SearchWithinResults({
             manifest: _this.manifest,
             appendTo: _this.element.find(".search-results-list"),
             parent: _this,
@@ -261,10 +261,6 @@ $.SearchWidget.prototype = {
   },
 
   registerWidget: function() {
-    // Handlebars.registerPartial('searchWithinButton',
-    //   '<a href="javascript:;" class="mirador-btn mirador-icon-search-within" title="Search within this object."><i class="fa fa-search fa-lg fa-fw"></i></a>'
-    // );
-
     /*
      * Search within widget template
      * Uses default Window context.
@@ -347,6 +343,27 @@ $.SearchWidget.prototype = {
       '</select>'
     ].join(''));
 
+    /**
+     * Handlebars helper that allows the evaluation of 2 input boolean comparisons.
+     * Follows standard JS rules. Due to the way Handlebars helpers handles
+     * parameters, the operator must be surrounded by quotes, either double or
+     * single.
+     *
+     * Possible operators:
+     * 	* '=='    equals
+     * 	* '==='   strict equals
+     * 	* '<'     less than
+     * 	* '<='    less than or equal to
+     * 	* '>'     greater than
+     * 	* '>='    greater than or equal to
+     * 	* '&&'    AND
+     * 	* '||'    OR
+     *
+     * To use, in a Handlebars template:
+     * 		{{#ifCond var1 OPERATOR var2}}
+     * Example:
+     * 		{{#ifCond v1 '===' v2}}
+     */
     Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
       switch (operator) {
         case '==':

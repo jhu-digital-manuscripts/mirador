@@ -1,6 +1,14 @@
 (function($) {
 
-  $.SearchWithin = function(options) {
+  /**
+   * UI + logic to get search results for a given search query. On initialization,
+   * the provided search query is given tothe provided IIIF Search service.
+   * The response is displayed as a list.
+   *
+   * Currently follows IIIF Search API v0.9.1-draft
+   * (http://iiif.io/api/search/0.9/)
+   */
+  $.SearchWithinResults = function(options) {
 
     jQuery.extend(this, {
       manifest:             null,
@@ -15,10 +23,9 @@
     this.init();
   };
 
-  $.SearchWithin.prototype = {
+  $.SearchWithinResults.prototype = {
 
     init: function() {
-
       var _this = this;
 
       _this.searchService = this.manifest.getSearchWithinService();
@@ -26,37 +33,33 @@
       jQuery(this.appendTo).html("");
       jQuery("<h1>Search results for: " + _this.query + "</h1>").appendTo(_this.appendTo);
 
-      var searchRequest = this.searchRequest(this.query);
-
-      searchRequest.done(function(searchResults) {
+      this.searchRequest(this.query).done(function(searchResults) {
 
         //create tplData array
-        if (searchResults.hits){
+        if (searchResults.hits) {
           _this.tplData = _this.getHits(searchResults);
         }
-        else{
+        else {
           _this.tplData = _this.getSearchAnnotations(searchResults);
         }
 
-        //add array to template
         _this.element = jQuery(_this.template(_this.tplData)).appendTo(_this.appendTo);
-        //bind events
         _this.bindEvents();
       });
     },
 
   // Base code from https://github.com/padolsey/prettyprint.js. Modified to fit Mirador needs
-  searchRequest: function(query){
+  searchRequest: function(query ){
     var _this = this;
-    var searchUrl = _this.searchService['@id'];
-    var searchRequest = jQuery.ajax({
-          url:  searchUrl + "?q=" + query,
-          dataType: 'json',
-          async: true
-        });
-     return searchRequest;
+
+    return jQuery.ajax({
+        url:   _this.searchService['@id'] + "?q=" + query,
+        dataType: 'json',
+        async: true
+      });
   },
-  getSearchAnnotations: function(searchResults){
+
+  getSearchAnnotations: function(searchResults) {
     var _this = this;
     tplData = [];
     searchResults.resources.forEach(function(result){
@@ -84,43 +87,40 @@
     });
     return tplData;
   },
-  getHits: function(searchResults){
-      var _this = this;
-      tplData = [];
-      searchResults.hits.forEach(function(hit){
-        //this seems like a really slow way to retrieve on property from hits
-        //note that at present it is only retrieving the first annotation
-        //but a hit annotation property takes an array and could have more than one
-        //annotation -- its not a very common case but a possibility.
-        var annotation = hit.annotations[0];
-        //canvases could come back as an array
-        var canvases = _this.getHitResources(searchResults, annotation);
 
-        var resource = canvases[0];
-        var canvasid = resource;
-        var canvaslabel = _this.getLabel(resource);
+  getHits: function(searchResults) {
+    var _this = this;
+    tplData = [];
+    searchResults.hits.forEach(function(hit) {
+      //this seems like a really slow way to retrieve on property from hits
+      //note that at present it is only retrieving the first annotation
+      //but a hit annotation property takes an array and could have more than one
+      //annotation -- its not a very common case but a possibility.
+      var annotation = hit.annotations[0];
+      //canvases could come back as an array
+      var canvases = _this.getHitResources(searchResults, annotation);
 
-        // If you have the full annotation, set ID and label appropriately
-        if (typeof canvasid === 'object') {
-          canvasid = resource.on['@id'];
-        }
+      var resource = canvases[0];
+      var canvasid = resource;
+      var canvaslabel = _this.getLabel(resource);
 
-        // Extract coordinates if necessary
-        var id_parts = _this.splitBaseUrlAndCoordinates(canvasid);
+      // If you have the full annotation, set ID and label appropriately
+      if (typeof canvasid === 'object') {
+        canvasid = resource.on['@id'];
+      }
 
-        resultobject = {
-          canvasid: id_parts.base,
-          coordinates: id_parts.coords,
-          canvaslabel: canvaslabel,
-          resulttext: (hit.before ? hit.before : '') +
-                      "<span style='background-color: yellow'>" +
-                      hit.match +
-                      "</span>" +
-                       (hit.after ? hit.after : '')
-        };
+      // Extract coordinates if necessary
+      var id_parts = _this.splitBaseUrlAndCoordinates(canvasid);
 
-        tplData.push(resultobject);
-      });
+      resultobject = {
+        canvasid: id_parts.base,
+        coordinates: id_parts.coords,
+        canvaslabel: canvaslabel,
+        hit: hit      // TODO must handle different results structures, see IIIF search spec for different responses
+      };
+
+      tplData.push(resultobject);
+    });
     return tplData;
   },
 
@@ -147,7 +147,7 @@
     }
   },
 
-  getHitResources: function(searchResults, annotationid){
+  getHitResources: function(searchResults, annotationid) {
     // Get array of results
     return searchResults.resources.filter(function(resource){
       return resource['@id'] === annotationid;
@@ -192,42 +192,56 @@
       //if there was more than one annotation
       //(for example if a word crossed a line and needed two coordinates sets)
       //the miniAnnotationList should have multiple objects
-      miniAnnotationList  = [
-                              {
-                              "@id": "test",
-                              "@type": "oa:Annotation",
-                              "motivation": "sc:painting",
-                              "resource": {
-                                "@type": "cnt:ContentAsText",
-                                "chars": _this.query
-                              },
-                              "on": canvasid + (coordinates ? "#" + coordinates : '')
-                              }
-                            ];
+      miniAnnotationList  = [{
+        "@id": "test",
+        "@type": "oa:Annotation",
+        "motivation": "sc:painting",
+        "resource": {
+          "@type": "cnt:ContentAsText",
+          "chars": _this.query
+        },
+        "on": canvasid + (coordinates ? "#" + coordinates : '')
+        }];
 
       _this.parent.annotationsList = miniAnnotationList;
-      // _this.parent.toggleImageView(canvasid);
-console.log("Clicked canvas ID: " + canvasid);
 
       _this.parent.setCurrentCanvasID(canvasid);
     });
   },
 
-    //notes about template, I can't the js-show-canvas to fire when applied to the wrapping div.
-    //so for now its applied on both the canvas number and the paragraph
+  /**
+   * Handlebars template. Accepts data and formats appropriately. To use,
+   * just pass in the template data and this will return a String with
+   * the formatted HTML which can then be inserted into the DOM.
+   *
+   * This template expects a IIIF AnnotationList formatted to represent
+   * IIIF Search results.
+   *
+   * EX: assume context:
+   * 	var templateData = { template data goes here }
+   * 	var htmlString = template(templateData);
+   */
   template: Handlebars.compile([
-            '{{#each this}}',
-            "<div class='result-wrapper'>",
-            "<a class='search-result search-title js-show-canvas' data-canvasid='{{canvasid}}' data-coordinates='{{coordinates}}'>",
-            "{{canvaslabel}}",
-            "</a>",
-            "<div class='search-result result-paragraph js-show-canvas' data-canvasid='{{canvasid}}' data-coordinates='{{coordinates}}'>",
-            "{{resulttext}}",
-            "</div>",
-            "</div>",
-            '{{/each}}'
-            ].join(""), { noEscape: true })
-
-  };
+    '{{#each this}}',
+      '<div class="result-wrapper">',
+        '<a class="search-result search-title js-show-canvas" data-canvasid="{{canvasid}}" data-coordinates="{{coordinates}}">',
+          '{{canvaslabel}}',
+        '</a>',
+        '<div class="search-result result-paragraph js-show-canvas" data-canvasid="{{canvasid}}" data-coordinates="{{coordinates}}">',
+          '{{#if hit.before}}',
+            '{{hit.before}} ',
+          '{{/if}}',
+          '{{#if hit.match}}',
+            '<span class="highlight">{{hit.match}}</span>',
+          '{{else}}',
+            '{{resulttext}}',   // If this text must NOT be escaped, use:   '{{{resulttext}}}'
+          '{{/if}}',
+          '{{#if hit.after}}',
+            '{{ hit.after}}',
+          '{{/if}}',
+        '</div>',
+      '</div>',
+    '{{/each}}'
+  ].join(""))};
 
 }(Mirador));
