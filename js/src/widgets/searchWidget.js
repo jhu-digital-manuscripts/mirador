@@ -104,12 +104,14 @@ $.SearchWidget.prototype = {
     });
 
     this.element.find('.search-disclose-btn-more').on('click', function() {
+      _this.element.find('#search-form').hide('fast');
       _this.element.find('.search-disclose').show('fast');
       _this.element.find('.search-disclose-btn-more').hide();
       _this.element.find('.search-disclose-btn-less').show();
     });
 
     this.element.find('.search-disclose-btn-less').on('click', function() {
+      _this.element.find('#search-form').show('fast');
       _this.element.find('.search-disclose').hide('fast');
       _this.element.find('.search-disclose-btn-less').hide();
       _this.element.find('.search-disclose-btn-more').show();
@@ -124,56 +126,7 @@ $.SearchWidget.prototype = {
     this.addAdvancedSearchLine();
     this.element.find(".perform-advanced-search").on('submit', function(event) {
       event.preventDefault();
-
-      var total = '';
-      _this.element.find('.advanced-search-line').each(function(index, line) {
-        line = jQuery(line);
-        var category = line.find('.advanced-search-categories').val();
-
-        var data = '';
-        switch (category) {
-          case 'marginalia':
-            data = line.find('.advanced-search-marginalia').val();
-            if (_this.isValidInput(data)) {
-              data.split(/\s+/).forEach(function(str) {
-                total += 'marginalia:' + str + ' ';
-              });
-            }
-            break;
-          case 'underlines':
-            data = line.find('.advanced-search-underlines').val();
-            if (_this.isValidInput(data)) {
-              data.split(/\s+/).forEach(function(str) {
-                total += 'underline:' + str + ' ';
-              });
-            }
-            break;
-          case 'symbols':
-            data = line.find('.advanced-search-symbols').val();
-            if (_this.isValidInput(data)) {
-              total += 'symbol:' + data + ' ';
-            }
-            break;
-          case 'marks':
-            data = line.find('.advanced-search-marks').val();
-            if (_this.isValidInput(data)) {
-              total += 'mark:' + data + ' ';
-            }
-            break;
-          default:
-            data = line.find('.advanced-search-all').val();
-            if (_this.isValidInput(data)) {
-              data.split(/\s+/).forEach(function(str) {
-                total += 'all:' + data + ' ';
-              });
-            }
-            break;
-        }
-      });
-
-      if (_this.isValidInput(total)) {
-        _this.displaySearchWithin(total);
-      }
+      _this.performAdvancedSearch();
     });
 
     this.element.find('.advanced-search-add-btn').on('click', function(e) {
@@ -188,6 +141,60 @@ $.SearchWidget.prototype = {
       });
       _this.addAdvancedSearchLine();
     });
+  },
+
+  performAdvancedSearch: function() {
+    var _this = this;
+    var total = '';
+
+    _this.element.find('.advanced-search-line').each(function(index, line) {
+      line = jQuery(line);
+      var category = line.find('.advanced-search-categories').val();
+
+      var data = '';
+      switch (category) {
+        case 'marginalia':
+          data = line.find('.advanced-search-marginalia').val();
+          if (_this.isValidInput(data)) {
+            data.split(/\s+/).forEach(function(str) {
+              total += 'marginalia:' + str + ' ';
+            });
+          }
+          break;
+        case 'underlines':
+          data = line.find('.advanced-search-underlines').val();
+          if (_this.isValidInput(data)) {
+            data.split(/\s+/).forEach(function(str) {
+              total += 'underline:' + str + ' ';
+            });
+          }
+          break;
+        case 'symbols':
+          data = line.find('.advanced-search-symbols').val();
+          if (_this.isValidInput(data)) {
+            total += 'symbol:' + data + ' ';
+          }
+          break;
+        case 'marks':
+          data = line.find('.advanced-search-marks').val();
+          if (_this.isValidInput(data)) {
+            total += 'mark:' + data + ' ';
+          }
+          break;
+        default:
+          data = line.find('.advanced-search-all').val();
+          if (_this.isValidInput(data)) {
+            data.split(/\s+/).forEach(function(str) {
+              total += 'all:' + data + ' ';
+            });
+          }
+          break;
+      }
+    });
+
+    if (_this.isValidInput(total)) {
+      _this.displaySearchWithin(total);
+    }
   },
 
   displaySearchWithin: function(query){
@@ -213,7 +220,6 @@ $.SearchWidget.prototype = {
 
   /**
    * Add a new line to the Advanced Search widget.
-   * @return {[type]} [description]
    */
   addAdvancedSearchLine: function() {
     var _this = this;
@@ -227,10 +233,20 @@ $.SearchWidget.prototype = {
     );
 
     // Hide all inputs except for the Default choice
+    // Make sure ENTER key presses activate advanced search
     Object.keys(this.search.inputs).forEach(function (key) {
       var input = _this.search.inputs[key];
+      var element = line.find(_this.classNamesToSelector(input.class));
+
+      element.keypress(function(event) {
+        if (event.which == 13) {
+          event.preventDefault();
+          _this.performAdvancedSearch();
+        }
+      });
+
       if (!input.default && input.class && input.class !== '') {
-        line.find(_this.classNamesToSelector(input.class)).hide();
+        element.hide();
       }
     });
 
@@ -277,7 +293,7 @@ $.SearchWidget.prototype = {
           '<input type="submit"/>',
         '</form>',
         '<div class="search-disclose-btn-more">Advanced Search</div>',
-        '<div class="search-disclose-btn-less" style="display: none;">Hide</div>',
+        '<div class="search-disclose-btn-less" style="display: none;">Basic Search</div>',
         '<div class="search-disclose-container">',
           '<div class="search-disclose" style="display: none;">',
             '{{> advancedSearch }}',
