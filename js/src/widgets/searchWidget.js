@@ -1,7 +1,6 @@
 (function($) {
 
 /**
- * [function description]
  * @param  {[type]} options init params, required
  *                          {
  *                          	parent: parent window that contains this widget,
@@ -19,11 +18,21 @@ $.SearchWidget = function(options) {
     element: null,
     searchObject: null,
     manifest: null, // Manifest object. To get search service: this.manifest.getSearchWithinService()
+    query: {
+      fields: [],
+      fieldRegex: /[A-Za-z]/,
+      operators: ['AND', 'OR'],
+      delimiters: {
+        'term': '%26',
+        'field': ':'
+      }
+    },
     search : {
       'categories': {
         'label': 'Categories',
         'class': 'advanced-search-categories',
-        'choices': ['all', 'marginalia', 'underlines', 'symbols', 'marks']
+        // 'choices': ['all', 'marginalia', 'underlines', 'symbols', 'marks']
+        'choices': ['all']
       },
       'inputs': {
         'all': {
@@ -34,40 +43,40 @@ $.SearchWidget = function(options) {
           'query': 'all',
           'default': true
         },
-        'symbols': {
-          "label": "Symbols",
-          "class": "advanced-search-symbols",
-          "type": "dropdown",
-          "choices": ['Asterisk', 'Bisectedcircle', 'Crown', 'JC', 'HT', 'LL', 'Mars', 'Mercury', 'Moon', 'Opposite_planets', 'Saturn', 'Square', 'SS', 'Sun', 'Venus'],
-          'addBlank': true,
-          'query': 'symbol'
-        },
-        'marks': {
-          "label": "Marks",
-          "class": "advanced-search-marks",
-          "type": "dropdown",
-          "choices": [
-            'apostrophe', 'box', 'bracket', 'circumflex', 'colon', 'comma', 'dash', 'diacritic', 'dot', 'double_vertical_bar', 'equal_sign',
-            'est_mark', 'hash', 'horizontal_bar', 'page_break', 'pen_trial', 'plus_sign', 'quotation_mark', 'scribble', 'section_sign',
-            'semicolon', 'slash', 'straight_quotation_mark', 'tick', 'tilde', 'triple_dash', 'vertical_bar', 'X-sign'
-          ],
-          'addBlank': true,
-          'query': 'mark'
-        },
-        'marginalia': {
-          'label': "Marginalia",
-          'class': 'advanced-search-marginalia',
-          'type': 'text',
-          'placeholder': 'Search marginalia text',
-          'query': 'marginalia'
-        },
-        'underlines': {
-          'label': 'Underlines',
-          'class': 'advanced-search-underlines',
-          'type': 'text',
-          'placeholder': 'Search underlined text',
-          'query': 'underline'
-        }
+        // 'symbols': {
+        //   "label": "Symbols",
+        //   "class": "advanced-search-symbols",
+        //   "type": "dropdown",
+        //   "choices": ['Asterisk', 'Bisectedcircle', 'Crown', 'JC', 'HT', 'LL', 'Mars', 'Mercury', 'Moon', 'Opposite_planets', 'Saturn', 'Square', 'SS', 'Sun', 'Venus'],
+        //   'addBlank': true,
+        //   'query': 'symbol'
+        // },
+        // 'marks': {
+        //   "label": "Marks",
+        //   "class": "advanced-search-marks",
+        //   "type": "dropdown",
+        //   "choices": [
+        //     'apostrophe', 'box', 'bracket', 'circumflex', 'colon', 'comma', 'dash', 'diacritic', 'dot', 'double_vertical_bar', 'equal_sign',
+        //     'est_mark', 'hash', 'horizontal_bar', 'page_break', 'pen_trial', 'plus_sign', 'quotation_mark', 'scribble', 'section_sign',
+        //     'semicolon', 'slash', 'straight_quotation_mark', 'tick', 'tilde', 'triple_dash', 'vertical_bar', 'X-sign'
+        //   ],
+        //   'addBlank': true,
+        //   'query': 'mark'
+        // },
+        // 'marginalia': {
+        //   'label': "Marginalia",
+        //   'class': 'advanced-search-marginalia',
+        //   'type': 'text',
+        //   'placeholder': 'Search marginalia text',
+        //   'query': 'marginalia'
+        // },
+        // 'underlines': {
+        //   'label': 'Underlines',
+        //   'class': 'advanced-search-underlines',
+        //   'type': 'text',
+        //   'placeholder': 'Search underlined text',
+        //   'query': 'underline'
+        // }
       }
     }
   }, options);
@@ -148,47 +157,39 @@ $.SearchWidget.prototype = {
     var total = '';
 
     _this.element.find('.advanced-search-line').each(function(index, line) {
+      if (index !== 0) {
+        total += _this.query.delimiters.term;
+      }
       line = jQuery(line);
       var category = line.find('.advanced-search-categories').val();
 
-      var data = '';
+      var input = null;
       switch (category) {
         case 'marginalia':
-          data = line.find('.advanced-search-marginalia').val();
-          if (_this.isValidInput(data)) {
-            data.split(/\s+/).forEach(function(str) {
-              total += 'marginalia:' + str + ' ';
-            });
-          }
+          input = line.find('.advanced-search-marginalia');
           break;
         case 'underlines':
-          data = line.find('.advanced-search-underlines').val();
-          if (_this.isValidInput(data)) {
-            data.split(/\s+/).forEach(function(str) {
-              total += 'underline:' + str + ' ';
-            });
-          }
+          input = line.find('.advanced-search-underlines');
           break;
         case 'symbols':
-          data = line.find('.advanced-search-symbols').val();
-          if (_this.isValidInput(data)) {
-            total += 'symbol:' + data + ' ';
-          }
+          input = line.find('.advanced-search-symbols');
           break;
         case 'marks':
-          data = line.find('.advanced-search-marks').val();
-          if (_this.isValidInput(data)) {
-            total += 'mark:' + data + ' ';
-          }
+          input = line.find('.advanced-search-marks');
           break;
         default:
-          data = line.find('.advanced-search-all').val();
-          if (_this.isValidInput(data)) {
-            data.split(/\s+/).forEach(function(str) {
-              total += 'all:' + data + ' ';
-            });
-          }
+          input = line.find('.advanced-search-all');
           break;
+      }
+
+      var data = input.val();
+
+      // total += 'type' + _this.query.delimiters.field + input.data('query') +
+      //     _this.query.delimiters.term + '' + _this.query.delimiters.field;
+      if (data.indexOf(' ') >= 0) {
+        total += '"' + data + '"';
+      } else {
+        total += data;
       }
     });
 
@@ -199,18 +200,18 @@ $.SearchWidget.prototype = {
 
   displaySearchWithin: function(query){
     var _this = this;
-    if (query !== ""){
+    if (query !== "") {
       searchService = (_this.manifest.getSearchWithinService());
       this.searchObject = new $.SearchWithinResults({
-            manifest: _this.manifest,
-            appendTo: _this.element.find(".search-results-list"),
-            parent: _this,
-            panel: true,
-            canvasID: _this.parent.currentCanvasID,
-            imagesList: _this.imagesList,
-            thumbInfo: {thumbsHeight: 80, listingCssCls: 'panel-listing-thumbs', thumbnailCls: 'panel-thumbnail-view'},
-            query: query
-          });
+        manifest: _this.manifest,
+        appendTo: _this.element.find(".search-results-list"),
+        parent: _this,
+        panel: true,
+        canvasID: _this.parent.currentCanvasID,
+        imagesList: _this.imagesList,
+        thumbInfo: {thumbsHeight: 80, listingCssCls: 'panel-listing-thumbs', thumbnailCls: 'panel-thumbnail-view'},
+        query: query
+      });
     }
   },
 
@@ -233,7 +234,7 @@ $.SearchWidget.prototype = {
     );
 
     // Hide all inputs except for the Default choice
-    // Make sure ENTER key presses activate advanced search
+    // Makes sure ENTER key presses activate advanced search
     Object.keys(this.search.inputs).forEach(function (key) {
       var input = _this.search.inputs[key];
       var element = line.find(_this.classNamesToSelector(input.class));
@@ -329,7 +330,7 @@ $.SearchWidget.prototype = {
         '<div>',
         '{{#each search.inputs}}',
           '{{#ifCond type "===" "text"}}',
-            '<input type="text" class="{{class}}" placeholder="{{placeholder}}"/>',
+            '<input type="text" class="{{class}}" placeholder="{{placeholder}}" {{#if query}}data-query="{{query}}"{{/if}}/>',
           '{{else}}{{#ifCond type "===" "dropdown"}}',
             '{{> searchDropDown this}}',
           '{{/ifCond}}{{/ifCond}}',
