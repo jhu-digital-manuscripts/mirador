@@ -99,17 +99,20 @@ $.SearchWidget.prototype = {
     this.bindEvents();
   },
 
+  toggle: function(panelState) {
+    this.parent.element.find('.mirador-icon-search-within').toggleClass('selected');
+    this.element.stop().slideFadeToggle(300);
+  },
+
   bindEvents: function() {
     var _this = this;
 
     this.parent.element.find('.mirador-icon-search-within').on('click', function() {
-      _this.parent.element.find('.mirador-icon-search-within').toggleClass('selected');
-      _this.element.stop().slideFadeToggle(300);
+      _this.toggle();
     });
 
     this.parent.element.find('.mirador-btn.js-close-search-within').on('click', function() {
-      _this.parent.element.find('.mirador-icon-search-within').removeClass('selected');
-      _this.element.stop().slideFadeToggle(300);
+      _this.toggle();
     });
 
     this.element.find('.search-disclose-btn-more').on('click', function() {

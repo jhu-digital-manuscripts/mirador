@@ -22,22 +22,26 @@
         'ThumbnailsView': {
           'overlay' : {'MetadataView' : false},
           'sidePanel' : {'TableOfContents' : true},
-          'bottomPanel' : {'' : false}
+          'bottomPanel' : {'' : false},
+          'searchWidget' : {'SearchWidget' : false}
         },
         'ImageView': {
           'overlay' : {'MetadataView' : false},
           'sidePanel' : {'TableOfContents' : true},
-          'bottomPanel' : {'ThumbnailsView' : true}
+          'bottomPanel' : {'ThumbnailsView' : true},
+          'searchWidget' : {'SearchWidget' : false}
         },
         'ScrollView': {
           'overlay' : {'MetadataView' : false},
           'sidePanel' : {'TableOfContents' : true},
-          'bottomPanel' : {'' : false}
+          'bottomPanel' : {'' : false},
+          'searchWidget' : {'SearchWidget' : false}
         },
         'BookView': {
           'overlay' : {'MetadataView' : false},
           'sidePanel' : {'TableOfContents' : true},
-          'bottomPanel' : {'ThumbnailsView' : true}
+          'bottomPanel' : {'ThumbnailsView' : true},
+          'searchWidget' : {'SearchWidget' : false}
         }
       },
       focusOptions: null,
@@ -60,7 +64,8 @@
         "slotAbove" : true,
         "slotBelow" : true
       },
-      searchWidget: null
+      searchWidget: null,
+      searchWidgetVisible: false
     }, options);
 
     this.init();
@@ -125,6 +130,15 @@
         templateData.MetadataView = true;
       }
 
+      if (typeof this.searchWidgetAvailable !== 'undefined' && !this.searchWidgetAvailable) {
+        jQuery.each(this.focusOverlaysAvailable, function(key, value) {
+          _this.focusOverlaysAvailable[key].overlay = {'': false};
+        });
+        templateData.searchPanel = false;
+      } else {
+        templateData.searchPanel = true;
+      }
+
       //determine if any buttons should be hidden in template
       jQuery.each(this.focuses, function(index, value) {
         templateData[value] = true;
@@ -138,8 +152,6 @@
           return _this.layoutOptions[element] === false;
         });
       }
-
-      templateData.searchPanel = true;
 
       _this.element = jQuery(this.template(templateData)).appendTo(_this.appendTo);
 
@@ -176,14 +188,6 @@
         this.bottomPanelVisibility(false);
       }
 
-      // -----------------------------------------------------------------------
-      // ---------- Add search widget ------------------------------------------
-      // -----------------------------------------------------------------------
-      this.searchPanel = new $.SearchWidget({
-        parent: _this,
-        manifest: _this.manifest,
-        appendTo: _this.element.find('.search-panel-container')
-      });
     },
 
     update: function(options) {
@@ -312,6 +316,7 @@
       this.sidePanel = null;
       this.bottomPanel = null;
       this.overlay = null;
+      this.searchWidget = null;
     },
 
     // only panels and overlay available to this view, make rest hidden while on this view
@@ -796,7 +801,7 @@
                                  '<div class="content-container">',
                                  // ----- Search within widget -----
                                  '{{#if searchPanel}}',
-                                 '<div class="search-panel-container"></div>',
+                                 '<div class="searchWidget"></div>',
                                  '{{/if}}',
                                 //  '{{> searchWithinWidget }}',
                                  // ----- End search within -----
