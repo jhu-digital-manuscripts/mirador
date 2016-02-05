@@ -36,7 +36,8 @@ module.exports = function(grunt) {
     'js/lib/URI.min.js',
     'js/lib/mousetrap.min.js',
     'js/lib/isfahan.js',
-    'js/lib/i18next.min.js'
+    'js/lib/i18next.min.js',
+    'bower_components/simplePagination.js/jquery.simplePagination.js'
   ],
 
   // libraries/plugins for running tests
@@ -95,7 +96,8 @@ module.exports = function(grunt) {
         'css/layout-default-latest.css',
         'css/jquery.qtip.min.css',
         'css/mirador.css',
-        '!css/mirador-combined.css'
+        '!css/mirador-combined.css',
+        'bower_components/simplePagination.js/simplePagination.css'
         ],
         dest: 'build/mirador/css/mirador-combined.css'
       }
@@ -151,11 +153,11 @@ module.exports = function(grunt) {
         }, {
           src: 'js/lib/parse.min.js',
           dest: 'build/mirador/parse.min.js'
-        }, {	    
+        }, {
           src: 'js/lib/ZeroClipboard.swf',
           dest: 'build/mirador/ZeroClipboard.swf'
         }, {
-	  expand: true,	    
+	  expand: true,
           src: 'locales/**',
           dest: 'build/mirador'
         }]
@@ -193,8 +195,8 @@ module.exports = function(grunt) {
 
     watch: {
       all: {
-        options: { 
-          livereload: true 
+        options: {
+          livereload: true
         },
         files: [
           'Gruntfile.js',
@@ -234,7 +236,7 @@ module.exports = function(grunt) {
     githooks: {
       all: {
         'pre-commit': 'jshint cover'
-        // 'post-checkout': 
+        // 'post-checkout':
       }
     },
 
@@ -337,7 +339,7 @@ module.exports = function(grunt) {
       browsers: {
         reporters: ['spec', 'saucelabs'],
         browsers: [
-          'sl_win7_chrome', 
+          'sl_win7_chrome',
           'sl_win7_firefox',
           // 'sl_win7_ie9',
           // 'sl_win7_ie10',
@@ -400,7 +402,7 @@ module.exports = function(grunt) {
   // Coverage task.
   // Runs instanbul coverage
   grunt.registerTask('cover', 'karma:cover');
-  
+
   // ----------
   // Runs this on travis.
   grunt.registerTask('ci', [

@@ -30,7 +30,7 @@
 
       _this.searchService = this.manifest.getSearchWithinService();
 
-      jQuery(this.appendTo).html("");
+      jQuery(this.appendTo).empty();
       jQuery("<h1>Search results for: " + _this.query + "</h1>").appendTo(_this.appendTo);
 
       this.searchRequest(this.query).done(function(searchResults) {
@@ -57,6 +57,49 @@
         dataType: 'json',
         async: true
       });
+  },
+
+  /**
+   * Look for necessary properties that point to the need for paging.
+   *
+   * @param  results IIIF Search results
+   * @return TRUE if paging is needed
+   */
+  needsPager: function(results) {
+    return results && results.next;
+  },
+
+  /**
+   * Initialize search results pager. It is assumed that it has already
+   * been determined whether or not the pager needs to be created.
+   * If a pager is created, it will be inserted into the DOM.
+   *
+   * @param  results - IIIF Search results
+   */
+  setPager: function(results) {
+    var onPageCount = results.hits ? results.hits.length : results.resources.length;
+    var urlPrefix = 'blah';
+
+    var startIndex = results.startIndex ? results.startIndex : results.
+
+    $('.search-results-pager').pagination({
+        items: results.within.total,
+        itemsOnPage: onPageCount,
+        currentPage: this.float2int(results.within.total / onPageCount),
+        cssStyle: 'compact-theme',
+        ellipsePageSet: true,
+        hrefTextPrefix: urlPrefix    // Take from the search results
+    });
+  },
+
+  /**
+   * Do a Bitwise OR to truncate decimal
+   *
+   * @param  num original number, could be integer or decimal
+   * @return integer with any decimal part of input truncated (no rounding)
+   */
+  float2int: function(num) {
+    return num | 0;
   },
 
   getSearchAnnotations: function(searchResults) {
@@ -240,6 +283,12 @@
     });
   },
 
+  // registerHandlebars: function() {
+  //   Handlebars.registerPartial('pager', [
+  //
+  //   ].join(''));
+  // },
+
   /**
    * Handlebars template. Accepts data and formats appropriately. To use,
    * just pass in the template data and this will return a String with
@@ -253,26 +302,29 @@
    * 	var htmlString = template(templateData);
    */
   template: Handlebars.compile([
-    '{{#each this}}',
-      '<div class="result-wrapper">',
-        '<a class="search-result search-title js-show-canvas" data-canvasid="{{canvasid}}" data-coordinates="{{coordinates}}">',
-          '{{canvaslabel}}',
-        '</a>',
-        '<div class="search-result result-paragraph js-show-canvas" data-canvasid="{{canvasid}}" data-coordinates="{{coordinates}}">',
-          '{{#if hit.before}}',
-            '{{hit.before}} ',
-          '{{/if}}',
-          '{{#if hit.match}}',
-            '<span class="highlight">{{hit.match}}</span>',
-          '{{else}}',
-            '{{resulttext}}',   // If this text must NOT be escaped, use:   '{{{resulttext}}}'
-          '{{/if}}',
-          '{{#if hit.after}}',
-            '{{ hit.after}}',
-          '{{/if}}',
+    '<div class="search-results-pager"></div>',
+    '<div class="search-results-container">',
+      '{{#each this}}',
+        '<div class="result-wrapper">',
+          '<a class="search-result search-title js-show-canvas" data-canvasid="{{canvasid}}" data-coordinates="{{coordinates}}">',
+            '{{canvaslabel}}',
+          '</a>',
+          '<div class="search-result result-paragraph js-show-canvas" data-canvasid="{{canvasid}}" data-coordinates="{{coordinates}}">',
+            '{{#if hit.before}}',
+              '{{hit.before}} ',
+            '{{/if}}',
+            '{{#if hit.match}}',
+              '<span class="highlight">{{hit.match}}</span>',
+            '{{else}}',
+              '{{resulttext}}',   // If this text must NOT be escaped, use:   '{{{resulttext}}}'
+            '{{/if}}',
+            '{{#if hit.after}}',
+              '{{ hit.after}}',
+            '{{/if}}',
+          '</div>',
         '</div>',
-      '</div>',
-    '{{/each}}'
+      '{{/each}}',
+    '</div>'
   ].join(""))};
 
 }(Mirador));
