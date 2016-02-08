@@ -93,6 +93,7 @@
 
       this.parent.element.find('.mirador-osd-go-home').on('click', function() {
         _this.parent.osd.viewport.goHome();
+        _this.parent.osd.viewport.setRotation(0);
       });
 
       this.parent.element.find('.mirador-osd-up').on('click', function() {
@@ -215,9 +216,9 @@
         events: [
           { name: 'startup',  from: 'none',  to: 'annoOff' },
           { name: 'displayOn',  from: 'annoOff',  to: 'annoOnCreateOff' },
-          { name: 'refreshCreateOff',  from: 'annoOnCreateOff',  to: 'annoOnCreateOff' },          
+          { name: 'refreshCreateOff',  from: 'annoOnCreateOff',  to: 'annoOnCreateOff' },
           { name: 'createOn', from: ['annoOff','annoOnCreateOff'], to: 'annoOnCreateOn' },
-          { name: 'refreshCreateOn',  from: 'annoOnCreateOn',  to: 'annoOnCreateOn' },          
+          { name: 'refreshCreateOn',  from: 'annoOnCreateOn',  to: 'annoOnCreateOn' },
           { name: 'createOff',  from: 'annoOnCreateOn',    to: 'annoOnCreateOff' },
           { name: 'displayOff', from: ['annoOnCreateOn','annoOnCreateOff'], to: 'annoOff' }
         ],
@@ -230,9 +231,9 @@
           },
           ondisplayOn: function(event, from, to) {
             if (_this.annoEndpointAvailable) {
-              _this.parent.element.find('.mirador-osd-annotations-layer').fadeOut(duration, function() {      
+              _this.parent.element.find('.mirador-osd-annotations-layer').fadeOut(duration, function() {
                 _this.contextControls.show();
-              });              
+              });
             } else {
               _this.parent.element.find('.mirador-osd-annotations-layer').addClass("selected");
             }
@@ -256,7 +257,7 @@
             }
             if (_this.annoEndpointAvailable) {
               if (from === "annoOff") {
-                _this.parent.element.find('.mirador-osd-annotations-layer').fadeOut(duration, function() {      
+                _this.parent.element.find('.mirador-osd-annotations-layer').fadeOut(duration, function() {
                   _this.contextControls.show();
                   enableEditingAnnotations();
                 });
