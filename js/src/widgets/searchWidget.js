@@ -18,67 +18,67 @@ $.SearchWidget = function(options) {
     element: null,
     searchObject: null,
     manifest: null, // Manifest object. To get search service: this.manifest.getSearchWithinService()
-    query: {
-      fields: [],
-      fieldRegex: /[A-Za-z]/,
-      operators: ['AND', 'OR'],
-      delimiters: {
-        'term': '%26',
-        'field': ':'
-      }
-    },
-    search : {
-      'categories': {
-        'label': 'Categories',
-        'class': 'advanced-search-categories',
-        // 'choices': ['all', 'marginalia', 'underlines', 'symbols', 'marks']
-        'choices': ['all']
-      },
-      'inputs': {
-        'all': {
-          'label': 'All',
-          'class': 'advanced-search-all',
-          'type': 'text',
-          'placeholder': 'Search across all categories',
-          'query': 'all',
-          'default': true
-        },
-        // 'symbols': {
-        //   "label": "Symbols",
-        //   "class": "advanced-search-symbols",
-        //   "type": "dropdown",
-        //   "choices": ['Asterisk', 'Bisectedcircle', 'Crown', 'JC', 'HT', 'LL', 'Mars', 'Mercury', 'Moon', 'Opposite_planets', 'Saturn', 'Square', 'SS', 'Sun', 'Venus'],
-        //   'addBlank': true,
-        //   'query': 'symbol'
-        // },
-        // 'marks': {
-        //   "label": "Marks",
-        //   "class": "advanced-search-marks",
-        //   "type": "dropdown",
-        //   "choices": [
-        //     'apostrophe', 'box', 'bracket', 'circumflex', 'colon', 'comma', 'dash', 'diacritic', 'dot', 'double_vertical_bar', 'equal_sign',
-        //     'est_mark', 'hash', 'horizontal_bar', 'page_break', 'pen_trial', 'plus_sign', 'quotation_mark', 'scribble', 'section_sign',
-        //     'semicolon', 'slash', 'straight_quotation_mark', 'tick', 'tilde', 'triple_dash', 'vertical_bar', 'X-sign'
-        //   ],
-        //   'addBlank': true,
-        //   'query': 'mark'
-        // },
-        // 'marginalia': {
-        //   'label': "Marginalia",
-        //   'class': 'advanced-search-marginalia',
-        //   'type': 'text',
-        //   'placeholder': 'Search marginalia text',
-        //   'query': 'marginalia'
-        // },
-        // 'underlines': {
-        //   'label': 'Underlines',
-        //   'class': 'advanced-search-underlines',
-        //   'type': 'text',
-        //   'placeholder': 'Search underlined text',
-        //   'query': 'underline'
-        // }
-      }
-    }
+    // query: {
+    //   fields: [],
+    //   fieldRegex: /[A-Za-z]/,
+    //   operators: ['AND', 'OR'],
+    //   delimiters: {
+    //     'term': '%26',
+    //     'field': ':'
+    //   }
+    // },
+    // search : {
+    //   'categories': {
+    //     'label': 'Categories',
+    //     'class': 'advanced-search-categories',
+    //     // 'choices': ['all', 'marginalia', 'underlines', 'symbols', 'marks']
+    //     'choices': ['all']
+    //   },
+    //   'inputs': {
+    //     'all': {
+    //       'label': 'All',
+    //       'class': 'advanced-search-all',
+    //       'type': 'text',
+    //       'placeholder': 'Search across all categories',
+    //       'query': 'all',
+    //       'default': true
+    //     },
+    //     'symbols': {
+    //       "label": "Symbols",
+    //       "class": "advanced-search-symbols",
+    //       "type": "dropdown",
+    //       "choices": ['Asterisk', 'Bisectedcircle', 'Crown', 'JC', 'HT', 'LL', 'Mars', 'Mercury', 'Moon', 'Opposite_planets', 'Saturn', 'Square', 'SS', 'Sun', 'Venus'],
+    //       'addBlank': true,
+    //       'query': 'symbol'
+    //     },
+    //     'marks': {
+    //       "label": "Marks",
+    //       "class": "advanced-search-marks",
+    //       "type": "dropdown",
+    //       "choices": [
+    //         'apostrophe', 'box', 'bracket', 'circumflex', 'colon', 'comma', 'dash', 'diacritic', 'dot', 'double_vertical_bar', 'equal_sign',
+    //         'est_mark', 'hash', 'horizontal_bar', 'page_break', 'pen_trial', 'plus_sign', 'quotation_mark', 'scribble', 'section_sign',
+    //         'semicolon', 'slash', 'straight_quotation_mark', 'tick', 'tilde', 'triple_dash', 'vertical_bar', 'X-sign'
+    //       ],
+    //       'addBlank': true,
+    //       'query': 'mark'
+    //     },
+    //     'marginalia': {
+    //       'label': "Marginalia",
+    //       'class': 'advanced-search-marginalia',
+    //       'type': 'text',
+    //       'placeholder': 'Search marginalia text',
+    //       'query': 'marginalia'
+    //     },
+    //     'underlines': {
+    //       'label': 'Underlines',
+    //       'class': 'advanced-search-underlines',
+    //       'type': 'text',
+    //       'placeholder': 'Search underlined text',
+    //       'query': 'underline'
+    //     }
+    //   }
+    // }
   }, options);
 
   this.init();
@@ -135,71 +135,71 @@ $.SearchWidget.prototype = {
         _this.displaySearchWithin(query);
     });
 
-    this.addAdvancedSearchLine();
-    this.element.find(".perform-advanced-search").on('submit', function(event) {
-      event.preventDefault();
-      _this.performAdvancedSearch();
-    });
-
-    this.element.find('.advanced-search-add-btn').on('click', function(e) {
-      e.preventDefault();
-      _this.addAdvancedSearchLine();
-    });
-
-    this.element.find('.advanced-search-reset-btn').on('click', function(e) {
-      e.preventDefault();
-      _this.element.find('.advanced-search-line').each(function(index, line) {
-        jQuery(line).remove();
-      });
-      _this.addAdvancedSearchLine();
-    });
+    // this.addAdvancedSearchLine();
+    // this.element.find(".perform-advanced-search").on('submit', function(event) {
+    //   event.preventDefault();
+    //   _this.performAdvancedSearch();
+    // });
+    //
+    // this.element.find('.advanced-search-add-btn').on('click', function(e) {
+    //   e.preventDefault();
+    //   _this.addAdvancedSearchLine();
+    // });
+    //
+    // this.element.find('.advanced-search-reset-btn').on('click', function(e) {
+    //   e.preventDefault();
+    //   _this.element.find('.advanced-search-line').each(function(index, line) {
+    //     jQuery(line).remove();
+    //   });
+    //   _this.addAdvancedSearchLine();
+    // });
   },
 
-  performAdvancedSearch: function() {
-    var _this = this;
-    var total = '';
-
-    _this.element.find('.advanced-search-line').each(function(index, line) {
-      if (index !== 0) {
-        total += _this.query.delimiters.term;
-      }
-      line = jQuery(line);
-      var category = line.find('.advanced-search-categories').val();
-
-      var input = null;
-      switch (category) {
-        case 'marginalia':
-          input = line.find('.advanced-search-marginalia');
-          break;
-        case 'underlines':
-          input = line.find('.advanced-search-underlines');
-          break;
-        case 'symbols':
-          input = line.find('.advanced-search-symbols');
-          break;
-        case 'marks':
-          input = line.find('.advanced-search-marks');
-          break;
-        default:
-          input = line.find('.advanced-search-all');
-          break;
-      }
-
-      var data = input.val();
-
-      // total += 'type' + _this.query.delimiters.field + input.data('query') +
-      //     _this.query.delimiters.term + '' + _this.query.delimiters.field;
-      if (data.indexOf(' ') >= 0) {
-        total += '"' + data + '"';
-      } else {
-        total += data;
-      }
-    });
-
-    if (_this.isValidInput(total)) {
-      _this.displaySearchWithin(total);
-    }
-  },
+  // performAdvancedSearch: function() {
+  //   var _this = this;
+  //   var total = '';
+  //
+  //   _this.element.find('.advanced-search-line').each(function(index, line) {
+  //     if (index !== 0) {
+  //       total += _this.query.delimiters.term;
+  //     }
+  //     line = jQuery(line);
+  //     var category = line.find('.advanced-search-categories').val();
+  //
+  //     var input = null;
+  //     switch (category) {
+  //       case 'marginalia':
+  //         input = line.find('.advanced-search-marginalia');
+  //         break;
+  //       case 'underlines':
+  //         input = line.find('.advanced-search-underlines');
+  //         break;
+  //       case 'symbols':
+  //         input = line.find('.advanced-search-symbols');
+  //         break;
+  //       case 'marks':
+  //         input = line.find('.advanced-search-marks');
+  //         break;
+  //       default:
+  //         input = line.find('.advanced-search-all');
+  //         break;
+  //     }
+  //
+  //     var data = input.val();
+  //
+  //     // total += 'type' + _this.query.delimiters.field + input.data('query') +
+  //     //     _this.query.delimiters.term + '' + _this.query.delimiters.field;
+  //     if (data.indexOf(' ') >= 0) {
+  //       total += '"' + data + '"';
+  //     } else {
+  //       total += data;
+  //     }
+  //   });
+  //
+  //   if (_this.isValidInput(total)) {
+  //     _this.displaySearchWithin(total);
+  //   }
+  // },
 
   displaySearchWithin: function(query){
     var _this = this;
@@ -218,67 +218,67 @@ $.SearchWidget.prototype = {
     }
   },
 
-  isValidInput: function(input) {
-    return input && input !== '';
-  },
+  // isValidInput: function(input) {
+  //   return input && input !== '';
+  // },
 
   /**
    * Add a new line to the Advanced Search widget.
    */
-  addAdvancedSearchLine: function() {
-    var _this = this;
-    var template = Handlebars.compile('{{> advancedSearchLine }}');
+  // addAdvancedSearchLine: function() {
+  //   var _this = this;
+  //   var template = Handlebars.compile('{{> advancedSearchLine }}');
+  //
+  //   var templateData = {"search": this.search};
+  //   var line = template(templateData);
+  //
+  //   line = jQuery(line).insertAfter(
+  //     this.element.find('.advanced-search-lines table tbody').children().last()
+  //   );
+  //
+  //   // Hide all inputs except for the Default choice
+  //   // Makes sure ENTER key presses activate advanced search
+  //   Object.keys(this.search.inputs).forEach(function (key) {
+  //     var input = _this.search.inputs[key];
+  //     var element = line.find(_this.classNamesToSelector(input.class));
+  //
+  //     element.keypress(function(event) {
+  //       if (event.which == 13) {
+  //         event.preventDefault();
+  //         _this.performAdvancedSearch();
+  //       }
+  //     });
+  //
+  //     if (!input.default && input.class && input.class !== '') {
+  //       element.hide();
+  //     }
+  //   });
+  //
+  //   line.find('.advanced-search-categories').on('change', function(event) {
+  //     var jSelector = jQuery(event.target);
+  //     var user_inputs = jSelector.parent().parent().find('div');
+  //
+  //     // Hide all input/select fields
+  //     user_inputs.find('select').hide();
+  //     user_inputs.find('input').hide();
+  //
+  //     user_inputs.find(_this.classNamesToSelector(_this.search.inputs[jSelector.val()].class)).show();
+  //   });
+  //
+  // },
 
-    var templateData = {"search": this.search};
-    var line = template(templateData);
-
-    line = jQuery(line).insertAfter(
-      this.element.find('.advanced-search-lines table tbody').children().last()
-    );
-
-    // Hide all inputs except for the Default choice
-    // Makes sure ENTER key presses activate advanced search
-    Object.keys(this.search.inputs).forEach(function (key) {
-      var input = _this.search.inputs[key];
-      var element = line.find(_this.classNamesToSelector(input.class));
-
-      element.keypress(function(event) {
-        if (event.which == 13) {
-          event.preventDefault();
-          _this.performAdvancedSearch();
-        }
-      });
-
-      if (!input.default && input.class && input.class !== '') {
-        element.hide();
-      }
-    });
-
-    line.find('.advanced-search-categories').on('change', function(event) {
-      var jSelector = jQuery(event.target);
-      var user_inputs = jSelector.parent().parent().find('div');
-
-      // Hide all input/select fields
-      user_inputs.find('select').hide();
-      user_inputs.find('input').hide();
-
-      user_inputs.find(_this.classNamesToSelector(_this.search.inputs[jSelector.val()].class)).show();
-    });
-
-  },
-
-  classNamesToSelector: function(name) {
-    // Convert class name(s) to CSS selectors
-    var selector = '';
-    name.split(/\s+/).forEach(function(str) {
-      if (str.charAt(0) !== '.') {
-        selector += '.';
-      }
-      selector += str + ' ';
-    });
-
-    return selector;
-  },
+  // classNamesToSelector: function(name) {
+  //   // Convert class name(s) to CSS selectors
+  //   var selector = '';
+  //   name.split(/\s+/).forEach(function(str) {
+  //     if (str.charAt(0) !== '.') {
+  //       selector += '.';
+  //     }
+  //     selector += str + ' ';
+  //   });
+  //
+  //   return selector;
+  // },
 
   registerWidget: function() {
     /*
@@ -296,51 +296,51 @@ $.SearchWidget.prototype = {
           '<input class="js-query" type="text" placeholder="search"/>',
           '<input type="submit"/>',
         '</form>',
-        '<div class="search-disclose-btn-more">Advanced Search</div>',
-        '<div class="search-disclose-btn-less" style="display: none;">Basic Search</div>',
-        '<div class="search-disclose-container">',
-          '<div class="search-disclose" style="display: none;">',
-            '{{> advancedSearch }}',
-          '</div>',
-        '</div>',
+        // '<div class="search-disclose-btn-more">Advanced Search</div>',
+        // '<div class="search-disclose-btn-less" style="display: none;">Basic Search</div>',
+        // '<div class="search-disclose-container">',
+        //   '<div class="search-disclose" style="display: none;">',
+        //     '{{> advancedSearch }}',
+        //   '</div>',
+        // '</div>',
         '<div class="search-results-list"></div>',
       '</div>',
     ].join(''));
 
-    Handlebars.registerPartial('advancedSearch', [
-      '<div class="advanced-search">',
-        '<form id="advanced-search-form" class="perform-advanced-search">',
-          '<div class="advanced-search-lines">',
-            '<table><tbody>',
-              '<tr></tr>',
-            '</tbody></table>',
-          '</div>',
-          '<div class="advanced-search-btn-container">',
-            '<button class="advanced-search-add-btn" value="add">Add Line</button>',
-            '<button class="advanced-search-reset-btn">Reset</button>',
-          '</div>',
-          '<input type="submit" value="Search"/>',
-        '</form>',
-      '</div>'
-    ].join(''));
+    // Handlebars.registerPartial('advancedSearch', [
+    //   '<div class="advanced-search">',
+    //     '<form id="advanced-search-form" class="perform-advanced-search">',
+    //       '<div class="advanced-search-lines">',
+    //         '<table><tbody>',
+    //           '<tr></tr>',
+    //         '</tbody></table>',
+    //       '</div>',
+    //       '<div class="advanced-search-btn-container">',
+    //         '<button class="advanced-search-add-btn" value="add">Add Line</button>',
+    //         '<button class="advanced-search-reset-btn">Reset</button>',
+    //       '</div>',
+    //       '<input type="submit" value="Search"/>',
+    //     '</form>',
+    //   '</div>'
+    // ].join(''));
 
-    Handlebars.registerPartial('advancedSearchLine', [
-      // Select search category
-      '<tr class="advanced-search-line"><td>',
-        '{{> searchDropDown search.categories }}',
-      '</td>',
-      '<td>',
-        '<div>',
-        '{{#each search.inputs}}',
-          '{{#ifCond type "===" "text"}}',
-            '<input type="text" class="{{class}}" placeholder="{{placeholder}}" {{#if query}}data-query="{{query}}"{{/if}}/>',
-          '{{else}}{{#ifCond type "===" "dropdown"}}',
-            '{{> searchDropDown this}}',
-          '{{/ifCond}}{{/ifCond}}',
-        '{{/each}}',
-        '</div>',
-      '</td></tr>',
-    ].join(''));
+    // Handlebars.registerPartial('advancedSearchLine', [
+    //   // Select search category
+    //   '<tr class="advanced-search-line"><td>',
+    //     '{{> searchDropDown search.categories }}',
+    //   '</td>',
+    //   '<td>',
+    //     '<div>',
+    //     '{{#each search.inputs}}',
+    //       '{{#ifCond type "===" "text"}}',
+    //         '<input type="text" class="{{class}}" placeholder="{{placeholder}}" {{#if query}}data-query="{{query}}"{{/if}}/>',
+    //       '{{else}}{{#ifCond type "===" "dropdown"}}',
+    //         '{{> searchDropDown this}}',
+    //       '{{/ifCond}}{{/ifCond}}',
+    //     '{{/each}}',
+    //     '</div>',
+    //   '</td></tr>',
+    // ].join(''));
 
     /**
      * Create a drop down. Required context:
@@ -352,16 +352,16 @@ $.SearchWidget.prototype = {
      *   'addBlank': OPTIONAL set to TRUE to add a blank option at the top
      * }
      */
-    Handlebars.registerPartial('searchDropDown', [
-      '<select class="{{class}}" {{#if query}}data-query="{{query}}{{/if}}">',
-        '{{#if addBlank}}',
-          '<option></option>',
-        '{{/if}}',
-        '{{#each choices}}',
-          '<option value="{{this}}">{{this}}</option>',
-        '{{/each}}',
-      '</select>'
-    ].join(''));
+    // Handlebars.registerPartial('searchDropDown', [
+    //   '<select class="{{class}}" {{#if query}}data-query="{{query}}{{/if}}">',
+    //     '{{#if addBlank}}',
+    //       '<option></option>',
+    //     '{{/if}}',
+    //     '{{#each choices}}',
+    //       '<option value="{{this}}">{{this}}</option>',
+    //     '{{/each}}',
+    //   '</select>'
+    // ].join(''));
 
     /**
      * Handlebars helper that allows the evaluation of 2 input boolean comparisons.
