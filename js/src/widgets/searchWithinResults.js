@@ -291,7 +291,6 @@
         "on": canvasid + (coordinates ? "#" + coordinates : '')
         }];
 
-console.log("[SearchResults] clicked canvas id : " + canvasid);
       _this.parent.annotationsList = miniAnnotationList;
       _this.parent.parent.setCurrentCanvasID(canvasid);
     });
