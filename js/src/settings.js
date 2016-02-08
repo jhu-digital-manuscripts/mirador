@@ -32,6 +32,10 @@
 
     'layout': '1x1',
 
+    'openManifestsPage' : false, //defaults to false, whether or not Mirador should display the manifests page, 
+                                //only valid if no windowObjects have been initialized
+                                //if there are multiple slots, it will be bound to the first slot and the selected manifest will open in that slot
+
     'windowObjects' : [
       /** within a single object, the following options:
        *   "loadedManifest": [manifestURI] e.g. "http://dms-data.stanford.edu/data/manifests/Walters/qm670kv1873/manifest.json"
@@ -44,6 +48,11 @@
        *   "bottomPanelVisible" : [_true_, false] whether or not to make the bottom panel visible in this window on load. This setting is dependent
        *                           on bottomPanel being true
        *   "sidePanel" : [_true_, false] whether or not to make the side panel available in this window
+       *   "sidePanelOptions" : control individual menu items in layout menu. if "displayLayout" is false, these options won't be applied
+       *     {
+       *     "toc" : [_true_, false]
+       *     "annotations" : [true, _false_]
+       *     }
        *   "sidePanelVisible" : [_true_, false] whether or not to make the side panel visible in this window on load. This setting is dependent
        *                           on sidePanel being true
        *   "overlay" : [_true_, false] whether or not to make the overlay available/visible in this window
@@ -110,9 +119,13 @@
     //true or false.  controls display of "Add new object from URL" on manifest listing page
     'showAddFromURLBox' : true,
 
-    'i18nPath' : 'build/mirador/locales/',
+    'buildPath' : 'build/mirador/',
 
-    'logosLocation' : 'build/mirador/images/logos/',
+    'i18nPath' : 'locales/',
+
+    'imagesPath' : 'images/',
+
+    'logosPath' : 'images/logos/',
 
     'repoImages' : {
       'other': 'iiif_logo.png'
@@ -131,6 +144,16 @@
      *  }
      **/
     'annotationEndpoint': {},
+
+    'jsonStorageEndpoint': {
+	'name': 'JSONBlob API Endpoint',
+	'module': 'JSONBlobAPI',
+	'options': {
+		'ssl': true,
+		'port': '443',
+		'host': 'jsonblob.com'
+	}
+    },
 
     'sharingEndpoint': {
       'url': '',

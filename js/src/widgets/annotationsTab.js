@@ -1,4 +1,4 @@
-(function($) {
+   (function($) {
 
     $.AnnotationsTab = function(options) {
         jQuery.extend(true, this, {
@@ -15,13 +15,14 @@
     $.AnnotationsTab.prototype = {
         init: function() {
             var _this = this;
-            jQuery.unsubscribe(('modeChange.' + _this.windowId));
             this.windowId = this.parent.id;
 
             this.state({
+                id: 'annotationsTab',
                 visible: this.visible,
                 annotationLists: [],
                 selectedList: null,
+                empty: true,
                 focusedList: null
             }, true);
 
@@ -33,8 +34,7 @@
         state: function(state, initial) {
             if (!arguments.length) return this.annoTabState;
             this.annoTabState = state;
-            //console.log(arguments.length);
-            //console.log('initial: ' + initial);
+
             if (!initial) {
                 jQuery.publish('annotationsTabStateUpdated.' + this.windowId, this.annoTabState);
             }
@@ -84,6 +84,10 @@
                 };
             });
 
+            if(state.annotationLists.length){
+              state.empty = false;
+            }
+
             this.state(state);
         },
         deselectList: function(listId) {
@@ -114,7 +118,7 @@
                 _this.render(data);
             });
 
-            jQuery.subscribe('tabStateUpdated' + _this.windowId, function(_, data) {
+            jQuery.subscribe('tabStateUpdated.' + _this.windowId, function(_, data) {
                 _this.tabStateUpdated(data.annotationsTab);
             });
 
@@ -190,15 +194,15 @@
             //}
         },
         template: Handlebars.compile([
-            '<div class="annotationsPanel">',
+          '<div class="annotationsPanel">',
             '<ul class="annotationSources">',
-            '{{#each annotationSources}}',
-            '<li class="annotationListItem {{#if this.selected}}selected{{/if}} {{#if this.focused }}focused{{/if}}" data-id="{{this.annotationSource}}">',
-                    '<span>{{this.annotationSource}}</span>',
-            '</li>',
-            '{{/each}}',
+              '{{#each annotationSources}}',
+                '<li class="annotationListItem {{#if this.selected}}selected{{/if}} {{#if this.focused }}focused{{/if}}" data-id="{{this.annotationSource}}">',
+                  '<span>{{this.annotationSource}}</span>',
+                '</li>',
+              '{{/each}}',
             '</ul>',
-            '</div>',
+          '</div>',
         ].join(''))
     };
 

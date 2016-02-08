@@ -44,7 +44,17 @@
       id : null,
       sidePanel: null, //the actual module for the side panel
       sidePanelAvailable: true,
+      sidePanelOptions: {
+        "toc" : true,
+        "annotations" : true
+      },
       sidePanelVisible: true,
+      annotationsAvailable: {
+        'ThumbnailsView' : false,
+        'ImageView' : true,
+        'ScrollView' : false,
+        'BookView' : false
+      },
       bottomPanel: null, //the actual module for the bottom panel
       bottomPanelAvailable: true,
       bottomPanelVisible: true,
@@ -111,13 +121,12 @@
           _this.focusOverlaysAvailable[key].bottomPanel = {'' : false};
         });
       }
-      if (typeof this.sidePanelAvailable !== 'undefined' && !this.sidePanelAvailable) {
-        jQuery.each(this.focusOverlaysAvailable, function(key, value) {
-          _this.focusOverlaysAvailable[key].sidePanel = {'' : false};
+
+      templateData.sidePanel = this.sidePanelAvailable;
+      if (this.sidePanelAvailable) {
+        templateData.sidePanel = !Object.keys(this.sidePanelOptions).every(function(element, index, array) {
+          return _this.sidePanelOptions[element] === false;
         });
-        templateData.sidePanel = false;
-      } else {
-        templateData.sidePanel = true;
       }
       if (typeof this.overlayAvailable !== 'undefined' && !this.overlayAvailable) {
         jQuery.each(this.focusOverlaysAvailable, function(key, value) {
@@ -172,7 +181,7 @@
       this.bindEvents();
 
       if (this.imagesList.length === 1) {
-        this.bottomPanelVisibility(false);      
+        this.bottomPanelVisibility(false);
       } else {
         this.bottomPanelVisibility(this.bottomPanelVisible);
       }
@@ -211,7 +220,7 @@
       var _this = this;
 
       //this event should trigger from layout
-      jQuery.subscribe('windowResize', $.debounce(function(){
+      jQuery(window).resize($.debounce(function(){
         if (_this.focusModules.ScrollView) {
           var containerHeight = _this.element.find('.view-container').height();
           var triggerShow = false;
@@ -239,17 +248,23 @@
         }
       });
 
-      jQuery.subscribe('sidePanelStateUpdated' + this.id, function(event, state) {
-          if (state.open) {
-              _this.element.find('.fa-list').switchClass('fa-list', 'fa-caret-down');
-              _this.element.find('.mirador-icon-toc').addClass('selected');
-              _this.element.find('.view-container').removeClass('maximised');
-          } else {
-              _this.element.find('.mirador-icon-toc').removeClass('selected');
-              _this.element.find('.fa-caret-down').switchClass('fa-caret-down', 'fa-list');
-              _this.element.find('.view-container').addClass('maximised');
-          }
+      jQuery.subscribe('sidePanelStateUpdated.' + this.id, function(event, state) {
+        if (state.open) {
+            _this.element.find('.fa-list').switchClass('fa-list', 'fa-caret-down');
+            _this.element.find('.mirador-icon-toc').addClass('selected');
+            _this.element.find('.view-container').removeClass('maximised');
+        } else {
+            _this.element.find('.mirador-icon-toc').removeClass('selected');
+            _this.element.find('.fa-caret-down').switchClass('fa-caret-down', 'fa-list');
+            _this.element.find('.view-container').addClass('maximised');
+        }
+    });
+
+      // TODO: temporary logic to minimize side panel if only tab is toc and toc is empty
+      jQuery.subscribe('sidePanelVisibilityByTab.' + this.id, function(event, visible) {
+        _this.sidePanelVisibility(visible, '0s');
       });
+
     },
 
     bindAnnotationEvents: function() {
@@ -282,7 +297,7 @@
               return false;
             }
           });
-          jQuery.publish(('annotationListLoaded.' + _this.id));          
+          jQuery.publish(('annotationListLoaded.' + _this.id));
         },
         function() {
           console.log("There was an error updating this annotation");
@@ -368,6 +383,35 @@
       if (this.bottomPanel) { this.bottomPanel.updateFocusImages(this.focusImages); }
     },
 
+    updateSidePanel: function() {
+      if (!this.sidePanelAvailable) {
+        return;
+      }
+      var _this = this,
+      tocAvailable = _this.sidePanelOptions.toc,
+      annotationsTabAvailable = _this.sidePanelOptions.annotations,
+      hasStructures = true;
+
+      var structures = _this.manifest.getStructures();
+      if (!structures || structures.length === 0) {
+        hasStructures = false;
+      }
+
+      if (this.sidePanel === null) {
+        this.sidePanel = new $.SidePanel({
+              parent: _this,
+              appendTo: _this.element.find('.sidePanel'),
+              manifest: _this.manifest,
+              canvasID: _this.currentCanvasID,
+              tocTabAvailable: tocAvailable,
+              annotationsTabAvailable: annotationsTabAvailable,
+              hasStructures: hasStructures
+        });
+      } else {
+        this.sidePanel.update('annotations', annotationsTabAvailable);
+      }
+    },
+
     get: function(prop, parent) {
       if (parent) {
         return this[parent][prop];
@@ -383,7 +427,7 @@
       }
     },
 
-    setTOCBoolean: function(boolValue) {
+    /*setTOCBoolean: function(boolValue) {
       var _this = this;
       jQuery.each(this.focusOverlaysAvailable, function(key, value) {
         _this.focusOverlaysAvailable[key].sidePanel.SidePanel = boolValue;
@@ -392,7 +436,7 @@
       if (!boolValue) {
         this.element.find('.mirador-icon-toc').hide();
       }
-    },
+    },*/
 
     togglePanels: function(panelType, panelState, viewType, focusState) {
       //update state in focusOverlaysAvailable
@@ -407,7 +451,7 @@
       tocIconElement = this.element.find('.mirador-icon-toc'),
       sidePanelElement = this.element.find('.sidePanel'),
       viewContainerElement = this.element.find('.view-container');
-      
+
       sidePanelElement.css('transition-duration', transitionDuration);
       viewContainerElement.css('transition', transitionDuration);
       if (visible && sidePanelElement.hasClass('minimized')) {
@@ -478,6 +522,8 @@
       this.focusModules[focusState].toggle(true);
       this.updateManifestInfo();
       this.updatePanelsAndOverlay(focusState);
+      this.updateSidePanel();
+      jQuery.publish("focusUpdated");
       jQuery.publish("windowUpdated", {
         id: _this.id,
         viewType: _this.currentFocus,
@@ -492,10 +538,10 @@
       this.currentCanvasID = canvasID;
       if (this.focusModules.ThumbnailsView === null) {
         this.focusModules.ThumbnailsView = new $.ThumbnailsView({
-          manifest: this.manifest, 
-          appendTo: this.element.find('.view-container'), 
-          parent: this, 
-          canvasID: this.currentCanvasID, 
+          manifest: this.manifest,
+          appendTo: this.element.find('.view-container'),
+          parent: this,
+          canvasID: this.currentCanvasID,
           imagesList: this.imagesList
         });
       } else {
@@ -579,6 +625,7 @@
       var _this = this;
       this.currentCanvasID = canvasID;
       jQuery.publish('removeTooltips.' + _this.id);
+      jQuery.unsubscribe(('annotationListLoaded.' + _this.id));
       while(_this.annotationsList.length > 0) {
         _this.annotationsList.pop();
       }
@@ -647,6 +694,13 @@
 
       if (url !== false) {
         jQuery.get(url, function(list) {
+
+// ------- TODO REMOVE THIS ----------------------------------------------------
+// ------- artifact of loading static text file --------------------------------
+list = JSON.parse(list);
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
           _this.annotationsList = _this.annotationsList.concat(list.resources);
           jQuery.each(_this.annotationsList, function(index, value) {
             // if there is no ID for this annotation, set a random one
@@ -664,9 +718,8 @@
       if (this.annoEndpointAvailable) {
         var dfd = jQuery.Deferred(),
         module = $.viewer.annotationEndpoint.module,
-        options = $.viewer.annotationEndpoint.options;
-        name = $.viewer.annotationEndpoint.name;
-
+        options = $.viewer.annotationEndpoint.options; //grab anything from the config that should be passed directly to the endpoint
+        options.name = $.viewer.annotationEndpoint.name;
         // One annotation endpoint per window, the endpoint
         // is a property of the whole app instance.
         if ( _this.endpoint && _this.endpoint !== null ) {
@@ -691,9 +744,8 @@
           });
 
           jQuery.each( _this.annotationsList, function( key, value ) {
-
             if(jQuery.isArray(value.resource)){
-               _this.annotationsList[key].resource = value.resource[0];
+              _this.annotationsList[key].resource = value.resource[0];
             }
           });
           jQuery.publish('annotationListLoaded.' + _this.id);
@@ -705,139 +757,138 @@
     bindNavigation: function() {
       var _this = this;
 
-    this.element.find('.mirador-icon-image-view').on('mouseenter',
-      function() {
-      _this.element.find('.image-list').stop().slideFadeToggle(300);
-    }).on('mouseleave',
-    function() {
-      _this.element.find('.image-list').stop().slideFadeToggle(300);
-    });
+      this.element.find('.mirador-icon-image-view').on('mouseenter',
+        function() {
+        _this.element.find('.image-list').stop().slideFadeToggle(300);
+      })
+      .on('mouseleave', function() {
+        _this.element.find('.image-list').stop().slideFadeToggle(300);
+      });
 
-    this.element.find('.mirador-icon-window-menu').on('mouseenter',
-      function() {
-      _this.element.find('.slot-controls').stop().slideFadeToggle(300);
-    }).on('mouseleave',
-    function() {
-      _this.element.find('.slot-controls').stop().slideFadeToggle(300);
-    });
+      this.element.find('.mirador-icon-window-menu').on('mouseenter',
+        function() {
+        _this.element.find('.slot-controls').stop().slideFadeToggle(300);
+      })
+      .on('mouseleave', function() {
+        _this.element.find('.slot-controls').stop().slideFadeToggle(300);
+      });
 
-    this.element.find('.single-image-option').on('click', function() {
-      _this.toggleImageView(_this.currentCanvasID);
-    });
+      this.element.find('.single-image-option').on('click', function() {
+        _this.toggleImageView(_this.currentCanvasID);
+      });
 
-    this.element.find('.book-option').on('click', function() {
-      _this.toggleBookView(_this.currentCanvasID);
-    });
+      this.element.find('.book-option').on('click', function() {
+        _this.toggleBookView(_this.currentCanvasID);
+      });
 
-    this.element.find('.scroll-option').on('click', function() {
-      _this.toggleScrollView(_this.currentCanvasID);
-    });
+      this.element.find('.scroll-option').on('click', function() {
+        _this.toggleScrollView(_this.currentCanvasID);
+      });
 
-    this.element.find('.thumbnails-option').on('click', function() {
-      _this.toggleThumbnails(_this.currentCanvasID);
-    });
+      this.element.find('.thumbnails-option').on('click', function() {
+        _this.toggleThumbnails(_this.currentCanvasID);
+      });
 
-    this.element.find('.mirador-icon-metadata-view').on('click', function() {
-      _this.toggleMetadataOverlay(_this.currentFocus);
-    });
+      this.element.find('.mirador-icon-metadata-view').on('click', function() {
+        _this.toggleMetadataOverlay(_this.currentFocus);
+      });
 
-    this.element.find('.mirador-icon-toc').on('click', function() {
-      _this.sidePanelVisibility(!_this.sidePanelVisible, '0.3s');
-        //jQuery.publish('sidePanelToggled' + _this.id);
-    });
+      this.element.find('.mirador-icon-toc').on('click', function() {
+        _this.sidePanelVisibility(!_this.sidePanelVisible, '0.3s');
+          //jQuery.publish('sidePanelToggled' + _this.id);
+      });
 
-    this.element.find('.new-object-option').on('click', function() {
-      _this.parent.addItem();
-    });
+      this.element.find('.new-object-option').on('click', function() {
+        _this.parent.addItem();
+      });
 
-    this.element.find('.remove-object-option').on('click', function() {
-      $.viewer.workspace.removeNode(_this.parent);
-    });
+      this.element.find('.remove-object-option').on('click', function() {
+        $.viewer.workspace.removeNode(_this.parent);
+      });
 
-    this.element.find('.add-slot-right').on('click', function() {
-      $.viewer.workspace.splitRight(_this.parent);
-    });
+      this.element.find('.add-slot-right').on('click', function() {
+        $.viewer.workspace.splitRight(_this.parent);
+      });
 
-    this.element.find('.add-slot-left').on('click', function() {
-      $.viewer.workspace.splitLeft(_this.parent);
-    });
+      this.element.find('.add-slot-left').on('click', function() {
+        $.viewer.workspace.splitLeft(_this.parent);
+      });
 
-    this.element.find('.add-slot-below').on('click', function() {
-      $.viewer.workspace.splitDown(_this.parent);
-    });
+      this.element.find('.add-slot-below').on('click', function() {
+        $.viewer.workspace.splitDown(_this.parent);
+      });
 
-    this.element.find('.add-slot-above').on('click', function() {
-      $.viewer.workspace.splitUp(_this.parent);
-    });
+      this.element.find('.add-slot-above').on('click', function() {
+        $.viewer.workspace.splitUp(_this.parent);
+      });
     },
 
     // template should be based on workspace type
     template: Handlebars.compile([
-                                 '<div class="window">',
-                                 '<div class="manifest-info">',
-                                 '<div class="window-manifest-navigation">',
-                                 '<a href="javascript:;" class="mirador-btn mirador-icon-image-view"><i class="fa fa-photo fa-lg fa-fw"></i>',
-                                 '<ul class="dropdown image-list">',
-                                 '{{#if ImageView}}',
-                                 '<li class="single-image-option"><i class="fa fa-photo fa-lg fa-fw"></i> {{t "imageView"}}</li>',
-                                 '{{/if}}',
-                                 '{{#if BookView}}',
-                                 '<li class="book-option"><i class="fa fa-columns fa-lg fa-fw"></i> {{t "bookView"}}</li>',
-                                 '{{/if}}',
-                                 '{{#if ScrollView}}',
-                                 '<li class="scroll-option"><i class="fa fa-ellipsis-h fa-lg fa-fw"></i> {{t "scrollView"}}</li>',
-                                 '{{/if}}',
-                                 '</ul>',
-                                 '</a>',
-                                 '{{#if ThumbnailsView}}',
-                                 '<a href="javascript:;" class="mirador-btn mirador-icon-thumbs-view thumbnails-option"><i class="fa fa-th fa-lg fa-rotate-90 fa-fw"></i>',
-                                 '</a>',
-                                 '{{/if}}',
-                                 '{{#if MetadataView}}',
-                                 '<a href="javascript:;" class="mirador-btn mirador-icon-metadata-view" title="{{t "objectMetadata"}}"><i class="fa fa-info-circle fa-lg fa-fw"></i></a>',
-                                 '{{/if}}',
-                                 '</div>',
-                                 '{{#if displayLayout}}',
-                                 '<a href="javascript:;" class="mirador-btn mirador-icon-window-menu" title="{{t "changeLayout"}}"><i class="fa fa-table fa-lg fa-fw"></i>',
-                                 '<ul class="dropdown slot-controls">',
-                                 '{{#if layoutOptions.newObject}}',
-                                 '<li class="new-object-option"><i class="fa fa-plus-square fa-lg fa-fw"></i> {{t "newObject"}}</li>',
-                                 '{{/if}}',
-                                 '{{#if layoutOptions.close}}',
-                                 '<li class="remove-object-option"><i class="fa fa-times fa-lg fa-fw"></i> {{t "close"}}</li>',
-                                 '{{/if}}',
-                                 '{{#if layoutOptions.slotRight}}',
-                                 '<li class="add-slot-right"><i class="fa fa-caret-square-o-right fa-lg fa-fw"></i> {{t "addSlotRight"}}</li>',
-                                 '{{/if}}',
-                                 '{{#if layoutOptions.slotLeft}}',
-                                 '<li class="add-slot-left"><i class="fa fa-caret-square-o-left fa-lg fa-fw"></i> {{t "addSlotLeft"}}</li>',
-                                 '{{/if}}',
-                                 '{{#if layoutOptions.slotAbove}}',
-                                 '<li class="add-slot-above"><i class="fa fa-caret-square-o-up fa-lg fa-fw"></i> {{t "addSlotAbove"}}</li>',
-                                 '{{/if}}',
-                                 '{{#if layoutOptions.slotBelow}}',
-                                 '<li class="add-slot-below"><i class="fa fa-caret-square-o-down fa-lg fa-fw"></i> {{t "addSlotBelow"}}</li>',
-                                 '{{/if}}',
-                                 '</ul>',
-                                 '</a>',
-                                 '{{/if}}',
-                                 '{{#if sidePanel}}',
-                                 '<a href="javascript:;" class="mirador-btn mirador-icon-toc selected" title="View/Hide Table of Contents"><i class="fa fa-caret-down fa-lg fa-fw"></i></a>',
-                                 '{{/if}}',
-                                 '<h3 class="window-manifest-title">{{title}}</h3>',
-                                 '</div>',
-                                 '<div class="content-container">',
-                                 '{{#if sidePanel}}',
-                                 '<div class="sidePanel">',
-                                 '</div>',
-                                 '{{/if}}',
-                                 '<div class="view-container {{#unless sidePanel}}focus-max-width{{/unless}}">',
-                                 '<div class="overlay"></div>',
-                                 '<div class="bottomPanel">',
-                                 '</div>',
-                                 '</div>',
-                                 '</div>',
-                                 '</div>'
+     '<div class="window">',
+      '<div class="manifest-info">',
+        '<div class="window-manifest-navigation">',
+          '<a href="javascript:;" class="mirador-btn mirador-icon-image-view" role="button" aria-label="Change Image Mode"><i class="fa fa-photo fa-lg fa-fw"></i>',
+            '<ul class="dropdown image-list">',
+              '{{#if ImageView}}',
+                '<li class="single-image-option"><i class="fa fa-photo fa-lg fa-fw"></i> {{t "imageView"}}</li>',
+              '{{/if}}',
+              '{{#if BookView}}',
+                '<li class="book-option"><i class="fa fa-columns fa-lg fa-fw"></i> {{t "bookView"}}</li>',
+              '{{/if}}',
+              '{{#if ScrollView}}',
+                '<li class="scroll-option"><i class="fa fa-ellipsis-h fa-lg fa-fw"></i> {{t "scrollView"}}</li>',
+              '{{/if}}',
+            '</ul>',
+          '</a>',
+          '{{#if ThumbnailsView}}',
+            '<a href="javascript:;" class="mirador-btn mirador-icon-thumbs-view thumbnails-option" role="button" aria-label="Change to Thumbnails Mode"><i class="fa fa-th fa-lg fa-rotate-90 fa-fw"></i>',
+            '</a>',
+          '{{/if}}',
+          '{{#if MetadataView}}',
+            '<a href="javascript:;" class="mirador-btn mirador-icon-metadata-view" title="{{t "objectMetadata"}}" role="button" aria-label="View Information/Metadata about Object"><i class="fa fa-info-circle fa-lg fa-fw"></i></a>',
+          '{{/if}}',
+        '</div>',
+        '{{#if displayLayout}}',
+          '<a href="javascript:;" class="mirador-btn mirador-icon-window-menu" title="{{t "changeLayout"}}"><i class="fa fa-table fa-lg fa-fw"></i>',
+            '<ul class="dropdown slot-controls">',
+              '{{#if layoutOptions.newObject}}',
+                '<li class="new-object-option"><i class="fa fa-plus-square fa-lg fa-fw"></i> {{t "newObject"}}</li>',
+              '{{/if}}',
+              '{{#if layoutOptions.close}}',
+                '<li class="remove-object-option"><i class="fa fa-times fa-lg fa-fw"></i> {{t "close"}}</li>',
+              '{{/if}}',
+              '{{#if layoutOptions.slotRight}}',
+                '<li class="add-slot-right"><i class="fa fa-caret-square-o-right fa-lg fa-fw"></i> {{t "addSlotRight"}}</li>',
+              '{{/if}}',
+              '{{#if layoutOptions.slotLeft}}',
+                '<li class="add-slot-left"><i class="fa fa-caret-square-o-left fa-lg fa-fw"></i> {{t "addSlotLeft"}}</li>',
+              '{{/if}}',
+              '{{#if layoutOptions.slotAbove}}',
+                '<li class="add-slot-above"><i class="fa fa-caret-square-o-up fa-lg fa-fw"></i> {{t "addSlotAbove"}}</li>',
+              '{{/if}}',
+              '{{#if layoutOptions.slotBelow}}',
+                '<li class="add-slot-below"><i class="fa fa-caret-square-o-down fa-lg fa-fw"></i> {{t "addSlotBelow"}}</li>',
+              '{{/if}}',
+            '</ul>',
+          '</a>',
+        '{{/if}}',
+        '{{#if sidePanel}}',
+          '<a href="javascript:;" class="mirador-btn mirador-icon-toc selected" title="View/Hide Table of Contents"><i class="fa fa-caret-down fa-lg fa-fw"></i></a>',
+        '{{/if}}',
+        '<h3 class="window-manifest-title">{{title}}</h3>',
+        '</div>',
+        '<div class="content-container">',
+          '{{#if sidePanel}}',
+            '<div class="sidePanel">',
+            '</div>',
+          '{{/if}}',
+          '<div class="overlay"></div>',
+          '<div class="view-container {{#unless sidePanel}}focus-max-width{{/unless}}">',
+            '<div class="bottomPanel"></div>',
+          '</div>',
+        '</div>',
+      '</div>'
     ].join(''))
   };
 
