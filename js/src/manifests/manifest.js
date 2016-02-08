@@ -209,7 +209,9 @@
      * @return {[type]}          string
      */
     getCanvasLabel: function(canvasId) {
-      return canvasId ? this.canvasMap[canvasId.split('#')[0]].label : '';
+      console.assert(canvasId && canvasId !== '', "No canvasId was specified.");
+      var canvas = this.canvasMap[canvasId.split('#')[0]];
+      return canvas ? canvas.label : undefined;
     }
 
   };

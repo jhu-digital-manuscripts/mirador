@@ -110,6 +110,10 @@
       var canvasid = result.on;
       var canvaslabel = _this.getLabel(result);
 
+      if (!canvaslabel) {   // Do not add this result if no label is found
+        return;
+      }
+
       // If resource.on is an Object, containing extra information about the
       // parent object, set ID appropriately
       if (typeof canvasid === 'object') {
@@ -146,6 +150,10 @@
       var resource = canvases[0];
       var canvasid = resource;
       var canvaslabel = _this.getLabel(resource);
+
+      if (!canvaslabel) {   // Do not add this result if no label is found
+        return;
+      }
 
       // If you have the full annotation, set ID and label appropriately
       if (typeof canvasid === 'object') {
@@ -208,17 +216,22 @@
    * @return {[type]}          string label
    */
   getLabel: function(resource) {
+    var label;
+
     if (resource && typeof resource === 'object') {
       if (resource.label) {
         return resource.label;
+      } else if (resource.resource.label){
+        return resource.resource.label;
       } else if (resource.on && typeof resource.on === 'string') {
-        return 'Canvas ' + this.manifest.getCanvasLabel(resource.on);
+        label = this.manifest.getCanvasLabel(resource.on);
+        return label ? 'Canvas ' + label : undefined;
       } else if (resource.on && typeof resource.on === 'object') {
-        return resource.on.label ?
-            resource.on.label : 'Canvas ' + this.manifest.getCanvasLabel(resource.on['@id']);
+        label = resource.on.label ? resource.on.label : this.manifest.getCanvasLabel(resource.on['@id']);
+        return label ? 'Canvas ' + label : undefined;
       }
     } else {
-      return resource;
+      return undefined;
     }
   },
 
@@ -278,6 +291,7 @@
         "on": canvasid + (coordinates ? "#" + coordinates : '')
         }];
 
+console.log("[SearchResults] clicked canvas id : " + canvasid);
       _this.parent.annotationsList = miniAnnotationList;
       _this.parent.parent.setCurrentCanvasID(canvasid);
     });
