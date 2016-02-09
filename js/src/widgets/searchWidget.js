@@ -17,6 +17,8 @@ $.SearchWidget = function(options) {
     appendTo: null,
     element: null,
     searchObject: null,
+    width: 300,
+    panelState: false,
     manifest: null, // Manifest object. To get search service: this.manifest.getSearchWithinService()
     // query: {
     //   fields: [],
@@ -99,9 +101,27 @@ $.SearchWidget.prototype = {
     this.bindEvents();
   },
 
-  toggle: function(panelState) {
-    this.parent.element.find('.mirador-icon-search-within').toggleClass('selected');
+  toggle: function() {
+    var searchIcon = this.parent.element.find('.mirador-icon-search-within');
+    searchIcon.toggleClass('selected');
     this.element.stop().slideFadeToggle(300);
+    this.resizeParent(searchIcon.hasClass('selected'));
+  },
+
+  resizeParent: function(selected) {
+    // Resize image view
+    var view = this.parent.element.find('.view-container');
+
+    if (selected) {
+      var parentRight = view.position().left + view.width() - this.width;
+      if (this.element.position().left !== parentRight) {
+        this.element.css('left', parentRight + 'px');
+      }
+
+      view.css('width', view.width() - this.width + 'px');
+    } else {
+      view.css('width', view.width() + this.width + 'px');
+    }
   },
 
   bindEvents: function() {

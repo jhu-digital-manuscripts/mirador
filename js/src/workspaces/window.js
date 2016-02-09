@@ -131,6 +131,7 @@
       }
 
       if (typeof this.searchWidgetAvailable !== 'undefined' && !this.searchWidgetAvailable) {
+        // Set the 'searchWidget' overlay not available in all views
         jQuery.each(this.focusOverlaysAvailable, function(key, value) {
           _this.focusOverlaysAvailable[key].overlay = {'': false};
         });
@@ -415,7 +416,9 @@
         this.focusModules[this.currentFocus].adjustHeight('focus-max-height', panelState);
       } else if (panelType === 'sidePanel') {
         this.focusModules[this.currentFocus].adjustWidth('focus-max-width', panelState);
-      } else {}
+      } else if (panelType === 'searchWidget') {
+
+      }
     },
 
     toggleMetadataOverlay: function(focusState) {
@@ -588,7 +591,16 @@
 
     updateManifestInfo: function() {
       var _this = this;
+
+      // Determine whether or not the search panel was open. If so, its
+      // icon must remain selected after this update.
+      var searchIcon = this.element.find('.mirador-icon-search-within');
+      var searchSelected = searchIcon.hasClass('selected');
+
       this.element.find('.window-manifest-navigation').children().removeClass('selected');
+      if (searchSelected) {
+        searchIcon.addClass('selected');
+      }
       switch(_this.currentFocus) {
         case 'ThumbnailsView':
           //hide thumbnails button and highlight currentImageMode?
@@ -626,6 +638,14 @@
 
       if (url !== false) {
         jQuery.get(url, function(list) {
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+if (typeof list === 'string') {
+  list = JSON.parse(list);
+}
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
           _this.annotationsList = _this.annotationsList.concat(list.resources);
           jQuery.each(_this.annotationsList, function(index, value) {
             //if there is no ID for this annotation, set a random one

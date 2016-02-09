@@ -21,7 +21,7 @@
       osdCls: 'mirador-osd',
       elemAnno:         null,
       annoCls:          'annotation-canvas',
-      annotationLayerAvailable: null 
+      annotationLayerAvailable: null
     }, options);
 
     this.init();
@@ -29,8 +29,8 @@
 
   $.ImageView.prototype = {
 
-    init: function() {    
-      // check (for thumbnail view) if the canvasID is set. 
+    init: function() {
+      // check (for thumbnail view) if the canvasID is set.
       // If not, make it page/item 1.
       if (this.canvasID !== null) {
         this.currentImgIndex = $.getImageIndexById(this.imagesList, this.canvasID);
@@ -48,8 +48,8 @@
       .addClass(this.annoCls)
       .appendTo(this.element);
       this.createOpenSeadragonInstance($.Iiif.getImageUrl(this.currentImg));
-      this.parent.updateFocusImages([this.canvasID]); 
-      // The hud controls are consistent 
+      this.parent.updateFocusImages([this.canvasID]);
+      // The hud controls are consistent
       // throughout any updates to the osd canvas.
       this.hud = new $.Hud({
         parent: this,
@@ -87,19 +87,19 @@
       var _this = this;
       this.osdOptions.osdBounds = this.osd.viewport.getBounds(true);
       jQuery.publish("imageBoundsUpdated", {
-        id: _this.parent.id, 
+        id: _this.parent.id,
         osdBounds: {
-          x: _this.osdOptions.osdBounds.x, 
-          y: _this.osdOptions.osdBounds.y, 
-          width: _this.osdOptions.osdBounds.width, 
+          x: _this.osdOptions.osdBounds.x,
+          y: _this.osdOptions.osdBounds.y,
+          width: _this.osdOptions.osdBounds.width,
           height: _this.osdOptions.osdBounds.height
         }
       });
     },
 
     toggle: function(stateValue) {
-      if (stateValue) { 
-        this.show(); 
+      if (stateValue) {
+        this.show();
       } else {
         this.hide();
       }
@@ -163,7 +163,7 @@
             jQuery.publish('modeChange.' + _this.windowId, 'displayAnnotations');          
           }
 
-          // A hack. Pop the osd overlays layer after the canvas so 
+          // A hack. Pop the osd overlays layer after the canvas so
           // that annotations appear.
           jQuery(_this.osd.canvas).children().first().remove().appendTo(_this.osd.canvas);
 
