@@ -1667,11 +1667,10 @@ div.manifest-info a.mirador-btn.mirador-icon-toc {
 /* Search Within */
 .searchResults  {
   overflow: scroll;
-  background-color: white;
-  color: black;
+  background-color: black;
+  color: white;
   opacity: .9;
   position: absolute;
-  /*left: 80%;*/
   top: 0%;
   width: 300px;
   height: 100%;
@@ -1719,4 +1718,6 @@ div.manifest-info a.mirador-btn.mirador-icon-toc {
 }
 .search-results-list .result-wrapper .result-paragraph .highlight {
   background-color: rgb(255, 255, 0);
+  padding: 0px 5px;
+  color: black;
 }
