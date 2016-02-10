@@ -243,8 +243,13 @@
     this.element.find('.js-show-canvas').on("click", function() {
       var canvasid = jQuery(this).attr('data-canvasid');
       var coordinates = jQuery(this).attr('data-coordinates');
-      jQuery(".result-wrapper").css("background-color", "inherit");
-      jQuery(this).parent().css("background-color", "lightyellow");
+      // jQuery(".result-wrapper").css("background-color", "inherit");
+      // jQuery(this).parent().css("background-color", "lightyellow");
+
+// console.log("[SearchResult]  " + JSON.stringify(_this.element.find('.search-results-container .selected'), null, 2));
+      _this.element.find('.selected').removeClass('selected');
+      jQuery(this).parent().addClass('selected');
+
       //if there was more than one annotation
       //(for example if a word crossed a line and needed two coordinates sets)
       //the miniAnnotationList should have multiple objects

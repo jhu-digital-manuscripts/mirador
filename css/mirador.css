@@ -1669,7 +1669,6 @@ div.manifest-info a.mirador-btn.mirador-icon-toc {
   overflow: scroll;
   background-color: black;
   color: white;
-  opacity: .9;
   position: absolute;
   top: 0%;
   width: 300px;
@@ -1679,8 +1678,8 @@ div.manifest-info a.mirador-btn.mirador-icon-toc {
 }
 .result-wrapper {
   border-bottom: 1px solid gray;
-  margin-bottom: 10px;
-  padding-bottom: 5px;
+  padding: 5px 0 8px 5px;
+  border-radius: 5px;
 }
 .search-result {
   cursor: pointer;
@@ -1720,4 +1719,7 @@ div.manifest-info a.mirador-btn.mirador-icon-toc {
   background-color: rgb(255, 255, 0);
   padding: 0px 5px;
   color: black;
+}
+.search-results-container .selected {
+  background-color: #787878;
 }

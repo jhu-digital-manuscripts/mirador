@@ -140,7 +140,7 @@ $.SearchWidget.prototype = {
       if (_this.parent.element.find('.mirador-icon-search-within').hasClass('selected')) {
         var newWidth = _this.parent.element.width() - _this.element.width();
         _this.parent.element.find('.view-container').width(newWidth);
-        _this.element.animate({left: _this.parent.element.position().left + newWidth + 'px'}, 300);
+        _this.element.animate({left: _this.parent.element.position().left + newWidth + 5 + 'px'}, 300);
       } else {
         _this.parent.element.find('.view-container').width(_this.parent.element.width());
       }
