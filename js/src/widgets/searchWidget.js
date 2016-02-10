@@ -124,8 +124,27 @@ $.SearchWidget.prototype = {
     }
   },
 
+  reposition: function(left) {
+    var view = this.parent.element.find('.view-container');
+    var parentRight = view.position().left + view.width() - this.element.width;
+
+    if (this.element.position().left !== parentRight) {
+      this.element.css('left', parentRight + 'px');
+    }
+  },
+
   bindEvents: function() {
     var _this = this;
+
+    jQuery.subscribe('layoutChanged', function(event, layoutRoot) {
+      if (_this.parent.element.find('.mirador-icon-search-within').hasClass('selected')) {
+        var newWidth = _this.parent.element.width() - _this.element.width();
+        _this.parent.element.find('.view-container').width(newWidth);
+        _this.element.animate({left: _this.parent.element.position().left + newWidth + 'px'}, 300);
+      } else {
+        _this.parent.element.find('.view-container').width(_this.parent.element.width());
+      }
+    });
 
     this.parent.element.find('.mirador-icon-search-within').on('click', function() {
       _this.toggle();

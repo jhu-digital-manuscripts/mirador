@@ -160,38 +160,6 @@
         canvasid = resource.on['@id'];
       }
 
-      // // -----------------------------------------------------------------------
-      // // ----- Ugly hack to get demo working -----------------------------------
-      // // -----------------------------------------------------------------------
-      // var id_arr = canvasid.split('/');
-      //
-      // var name_parts = id_arr[id_arr.length - 1].split('.');
-      // var name = '';
-      // name_parts = name_parts.slice(1, name_parts.length - 1).forEach(function(str, index) {
-      //   if (index !== 0) {
-      //     name += '%20';
-      //   }
-      //
-      //   if (str === 'frontmatter') {
-      //     name += 'front%20matter';
-      //   } else if (str === 'endmatter') {
-      //     name += 'end%20matter';
-      //   } else if (str.match(/\d+(r|v)/)) {
-      //     var num = parseInt(str.slice(0, str.length - 1));
-      //     name += num + str.charAt(str.length - 1);
-      //   } else {
-      //     name += str;
-      //   }
-      //
-      // });
-      //
-      // canvasid = canvasid.substring(0, canvasid.lastIndexOf('/'));
-      // canvasid += '/' + name;
-      //
-      // // -----------------------------------------------------------------------
-      // // ----- Must delete! ----------------------------------------------------
-      // // -----------------------------------------------------------------------
-
       // Extract coordinates if necessary
       var id_parts = _this.splitBaseUrlAndCoordinates(canvasid);
 
