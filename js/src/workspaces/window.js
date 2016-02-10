@@ -638,14 +638,6 @@
 
       if (url !== false) {
         jQuery.get(url, function(list) {
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-if (typeof list === 'string') {
-  list = JSON.parse(list);
-}
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
           _this.annotationsList = _this.annotationsList.concat(list.resources);
           jQuery.each(_this.annotationsList, function(index, value) {
             //if there is no ID for this annotation, set a random one
