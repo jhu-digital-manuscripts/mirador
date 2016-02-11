@@ -1681,7 +1681,7 @@ div.manifest-info a.mirador-btn.mirador-icon-toc {
   padding: 5px 0 8px 5px;
   border-radius: 5px;
 }
-.search-result {
+.js-show-canvas {
   cursor: pointer;
 }
 .search-title {

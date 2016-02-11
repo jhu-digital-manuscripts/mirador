@@ -62,7 +62,7 @@
       if (offset) {
         queryUrl += '&o=' + offset;
       }
-console.log("[SearchResults] requesting : " + queryUrl);
+
       this.searchResults = null;
 
       jQuery(this.appendTo).empty();
@@ -75,6 +75,16 @@ console.log("[SearchResults] requesting : " + queryUrl);
       })
       .done(function(searchResults) {
         _this.searchResults = searchResults;
+        // Need to massage results slightly to make it parsable by Handlebars -
+        // @id cannot be parsed. Move this value to property "id"
+        // IDs must be stripped of any fragment selectors if necessary
+        searchResults.matches.forEach(function(match) {
+          match.object.id = match.object['@id'].split('#')[0];
+          if (match.manifest) {
+            match.manifest.id = match.manifest['@id'].split('#')[0];
+          }
+        });
+
         _this.element = jQuery(_this.template(searchResults.matches)).appendTo(_this.appendTo);
 
         _this.bindEvents();
@@ -142,27 +152,21 @@ console.log("[SearchResults] requesting : " + queryUrl);
     var _this = this;
 
     this.element.find('.js-show-canvas').on("click", function() {
-      var canvasid = jQuery(this).attr('data-canvasid');
-      var coordinates = jQuery(this).attr('data-coordinates');
+      var canvasid = jQuery(this).attr('data-objectid');
 
+      // Escape early if invalid data is found
+      if (!canvasid) {
+        console.log("[SearchResult] No object to navigate to.");
+        return;
+      } else if (typeof canvasid !== 'string') {
+        console.log("[SearchResult] Result clicked object ID not a string. (" + canvasid + ")");
+      }
+
+      // Select only the clicked result.
       _this.element.find('.selected').removeClass('selected');
-      jQuery(this).parent().addClass('selected');
+      jQuery(this).addClass('selected');
 
-      //if there was more than one annotation
-      //(for example if a word crossed a line and needed two coordinates sets)
-      //the miniAnnotationList should have multiple objects
-      miniAnnotationList  = [{
-        "@id": "test",
-        "@type": "oa:Annotation",
-        "motivation": "sc:painting",
-        "resource": {
-          "@type": "cnt:ContentAsText",
-          "chars": _this.query
-        },
-        "on": canvasid
-        }];
-
-      _this.parent.parent.annotationsList = miniAnnotationList;
+      // Navigate to clicked object
       _this.parent.parent.setCurrentCanvasID(canvasid);
     });
   },
@@ -171,11 +175,11 @@ console.log("[SearchResults] requesting : " + queryUrl);
     Handlebars.registerPartial('resultsList', [
       '<div class="search-results-container">',
         '{{#each this}}',
-          '<div class="result-wrapper">',
-            '<a class="search-result search-title js-show-canvas" data-objectid="{{object.id}}" {{#if manifest}}data-manifestid="{{manifest.id}}"{{/if}}>',
+          '<div class="result-wrapper js-show-canvas" data-objectid="{{object.id}}" {{#if manifest}}data-manifestid="{{manifest.id}}"{{/if}}>',
+            '<a class="search-result search-title">',
               '{{object.label}}',
             '</a>',
-            '<div class="search-result result-paragraph js-show-canvas" data-canvasid="{{canvasid}}" data-coordinates="{{coordinates}}">',
+            '<div class="search-result result-paragraph">',
               '{{{context}}}',
             '</div>',
           '</div>',
