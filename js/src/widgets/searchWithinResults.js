@@ -44,7 +44,12 @@
         }
 
         _this.element = jQuery(_this.template(_this.tplData)).appendTo(_this.appendTo);
+
         _this.bindEvents();
+
+        if (_this.needsPager(searchResults)) {
+          _this.setPager(searchResults);
+        }
       });
     },
 
@@ -78,17 +83,21 @@
    */
   setPager: function(results) {
     var onPageCount = results.hits ? results.hits.length : results.resources.length;
-    var urlPrefix = 'blah';
+    var urlPrefix = 'http://localhost:8080/fake-search/aorcollection.FolgersHa2/manifest?q=blah&page=';
 
-    var startIndex = results.startIndex ? results.startIndex : results.
+    var startIndex = results.startIndex ? results.startIndex : 0;
 
-    $('.search-results-pager').pagination({
-        items: results.within.total,
+    this.element.find('.search-results-pager').pagination({
+        // items: results.within.total,
+        items: 200,
         itemsOnPage: onPageCount,
-        currentPage: this.float2int(results.within.total / onPageCount),
+        currentPage: this.float2int(startIndex / onPageCount),
         cssStyle: 'compact-theme',
         ellipsePageSet: true,
-        hrefTextPrefix: urlPrefix    // Take from the search results
+        hrefTextPrefix: urlPrefix,    // Take from the search results
+        onPageClick: function(pageNumber, event) {
+
+        }
     });
   },
 
@@ -243,10 +252,7 @@
     this.element.find('.js-show-canvas').on("click", function() {
       var canvasid = jQuery(this).attr('data-canvasid');
       var coordinates = jQuery(this).attr('data-coordinates');
-      // jQuery(".result-wrapper").css("background-color", "inherit");
-      // jQuery(this).parent().css("background-color", "lightyellow");
 
-// console.log("[SearchResult]  " + JSON.stringify(_this.element.find('.search-results-container .selected'), null, 2));
       _this.element.find('.selected').removeClass('selected');
       jQuery(this).parent().addClass('selected');
 
@@ -269,6 +275,33 @@
     });
   },
 
+  registerHandlebars: function() {
+    Handlebars.registerPartial('resultsList', [
+      '<div class="search-results-container">',
+        '{{#each this}}',
+          '<div class="result-wrapper">',
+            '<a class="search-result search-title js-show-canvas" data-canvasid="{{canvasid}}" data-coordinates="{{coordinates}}">',
+              '{{canvaslabel}}',
+            '</a>',
+            '<div class="search-result result-paragraph js-show-canvas" data-canvasid="{{canvasid}}" data-coordinates="{{coordinates}}">',
+              '{{#if hit.before}}',
+                '{{hit.before}} ',
+              '{{/if}}',
+              '{{#if hit.match}}',
+                '<span class="highlight">{{hit.match}}</span>',
+              '{{else}}',
+                '{{resulttext}}',   // If this text must NOT be escaped, use:   '{{{resulttext}}}'
+              '{{/if}}',
+              '{{#if hit.after}}',
+                '{{ hit.after}}',
+              '{{/if}}',
+            '</div>',
+          '</div>',
+        '{{/each}}',
+      '</div>',
+    ].join(''));
+  },
+
   /**
    * Handlebars template. Accepts data and formats appropriately. To use,
    * just pass in the template data and this will return a String with
@@ -282,28 +315,9 @@
    * 	var htmlString = template(templateData);
    */
   template: Handlebars.compile([
-    '<div class="search-results-pager"></div>',
-    '<div class="search-results-container">',
-      '{{#each this}}',
-        '<div class="result-wrapper">',
-          '<a class="search-result search-title js-show-canvas" data-canvasid="{{canvasid}}" data-coordinates="{{coordinates}}">',
-            '{{canvaslabel}}',
-          '</a>',
-          '<div class="search-result result-paragraph js-show-canvas" data-canvasid="{{canvasid}}" data-coordinates="{{coordinates}}">',
-            '{{#if hit.before}}',
-              '{{hit.before}} ',
-            '{{/if}}',
-            '{{#if hit.match}}',
-              '<span class="highlight">{{hit.match}}</span>',
-            '{{else}}',
-              '{{resulttext}}',   // If this text must NOT be escaped, use:   '{{{resulttext}}}'
-            '{{/if}}',
-            '{{#if hit.after}}',
-              '{{ hit.after}}',
-            '{{/if}}',
-          '</div>',
-        '</div>',
-      '{{/each}}',
+    '<div>',
+      '<div class="search-results-pager"></div>',
+      '{{> resultsList }}',
     '</div>'
   ].join(""))};
 

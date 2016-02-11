@@ -194,6 +194,11 @@ $.SearchWidget.prototype = {
     });
   },
 
+  /**
+   * Execute the search by making a request to the search service.
+   * The query fragments from the UI elements must first be adapted
+   * into the standard query format before being sent to the server.
+   */
   performAdvancedSearch: function() {
     var _this = this;
     var total = '';
