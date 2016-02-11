@@ -17,6 +17,7 @@
       metadataTypes:        null,
       metadataListingCls:   'metadata-listing',
       query:                null,
+      results:              null,
       searchService:        null,
     }, options);
 
@@ -26,43 +27,70 @@
   $.SearchWithinResults.prototype = {
 
     init: function() {
+      this.registerHandlebars();
+      this.searchService = this.manifest.getSearchWithinService();
+
+      this.search(this.query);
+    },
+
+    /**
+     * Submit AJAX request to search service. The returned results are displayed
+     * in the results '.search-results-container'
+     *
+     * @param  'string' query       query string, using server query syntax
+     * @param  'number' offset      (OPTIONAL) offset within total results list, if paged
+     * @param  'number' numExpected (OPTIONAL) number of results to return, if results are paged
+     * @param  'string' resumeToken (OPTIONAL) resume token for the search service to resume a paged search
+     * @return                      the JSON-LD search results from the search service
+     */
+    search: function(query, offset, numExpected, resumeToken) {
+      console.assert(query && typeof query === 'string', "Query must exist and must be a String");
+      console.assert(offset ? typeof offset === 'number' : true, "Offset value provided must be a number.");
+      console.assert(numExpected ? typeof numExpected === 'number' : true, "numExpected value provided must be a number.");
+      console.assert(resumeToken ? typeof resumeToken === 'string' : true, "Resume token value provided must be a string.");
       var _this = this;
 
-      _this.searchService = this.manifest.getSearchWithinService();
+      this.query = query;
+
+      var queryUrl = this.searchService['@id'] + "?q=" + query;
+      if (numExpected) {
+        queryUrl += '&m=' + numExpected;
+      }
+      if (resumeToken) {
+        queryUrl += '&r=' + resumeToken;
+      }
+      if (offset) {
+        queryUrl += '&o=' + offset;
+      }
+console.log("[SearchResults] requesting : " + queryUrl);
+      this.searchResults = null;
 
       jQuery(this.appendTo).empty();
-      jQuery("<h1>Search results for: " + _this.query + "</h1>").appendTo(_this.appendTo);
+      jQuery(this.queryMessage(query)).appendTo(_this.appendTo);
 
-      this.searchRequest(this.query).done(function(searchResults) {
-
-        //create tplData array
-        if (searchResults.hits) {
-          _this.tplData = _this.getHits(searchResults);
-        }
-        else {
-          _this.tplData = _this.getSearchAnnotations(searchResults);
-        }
-
-        _this.element = jQuery(_this.template(_this.tplData)).appendTo(_this.appendTo);
+      jQuery.ajax({
+        url:   queryUrl,
+        dataType: 'json',
+        async: true
+      })
+      .done(function(searchResults) {
+        _this.searchResults = searchResults;
+        _this.element = jQuery(_this.template(searchResults.matches)).appendTo(_this.appendTo);
 
         _this.bindEvents();
 
         if (_this.needsPager(searchResults)) {
           _this.setPager(searchResults);
         }
+      })
+      .fail(function() {
+        console.log("[SearchResults] window=" + _this.parent.parent.id + " search query failed (" + queryUrl + ")");
+      })
+      .always(function() {
+
       });
+
     },
-
-  // Base code from https://github.com/padolsey/prettyprint.js. Modified to fit Mirador needs
-  searchRequest: function(query ){
-    var _this = this;
-
-    return jQuery.ajax({
-        url:   _this.searchService['@id'] + "?q=" + query,
-        dataType: 'json',
-        async: true
-      });
-  },
 
   /**
    * Look for necessary properties that point to the need for paging.
@@ -71,7 +99,7 @@
    * @return TRUE if paging is needed
    */
   needsPager: function(results) {
-    return results && results.next;
+    return results.offset + results.max_matches < results.total;
   },
 
   /**
@@ -82,21 +110,20 @@
    * @param  results - IIIF Search results
    */
   setPager: function(results) {
-    var onPageCount = results.hits ? results.hits.length : results.resources.length;
-    var urlPrefix = 'http://localhost:8080/fake-search/aorcollection.FolgersHa2/manifest?q=blah&page=';
-
-    var startIndex = results.startIndex ? results.startIndex : 0;
+    var _this = this;
+    var onPageCount = results.max_matches;
 
     this.element.find('.search-results-pager').pagination({
-        // items: results.within.total,
-        items: 200,
+        items: results.total,
         itemsOnPage: onPageCount,
-        currentPage: this.float2int(startIndex / onPageCount),
+        currentPage: this.float2int(results.offset / onPageCount),
         cssStyle: 'compact-theme',
         ellipsePageSet: true,
-        hrefTextPrefix: urlPrefix,    // Take from the search results
         onPageClick: function(pageNumber, event) {
+          event.preventDefault();
 
+          var newOffset = (pageNumber - 1) * results.max_matches;
+          _this.search(_this.query, newOffset, results.max_matches, results.resume);
         }
     });
   },
@@ -109,141 +136,6 @@
    */
   float2int: function(num) {
     return num | 0;
-  },
-
-  getSearchAnnotations: function(searchResults) {
-    var _this = this;
-    tplData = [];
-    searchResults.resources.forEach(function(result){
-      // Set to resouce.on, which is usually a simple String ID
-      var canvasid = result.on;
-      var canvaslabel = _this.getLabel(result);
-
-      if (!canvaslabel) {   // Do not add this result if no label is found
-        return;
-      }
-
-      // If resource.on is an Object, containing extra information about the
-      // parent object, set ID appropriately
-      if (typeof canvasid === 'object') {
-        canvasid = result.on['@id'];
-      }
-
-      // Split ID from Coordinates if necessary
-      var id_parts = _this.splitBaseUrlAndCoordinates(canvasid);
-
-      resultobject = {
-        canvasid: id_parts.base,
-        coordinates: id_parts.coords,
-        canvaslabel: canvaslabel,
-        resulttext: result.resource.chars
-      };
-
-      tplData.push(resultobject);
-    });
-    return tplData;
-  },
-
-  getHits: function(searchResults) {
-    var _this = this;
-    tplData = [];
-    searchResults.hits.forEach(function(hit) {
-      //this seems like a really slow way to retrieve on property from hits
-      //note that at present it is only retrieving the first annotation
-      //but a hit annotation property takes an array and could have more than one
-      //annotation -- its not a very common case but a possibility.
-      var annotation = hit.annotations[0];
-      //canvases could come back as an array
-      var canvases = _this.getHitResources(searchResults, annotation);
-
-      var resource = canvases[0];
-      var canvasid = resource;
-      var canvaslabel = _this.getLabel(resource);
-
-      if (!canvaslabel) {   // Do not add this result if no label is found
-        return;
-      }
-
-      // If you have the full annotation, set ID and label appropriately
-      if (typeof canvasid === 'object') {
-        canvasid = resource.on['@id'];
-      }
-
-      // Extract coordinates if necessary
-      var id_parts = _this.splitBaseUrlAndCoordinates(canvasid);
-
-      resultobject = {
-        canvasid: id_parts.base,
-        coordinates: id_parts.coords,
-        canvaslabel: canvaslabel,
-        hit: hit      // TODO must handle different results structures, see IIIF search spec for different responses
-      };
-
-      tplData.push(resultobject);
-    });
-    return tplData;
-  },
-
-  /**
-   * Get a label describing a search match. This label is set to the
-   * associated annotation label, if available, or to the label of the
-   * parent canvas.
-   *
-   * @param  {[type]} resource annotation associated with the search match
-   * @return {[type]}          string label
-   */
-  getLabel: function(resource) {
-    var label;
-
-    if (resource && typeof resource === 'object') {
-      if (resource.label) {
-        return resource.label;
-      } else if (resource.resource.label){
-        return resource.resource.label;
-      } else if (resource.on && typeof resource.on === 'string') {
-        label = this.manifest.getCanvasLabel(resource.on);
-        return label ? 'Canvas ' + label : undefined;
-      } else if (resource.on && typeof resource.on === 'object') {
-        label = resource.on.label ? resource.on.label : this.manifest.getCanvasLabel(resource.on['@id']);
-        return label ? 'Canvas ' + label : undefined;
-      }
-    } else {
-      return undefined;
-    }
-  },
-
-  getHitResources: function(searchResults, annotationid) {
-    // Get array of results
-    return searchResults.resources.filter(function(resource){
-      return resource['@id'] === annotationid;
-    });
-  },
-
-  /**
-   * @param  url - a resource ID
-   * @return {
-   *   base: base URL, or the original url param if no coords are present,
-   *   coords: coordinates from ID if present
-   * }
-   */
-  splitBaseUrlAndCoordinates: function(url) {
-    var coordinates;
-    var base = url;
-
-    if (typeof url === 'string') {
-      // Separate base ID from fragment selector
-      var parts = url.split('#');
-
-      base = parts[0];
-      if (parts.length === 2) {
-        coordinates = parts[1];
-      }
-    }
-
-    return {
-      base: base,
-      coords: coordinates
-    };
   },
 
   bindEvents: function() {
@@ -267,10 +159,10 @@
           "@type": "cnt:ContentAsText",
           "chars": _this.query
         },
-        "on": canvasid + (coordinates ? "#" + coordinates : '')
+        "on": canvasid
         }];
 
-      _this.parent.annotationsList = miniAnnotationList;
+      _this.parent.parent.annotationsList = miniAnnotationList;
       _this.parent.parent.setCurrentCanvasID(canvasid);
     });
   },
@@ -280,27 +172,19 @@
       '<div class="search-results-container">',
         '{{#each this}}',
           '<div class="result-wrapper">',
-            '<a class="search-result search-title js-show-canvas" data-canvasid="{{canvasid}}" data-coordinates="{{coordinates}}">',
-              '{{canvaslabel}}',
+            '<a class="search-result search-title js-show-canvas" data-objectid="{{object.id}}" {{#if manifest}}data-manifestid="{{manifest.id}}"{{/if}}>',
+              '{{object.label}}',
             '</a>',
             '<div class="search-result result-paragraph js-show-canvas" data-canvasid="{{canvasid}}" data-coordinates="{{coordinates}}">',
-              '{{#if hit.before}}',
-                '{{hit.before}} ',
-              '{{/if}}',
-              '{{#if hit.match}}',
-                '<span class="highlight">{{hit.match}}</span>',
-              '{{else}}',
-                '{{resulttext}}',   // If this text must NOT be escaped, use:   '{{{resulttext}}}'
-              '{{/if}}',
-              '{{#if hit.after}}',
-                '{{ hit.after}}',
-              '{{/if}}',
+              '{{{context}}}',
             '</div>',
           '</div>',
         '{{/each}}',
       '</div>',
     ].join(''));
   },
+
+  queryMessage: Handlebars.compile('<h1>Query: {{this}}</h1>'),
 
   /**
    * Handlebars template. Accepts data and formats appropriately. To use,
