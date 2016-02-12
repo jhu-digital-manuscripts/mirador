@@ -1715,6 +1715,9 @@ div.manifest-info a.mirador-btn.mirador-icon-toc {
 .advanced-search-underlines {
   margin: 5px;
 }
+.advanced-search-line {
+  border-bottom: 1px solid rgb( 146, 145, 145 );
+}
 .search-results-list .result-wrapper .result-paragraph .highlight {
   background-color: rgb(255, 255, 0);
   padding: 0px 5px;

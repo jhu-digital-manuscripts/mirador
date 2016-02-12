@@ -33,15 +33,14 @@ $.SearchWidget = function(options) {
       'categories': {
         'label': 'Categories',
         'class': 'advanced-search-categories',
-        // 'choices': ['all', 'marginalia', 'underlines', 'symbols', 'marks']
-        'choices': ['all']
+        'choices': ['all', 'marginalia', 'underlines', 'symbols', 'marks']
       },
       'inputs': {
         'all': {
           'label': 'All',
           'class': 'advanced-search-all',
           'type': 'text',
-          'placeholder': 'Search across all categories',
+          'placeholder': 'Search all categories',
           'query': 'all',
           'default': true
         },
@@ -51,7 +50,8 @@ $.SearchWidget = function(options) {
           "type": "dropdown",
           "choices": ['Asterisk', 'Bisectedcircle', 'Crown', 'JC', 'HT', 'LL', 'Mars', 'Mercury', 'Moon', 'Opposite_planets', 'Saturn', 'Square', 'SS', 'Sun', 'Venus'],
           'addBlank': true,
-          'query': 'symbol'
+          'query': 'symbol',
+          'placeholder': 'Search symboled text'
         },
         'marks': {
           "label": "Marks",
@@ -63,7 +63,8 @@ $.SearchWidget = function(options) {
             'semicolon', 'slash', 'straight_quotation_mark', 'tick', 'tilde', 'triple_dash', 'vertical_bar', 'X-sign'
           ],
           'addBlank': true,
-          'query': 'mark'
+          'query': 'mark',
+          'placeholder': 'Search marked text.'
         },
         'marginalia': {
           'label': "Marginalia",
@@ -201,48 +202,80 @@ $.SearchWidget.prototype = {
    */
   performAdvancedSearch: function() {
     var _this = this;
-    var total = '';
 
+    var queries = [];
     _this.element.find('.advanced-search-line').each(function(index, line) {
-      if (index !== 0) {
-        total += _this.query.delimiters.term;
-      }
       line = jQuery(line);
       var category = line.find('.advanced-search-categories').val();
 
-      var input = null;
-      switch (category) {
-        case 'marginalia':
-          input = line.find('.advanced-search-marginalia');
-          break;
-        case 'underlines':
-          input = line.find('.advanced-search-underlines');
-          break;
-        case 'symbols':
-          input = line.find('.advanced-search-symbols');
-          break;
-        case 'marks':
-          input = line.find('.advanced-search-marks');
-          break;
-        default:
-          input = line.find('.advanced-search-all');
-          break;
+      var inputs = line.find('.advanced-search-inputs').children()
+      .each(function(index, child) {
+        child = jQuery(child);
+
+        // Only grab visible inputs
+        if (child.css('display') != 'none') {
+
+          if (child.is('input') && _this.search.inputs[category].type === 'dropdown') {
+            queries.push('text:' + child.val());
+          } else {
+            queries.push([
+              child.data('query'),
+               _this.query.delimiters.field,
+               child.val()
+             ].join(''));
+          }
+        }
+      });
+    });
+console.log("[SearchWidget] query = " + JSON.stringify(queries, null, 2));
+
+    var finalQuery = this.terms2query(queries);
+    if (finalQuery && finalQuery.length > 0) {
+      this.displaySearchWithin(finalQuery);
+    }
+  },
+
+  terms2query: function(terms) {
+    console.assert(terms, "Provided 'terms' must exist.");
+    var _this = this;
+
+    var query = '';
+    var frag = '';
+    var frag_start = false;
+    terms.forEach(function(term) {
+      if (!term || term.length <= 0) {
+        return;
       }
+      // All terms
+      //  fragment already started?
+      //    yes : add '(' to beginning of fragment
+      //          append operator, current term, ')'
+      //          fragment ended
+      //          add '(' to start of query, append operator, fragment, ')'
+      //    no : start fragment
+      if (frag_start) {
+        frag = '(' + frag + _this.query.delimiters.term + term + ')';
+        if (query.length === 0) {
+          query = frag;
+        } else {
+          query = '(' + query + _this.query.delimiters.term + frag + ')';
+        }
 
-      var data = input.val();
-
-      // total += 'type' + _this.query.delimiters.field + input.data('query') +
-      //     _this.query.delimiters.term + '' + _this.query.delimiters.field;
-      if (data.indexOf(' ') >= 0) {
-        total += '"' + data + '"';
+        frag_start = false;
+        frag = '';
       } else {
-        total += data;
+        frag = term;
+        frag_start = true;
       }
     });
 
-    if (_this.isValidInput(total)) {
-      _this.displaySearchWithin(total);
+    // Could be a hanging term at the end if an odd number of terms were given.
+    // Add this to the end of the query
+    if (frag_start && frag && frag.length > 0) {
+      query = '(' + query + _this.query.delimiters.term + frag + ')';
     }
+console.log('[SearchWidget] final query = ' + query);
+    return query;
   },
 
   displaySearchWithin: function(query){
@@ -374,13 +407,12 @@ $.SearchWidget.prototype = {
         '{{> searchDropDown search.categories }}',
       '</td>',
       '<td>',
-        '<div>',
+        '<div class="advanced-search-inputs">',
         '{{#each search.inputs}}',
-          '{{#ifCond type "===" "text"}}',
-            '<input type="text" class="{{class}}" placeholder="{{placeholder}}" {{#if query}}data-query="{{query}}"{{/if}}/>',
-          '{{else}}{{#ifCond type "===" "dropdown"}}',
+          '{{#ifCond type "===" "dropdown"}}',
             '{{> searchDropDown this}}',
-          '{{/ifCond}}{{/ifCond}}',
+          '{{/ifCond}}',
+          '<input type="text" class="{{class}}" placeholder="{{placeholder}}" {{#if query}}data-query="{{query}}"{{/if}}/>',
         '{{/each}}',
         '</div>',
       '</td></tr>',
