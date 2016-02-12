@@ -52,6 +52,7 @@
 
       this.query = query;
 
+      // Create request URL from parameters
       var queryUrl = this.searchService['@id'] + "?q=" + query;
       if (numExpected) {
         queryUrl += '&m=' + numExpected;
@@ -63,11 +64,13 @@
         queryUrl += '&o=' + offset;
       }
 
+      // Clear search related stuff
       this.searchResults = null;
 
       jQuery(this.appendTo).empty();
       jQuery(this.queryMessage(query)).appendTo(_this.appendTo);
 
+      // Make the request
       jQuery.ajax({
         url:   queryUrl,
         dataType: 'json',

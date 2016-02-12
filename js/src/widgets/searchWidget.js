@@ -25,7 +25,7 @@ $.SearchWidget = function(options) {
       fieldRegex: /[A-Za-z]/,
       operators: ['AND', 'OR'],
       delimiters: {
-        'term': '%26',
+        'term': '&',
         'field': ':'
       }
     },
@@ -216,12 +216,14 @@ $.SearchWidget.prototype = {
         if (child.css('display') != 'none') {
 
           if (child.is('input') && _this.search.inputs[category].type === 'dropdown') {
-            queries.push('text:' + child.val());
+            queries.push('text:\'' + _this.escapeTerm(child.val() + "''"));
           } else {
             queries.push([
               child.data('query'),
-               _this.query.delimiters.field,
-               child.val()
+                _this.query.delimiters.field,
+                "'",
+                _this.escapeTerm(child.val()),
+                "'"
              ].join(''));
           }
         }
@@ -235,6 +237,24 @@ console.log("[SearchWidget] query = " + JSON.stringify(queries, null, 2));
     }
   },
 
+  /**
+   * Properly escape a query term in preparation to be sent to the
+   * search service.
+   *
+   * @param  string term
+   * @return string      escaped term
+   */
+  escapeTerm: function(term) {
+    return term ? term.replace("'", "\\'") : term;
+  },
+
+  /**
+   * Convert string inputs from the UI into a syntax that can be
+   * understood by the search service.
+   *
+   * @param  string terms array of escaped terms
+   * @return {[type]}       [description]
+   */
   terms2query: function(terms) {
     console.assert(terms, "Provided 'terms' must exist.");
     var _this = this;
