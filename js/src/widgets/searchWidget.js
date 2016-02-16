@@ -16,9 +16,7 @@ $.SearchWidget = function(options) {
     parent: null,   // Window object. To get window ID: this.parent.id
     appendTo: null,
     element: null,
-    searchObject: null,
     width: 330,
-    panelState: false,
     manifest: null, // Manifest object. To get search service: this.manifest.getSearchWithinService()
     query: {
       fields: [],
@@ -171,7 +169,7 @@ $.SearchWidget.prototype = {
 
     this.element.find(".js-perform-query").on('submit', function(event){
         event.preventDefault();
-        var query = _this.element.find(".js-query").val();
+        var query = "all:\'" + _this.element.find(".js-query").val() + "'";    // TODO must use all fields, instead of 'all'
         _this.displaySearchWithin(query);
     });
 
@@ -213,10 +211,10 @@ $.SearchWidget.prototype = {
         child = jQuery(child);
 
         // Only grab visible inputs
-        if (child.css('display') != 'none') {
+        if (child.css('display') != 'none' && child.val() && child.val() !== '') {
 
           if (child.is('input') && _this.search.inputs[category].type === 'dropdown') {
-            queries.push('text:\'' + _this.escapeTerm(child.val() + "''"));
+            queries.push(category + ':\'' + _this.escapeTerm(child.val() + "'"));
           } else {
             queries.push([
               child.data('query'),
@@ -245,7 +243,8 @@ console.log("[SearchWidget] query = " + JSON.stringify(queries, null, 2));
    * @return string      escaped term
    */
   escapeTerm: function(term) {
-    return term ? term.replace("'", "\\'") : term;
+    // return term ? term.replace("'", "\\'") : term;
+    return term;
   },
 
   /**
@@ -253,11 +252,20 @@ console.log("[SearchWidget] query = " + JSON.stringify(queries, null, 2));
    * understood by the search service.
    *
    * @param  string terms array of escaped terms
-   * @return {[type]}       [description]
+   * @return string       single formatted string following search syntax
    */
   terms2query: function(terms) {
     console.assert(terms, "Provided 'terms' must exist.");
     var _this = this;
+
+    // Return input if it is not an array
+    if (!jQuery.isArray(terms)) {
+      return terms;
+    }
+    // Short circuit if only 1 term exists
+    if (terms.length === 1) {
+      return terms[0];
+    }
 
     var query = '';
     var frag = '';
@@ -274,11 +282,11 @@ console.log("[SearchWidget] query = " + JSON.stringify(queries, null, 2));
       //          add '(' to start of query, append operator, fragment, ')'
       //    no : start fragment
       if (frag_start) {
-        frag = '(' + frag + _this.query.delimiters.term + term + ')';
+        frag = '(' + frag + ' ' + _this.query.delimiters.term + ' ' + term + ')';
         if (query.length === 0) {
           query = frag;
         } else {
-          query = '(' + query + _this.query.delimiters.term + frag + ')';
+          query = '(' + query + ' '+ _this.query.delimiters.term + ' '+ frag + ')';
         }
 
         frag_start = false;
@@ -295,14 +303,20 @@ console.log("[SearchWidget] query = " + JSON.stringify(queries, null, 2));
       query = '(' + query + _this.query.delimiters.term + frag + ')';
     }
 console.log('[SearchWidget] final query = ' + query);
+    // Trim leading and trailing parentheses
+    query = query.slice(1, query.length - 1);
+
     return query;
   },
 
   displaySearchWithin: function(query){
     var _this = this;
     if (query !== "") {
+console.log("[SearchWidget] original : " + query);
+      query = encodeURIComponent(query);
+console.log("[SearchWidget] encoded : " + query);
       searchService = (_this.manifest.getSearchWithinService());
-      this.searchObject = new $.SearchWithinResults({
+      new $.SearchWithinResults({
         manifest: _this.manifest,
         appendTo: _this.element.find(".search-results-list"),
         parent: _this,

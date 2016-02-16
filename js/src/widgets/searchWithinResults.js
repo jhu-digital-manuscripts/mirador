@@ -70,11 +70,11 @@
       jQuery(this.appendTo).empty();
       jQuery(this.queryMessage(query)).appendTo(_this.appendTo);
 
+console.log('[SearchResults] making request ' + queryUrl);
       // Make the request
-      jQuery.ajax({
+      var request = jQuery.ajax({
         url:   queryUrl,
-        dataType: 'json',
-        async: true
+        dataType: 'json'
       })
       .done(function(searchResults) {
         _this.searchResults = searchResults;
@@ -96,120 +96,120 @@
           _this.setPager(searchResults);
         }
       })
-      .fail(function() {
-        console.log("[SearchResults] window=" + _this.parent.parent.id + " search query failed (" + queryUrl + ")");
+      .fail(function(jqXHR, textStatus, errorThrown) {
+        console.log("[SearchResults] window=" + _this.parent.parent.id + " search query failed (" + queryUrl + ") " + errorThrown);
       })
       .always(function() {
-
+        console.log('[SearchResults] query done.');
       });
 
     },
 
-  /**
-   * Look for necessary properties that point to the need for paging.
-   *
-   * @param  results IIIF Search results
-   * @return TRUE if paging is needed
-   */
-  needsPager: function(results) {
-    return results.offset + results.max_matches < results.total;
-  },
+    /**
+     * Look for necessary properties that point to the need for paging.
+     *
+     * @param  results IIIF Search results
+     * @return TRUE if paging is needed
+     */
+    needsPager: function(results) {
+      return results.offset + results.max_matches < results.total;
+    },
 
-  /**
-   * Initialize search results pager. It is assumed that it has already
-   * been determined whether or not the pager needs to be created.
-   * If a pager is created, it will be inserted into the DOM.
-   *
-   * @param  results - IIIF Search results
-   */
-  setPager: function(results) {
-    var _this = this;
-    var onPageCount = results.max_matches;
+    /**
+     * Initialize search results pager. It is assumed that it has already
+     * been determined whether or not the pager needs to be created.
+     * If a pager is created, it will be inserted into the DOM.
+     *
+     * @param  results - IIIF Search results
+     */
+    setPager: function(results) {
+      var _this = this;
+      var onPageCount = results.max_matches;
 
-    this.element.find('.search-results-pager').pagination({
-        items: results.total,
-        itemsOnPage: onPageCount,
-        currentPage: this.float2int(results.offset / onPageCount),
-        cssStyle: 'compact-theme',
-        ellipsePageSet: true,
-        onPageClick: function(pageNumber, event) {
-          event.preventDefault();
+      this.element.find('.search-results-pager').pagination({
+          items: results.total,
+          itemsOnPage: onPageCount,
+          currentPage: this.float2int(results.offset / onPageCount),
+          cssStyle: 'compact-theme',
+          ellipsePageSet: true,
+          onPageClick: function(pageNumber, event) {
+            event.preventDefault();
 
-          var newOffset = (pageNumber - 1) * results.max_matches;
-          _this.search(_this.query, newOffset, results.max_matches, results.resume);
+            var newOffset = (pageNumber - 1) * results.max_matches;
+            _this.search(_this.query, newOffset, results.max_matches, results.resume);
+          }
+      });
+    },
+
+    /**
+     * Do a Bitwise OR to truncate decimal
+     *
+     * @param  num original number, could be integer or decimal
+     * @return integer with any decimal part of input truncated (no rounding)
+     */
+    float2int: function(num) {
+      return num | 0;
+    },
+
+    bindEvents: function() {
+      var _this = this;
+
+      this.element.find('.js-show-canvas').on("click", function() {
+        var canvasid = jQuery(this).attr('data-objectid');
+
+        // Escape early if invalid data is found
+        if (!canvasid) {
+          console.log("[SearchResult] No object to navigate to.");
+          return;
+        } else if (typeof canvasid !== 'string') {
+          console.log("[SearchResult] Result clicked object ID not a string. (" + canvasid + ")");
         }
-    });
-  },
 
-  /**
-   * Do a Bitwise OR to truncate decimal
-   *
-   * @param  num original number, could be integer or decimal
-   * @return integer with any decimal part of input truncated (no rounding)
-   */
-  float2int: function(num) {
-    return num | 0;
-  },
+        // Select only the clicked result.
+        _this.element.find('.selected').removeClass('selected');
+        jQuery(this).addClass('selected');
 
-  bindEvents: function() {
-    var _this = this;
+        // Navigate to clicked object
+        _this.parent.parent.setCurrentCanvasID(canvasid);
+      });
+    },
 
-    this.element.find('.js-show-canvas').on("click", function() {
-      var canvasid = jQuery(this).attr('data-objectid');
-
-      // Escape early if invalid data is found
-      if (!canvasid) {
-        console.log("[SearchResult] No object to navigate to.");
-        return;
-      } else if (typeof canvasid !== 'string') {
-        console.log("[SearchResult] Result clicked object ID not a string. (" + canvasid + ")");
-      }
-
-      // Select only the clicked result.
-      _this.element.find('.selected').removeClass('selected');
-      jQuery(this).addClass('selected');
-
-      // Navigate to clicked object
-      _this.parent.parent.setCurrentCanvasID(canvasid);
-    });
-  },
-
-  registerHandlebars: function() {
-    Handlebars.registerPartial('resultsList', [
-      '<div class="search-results-container">',
-        '{{#each this}}',
-          '<div class="result-wrapper js-show-canvas" data-objectid="{{object.id}}" {{#if manifest}}data-manifestid="{{manifest.id}}"{{/if}}>',
-            '<a class="search-result search-title">',
-              '{{object.label}}',
-            '</a>',
-            '<div class="search-result result-paragraph">',
-              '{{{context}}}',
+    registerHandlebars: function() {
+      Handlebars.registerPartial('resultsList', [
+        '<div class="search-results-container">',
+          '{{#each this}}',
+            '<div class="result-wrapper js-show-canvas" data-objectid="{{object.id}}" {{#if manifest}}data-manifestid="{{manifest.id}}"{{/if}}>',
+              '<a class="search-result search-title">',
+                '{{object.label}}',
+              '</a>',
+              '<div class="search-result result-paragraph">',
+                '{{{context}}}',
+              '</div>',
             '</div>',
-          '</div>',
-        '{{/each}}',
-      '</div>',
-    ].join(''));
-  },
+          '{{/each}}',
+        '</div>',
+      ].join(''));
+    },
 
-  queryMessage: Handlebars.compile('<h1>Query: {{this}}</h1>'),
+    queryMessage: Handlebars.compile('<h1>Query: {{this}}</h1>'),
 
-  /**
-   * Handlebars template. Accepts data and formats appropriately. To use,
-   * just pass in the template data and this will return a String with
-   * the formatted HTML which can then be inserted into the DOM.
-   *
-   * This template expects a IIIF AnnotationList formatted to represent
-   * IIIF Search results.
-   *
-   * EX: assume context:
-   * 	var templateData = { template data goes here }
-   * 	var htmlString = template(templateData);
-   */
-  template: Handlebars.compile([
-    '<div>',
-      '<div class="search-results-pager"></div>',
-      '{{> resultsList }}',
-    '</div>'
-  ].join(""))};
+    /**
+     * Handlebars template. Accepts data and formats appropriately. To use,
+     * just pass in the template data and this will return a String with
+     * the formatted HTML which can then be inserted into the DOM.
+     *
+     * This template expects a IIIF AnnotationList formatted to represent
+     * IIIF Search results.
+     *
+     * EX: assume context:
+     * 	var templateData = { template data goes here }
+     * 	var htmlString = template(templateData);
+     */
+    template: Handlebars.compile([
+      '<div>',
+        '<div class="search-results-pager"></div>',
+        '{{> resultsList }}',
+      '</div>'
+    ].join(""))};
 
 }(Mirador));

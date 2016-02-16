@@ -191,7 +191,8 @@
           }
         }
       }
-      else if (_this.jsonLd.service["@context"] === "http://iiif.io/api/search/0/context.json"){
+      else if (_this.jsonLd.service["@context"] === "http://iiif.io/api/search/0/context.json" ||
+          _this.jsonLd.service["@context"] === "http://manuscriptlib.org/jhiff/search/context.json"){
         service = _this.jsonLd.service;
       }
       else {
@@ -204,7 +205,7 @@
     /**
      * Get the label of the a canvas by ID, removing any region fragments
      * if necessary
-     * 
+     *
      * @param  {[type]} canvasId ID of desired canvas
      * @return {[type]}          string
      */
