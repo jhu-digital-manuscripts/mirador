@@ -19,6 +19,8 @@
       query:                null,
       results:              null,
       searchService:        null,
+      searchPrefix:         'jhsearch',
+      searchCollection:     null
     }, options);
 
     this.init();
@@ -53,7 +55,10 @@
       this.query = query;
 
       // Create request URL from parameters
-      var queryUrl = this.searchService['@id'] + "?q=" + query;
+      var queryUrl = this.baseUrl +
+          (this.baseUrl.charAt(this.baseUrl.length - 1) !== '/' ? '/' : '');
+
+      queryUrl += this.searchPrefix + '?q=' + this.query;
       if (numExpected) {
         queryUrl += '&m=' + numExpected;
       }
@@ -68,7 +73,7 @@
       this.searchResults = null;
 
       jQuery(this.appendTo).empty();
-      jQuery(this.queryMessage(query)).appendTo(_this.appendTo);
+      jQuery(this.queryMessage(decodeURIComponent(query))).appendTo(_this.appendTo);
 
 console.log('[SearchResults] making request ' + queryUrl);
       // Make the request
@@ -78,6 +83,12 @@ console.log('[SearchResults] making request ' + queryUrl);
       })
       .done(function(searchResults) {
         _this.searchResults = searchResults;
+
+        // Check for bad or no results.
+        if (!searchResults || !searchResults.matches || searchResults.matches.length === 0) {
+          jQuery(_this.noResultsMessage()).appendTo(_this.appendTo);
+        }
+
         // Need to massage results slightly to make it parsable by Handlebars -
         // @id cannot be parsed. Move this value to property "id"
         // IDs must be stripped of any fragment selectors if necessary
@@ -98,6 +109,7 @@ console.log('[SearchResults] making request ' + queryUrl);
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
         console.log("[SearchResults] window=" + _this.parent.parent.id + " search query failed (" + queryUrl + ") " + errorThrown);
+        jQuery(_this.errorMessage()).appentTo(_this.appentTo);
       })
       .always(function() {
         // console.log('[SearchResults] query done.');
@@ -191,7 +203,11 @@ console.log('[SearchResults] making request ' + queryUrl);
       ].join(''));
     },
 
-    queryMessage: Handlebars.compile('<h1>Query: {{this}}</h1>'),
+    queryMessage: Handlebars.compile('<p class="query">Query: {{this}}</p>'),
+
+    noResultsMessage: Handlebars.compile('<h1>No results found.</h1>'),
+
+    errorMessage: Handlebars.compile('<h1>An error occurred while searching.</h1>'),
 
     /**
      * Handlebars template. Accepts data and formats appropriately. To use,

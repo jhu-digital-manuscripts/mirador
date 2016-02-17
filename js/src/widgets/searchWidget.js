@@ -37,20 +37,20 @@ $.SearchWidget = function(options) {
         'label': 'Categories',
         'class': 'advanced-search-categories',
         'choices': [
-          'all', 'marginalia', 'underlines', 'symbols', 'marks'/*, 'object_id', 'object_type', 'object_label',
+          'marginalia', 'underlines', 'symbols', 'marks'/*, 'object_id', 'object_type', 'object_label',
           'collection_id', 'manifest_id', 'manifest_label', 'marginalia', 'underline', 'errata', 'mark',
           'symbol', 'numeral', 'drawing', 'image_name'*/
         ]
       },
       'inputs': { // TODO set field defaults!
-        'all': {
-          'label': 'All',
-          'class': 'advanced-search-all',
-          'type': 'text',
-          'placeholder': 'Search all categories',
-          'query': 'all',
-          'default': true
-        },
+        // 'all': {
+        //   'label': 'All',
+        //   'class': 'advanced-search-all',
+        //   'type': 'text',
+        //   'placeholder': 'Search all categories',
+        //   'query': 'all',
+        //   'default': true
+        // },
         'symbols': {
           "label": "Symbols",
           "class": "advanced-search-symbols",
@@ -78,7 +78,8 @@ $.SearchWidget = function(options) {
           'class': 'advanced-search-marginalia',
           'type': 'text',
           'placeholder': 'Search marginalia text',
-          'query': 'marginalia'
+          'query': 'marginalia',
+          'default': true
         },
         'underlines': {
           'label': 'Underlines',
@@ -183,9 +184,7 @@ $.SearchWidget.prototype = {
     this.element.find(".js-perform-query").on('submit', function(event){
         event.preventDefault();
 
-        var query = _this.addSearchWithinCriteria(
-          _this.generateAllQuery(_this.element.find('.js-query').val())
-        );
+        var query = _this.generateAllQuery(_this.element.find('.js-query').val());
         if (query && query.length > 0) {
           _this.displaySearchWithin(query);
         }
@@ -216,7 +215,7 @@ $.SearchWidget.prototype = {
     var query = [];
 
     this.search.categories.choices.forEach(function(choice) {
-      query.push(choice + _this.query.delimiters.field + "'" + value + "'");
+      query.push(_this.search.inputs[choice].query + _this.query.delimiters.field + "'" + _this.escapeTerm(value) + "'");
     });
 
     return this.terms2query(query, this.query.delimiters.or);
@@ -257,34 +256,9 @@ $.SearchWidget.prototype = {
       });
     });
 
-    var finalQuery = this.addSearchWithinCriteria(
-      this.terms2query(queries, queries.length === 1)
-    );
+    var finalQuery = this.terms2query(queries);
     if (finalQuery && finalQuery.length > 0) {
       this.displaySearchWithin(finalQuery, _this.query.delimiters.term);
-    }
-  },
-
-  /**
-   * Add a restriction term to a search query that will limit the
-   * search to a single IIIF object, either a manifest or collection.
-   * A pre-formatted query string is given to this function and
-   * the restriction term is appended.
-   *
-   * @param  string query original pre-formatted query
-   * @return array of search terms with new term appended
-   */
-  addSearchWithinCriteria: function(query, addParens) {
-    var objectTerm = this.element.find('.search-within-object-select').val();
-
-    if (!objectTerm || objectTerm.length === 0) {
-      return query;
-    }
-
-    if (addParens) {
-      return '(' + query + ')' + ' & ' + objectTerm;
-    } else {
-      return query + ' & ' + objectTerm;
     }
   },
 
@@ -359,7 +333,7 @@ $.SearchWidget.prototype = {
     }
 
     // Trim leading and trailing parentheses
-    query = query.slice(1, query.length - 1);
+    // query = query.slice(1, query.length - 1);
     return query;
   },
 
@@ -378,7 +352,8 @@ console.log("[SearchWidget] original : " + query);
         canvasID: _this.parent.currentCanvasID,
         imagesList: _this.imagesList,
         thumbInfo: {thumbsHeight: 80, listingCssCls: 'panel-listing-thumbs', thumbnailCls: 'panel-thumbnail-view'},
-        query: query
+        query: query,
+        baseUrl: _this.element.find('.search-within-object-select').val()
       });
     }
   },
@@ -462,8 +437,8 @@ console.log("[SearchWidget] original : " + query);
           '<p>',
             'Search within: ',
             '<select class="search-within-object-select">',
-              '<option value="manifest_id:\'{{search.manifest.id}}\'">{{search.manifest.label}}</option>',
-              '<option value="collection_id:\'{{search.collection.id}}\'">{{search.collection.label}}</option>',
+              '<option value="{{search.manifest.id}}">{{search.manifest.label}}</option>',
+              '<option value="{{search.collection.id}}">{{search.collection.label}}</option>',
             '</select>',
           '</p>',
         '</div>',

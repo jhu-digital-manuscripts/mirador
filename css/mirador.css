@@ -1676,10 +1676,17 @@ div.manifest-info a.mirador-btn.mirador-icon-toc {
   z-index: 1;
   padding: 15px;
 }
+.search-results-list .query {
+  font-style: italic;
+  color: grey;
+}
 .result-wrapper {
   border-bottom: 1px solid gray;
   padding: 5px 0 8px 5px;
   border-radius: 5px;
+}
+.js-show-canvas:hover {
+  background-color: #454545;
 }
 .js-show-canvas {
   cursor: pointer;
@@ -1722,5 +1729,5 @@ div.manifest-info a.mirador-btn.mirador-icon-toc {
   color: black;
 }
 .search-results-container .selected {
-  background-color: #787878;
+  background-color: #454545;
 }
