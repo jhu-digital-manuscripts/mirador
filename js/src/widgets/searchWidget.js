@@ -150,7 +150,7 @@ $.SearchWidget.prototype = {
 
     jQuery.subscribe('layoutChanged', function(event, layoutRoot) {
       if (_this.parent.element.find('.mirador-icon-search-within').hasClass('selected')) {
-        var newWidth = _this.parent.element.width() - _this.element.width();
+        var newWidth = _this.parent.element.width() - _this.element.width() - 35;
         _this.parent.element.find('.view-container').width(newWidth);
         _this.element.animate({left: _this.parent.element.position().left + newWidth + 5 + 'px'}, 300);
       } else {
