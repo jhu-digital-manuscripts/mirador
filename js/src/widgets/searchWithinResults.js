@@ -100,7 +100,7 @@ console.log('[SearchResults] making request ' + queryUrl);
         console.log("[SearchResults] window=" + _this.parent.parent.id + " search query failed (" + queryUrl + ") " + errorThrown);
       })
       .always(function() {
-        console.log('[SearchResults] query done.');
+        // console.log('[SearchResults] query done.');
       });
 
     },

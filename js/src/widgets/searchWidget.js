@@ -256,10 +256,10 @@ $.SearchWidget.prototype = {
         }
       });
     });
-    // this.addSearchWithinCriteria(queries);
-console.log("[SearchWidget] query = " + JSON.stringify(queries, null, 2));
 
-    var finalQuery = this.addSearchWithinCriteria(this.terms2query(queries));
+    var finalQuery = this.addSearchWithinCriteria(
+      this.terms2query(queries, queries.length === 1)
+    );
     if (finalQuery && finalQuery.length > 0) {
       this.displaySearchWithin(finalQuery, _this.query.delimiters.term);
     }
@@ -274,14 +274,18 @@ console.log("[SearchWidget] query = " + JSON.stringify(queries, null, 2));
    * @param  string query original pre-formatted query
    * @return array of search terms with new term appended
    */
-  addSearchWithinCriteria: function(query) {
+  addSearchWithinCriteria: function(query, addParens) {
     var objectTerm = this.element.find('.search-within-object-select').val();
 
     if (!objectTerm || objectTerm.length === 0) {
       return query;
     }
 
-    return '(' + query + ')' + ' & ' + objectTerm;
+    if (addParens) {
+      return '(' + query + ')' + ' & ' + objectTerm;
+    } else {
+      return query + ' & ' + objectTerm;
+    }
   },
 
   /**
@@ -356,7 +360,6 @@ console.log("[SearchWidget] query = " + JSON.stringify(queries, null, 2));
 
     // Trim leading and trailing parentheses
     query = query.slice(1, query.length - 1);
-console.log('[SearchWidget] final query = ' + query);
     return query;
   },
 
@@ -365,7 +368,7 @@ console.log('[SearchWidget] final query = ' + query);
     if (query !== "") {
 console.log("[SearchWidget] original : " + query);
       query = encodeURIComponent(query);
-console.log("[SearchWidget] encoded : " + query);
+
       searchService = (_this.manifest.getSearchWithinService());
       new $.SearchWithinResults({
         manifest: _this.manifest,
