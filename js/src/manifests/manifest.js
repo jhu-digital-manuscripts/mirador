@@ -213,6 +213,13 @@
       console.assert(canvasId && canvasId !== '', "No canvasId was specified.");
       var canvas = this.canvasMap[canvasId.split('#')[0]];
       return canvas ? canvas.label : undefined;
+    },
+
+    getId: function() {
+      return this.jsonLd['@id'];
+    },
+    getLabel: function() {
+      return this.jsonLd.label;
     }
 
   };

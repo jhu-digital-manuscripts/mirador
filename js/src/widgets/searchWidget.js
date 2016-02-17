@@ -24,16 +24,25 @@ $.SearchWidget = function(options) {
       operators: ['AND', 'OR'],
       delimiters: {
         'term': '&',
+        'or': '|',
         'field': ':'
       }
     },
     search : {
+      'collection': {
+        'id': 'http://rosetest.library.jhu.edu/iiif-pres/collection/aorcollection',
+        'label': 'Archaeology of Reading collection'
+      },
       'categories': {
         'label': 'Categories',
         'class': 'advanced-search-categories',
-        'choices': ['all', 'marginalia', 'underlines', 'symbols', 'marks']
+        'choices': [
+          'all', 'marginalia', 'underlines', 'symbols', 'marks'/*, 'object_id', 'object_type', 'object_label',
+          'collection_id', 'manifest_id', 'manifest_label', 'marginalia', 'underline', 'errata', 'mark',
+          'symbol', 'numeral', 'drawing', 'image_name'*/
+        ]
       },
-      'inputs': {
+      'inputs': { // TODO set field defaults!
         'all': {
           'label': 'All',
           'class': 'advanced-search-all',
@@ -94,6 +103,10 @@ $.SearchWidget.prototype = {
 
     var templateData = {};
     templateData.search = this.search;
+    templateData.search.manifest = {
+      'id': this.manifest.getId(),
+      'label': this.manifest.getLabel()
+    };
 
     this.element = jQuery(this.template(templateData)).appendTo(this.appendTo);
 
@@ -169,8 +182,13 @@ $.SearchWidget.prototype = {
 
     this.element.find(".js-perform-query").on('submit', function(event){
         event.preventDefault();
-        var query = "all:\'" + _this.element.find(".js-query").val() + "'";    // TODO must use all fields, instead of 'all'
-        _this.displaySearchWithin(query);
+
+        var query = _this.addSearchWithinCriteria(
+          _this.generateAllQuery(_this.element.find('.js-query').val())
+        );
+        if (query && query.length > 0) {
+          _this.displaySearchWithin(query);
+        }
     });
 
     this.addAdvancedSearchLine();
@@ -191,6 +209,17 @@ $.SearchWidget.prototype = {
       });
       _this.addAdvancedSearchLine();
     });
+  },
+
+  generateAllQuery: function(value) {
+    var _this = this;
+    var query = [];
+
+    this.search.categories.choices.forEach(function(choice) {
+      query.push(choice + _this.query.delimiters.field + "'" + value + "'");
+    });
+
+    return this.terms2query(query, this.query.delimiters.or);
   },
 
   /**
@@ -227,12 +256,32 @@ $.SearchWidget.prototype = {
         }
       });
     });
+    // this.addSearchWithinCriteria(queries);
 console.log("[SearchWidget] query = " + JSON.stringify(queries, null, 2));
 
-    var finalQuery = this.terms2query(queries);
+    var finalQuery = this.addSearchWithinCriteria(this.terms2query(queries));
     if (finalQuery && finalQuery.length > 0) {
-      this.displaySearchWithin(finalQuery);
+      this.displaySearchWithin(finalQuery, _this.query.delimiters.term);
     }
+  },
+
+  /**
+   * Add a restriction term to a search query that will limit the
+   * search to a single IIIF object, either a manifest or collection.
+   * A pre-formatted query string is given to this function and
+   * the restriction term is appended.
+   *
+   * @param  string query original pre-formatted query
+   * @return array of search terms with new term appended
+   */
+  addSearchWithinCriteria: function(query) {
+    var objectTerm = this.element.find('.search-within-object-select').val();
+
+    if (!objectTerm || objectTerm.length === 0) {
+      return query;
+    }
+
+    return '(' + query + ')' + ' & ' + objectTerm;
   },
 
   /**
@@ -243,8 +292,7 @@ console.log("[SearchWidget] query = " + JSON.stringify(queries, null, 2));
    * @return string      escaped term
    */
   escapeTerm: function(term) {
-    // return term ? term.replace("'", "\\'") : term;
-    return term;
+    return term ? term.replace("'", "\\'") : term;
   },
 
   /**
@@ -254,8 +302,11 @@ console.log("[SearchWidget] query = " + JSON.stringify(queries, null, 2));
    * @param  string terms array of escaped terms
    * @return string       single formatted string following search syntax
    */
-  terms2query: function(terms) {
+  terms2query: function(terms, operation) {
     console.assert(terms, "Provided 'terms' must exist.");
+    if (!operation) {
+      operation = this.query.delimiters.term;
+    }
     var _this = this;
 
     // Return input if it is not an array
@@ -282,11 +333,11 @@ console.log("[SearchWidget] query = " + JSON.stringify(queries, null, 2));
       //          add '(' to start of query, append operator, fragment, ')'
       //    no : start fragment
       if (frag_start) {
-        frag = '(' + frag + ' ' + _this.query.delimiters.term + ' ' + term + ')';
+        frag = '(' + frag + ' ' + operation + ' ' + term + ')';
         if (query.length === 0) {
           query = frag;
         } else {
-          query = '(' + query + ' '+ _this.query.delimiters.term + ' '+ frag + ')';
+          query = '(' + query + ' '+ operation + ' '+ frag + ')';
         }
 
         frag_start = false;
@@ -300,12 +351,12 @@ console.log("[SearchWidget] query = " + JSON.stringify(queries, null, 2));
     // Could be a hanging term at the end if an odd number of terms were given.
     // Add this to the end of the query
     if (frag_start && frag && frag.length > 0) {
-      query = '(' + query + _this.query.delimiters.term + frag + ')';
+      query = '(' + query + ' ' + operation + ' ' + frag + ')';
     }
-console.log('[SearchWidget] final query = ' + query);
+
     // Trim leading and trailing parentheses
     query = query.slice(1, query.length - 1);
-
+console.log('[SearchWidget] final query = ' + query);
     return query;
   },
 
@@ -403,6 +454,16 @@ console.log("[SearchWidget] encoded : " + query);
         '<a href="javascript:;" class="mirador-btn js-close-search-within" title="close">',
          '<i class="fa fa-times fa-lg"></i>',
         '</a>',  // Close button
+        // SearchWithin selector
+        '<div class="">',
+          '<p>',
+            'Search within: ',
+            '<select class="search-within-object-select">',
+              '<option value="manifest_id:\'{{search.manifest.id}}\'">{{search.manifest.label}}</option>',
+              '<option value="collection_id:\'{{search.collection.id}}\'">{{search.collection.label}}</option>',
+            '</select>',
+          '</p>',
+        '</div>',
         '<form id="search-form" class="js-perform-query">',
           '<input class="js-query" type="text" placeholder="search"/>',
           '<input type="submit"/>',
