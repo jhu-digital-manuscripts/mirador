@@ -99,7 +99,13 @@ console.log('[SearchResults] making request ' + queryUrl);
           }
         });
 
-        _this.element = jQuery(_this.template(searchResults.matches)).appendTo(_this.appendTo);
+        // Need to specify index of last result in total results
+        var length = searchResults.max_matches || searchResults.matches.length;
+        if (searchResults.offset >= 0 && length > 0) {
+          searchResults.last = parseInt(searchResults.offset) + parseInt(length);
+        }
+
+        _this.element = jQuery(_this.template(searchResults)).appendTo(_this.appendTo);
 
         _this.bindEvents();
 
@@ -182,14 +188,43 @@ console.log('[SearchResults] making request ' + queryUrl);
         jQuery(this).addClass('selected');
 
         // Navigate to clicked object
-        _this.parent.parent.setCurrentCanvasID(canvasid);
+        var manifestid = jQuery(this).data('manifestid');
+
+        if (manifestid && manifestid !== _this.manifest.getId()) {
+          // DO NOTHING for now
+          // // Load manifest
+          console.log("[SearchResults] click : changing manifest : " + manifestid);
+          // var manifest = new $.Manifest(manifestid, '');
+          // manifest.request.done(function(data) {
+          //   console.log("[SearchResults] manifest loaded : " + manifest.getId());
+          //   var currentWindow = _this.parent.parent;
+          //   currentWindow.element.remove();
+          //   currentWindow.update({
+          //     manifest: manifest,
+          //     currentCanvasID: canvasid,
+          //     searchWidgetAvailable: true,
+          //     searchWidget: _this
+          //   });
+          //   currentWindow.setCurrentCanvasID(canvasid);
+          //
+          //
+          // });
+
+
+
+        } else {
+          _this.parent.parent.setCurrentCanvasID(canvasid);
+        }
       });
     },
 
     registerHandlebars: function() {
       Handlebars.registerPartial('resultsList', [
         '<div class="search-results-container">',
-          '{{#each this}}',
+          '<p>',
+            'Showing {{offset}} - {{last}} {{#if total}}out of {{total}}{{/if}}',
+          '</p>',
+          '{{#each matches}}',
             '<div class="result-wrapper js-show-canvas" data-objectid="{{object.id}}" {{#if manifest}}data-manifestid="{{manifest.id}}"{{/if}}>',
               '<a class="search-result search-title">',
                 '{{#if manifest}}',
