@@ -62,9 +62,9 @@
       if (numExpected) {
         queryUrl += '&m=' + numExpected;
       }
-      if (resumeToken) {
-        queryUrl += '&r=' + resumeToken;
-      }
+      // if (resumeToken) {
+      //   queryUrl += '&r=' + resumeToken;
+      // }
       if (offset) {
         queryUrl += '&o=' + offset;
       }
@@ -92,7 +92,10 @@ console.log('[SearchResults] making request ' + queryUrl);
         // Need to massage results slightly to make it parsable by Handlebars -
         // @id cannot be parsed. Move this value to property "id"
         // IDs must be stripped of any fragment selectors if necessary
-        searchResults.matches.forEach(function(match) {
+        // Also add index within total results list
+        searchResults.matches.forEach(function(match, index) {
+          match.offset = index + searchResults.offset;
+
           match.object.id = match.object['@id'].split('#')[0];
           if (match.manifest) {
             match.manifest.id = match.manifest['@id'].split('#')[0];
@@ -110,7 +113,6 @@ console.log('[SearchResults] making request ' + queryUrl);
         _this.bindEvents();
 
         if (_this.needsPager(searchResults)) {
-          console.log("[SearchResults] Pager needed!");
           _this.setPager(searchResults);
         }
       })
@@ -131,7 +133,7 @@ console.log('[SearchResults] making request ' + queryUrl);
      * @return TRUE if paging is needed
      */
     needsPager: function(results) {
-      return results.offset + results.max_matches < results.total;
+      return results.offset + (results.max_matches || results.matches.length) < results.total;
     },
 
     /**
@@ -144,17 +146,18 @@ console.log('[SearchResults] making request ' + queryUrl);
     setPager: function(results) {
       var _this = this;
       var onPageCount = results.max_matches || results.matches.length;
-console.log("[SearchResults] Setting pager:: " + onPageCount);
+
       this.element.find('.search-results-pager').pagination({
           items: results.total,
           itemsOnPage: onPageCount,
-          currentPage: this.float2int(results.offset / onPageCount),
+          currentPage: this.float2int(1 + results.offset / onPageCount),
+          displayedPages: 3,
           cssStyle: 'compact-theme',
           ellipsePageSet: true,
           onPageClick: function(pageNumber, event) {
             event.preventDefault();
 
-            var newOffset = (pageNumber - 1) * results.max_matches;
+            var newOffset = (pageNumber - 1) * onPageCount;
             _this.search(_this.query, newOffset, results.max_matches, results.resume);
           }
       });
@@ -230,6 +233,7 @@ console.log("[SearchResults] Setting pager:: " + onPageCount);
           '{{#each matches}}',
             '<div class="result-wrapper js-show-canvas" data-objectid="{{object.id}}" {{#if manifest}}data-manifestid="{{manifest.id}}"{{/if}}>',
               '<a class="search-result search-title">',
+                '{{offset}}) ',
                 '{{#if manifest}}',
                   '{{manifest.label}} : ',
                 '{{/if}}',
