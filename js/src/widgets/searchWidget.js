@@ -242,7 +242,7 @@ $.SearchWidget.prototype = {
         if (child.css('display') != 'none' && child.val() && child.val() !== '') {
 
           if (child.is('input') && _this.search.inputs[category].type === 'dropdown') {
-            queries.push(category + ':\'' + _this.escapeTerm(child.val() + "'"));
+            queries.push(child.data('query') + ':\'' + _this.escapeTerm(child.val()) + "'");
           } else {
             queries.push([
               child.data('query'),

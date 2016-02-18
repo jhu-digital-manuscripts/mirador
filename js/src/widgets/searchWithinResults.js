@@ -110,6 +110,7 @@ console.log('[SearchResults] making request ' + queryUrl);
         _this.bindEvents();
 
         if (_this.needsPager(searchResults)) {
+          console.log("[SearchResults] Pager needed!");
           _this.setPager(searchResults);
         }
       })
@@ -142,8 +143,8 @@ console.log('[SearchResults] making request ' + queryUrl);
      */
     setPager: function(results) {
       var _this = this;
-      var onPageCount = results.max_matches;
-
+      var onPageCount = results.max_matches || results.matches.length;
+console.log("[SearchResults] Setting pager:: " + onPageCount);
       this.element.find('.search-results-pager').pagination({
           items: results.total,
           itemsOnPage: onPageCount,
@@ -222,7 +223,9 @@ console.log('[SearchResults] making request ' + queryUrl);
       Handlebars.registerPartial('resultsList', [
         '<div class="search-results-container">',
           '<p>',
+            '{{#if last}}',
             'Showing {{offset}} - {{last}} {{#if total}}out of {{total}}{{/if}}',
+            '{{/if}}',
           '</p>',
           '{{#each matches}}',
             '<div class="result-wrapper js-show-canvas" data-objectid="{{object.id}}" {{#if manifest}}data-manifestid="{{manifest.id}}"{{/if}}>',
