@@ -84,6 +84,11 @@ console.log('[SearchResults] making request ' + queryUrl);
       .done(function(searchResults) {
         _this.searchResults = searchResults;
 
+        // TODO this should be changed when proper perPage max is implemented in search service.
+        if (_this.perPageCount === undefined) {
+          _this.perPageCount = searchResults.max_matches || searchResults.matches.length;
+        }
+
         // Check for bad or no results.
         if (!searchResults || !searchResults.matches || searchResults.matches.length === 0) {
           jQuery(_this.noResultsMessage()).appendTo(_this.appendTo);
@@ -94,7 +99,7 @@ console.log('[SearchResults] making request ' + queryUrl);
         // IDs must be stripped of any fragment selectors if necessary
         // Also add index within total results list
         searchResults.matches.forEach(function(match, index) {
-          match.offset = index + searchResults.offset;
+          match.offset = index + searchResults.offset + 1;
 
           match.object.id = match.object['@id'].split('#')[0];
           if (match.manifest) {
@@ -107,6 +112,7 @@ console.log('[SearchResults] making request ' + queryUrl);
         if (searchResults.offset >= 0 && length > 0) {
           searchResults.last = parseInt(searchResults.offset) + parseInt(length);
         }
+        searchResults.offset += 1;
 
         _this.element = jQuery(_this.template(searchResults)).appendTo(_this.appendTo);
 
@@ -133,7 +139,8 @@ console.log('[SearchResults] making request ' + queryUrl);
      * @return TRUE if paging is needed
      */
     needsPager: function(results) {
-      return results.offset + (results.max_matches || results.matches.length) < results.total;
+      return results.offset > 0 ||
+          results.offset + (results.max_matches || results.matches.length) < results.total;
     },
 
     /**
@@ -145,7 +152,8 @@ console.log('[SearchResults] making request ' + queryUrl);
      */
     setPager: function(results) {
       var _this = this;
-      var onPageCount = results.max_matches || results.matches.length;
+      // var onPageCount = results.max_matches || results.matches.length;
+      var onPageCount = this.perPageCount;
 
       this.element.find('.search-results-pager').pagination({
           items: results.total,
