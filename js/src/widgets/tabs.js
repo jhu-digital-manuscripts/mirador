@@ -56,7 +56,6 @@
       });
 
       jQuery.subscribe('tabSelected.' + this.windowId, function(_, data) {
-        console.log('[Tabs] selected : ' + JSON.stringify(data));
         _this.tabSelected(data.index);
       });
 
@@ -115,13 +114,15 @@
 
     },
     template: Handlebars.compile([
-      '<ul class="tabGroup">',
+      '<tr class="tabGroup"><td>',
+      '<ul>',
         '{{#each tabs}}',
         '<li class="tab {{this.options.id}} {{#unless @index}}selected{{/unless}}" data-tabId="{{this.options.id}}">',
           '{{this.options.label}}',
         '</li>',
         '{{/each}}',
       '</ul>',
+      '</td></tr>'
     ].join('')),
 
     toggle: function () {}

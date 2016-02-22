@@ -112,40 +112,12 @@ $.SearchWidget.prototype = {
     };
 
     this.element = jQuery(this.template(templateData)).appendTo(this.appendTo);
-console.log('[SearchWidget] appending to thing');
+
     this.bindEvents();
   },
 
   toggle: function() {
-    var searchIcon = this.parent.element.find('.mirador-icon-search-within');
-    searchIcon.toggleClass('selected');
     this.element.stop().slideFadeToggle(300);
-    this.resizeParent(searchIcon.hasClass('selected'));
-  },
-
-  resizeParent: function(selected) {
-    // // Resize image view
-    // var view = this.parent.element.find('.view-container');
-    //
-    // if (selected) {
-    //   var parentRight = view.position().left + view.width() - this.width;
-    //   if (this.element.position().left !== parentRight) {
-    //     this.element.css('left', parentRight + 'px');
-    //   }
-    //
-    //   view.css('width', view.width() - this.width - 5 + 'px');
-    // } else {
-    //   view.css('width', view.width() + this.width + 5 + 'px');
-    // }
-  },
-
-  reposition: function(left) {
-    // var view = this.parent.element.find('.view-container');
-    // var parentRight = view.position().left + view.width() - this.element.width;
-    //
-    // if (this.element.position().left !== parentRight) {
-    //   this.element.css('left', parentRight + 'px');
-    // }
   },
 
   bindEvents: function() {
@@ -167,14 +139,6 @@ console.log('[SearchWidget] appending to thing');
       } else {
         _this.parent.element.find('.view-container').width(_this.parent.element.width());
       }
-    });
-
-    this.parent.element.find('.mirador-icon-search-within').on('click', function() {
-      _this.toggle();
-    });
-
-    this.parent.element.find('.mirador-btn.js-close-search-within').on('click', function() {
-      _this.toggle();
     });
 
     this.element.find('.search-disclose-btn-more').on('click', function() {
@@ -439,9 +403,6 @@ console.log("[SearchWidget] original : " + query);
      */
     Handlebars.registerPartial('searchWithinWidget',[
       '<div class="searchResults" style="display: none;">',
-        '<a href="javascript:;" class="mirador-btn js-close-search-within" title="close">',
-         '<i class="fa fa-times fa-lg"></i>',
-        '</a>',  // Close button
         // SearchWithin selector
         '<div class="">',
           '<p>',

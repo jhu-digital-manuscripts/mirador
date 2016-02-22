@@ -212,10 +212,8 @@
     },
 
     template: Handlebars.compile([
-      '<div class="tabContentArea">',
-        '<ul class="tabGroup">',
-        '</ul>',
-      '</div>'
+      '<tr class="tabContentArea"><td>',
+      '</td></tr>'
     ].join('')),
 
     toggle: function (enableSidePanel) {

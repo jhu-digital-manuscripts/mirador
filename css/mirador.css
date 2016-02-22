@@ -697,17 +697,18 @@ li.highlight {
 
 
 .sidePanel {
-    position:absolute;
+  position:absolute;
   width:280px;
   left: 0;
   bottom: 0;
   top:0;
+  height: 100%;
   background-color: #efefef;
   border-right: 1px solid lightgray;
   box-sizing: border-box;
   overflow: hidden;
   transition: all 0.3s ease;
-  padding: 10px;
+  /*padding: 10px;*/
   opacity:1;
   transition: all 0.2s ease-out;
   transform: translateX(0);
@@ -733,9 +734,14 @@ li.highlight {
 }
 
 .sidePanel .tabGroup {
-    list-style-type:none;
     margin:0;
     padding:0;
+    height: 25px;
+}
+.sidePanel .tabGroup ul {
+  list-style-type: none;
+  margin: 0;
+  padding-left: 2px;
 }
 
 .sidePanel .tab {
@@ -2097,18 +2103,14 @@ div.manifest-info a.mirador-btn.mirador-icon-toc {
   border: 3px solid orangered;
   opacity: 0.5;
   box-shadow: 0px 0px 15px rgba(0,0,0,1);
-
+}
 /* Search Within */
 .searchResults  {
-  overflow: scroll;
-  background-color: black;
-  color: white;
+  overflow: auto;
   position: absolute;
-  top: 0%;
-  width: 300px;
+  top: 0;
   height: 100%;
-  z-index: 1;
-  padding: 15px;
+  padding-left: 10px;
 }
 .search-results-list .query {
   font-style: italic;
@@ -2120,7 +2122,7 @@ div.manifest-info a.mirador-btn.mirador-icon-toc {
   border-radius: 5px;
 }
 .js-show-canvas:hover {
-  background-color: #454545;
+  background-color: #D8D8D8;
 }
 .js-show-canvas {
   cursor: pointer;
@@ -2163,5 +2165,5 @@ div.manifest-info a.mirador-btn.mirador-icon-toc {
   color: black;
 }
 .search-results-container .selected {
-  background-color: #454545;
+  background-color: #D8D8D8;
 }
