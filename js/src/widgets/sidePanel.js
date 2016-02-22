@@ -9,6 +9,7 @@
       panelState:        {},
       tocTabAvailable:   false,
       annotationsTabAvailable: true,
+      searchTabAvailable: true,
       layersTabAvailable: false,
       toolsTabAvailable: false,
       hasStructures:     false
@@ -23,21 +24,32 @@
       this.windowId = this.parent.id;
 
       this.state({
-          tabs : [
+        tabs : [
           {
             name : 'toc',
+            content: null,
             options : {
               available: _this.tocTabAvailable,
               id:'tocTab',
               label:'Index'
-              }
+            }
           },
           {
             name : 'annotations',
+            content: null,
             options : {
               available: _this.annotationsTabAvailable,
               id:'annotationsTab',
               label:'Annotations'
+            }
+          },
+          {
+            name: 'search',
+            content: null,
+            options: {
+              available: _this.searchTabAvailable,
+              id: 'searchTab',
+              label: 'Search'
             }
           },
           /*{
@@ -56,15 +68,28 @@
               label:'Tools'
             }
           }*/
-          ],
-          width: 280,
-          open: true
+        ],
+        width: 280,
+        open: true
       }, true);
 
       this.listenForActions();
       this.render(this.state());
 
       this.loadSidePanelComponents();
+    },
+
+    /**
+     * Return all tabs with the requested ID.
+     *
+     * @param  string id
+     * @return array containing all tabs (0 or more)
+     */
+    getTabObject: function(id) {
+      console.assert(id && typeof id === 'string', 'The requested ID cannot be blank and must be a string.');
+      return this.panelState.tabs.filter(function(tab) {
+        return tab.options.id === id;
+      });
     },
 
     loadSidePanelComponents: function() {
@@ -93,6 +118,17 @@
           parent: this.parent,
           appendTo: _this.element.find('.tabContentArea'),
           tabs: _this.state.tabs
+        });
+      }
+
+      if (_this.searchTabAvailable) {
+        new $.SearchWidget({
+          manifest: _this.manifest,
+          parent: _this.parent,
+          windowId: _this.parent.id,
+          widgetId: 'searchTab',
+          appendTo: _this.element.find('.tabContentArea'),
+          width: 0
         });
       }
     },
@@ -138,7 +174,6 @@
     listenForActions: function() {
       var _this = this;
       jQuery.subscribe('sidePanelStateUpdated.' + this.windowId, function(_, data) {
-
         _this.render(data);
       });
 

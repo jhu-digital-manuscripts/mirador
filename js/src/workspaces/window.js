@@ -21,13 +21,13 @@
       focusOverlaysAvailable: {
         'ThumbnailsView': {
           'overlay' : {'MetadataView' : false},
-          'sidePanel' : {'TableOfContents' : true},
+          'sidePanel' : {'SidePanel' : true},
           'bottomPanel' : {'' : false},
           'searchWidget' : {'SearchWidget' : false}
         },
         'ImageView': {
           'overlay' : {'MetadataView' : false},
-          'sidePanel' : {'TableOfContents' : true},
+          'sidePanel' : {'SidePanel' : true},
           'bottomPanel' : {'ThumbnailsView' : true},
           'searchWidget' : {'SearchWidget' : false}
         },
@@ -39,7 +39,7 @@
         },
         'BookView': {
           'overlay' : {'MetadataView' : false},
-          'sidePanel' : {'TableOfContents' : true},
+          'sidePanel' : {'SidePanel' : true},
           'bottomPanel' : {'ThumbnailsView' : true},
           'searchWidget' : {'SearchWidget' : false}
         }
@@ -727,7 +727,9 @@
 
 // ------- TODO REMOVE THIS ----------------------------------------------------
 // ------- artifact of loading static text file --------------------------------
-list = JSON.parse(list);
+if (typeof list === 'string') {
+  list = JSON.parse(list);
+}
 // -----------------------------------------------------------------------------
 // -----------------------------------------------------------------------------
 
@@ -858,7 +860,7 @@ list = JSON.parse(list);
      '<div class="window">',
       '<div class="manifest-info">',
         '<div class="window-manifest-navigation">',
-          '<a href="javascript:;" class="mirador-btn mirador-icon-search-within" title="Search within this object."><i class="fa fa-search fa-lg fa-fw"></i></a>',
+          '<a href="javascript:;" class="mirador-btn mirador-icon-search-within" style="display: none" title="Search within this object."><i class="fa fa-search fa-lg fa-fw"></i></a>',
           '<a href="javascript:;" class="mirador-btn mirador-icon-image-view" role="button" aria-label="Change Image Mode"><i class="fa fa-photo fa-lg fa-fw"></i>',
             '<ul class="dropdown image-list">',
               '{{#if ImageView}}',

@@ -169,6 +169,14 @@
 
             });
 
+            jQuery.subscribe('tabSelected.' + this.windowId, function(event, data) {
+              if (data.id === _this.annoTabState.id) {
+                _this.element.show();
+              } else {
+                _this.element.hide();
+              }
+            });
+
         },
         render: function(state) {
             var _this = this,

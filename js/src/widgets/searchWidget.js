@@ -14,6 +14,8 @@ $.SearchWidget = function(options) {
 
   jQuery.extend(this, {
     parent: null,   // Window object. To get window ID: this.parent.id
+    windowId: null,
+    widgetId: null,
     appendTo: null,
     element: null,
     width: 330,
@@ -98,7 +100,7 @@ $.SearchWidget = function(options) {
 
 $.SearchWidget.prototype = {
 
-  init: function() {
+  init: function() {console.log('[SearchWidget] init');
     var _this = this;
     this.registerWidget();
 
@@ -110,7 +112,7 @@ $.SearchWidget.prototype = {
     };
 
     this.element = jQuery(this.template(templateData)).appendTo(this.appendTo);
-
+console.log('[SearchWidget] appending to thing');
     this.bindEvents();
   },
 
@@ -122,32 +124,40 @@ $.SearchWidget.prototype = {
   },
 
   resizeParent: function(selected) {
-    // Resize image view
-    var view = this.parent.element.find('.view-container');
-
-    if (selected) {
-      var parentRight = view.position().left + view.width() - this.width;
-      if (this.element.position().left !== parentRight) {
-        this.element.css('left', parentRight + 'px');
-      }
-
-      view.css('width', view.width() - this.width - 5 + 'px');
-    } else {
-      view.css('width', view.width() + this.width + 5 + 'px');
-    }
+    // // Resize image view
+    // var view = this.parent.element.find('.view-container');
+    //
+    // if (selected) {
+    //   var parentRight = view.position().left + view.width() - this.width;
+    //   if (this.element.position().left !== parentRight) {
+    //     this.element.css('left', parentRight + 'px');
+    //   }
+    //
+    //   view.css('width', view.width() - this.width - 5 + 'px');
+    // } else {
+    //   view.css('width', view.width() + this.width + 5 + 'px');
+    // }
   },
 
   reposition: function(left) {
-    var view = this.parent.element.find('.view-container');
-    var parentRight = view.position().left + view.width() - this.element.width;
-
-    if (this.element.position().left !== parentRight) {
-      this.element.css('left', parentRight + 'px');
-    }
+    // var view = this.parent.element.find('.view-container');
+    // var parentRight = view.position().left + view.width() - this.element.width;
+    //
+    // if (this.element.position().left !== parentRight) {
+    //   this.element.css('left', parentRight + 'px');
+    // }
   },
 
   bindEvents: function() {
     var _this = this;
+
+    jQuery.subscribe('tabSelected.' + this.windowId, function(event, data) {
+      if (data.id === _this.widgetId) {
+        _this.element.show();
+      } else {
+        _this.element.hide();
+      }
+    });
 
     jQuery.subscribe('layoutChanged', function(event, layoutRoot) {
       if (_this.parent.element.find('.mirador-icon-search-within').hasClass('selected')) {
