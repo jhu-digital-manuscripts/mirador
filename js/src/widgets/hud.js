@@ -17,13 +17,13 @@
 
   $.Hud.prototype = {
 
-    init: function() {   
+    init: function() {
       this.createStateMachine();
 
       this.element = jQuery(this.template({
-        showNextPrev : this.parent.imagesList.length !== 1, 
+        showNextPrev : this.parent.imagesList.length !== 1,
         showBottomPanel : typeof this.bottomPanelAvailable === 'undefined' ? true : this.bottomPanelAvailable,
-        showAnno : this.annotationLayerAvailable,
+        showAnno : this.annotationLayerAvailable && this.editorPanelConfig.showOverlay,
         showFullScreen : this.fullScreenAvailable
       })).appendTo(this.element);
 
@@ -38,7 +38,10 @@
         });
       }
 
+      this.loadHudComponents();
+
       this.bindEvents();
+      this.listenForActions();
 
       if (typeof this.bottomPanelAvailable !== 'undefined' && !this.bottomPanelAvailable) {
         this.parent.parent.bottomPanelVisibility(false);
@@ -46,7 +49,24 @@
         this.parent.parent.bottomPanelVisibility(this.parent.parent.bottomPanelVisible);
       }
     },
+    listenForActions: function() {
+        var _this = this;
 
+        jQuery.subscribe('editorPanelStateUpdated' + _this.windowId, function(_, editorPanelState) {
+
+          if (editorPanelState.open){
+            if (_this.annoState.current === 'annoOff') {
+              _this.annoState.displayOn(this);
+            }
+          } else {
+            if (_this.annoState.current === 'annoOn') {
+              _this.annoState.displayOff(this);
+            }
+          }
+
+        });
+
+    },
     bindEvents: function() {
       var _this = this,
       firstCanvasId = _this.parent.imagesList[0]['@id'],
@@ -61,15 +81,19 @@
       });
 
       this.parent.element.find('.mirador-osd-annotations-layer').on('click', function() {
+        if (_this.annoState.current === 'none') {
+          _this.annoState.startup(this);
+        }
         if (_this.annoState.current === 'annoOff') {
           _this.annoState.displayOn(this);
         } else {
-          _this.annoState.displayOff(this);          
+          _this.annoState.displayOff(this);
         }
       });
 
       this.parent.element.find('.mirador-osd-go-home').on('click', function() {
         _this.parent.osd.viewport.goHome();
+        _this.parent.osd.viewport.setRotation(0);
       });
 
       this.parent.element.find('.mirador-osd-up').on('click', function() {
@@ -132,8 +156,25 @@
         _this.parent.parent.bottomPanelVisibility(visible);
       });
 
+      /**
+       * TODO BUG! panning around is kind of broken when image is rotated 90 deg./270 deg. 180 deg is fine.
+       * This bug is caused by a bug in OpenSeadragon, as yet unresolved.
+       * It is perhaps due to a failure to re-calculate viewport coords on rotate?
+       * See: https://github.com/openseadragon/openseadragon/issues/567
+       */
+      this.parent.element.find('.mirador-osd-rotate-left').on('click', function() {
+        var osd = _this.parent.osd;
+        var current_rotation = osd.viewport.getRotation();
+        osd.viewport.setRotation(current_rotation - 90);
+      });
+      this.parent.element.find('.mirador-osd-rotate-right').on('click', function() {
+        var osd = _this.parent.osd;
+        var current_rotation = osd.viewport.getRotation();
+        osd.viewport.setRotation(current_rotation + 90);
+      });
+
       jQuery.subscribe('bottomPanelSet.' + _this.windowId, function(event, visible) {
-        var dodgers = _this.parent.element.find('.mirador-osd-toggle-bottom-panel, .mirador-pan-zoom-controls, .mirador-osd-annotations-layer');
+        var dodgers = _this.parent.element.find('.mirador-osd-toggle-bottom-panel, .mirador-pan-zoom-controls');
         var arrows = _this.parent.element.find('.mirador-osd-next, .mirador-osd-previous');
         if (visible === true) {
           dodgers.css({transform: 'translateY(-130px)'});
@@ -159,50 +200,106 @@
         // If it is the last canvas, hide the "go to previous" button, otherwise show it.
       });
     },
-
+    loadHudComponents: function () {
+        new $.EditorPanel({
+          windowId: this.windowId,
+          appendTo: this.element.parent().parent(), // appending to .view-container
+          editorPanelConfig: this.editorPanelConfig
+        });
+    },
     createStateMachine: function() {
       //add more to these as AnnoState becomes more complex
-      var _this = this;
+      var _this = this,
+      duration = "200";
+      //initial state is 'none'
       this.annoState = StateMachine.create({
-        initial: 'annoOff',
         events: [
-          { name: 'displayOn',  from: 'annoOff',  to: 'annoOnEditOff' },
-          { name: 'editOn', from: 'annoOnEditOff', to: 'annoOnEditOn' },
-          { name: 'editOff',  from: 'annoOnEditOn',    to: 'annoOnEditOff' },
-          { name: 'displayOff', from: ['annoOnEditOn','annoOnEditOff'], to: 'annoOff' }
+          { name: 'startup',  from: 'none',  to: 'annoOff' },
+          { name: 'displayOn',  from: 'annoOff',  to: 'annoOnCreateOff' },
+          { name: 'refreshCreateOff',  from: 'annoOnCreateOff',  to: 'annoOnCreateOff' },
+          { name: 'createOn', from: ['annoOff','annoOnCreateOff'], to: 'annoOnCreateOn' },
+          { name: 'refreshCreateOn',  from: 'annoOnCreateOn',  to: 'annoOnCreateOn' },
+          { name: 'createOff',  from: 'annoOnCreateOn',    to: 'annoOnCreateOff' },
+          { name: 'displayOff', from: ['annoOnCreateOn','annoOnCreateOff'], to: 'annoOff' }
         ],
         callbacks: {
-          ondisplayOn: function(event, from, to) { 
-            _this.parent.element.find('.mirador-osd-annotations-layer').addClass("selected");
+          onstartup: function(event, from, to) {
+            jQuery.publish(('windowUpdated'), {
+              id: _this.windowId,
+              annotationState: to
+            });
+          },
+          ondisplayOn: function(event, from, to) {
             if (_this.annoEndpointAvailable) {
-              _this.contextControls.show();
+              _this.parent.element.find('.mirador-osd-annotations-layer').fadeOut(duration, function() {
+                _this.contextControls.show();
+              });
+            } else {
+              _this.parent.element.find('.mirador-osd-annotations-layer').addClass("selected");
             }
             jQuery.publish('modeChange.' + _this.windowId, 'displayAnnotations');
+            jQuery.publish(('windowUpdated'), {
+              id: _this.windowId,
+              annotationState: to
+            });
           },
-          oneditOn: function(event, from, to) { 
-            _this.parent.element.find('.mirador-osd-edit-mode').addClass("selected");
+          onrefreshCreateOff: function(event, from, to) {
+            jQuery.publish('modeChange.' + _this.windowId, 'displayAnnotations');
+            jQuery.publish(('windowUpdated'), {
+              id: _this.windowId,
+              annotationState: to
+            });
+          },
+          oncreateOn: function(event, from, to) {
+            function enableEditingAnnotations() {
+              _this.parent.element.find('.mirador-osd-edit-mode').addClass("selected");
+              jQuery.publish('modeChange.' + _this.windowId, 'editingAnnotations');
+            }
+            if (_this.annoEndpointAvailable) {
+              if (from === "annoOff") {
+                _this.parent.element.find('.mirador-osd-annotations-layer').fadeOut(duration, function() {
+                  _this.contextControls.show();
+                  enableEditingAnnotations();
+                });
+              } else {
+                enableEditingAnnotations();
+              }
+            }
+            jQuery.publish(('windowUpdated'), {
+              id: _this.windowId,
+              annotationState: to
+            });
+          },
+          onrefreshCreateOn: function(event, from, to) {
             jQuery.publish('modeChange.' + _this.windowId, 'editingAnnotations');
-            if (_this.annoEndpointAvailable) {
-              _this.contextControls.rectTool.enterEditMode();
-            }
+            jQuery.publish(('windowUpdated'), {
+              id: _this.windowId,
+              annotationState: to
+            });
           },
-          oneditOff: function(event, from, to) { 
+          oncreateOff: function(event, from, to) {
             _this.parent.element.find('.mirador-osd-edit-mode').removeClass("selected");
             jQuery.publish('modeChange.' + _this.windowId, 'displayAnnotations');
-            if (_this.annoEndpointAvailable) {
-              _this.contextControls.rectTool.exitEditMode();
-            }
+            jQuery.publish(('windowUpdated'), {
+              id: _this.windowId,
+              annotationState: to
+            });
           },
-          ondisplayOff: function(event, from, to) { 
-            if (_this.annoEndpointAvailable && _this.contextControls.rectTool) {
-              _this.contextControls.rectTool.exitEditMode();
-            }
-            _this.parent.element.find('.mirador-osd-edit-mode').removeClass("selected");
-            _this.parent.element.find('.mirador-osd-annotations-layer').removeClass("selected");
+          ondisplayOff: function(event, from, to) {
             if (_this.annoEndpointAvailable) {
-              _this.contextControls.hide();
+              _this.parent.element.find('.mirador-osd-edit-mode').removeClass("selected");
+              _this.contextControls.hide(function() {
+                _this.parent.element.find('.mirador-osd-annotations-layer').fadeIn(duration);
+              }
+              );
+            } else {
+              _this.parent.element.find('.mirador-osd-annotations-layer').removeClass("selected");
             }
-            jQuery.publish('modeChange.' + _this.windowId, 'default');            
+            jQuery.publish('modeChange.' + _this.windowId, 'default');
+            jQuery.publish(('windowUpdated'), {
+              id: _this.windowId,
+              annotationState: to
+            });
           }
         }
       });
@@ -243,13 +340,13 @@
                                  '</a>',
                                  '{{/if}}',
                                  '{{#if showFullScreen}}',
-                                 '<a class="mirador-osd-fullscreen hud-control">',
+                                 '<a class="mirador-osd-fullscreen hud-control" role="button" aria-label="Toggle fullscreen">',
                                  '<i class="fa fa-expand"></i>',
                                  '</a>',
                                  '{{/if}}',
                                  '{{#if showAnno}}',
-                                 '<a class="mirador-osd-annotations-layer hud-control ">',
-                                 '<i class="fa fa-2x fa-comments"></i>',
+                                 '<a class="mirador-osd-annotations-layer hud-control " role="button" aria-label="Toggle annotations">',
+                                 '<i class="fa fa-lg fa-comments"></i>',
                                  '</a>',
                                  '{{/if}}',
                                  '{{#if showNextPrev}}',
@@ -258,31 +355,37 @@
                                  '</a>',
                                  '{{/if}}',
                                  '{{#if showBottomPanel}}',
-                                 '<a class="mirador-osd-toggle-bottom-panel hud-control ">',
+                                 '<a class="mirador-osd-toggle-bottom-panel hud-control " role="button" aria-label="Toggle Bottom Panel">',
                                  '<i class="fa fa-2x fa-ellipsis-h"></i>',
                                  '</a>',
                                  '{{/if}}',
                                  '<div class="mirador-pan-zoom-controls hud-control ">',
-                                 '<a class="mirador-osd-up hud-control">',
+                                 '<a class="mirador-osd-up hud-control" role="button" aria-label="Move image up">',
                                  '<i class="fa fa-chevron-circle-up"></i>',
                                  '</a>',
-                                 '<a class="mirador-osd-right hud-control">',
+                                 '<a class="mirador-osd-right hud-control" role="button" aria-label="Move image right">',
                                  '<i class="fa fa-chevron-circle-right"></i>',
                                  '</a>',
-                                 '<a class="mirador-osd-down hud-control">',
+                                 '<a class="mirador-osd-down hud-control" role="button" aria-label="Move image down">',
                                  '<i class="fa fa-chevron-circle-down"></i>',
                                  '</a>',
-                                 '<a class="mirador-osd-left hud-control">',
+                                 '<a class="mirador-osd-left hud-control" role="button" aria-label="Move image left">',
                                  '<i class="fa fa-chevron-circle-left"></i>',
                                  '</a>',
-                                 '<a class="mirador-osd-zoom-in hud-control">',
+                                 '<a class="mirador-osd-zoom-in hud-control" role="button" aria-label="Zoom in">',
                                  '<i class="fa fa-plus-circle"></i>',
                                  '</a>',
-                                 '<a class="mirador-osd-zoom-out hud-control">',
+                                 '<a class="mirador-osd-zoom-out hud-control" role="button" aria-label="Zoom out">',
                                  '<i class="fa fa-minus-circle"></i>',
                                  '</a>',
-                                 '<a class="mirador-osd-go-home hud-control">',
+                                 '<a class="mirador-osd-go-home hud-control" role="button" aria-label="Reset image bounds">',
                                  '<i class="fa fa-home"></i>',
+                                 '<a class="mirador-osd-rotate-left hud-control ">',
+                                 '<i class="fa fa-3x fa-rotate-left "></i>',    // Rotate right icon
+                                 '</a>',
+                                 '<a class="mirador-osd-rotate-right hud-control ">',
+                                 '<i class="fa fa-3x fa-rotate-right "></i>',    // Rotate right icon
+                                 '</a>',
                                  '</a>',
                                  '</div>'
     ].join(''))

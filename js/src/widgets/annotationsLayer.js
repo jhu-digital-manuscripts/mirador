@@ -5,8 +5,10 @@
     jQuery.extend(true, this, {
       parent:            null,
       annotationsList:   null,
+      currentAnnosList:  null,
       viewer:            null,
       renderer:          null,
+      rectTool:          null,
       selected:          null,
       hovered:           null,
       windowId:          null,
@@ -35,31 +37,70 @@
         _this.modeSwitch();
       });
 
-      jQuery.subscribe('annotationListLoaded.' + _this.windowId, function(event) {
-        _this.annotationsList = _this.parent.parent.annotationsList;
-        _this.updateRenderer();
-      });
-    },
 
+      jQuery.subscribe('annotationsTabStateUpdated.' + _this.windowId, function(_, data) {
+
+          _this.filterList(data.selectedList);
+
+      });
+
+      jQuery.subscribe('editorPanelStateUpdated' + this.windowId, function(_, data) {
+          _this.updateRenderer();
+      });
+
+    },
+    filterList: function(listId){
+      var _this = this;
+
+      var window = $.viewer.workspace.windows
+        // Return array of only those 'windows' whose ID matches the current window ID
+        .filter(function(window) { return window.id == _this.windowId; }
+      );
+
+      var annos = null;
+
+      if(listId === null){
+        annos = window[0].annotationsList;
+      }else{
+        annos = window[0].annotationsList.filter(function(annotation){
+          if(annotation.endpoint === listId){
+            return true;
+          }
+
+          if(annotation.endpoint.name === listId){
+            return true;
+          }
+
+          return false;
+        });
+      }
+
+      _this.currentAnnosList = annos;
+      _this.updateRenderer();
+
+    },
     createRenderer: function() {
       var _this = this;
       this.renderer = new $.OsdCanvasRenderer({
         osd: $.OpenSeadragon,
         osdViewer: _this.viewer,
         list: _this.annotationsList, // must be passed by reference.
+        //list: _this.parent.parent.editorPanel.state.annotations,
         visible: false,
         parent: _this
       });
       this.modeSwitch();
     },
-    
+
     updateRenderer: function() {
-      this.renderer.list = this.annotationsList;
+      var _this = this;
+      if(_this.currentAnnosList === null){ _this.currentAnnosList = _this.annotationsList; }
+      if(_this.currentAnnosList.length < 1){ _this.currentAnnosList = _this.annotationsList; }
+      this.renderer.list = _this.currentAnnosList;
       this.modeSwitch();
     },
-    
+
     modeSwitch: function() {
-      //console.log(this.mode);
       if (this.mode === 'displayAnnotations') { this.enterDisplayAnnotations(); }
       else if (this.mode === 'editingAnnotations') { this.enterEditAnnotations(); }
       else if (this.mode === 'default') { this.enterDefault(); }
@@ -70,25 +111,32 @@
     enterDisplayAnnotations: function() {
       var _this = this;
       //console.log('triggering annotation loading and display');
+      if (this.rectTool) {
+        this.rectTool.exitEditMode();
+      }
       this.renderer.render();
     },
 
     enterEditAnnotations: function() {
       var _this = this;
-      if (!this.parent.hud.contextControls.rectTool) {
-        this.parent.hud.contextControls.rectTool = new $.OsdRegionRectTool({
+      if (!this.rectTool) {
+        this.rectTool = new $.OsdRegionRectTool({
           osd: OpenSeadragon,
           osdViewer: _this.viewer,
-          rectType: 'oa', // does not do anything yet. 
+          rectType: 'oa', // does not do anything yet.
           parent: _this
         });
       } else {
-        this.parent.hud.contextControls.rectTool.reset(_this.viewer);
+        this.rectTool.reset(_this.viewer);
       }
       this.renderer.render();
+      this.rectTool.enterEditMode();
     },
 
     enterDefault: function() {
+      if (this.rectTool) {
+        this.rectTool.exitEditMode();
+      }
       this.renderer.hideAll();
     }
 
