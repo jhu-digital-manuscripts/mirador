@@ -100,7 +100,7 @@ $.SearchWidget = function(options) {
 
 $.SearchWidget.prototype = {
 
-  init: function() {console.log('[SearchWidget] init');
+  init: function() {
     var _this = this;
     this.registerWidget();
 

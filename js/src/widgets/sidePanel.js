@@ -27,7 +27,6 @@
         tabs : [
           {
             name : 'toc',
-            content: null,
             options : {
               available: _this.tocTabAvailable,
               id:'tocTab',
@@ -36,7 +35,6 @@
           },
           {
             name : 'annotations',
-            content: null,
             options : {
               available: _this.annotationsTabAvailable,
               id:'annotationsTab',
@@ -45,29 +43,12 @@
           },
           {
             name: 'search',
-            content: null,
             options: {
               available: _this.searchTabAvailable,
               id: 'searchTab',
               label: 'Search'
             }
           },
-          /*{
-            name : 'layers',
-            options : {
-              available: _this.layersTabAvailable,
-              id:'layersTab',
-              label:'Layers'
-            }
-          },
-          {
-            name : 'tools',
-            options : {
-              available: _this.toolsTabAvailable,
-              id:'toolsTab',
-              label:'Tools'
-            }
-          }*/
         ],
         width: 280,
         open: true
@@ -113,12 +94,6 @@
       }
 
       if (_this.annotationsTabAvailable) {
-        // new $.AnnotationsTab({
-        //   manifest: _this.manifest,
-        //   parent: this.parent,
-        //   appendTo: _this.element.find('.tabContentArea'),
-        //   tabs: _this.state.tabs
-        // });
         new $.JhAnnotationTab({
           manifest: _this.manifest,
           parent: _this.parent,
@@ -158,15 +133,6 @@
       if (!initial) {
         jQuery.publish('sidePanelStateUpdated.' + this.windowId, this.panelState);
       }
-
-      /*var enableSidePanel = false;
-      jQuery.each(this.panelState.tabs, function(index, value) {
-          if (value.options.available) {
-              enableSidePanel = true;
-          }
-      });
-
-      this.toggle(enableSidePanel);*/
 
       return this.panelState;
     },

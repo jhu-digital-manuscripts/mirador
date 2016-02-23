@@ -662,7 +662,7 @@
         default:
           break;
       }
-      console.log('currentCanvasIDUpdated fired!');
+
       jQuery.publish(('currentCanvasIDUpdated.' + _this.id), canvasID);
     },
 

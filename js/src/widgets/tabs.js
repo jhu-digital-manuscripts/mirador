@@ -66,20 +66,9 @@
       var _this = this;
 
       this.element.find('.tab').on('click', function(event) {
-      //   console.log('[Tabs] tab clicked : ' + jQuery(this).text());
-      //   var tabid = jQuery(this).data('tabid');
-      //
-      //   // Hide all tabs, but show the selected tab
-      //   _this.tabs.forEach(function(tab) {
-      //     if (tab.options.id === tabid) {
-      //       tab.content.show();
-      //     } else {
-      //       tab.content.hide();
-      //     }
-      //   });
         jQuery.publish('tabSelected.' + _this.windowId,
           {
-            index: jQuery( ".tabGroup li" ).index( this ),
+            index: jQuery(this).index(),
             id: jQuery(this).data('tabid')
           }
         );
@@ -107,7 +96,7 @@
         this.element = jQuery(_this.template(renderingData)).prependTo(_this.appendTo);
         return;
       }
-
+console.log('Selected tab index : ' + renderingData.selectedTabIndex);
       this.element.find('.tab').removeClass('selected');
       var tabClass = '.' + renderingData.tabs[renderingData.selectedTabIndex].options.id;
       this.element.find(tabClass).addClass('selected');
