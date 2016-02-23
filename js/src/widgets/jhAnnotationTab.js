@@ -23,14 +23,9 @@
       console.assert(this.manifest, '[jhAnnotationTab] Manifest must be provided.');
       console.assert(this.currentCanvasID, '[jhAnnotationTab] Current canvas ID must be defined.');
       this.registerWidget();
-
       this.element = jQuery(this.template()).appendTo(this.appendTo);
-
       this.bindEvents();
-
-      this.loadAnnotationLists(
-        this.manifest.getAnnotationLists(this.currentCanvasID)
-      );
+      this.processCurrentManifest();
     },
 
     bindEvents: function() {
@@ -43,6 +38,18 @@
           _this.element.hide();
         }
       });
+
+      jQuery.subscribe('currentCanvasIDUpdated.' + _this.windowId, function(event, canvasId) {
+        _this.currentCanvasID = canvasId;
+        _this.processCurrentManifest();
+      });
+    },
+
+    processCurrentManifest: function() {
+      this.loadAnnotationLists(
+        this.manifest.getAnnotationLists(this.currentCanvasID),
+        true
+      );
     },
 
     loadAnnotationLists: function(lists, clearAnnotations) {
@@ -58,11 +65,9 @@
       }
       // Remove any error messages, if necessary
       this.element.find('.error').remove();
-console.log('[jhAnnotationTab] lists = ' + JSON.stringify(lists, null, 2));
       if (typeof lists === 'string') {
         this.requestList(lists);
       } else {
-console.log('[jhAnnotationTab] for array');
         lists.forEach(function(list) {
           _this.requestList(list);
         });
@@ -71,21 +76,19 @@ console.log('[jhAnnotationTab] for array');
 
     requestList: function(listId) {
       var _this = this;
-console.log('[jhAnnotationTab] requesting : ' + JSON.stringify(listId, null, 2));
       jQuery.ajax({
         url:   listId,
         dataType: 'json'
       })
       .done(function(data) {
         _this.processAnnotationList(data);
-        console.log('Request success.');
       })
       .fail(function() {
         console.log('[jhAnnotationTab#requestList] Failed to load annotation list. ' + listId);
         jQuery(_this.message.error).appendTo(_this.appendTo);
       })
       .always(function() {
-console.log('DONE');
+
       });
     },
 
