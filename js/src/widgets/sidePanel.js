@@ -105,7 +105,7 @@
       if (this.tocTabAvailable) {
         new $.TableOfContents({
           manifest: this.manifest,
-          appendTo: this.element.find('.tabContentArea'),
+          appendTo: this.element.find('.tabContentArea td'),
           parent: this.parent,
           panel: true,
           canvasID: this.parent.currentCanvasID
@@ -113,11 +113,19 @@
       }
 
       if (_this.annotationsTabAvailable) {
-        new $.AnnotationsTab({
+        // new $.AnnotationsTab({
+        //   manifest: _this.manifest,
+        //   parent: this.parent,
+        //   appendTo: _this.element.find('.tabContentArea'),
+        //   tabs: _this.state.tabs
+        // });
+        new $.JhAnnotationTab({
           manifest: _this.manifest,
-          parent: this.parent,
-          appendTo: _this.element.find('.tabContentArea'),
-          tabs: _this.state.tabs
+          parent: _this.parent,
+          appendTo: _this.element.find('.tabContentArea td'),
+          tabId: 'annotationsTab',
+          windowId: _this.parent.id,
+          currentCanvasID: this.parent.currentCanvasID,
         });
       }
 
@@ -127,7 +135,7 @@
           parent: _this.parent,
           windowId: _this.parent.id,
           widgetId: 'searchTab',
-          appendTo: _this.element.find('.tabContentArea'),
+          appendTo: _this.element.find('.tabContentArea td'),
           width: 0
         });
       }

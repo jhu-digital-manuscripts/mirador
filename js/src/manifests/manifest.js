@@ -207,6 +207,42 @@
     },
 
     /**
+     * Get all annotation lists for the given canvas. Each canvas can define
+     * zero or more annotation lists for transcriptions or annotations under
+     * its 'otherContent' property. If exactly one is defined, this
+     * property will be a simple string. If more than one are defined, it
+     * will be an array of strings. If no annotation lists are defined,
+     * return UNDEFINED.
+     *
+     * @param  string canvasId URI ID
+     * @return single annotation list ID or array of IDs
+     */
+    getAnnotationLists: function(canvasId) {
+      console.assert(canvasId && canvasId !== '', '[Manifest#getAnnotationLists] "canvasId" must be specified.');
+      var canvas = this.canvasMap[canvasId.split('#')[0]];
+
+      if (canvas && canvas.otherContent) {
+        if (Array.isArray(canvas.otherContent)) {
+          var results = [];
+
+          canvas.otherContent
+          // .filter(function(content) {
+          //   return content['@type'] === 'sc:AnnotationList';
+          // })
+          .forEach(function(content) {
+            results.push(content['@id']);
+          });
+
+          return results;
+        } else if (typeof canvas.otherContent === 'object') {
+          return canvas.otherContent['@id'];
+        } else if (typeof canvas.otherContent === 'string') {
+          return canvas.otherContent;
+        }
+      }
+    },
+
+    /**
      * Get the label of the a canvas by ID, removing any region fragments
      * if necessary
      *
