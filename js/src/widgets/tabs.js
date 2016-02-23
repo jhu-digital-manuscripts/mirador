@@ -96,7 +96,7 @@
         this.element = jQuery(_this.template(renderingData)).prependTo(_this.appendTo);
         return;
       }
-console.log('Selected tab index : ' + renderingData.selectedTabIndex);
+
       this.element.find('.tab').removeClass('selected');
       var tabClass = '.' + renderingData.tabs[renderingData.selectedTabIndex].options.id;
       this.element.find(tabClass).addClass('selected');

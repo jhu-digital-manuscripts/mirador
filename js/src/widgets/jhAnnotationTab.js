@@ -53,8 +53,9 @@
     },
 
     loadAnnotationLists: function(lists, clearAnnotations) {
-      console.assert(lists,
-        "[jhAnnotationTab#loadAnnotationLists] Must provide annotation lists to load.");
+      if (!lists) {
+        return;
+      }
       console.assert(typeof lists === 'string' || Array.isArray(lists),
         "[jhAnnotationTab#loadAnnotationLists] provided 'lists' must be a single string, or array of strings.");
 

@@ -131,16 +131,6 @@ $.SearchWidget.prototype = {
       }
     });
 
-    jQuery.subscribe('layoutChanged', function(event, layoutRoot) {
-      if (_this.parent.element.find('.mirador-icon-search-within').hasClass('selected')) {
-        var newWidth = _this.parent.element.width() - _this.element.width() - 35;
-        _this.parent.element.find('.view-container').width(newWidth);
-        _this.element.animate({left: _this.parent.element.position().left + newWidth + 5 + 'px'}, 300);
-      } else {
-        _this.parent.element.find('.view-container').width(_this.parent.element.width());
-      }
-    });
-
     this.element.find('.search-disclose-btn-more').on('click', function() {
       _this.element.find('#search-form').hide('fast');
       _this.element.find('.search-disclose').show('fast');
