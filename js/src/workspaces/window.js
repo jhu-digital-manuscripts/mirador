@@ -21,25 +21,25 @@
       focusOverlaysAvailable: {
         'ThumbnailsView': {
           'overlay' : {'MetadataView' : false},
-          'sidePanel' : {'SidePanel' : true},
+          'sidePanel' : {'SidePanel' : false},
           'bottomPanel' : {'' : false},
           'searchWidget' : {'SearchWidget' : false}
         },
         'ImageView': {
           'overlay' : {'MetadataView' : false},
-          'sidePanel' : {'SidePanel' : true},
+          'sidePanel' : {'SidePanel' : false},
           'bottomPanel' : {'ThumbnailsView' : true},
           'searchWidget' : {'SearchWidget' : false}
         },
         'ScrollView': {
           'overlay' : {'MetadataView' : false},
-          'sidePanel' : {'TableOfContents' : true},
+          'sidePanel' : {'TableOfContents' : false},
           'bottomPanel' : {'' : false},
           'searchWidget' : {'SearchWidget' : false}
         },
         'BookView': {
           'overlay' : {'MetadataView' : false},
-          'sidePanel' : {'SidePanel' : true},
+          'sidePanel' : {'SidePanel' : false},
           'bottomPanel' : {'ThumbnailsView' : true},
           'searchWidget' : {'SearchWidget' : false}
         }
@@ -52,7 +52,7 @@
         "toc" : true,
         "annotations" : true
       },
-      sidePanelVisible: true,
+      sidePanelVisible: false,
       annotationsAvailable: {
         'ThumbnailsView' : false,
         'ImageView' : true,
@@ -202,7 +202,10 @@
       } else {
         this.bottomPanelVisibility(this.bottomPanelVisible);
       }
-      this.sidePanelVisibility(this.sidePanelVisible, '0s');
+
+      // if (this.sidePanelVisible) {
+      //   this.sidePanelVisibility(this.sidePanelVisible, '0s');
+      // }
     },
 
     update: function(options) {
@@ -266,6 +269,7 @@
       });
 
       jQuery.subscribe('sidePanelStateUpdated.' + this.id, function(event, state) {
+        console.log('[Window] updating side panel state. ' + JSON.stringify(state));
         if (state.open) {
             _this.element.find('.fa-list').switchClass('fa-list', 'fa-caret-down');
             _this.element.find('.mirador-icon-toc').addClass('selected');
@@ -415,7 +419,7 @@
         hasStructures = false;
       }
 
-      if (this.sidePanel === null) {
+      if (this.sidePanel === null) {console.log('[Window] creating side panel. visible: ' + _this.sidePanelVisible);
         this.sidePanel = new $.SidePanel({
               parent: _this,
               appendTo: _this.element.find('.sidePanel'),
@@ -423,7 +427,8 @@
               canvasID: _this.currentCanvasID,
               tocTabAvailable: tocAvailable,
               annotationsTabAvailable: annotationsTabAvailable,
-              hasStructures: hasStructures
+              hasStructures: hasStructures,
+              visible: _this.sidePanelVisible
         });
       } else {
         this.sidePanel.update('annotations', annotationsTabAvailable);
@@ -468,19 +473,21 @@
       _this.sidePanelVisible = visible,
       tocIconElement = this.element.find('.mirador-icon-toc'),
       sidePanelElement = this.element.find('.sidePanel'),
-      viewContainerElement = this.element.find('.view-container');
+      viewContainerElement = this.element.find('.view-container'),
+      sidePanelMinimized = sidePanelElement.hasClass('minimized');
 
-      sidePanelElement.css('transition-duration', transitionDuration);
-      viewContainerElement.css('transition', transitionDuration);
-      if (visible && sidePanelElement.hasClass('minimized')) {
+      if (transitionDuration) {
+        sidePanelElement.css('transition-duration', transitionDuration);
+        viewContainerElement.css('transition', transitionDuration);
+      }
+
+      if (visible && sidePanelMinimized) { console.log('[Window#toggleSidePanel] showing sidepanel');
         tocIconElement.find('.fa-list').switchClass('fa-list', 'fa-caret-down');
-        tocIconElement.addClass('selected').css('background','#efefef');
         sidePanelElement.removeClass('minimized').width(280).css('border-right', '1px solid lightgray');
-        viewContainerElement.css('margin-left', 280);
-      } else if (!visible && !sidePanelElement.hasClass('minimized')) {
+        viewContainerElement.css('margin-right', 280);
+      } else if (!visible && !sidePanelMinimized) { console.log('[Window#toggleSidePanel] hiding sidepanel');
         tocIconElement.find('.fa-caret-down').switchClass('fa-caret-down', 'fa-list');
-        tocIconElement.removeClass('selected').css('background', '#fafafa');
-        viewContainerElement.css('margin-left', 0);
+        viewContainerElement.css('margin-right', 0);
         sidePanelElement.addClass('minimized').css('border', 'none').width(0);
       }
       jQuery.publish(('windowUpdated'), {
@@ -860,7 +867,9 @@ if (typeof list === 'string') {
      '<div class="window">',
       '<div class="manifest-info">',
         '<div class="window-manifest-navigation">',
-          '<a href="javascript:;" class="mirador-btn mirador-icon-search-within" style="display: none" title="Search within this object."><i class="fa fa-search fa-lg fa-fw"></i></a>',
+          '{{#if sidePanel}}',
+            '<a href="javascript:;" class="mirador-btn mirador-icon-toc" title="View/Hide Table of Contents"><i class="fa fa-list fa-lg fa-fw"></i></a>',
+          '{{/if}}',
           '<a href="javascript:;" class="mirador-btn mirador-icon-image-view" role="button" aria-label="Change Image Mode"><i class="fa fa-photo fa-lg fa-fw"></i>',
             '<ul class="dropdown image-list">',
               '{{#if ImageView}}',
@@ -910,14 +919,11 @@ if (typeof list === 'string') {
         '{{#if searchPanel}}',
           '<div class="searchWidget"></div>',
         '{{/if}}',
-        '{{#if sidePanel}}',
-          '<a href="javascript:;" class="mirador-btn mirador-icon-toc selected" title="View/Hide Table of Contents"><i class="fa fa-caret-down fa-lg fa-fw"></i></a>',
-        '{{/if}}',
         '<h3 class="window-manifest-title">{{title}}</h3>',
         '</div>',
         '<div class="content-container">',
           '{{#if sidePanel}}',
-            '<table class="sidePanel">',
+            '<table class="sidePanel minimized">',
             '</table>',
           '{{/if}}',
           '<div class="overlay"></div>',

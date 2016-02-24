@@ -12,7 +12,8 @@
       searchTabAvailable: true,
       layersTabAvailable: false,
       toolsTabAvailable: false,
-      hasStructures:     false
+      hasStructures:     false,
+      visible:           false
     }, options);
 
     this.init();
@@ -51,7 +52,7 @@
           },
         ],
         width: 280,
-        open: true
+        open: _this.visible
       }, true);
 
       this.listenForActions();
