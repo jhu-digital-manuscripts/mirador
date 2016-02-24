@@ -141,9 +141,7 @@
     panelToggled: function() {
       var state = this.state(),
           open = !state.open;
-
-      state.open = open;
-      this.state(state);
+      this.panelState.open = open;
     },
 
     listenForActions: function() {

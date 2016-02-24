@@ -203,9 +203,10 @@
         this.bottomPanelVisibility(this.bottomPanelVisible);
       }
 
-      // if (this.sidePanelVisible) {
-      //   this.sidePanelVisibility(this.sidePanelVisible, '0s');
-      // }
+      if (this.sidePanelVisible) {
+        jQuery.publish('sidePanelToggled.' + _this.id);
+        this.sidePanelVisibility(this.sidePanelVisible, '0s');
+      }
     },
 
     update: function(options) {
@@ -269,7 +270,6 @@
       });
 
       jQuery.subscribe('sidePanelStateUpdated.' + this.id, function(event, state) {
-        console.log('[Window] updating side panel state. ' + JSON.stringify(state));
         if (state.open) {
             _this.element.find('.fa-list').switchClass('fa-list', 'fa-caret-down');
             _this.element.find('.mirador-icon-toc').addClass('selected');
@@ -419,7 +419,7 @@
         hasStructures = false;
       }
 
-      if (this.sidePanel === null) {console.log('[Window] creating side panel. visible: ' + _this.sidePanelVisible);
+      if (this.sidePanel === null) {
         this.sidePanel = new $.SidePanel({
               parent: _this,
               appendTo: _this.element.find('.sidePanel'),
@@ -481,11 +481,11 @@
         viewContainerElement.css('transition', transitionDuration);
       }
 
-      if (visible && sidePanelMinimized) { console.log('[Window#toggleSidePanel] showing sidepanel');
+      if (visible && sidePanelMinimized) {
         tocIconElement.find('.fa-list').switchClass('fa-list', 'fa-caret-down');
         sidePanelElement.removeClass('minimized').width(280).css('border-right', '1px solid lightgray');
         viewContainerElement.css('margin-right', 280);
-      } else if (!visible && !sidePanelMinimized) { console.log('[Window#toggleSidePanel] hiding sidepanel');
+      } else if (!visible && !sidePanelMinimized) {
         tocIconElement.find('.fa-caret-down').switchClass('fa-caret-down', 'fa-list');
         viewContainerElement.css('margin-right', 0);
         sidePanelElement.addClass('minimized').css('border', 'none').width(0);
@@ -833,8 +833,8 @@ if (typeof list === 'string') {
       });
 
       this.element.find('.mirador-icon-toc').on('click', function() {
+        jQuery.publish('sidePanelToggled.' + _this.id);
         _this.sidePanelVisibility(!_this.sidePanelVisible, '0.3s');
-          //jQuery.publish('sidePanelToggled' + _this.id);
       });
 
       this.element.find('.new-object-option').on('click', function() {
