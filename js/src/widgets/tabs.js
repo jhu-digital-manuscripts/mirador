@@ -101,7 +101,7 @@
 
     },
     template: Handlebars.compile([
-      '<tr class="tabGroup"><td>',
+      '<div class="tabGroup">',
       '<ul>',
         '{{#each tabs}}',
         '<li class="tab {{this.options.id}} {{#unless @index}}selected{{/unless}}" data-tabId="{{this.options.id}}">',
@@ -109,7 +109,7 @@
         '</li>',
         '{{/each}}',
       '</ul>',
-      '</td></tr>'
+      '</div>'
     ].join('')),
 
     toggle: function () {}

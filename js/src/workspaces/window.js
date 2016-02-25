@@ -468,12 +468,14 @@
     },
 
     sidePanelVisibility: function(visible, transitionDuration) {
-      var _this = this;
-      _this.sidePanelVisible = visible,
-      tocIconElement = this.element.find('.mirador-icon-toc'),
-      sidePanelElement = this.element.find('.sidePanel'),
-      viewContainerElement = this.element.find('.view-container'),
-      sidePanelMinimized = sidePanelElement.hasClass('minimized');
+      var _this = this,
+          width = 330,
+          tocIconElement = this.element.find('.mirador-icon-toc'),
+          sidePanelElement = this.element.find('.sidePanel'),
+          viewContainerElement = this.element.find('.view-container'),
+          sidePanelMinimized = sidePanelElement.hasClass('minimized');
+
+      _this.sidePanelVisible = visible;
 
       if (transitionDuration) {
         sidePanelElement.css('transition-duration', transitionDuration);
@@ -482,8 +484,8 @@
 
       if (visible && sidePanelMinimized) {
         tocIconElement.find('.fa-list').switchClass('fa-list', 'fa-caret-down');
-        sidePanelElement.removeClass('minimized').width(280).css('border-right', '1px solid lightgray');
-        viewContainerElement.css('margin-right', 280);
+        sidePanelElement.removeClass('minimized').width(width).css('border-right', '1px solid lightgray');
+        viewContainerElement.css('margin-right', width);
       } else if (!visible && !sidePanelMinimized) {
         tocIconElement.find('.fa-caret-down').switchClass('fa-caret-down', 'fa-list');
         viewContainerElement.css('margin-right', 0);
@@ -922,8 +924,8 @@ if (typeof list === 'string') {
         '</div>',
         '<div class="content-container">',
           '{{#if sidePanel}}',
-            '<table class="sidePanel minimized">',
-            '</table>',
+            '<div class="sidePanel minimized">',
+            '</div>',
           '{{/if}}',
           '<div class="overlay"></div>',
           '<div class="view-container {{#unless sidePanel}}focus-max-width{{/unless}}">',

@@ -115,7 +115,7 @@ $.SearchWidget.prototype = {
       );
     });
 
-    return this.terms2query(query, this.query.delimiters.or);
+    return this.terms2query(query, this.searchService.query.delimiters.or);
   },
 
   /**
@@ -265,7 +265,10 @@ console.log("[SearchWidget] original : " + query);
     var _this = this;
     var template = Handlebars.compile('{{> advancedSearchLine }}');
 
-    var templateData = {"search": this.searchService.search};
+    var templateData = {
+      'search': this.searchService.search,
+      'query': this.searchService.query
+    };
     templateData.search.categories.choices = this.searchService.query.fields;
 
     var line = template(templateData);
@@ -294,7 +297,7 @@ console.log("[SearchWidget] original : " + query);
 
     line.find('.advanced-search-categories').on('change', function(event) {
       var jSelector = jQuery(event.target);
-      var user_inputs = jSelector.parent().parent().find('div');
+      var user_inputs = line.find('.advanced-search-inputs');
 
       // Hide all input/select fields
       user_inputs.find('select').hide();
@@ -372,7 +375,10 @@ console.log("[SearchWidget] original : " + query);
     Handlebars.registerPartial('advancedSearchLine', [
       // Select search category
       '<tr class="advanced-search-line"><td>',
-        '{{> searchDropDown search.categories }}',
+        '<div class="advanced-search-selector">',
+          '{{> searchDropDown query.operators}}',
+          '{{> searchDropDown search.categories }}',
+        '</div>',
       '</td>',
       '<td>',
         '<div class="advanced-search-inputs">',
@@ -402,7 +408,7 @@ console.log("[SearchWidget] original : " + query);
           '<option></option>',
         '{{/if}}',
         '{{#each choices}}',
-          '<option value="{{this}}">{{this}}</option>',
+          '<option value="{{#if value}}{{value}}{{else}}{{this}}{{/if}}">{{#if label}}{{label}}{{else}}{{this}}{{/if}}</option>',
         '{{/each}}',
       '</select>'
     ].join(''));

@@ -51,7 +51,7 @@
             }
           },
         ],
-        width: 280,
+        width: 330,
         open: _this.visible
       }, true);
 
@@ -87,7 +87,7 @@
       if (this.tocTabAvailable) {
         new $.TableOfContents({
           manifest: this.manifest,
-          appendTo: this.element.find('.tabContentArea td'),
+          appendTo: this.element.find('.tabContentArea'),
           parent: this.parent,
           panel: true,
           canvasID: this.parent.currentCanvasID
@@ -98,7 +98,7 @@
         new $.JhAnnotationTab({
           manifest: _this.manifest,
           parent: _this.parent,
-          appendTo: _this.element.find('.tabContentArea td'),
+          appendTo: _this.element.find('.tabContentArea'),
           tabId: 'annotationsTab',
           windowId: _this.parent.id,
           currentCanvasID: this.parent.currentCanvasID,
@@ -111,7 +111,7 @@
           parent: _this.parent,
           windowId: _this.parent.id,
           widgetId: 'searchTab',
-          appendTo: _this.element.find('.tabContentArea td'),
+          appendTo: _this.element.find('.tabContentArea'),
           width: 0,
           searchService: new $.JhiiifSearchService({
             manifest: _this.manifest,
@@ -188,8 +188,8 @@
     },
 
     template: Handlebars.compile([
-      '<tr class="tabContentArea"><td>',
-      '</td></tr>'
+      '<div class="tabContentArea">',
+      '</div>'
     ].join('')),
 
     toggle: function (enableSidePanel) {
