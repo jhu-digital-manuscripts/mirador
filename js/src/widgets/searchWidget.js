@@ -20,92 +20,21 @@ $.SearchWidget = function(options) {
     element: null,
     width: 330,
     manifest: null, // Manifest object. To get search service: this.manifest.getSearchWithinService()
-    query: {
-      fields: [],
-      fieldRegex: /[A-Za-z]/,
-      operators: ['AND', 'OR'],
-      delimiters: {
-        'term': '&',
-        'or': '|',
-        'field': ':'
-      }
-    },
-    search : {
-      'collection': {
-        'id': 'http://rosetest.library.jhu.edu/iiif-pres/collection/aorcollection',
-        'label': 'Archaeology of Reading collection'
-      },
-      'categories': {
-        'label': 'Categories',
-        'class': 'advanced-search-categories',
-        'choices': [
-          'marginalia', 'underlines', 'symbols', 'marks'/*, 'object_id', 'object_type', 'object_label',
-          'collection_id', 'manifest_id', 'manifest_label', 'marginalia', 'underline', 'errata', 'mark',
-          'symbol', 'numeral', 'drawing', 'image_name'*/
-        ]
-      },
-      'inputs': { // TODO set field defaults!
-        // 'all': {
-        //   'label': 'All',
-        //   'class': 'advanced-search-all',
-        //   'type': 'text',
-        //   'placeholder': 'Search all categories',
-        //   'query': 'all',
-        //   'default': true
-        // },
-        'symbols': {
-          "label": "Symbols",
-          "class": "advanced-search-symbols",
-          "type": "dropdown",
-          "choices": ['Asterisk', 'Bisectedcircle', 'Crown', 'JC', 'HT', 'LL', 'Mars', 'Mercury', 'Moon', 'Opposite_planets', 'Saturn', 'Square', 'SS', 'Sun', 'Venus'],
-          'addBlank': true,
-          'query': 'symbol',
-          'placeholder': 'Search symboled text'
-        },
-        'marks': {
-          "label": "Marks",
-          "class": "advanced-search-marks",
-          "type": "dropdown",
-          "choices": [
-            'apostrophe', 'box', 'bracket', 'circumflex', 'colon', 'comma', 'dash', 'diacritic', 'dot', 'double_vertical_bar', 'equal_sign',
-            'est_mark', 'hash', 'horizontal_bar', 'page_break', 'pen_trial', 'plus_sign', 'quotation_mark', 'scribble', 'section_sign',
-            'semicolon', 'slash', 'straight_quotation_mark', 'tick', 'tilde', 'triple_dash', 'vertical_bar', 'X-sign'
-          ],
-          'addBlank': true,
-          'query': 'mark',
-          'placeholder': 'Search marked text.'
-        },
-        'marginalia': {
-          'label': "Marginalia",
-          'class': 'advanced-search-marginalia',
-          'type': 'text',
-          'placeholder': 'Search marginalia text',
-          'query': 'marginalia',
-          'default': true
-        },
-        'underlines': {
-          'label': 'Underlines',
-          'class': 'advanced-search-underlines',
-          'type': 'text',
-          'placeholder': 'Search underlined text',
-          'query': 'underline'
-        }
-      }
-    }
+    searchService: null
   }, options);
 
   this.init();
-
 };
 
 $.SearchWidget.prototype = {
 
   init: function() {
+    console.assert(this.searchService, '[SearchWidget] searchService MUST be supplied when creating this widget.');
     var _this = this;
     this.registerWidget();
 
     var templateData = {};
-    templateData.search = this.search;
+    templateData.search = this.searchService.search;
     templateData.search.manifest = {
       'id': this.manifest.getId(),
       'label': this.manifest.getLabel()
@@ -178,8 +107,12 @@ $.SearchWidget.prototype = {
     var _this = this;
     var query = [];
 
-    this.search.categories.choices.forEach(function(choice) {
-      query.push(_this.search.inputs[choice].query + _this.query.delimiters.field + "'" + _this.escapeTerm(value) + "'");
+    this.searchService.query.fields.forEach(function(field) {
+      query.push(
+        _this.searchService.search.inputs[field].query +
+        _this.searchService.query.delimiters.field + "'" +
+        _this.escapeTerm(value) + "'"
+      );
     });
 
     return this.terms2query(query, this.query.delimiters.or);
@@ -205,12 +138,12 @@ $.SearchWidget.prototype = {
         // Only grab visible inputs
         if (child.css('display') != 'none' && child.val() && child.val() !== '') {
 
-          if (child.is('input') && _this.search.inputs[category].type === 'dropdown') {
+          if (child.is('input') && _this.searchService.search.inputs[category].type === 'dropdown') {
             queries.push(child.data('query') + ':\'' + _this.escapeTerm(child.val()) + "'");
           } else {
             queries.push([
               child.data('query'),
-                _this.query.delimiters.field,
+                _this.searchService.query.delimiters.field,
                 "'",
                 _this.escapeTerm(child.val()),
                 "'"
@@ -222,7 +155,7 @@ $.SearchWidget.prototype = {
 
     var finalQuery = this.terms2query(queries);
     if (finalQuery && finalQuery.length > 0) {
-      this.displaySearchWithin(finalQuery, _this.query.delimiters.term);
+      this.displaySearchWithin(finalQuery, _this.searchService.query.delimiters.and);
     }
   },
 
@@ -247,7 +180,7 @@ $.SearchWidget.prototype = {
   terms2query: function(terms, operation) {
     console.assert(terms, "Provided 'terms' must exist.");
     if (!operation) {
-      operation = this.query.delimiters.term;
+      operation = this.searchService.query.delimiters.and;
     }
     var _this = this;
 
@@ -307,7 +240,6 @@ $.SearchWidget.prototype = {
 console.log("[SearchWidget] original : " + query);
       query = encodeURIComponent(query);
 
-      searchService = (_this.manifest.getSearchWithinService());
       new $.SearchWithinResults({
         manifest: _this.manifest,
         appendTo: _this.element.find(".search-results-list"),
@@ -333,7 +265,9 @@ console.log("[SearchWidget] original : " + query);
     var _this = this;
     var template = Handlebars.compile('{{> advancedSearchLine }}');
 
-    var templateData = {"search": this.search};
+    var templateData = {"search": this.searchService.search};
+    templateData.search.categories.choices = this.searchService.query.fields;
+
     var line = template(templateData);
 
     line = jQuery(line).insertAfter(
@@ -342,8 +276,8 @@ console.log("[SearchWidget] original : " + query);
 
     // Hide all inputs except for the Default choice
     // Makes sure ENTER key presses activate advanced search
-    Object.keys(this.search.inputs).forEach(function (key) {
-      var input = _this.search.inputs[key];
+    Object.keys(this.searchService.search.inputs).forEach(function (key) {
+      var input = _this.searchService.search.inputs[key];
       var element = line.find(_this.classNamesToSelector(input.class));
 
       element.keypress(function(event) {
@@ -366,7 +300,7 @@ console.log("[SearchWidget] original : " + query);
       user_inputs.find('select').hide();
       user_inputs.find('input').hide();
 
-      user_inputs.find(_this.classNamesToSelector(_this.search.inputs[jSelector.val()].class)).show();
+      user_inputs.find(_this.classNamesToSelector(_this.searchService.search.inputs[jSelector.val()].class)).show();
     });
 
   },

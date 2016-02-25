@@ -23,25 +23,21 @@
           'overlay' : {'MetadataView' : false},
           'sidePanel' : {'SidePanel' : false},
           'bottomPanel' : {'' : false},
-          'searchWidget' : {'SearchWidget' : false}
         },
         'ImageView': {
           'overlay' : {'MetadataView' : false},
           'sidePanel' : {'SidePanel' : false},
           'bottomPanel' : {'ThumbnailsView' : true},
-          'searchWidget' : {'SearchWidget' : false}
         },
         'ScrollView': {
           'overlay' : {'MetadataView' : false},
           'sidePanel' : {'TableOfContents' : false},
           'bottomPanel' : {'' : false},
-          'searchWidget' : {'SearchWidget' : false}
         },
         'BookView': {
           'overlay' : {'MetadataView' : false},
           'sidePanel' : {'SidePanel' : false},
           'bottomPanel' : {'ThumbnailsView' : true},
-          'searchWidget' : {'SearchWidget' : false}
         }
       },
       focusOptions: null,
@@ -50,7 +46,8 @@
       sidePanelAvailable: true,
       sidePanelOptions: {
         "toc" : true,
-        "annotations" : true
+        "annotations" : true,
+        "search" : true,
       },
       sidePanelVisible: false,
       annotationsAvailable: {
@@ -412,6 +409,7 @@
       var _this = this,
       tocAvailable = _this.sidePanelOptions.toc,
       annotationsTabAvailable = _this.sidePanelOptions.annotations,
+      searchAvailable = _this.sidePanelOptions.search,
       hasStructures = true;
 
       var structures = _this.manifest.getStructures();
@@ -427,6 +425,7 @@
               canvasID: _this.currentCanvasID,
               tocTabAvailable: tocAvailable,
               annotationsTabAvailable: annotationsTabAvailable,
+              searchAvailable: searchAvailable,
               hasStructures: hasStructures,
               visible: _this.sidePanelVisible
         });

@@ -112,7 +112,10 @@
           windowId: _this.parent.id,
           widgetId: 'searchTab',
           appendTo: _this.element.find('.tabContentArea td'),
-          width: 0
+          width: 0,
+          searchService: new $.JhiiifSearchService({
+            manifest: _this.manifest,
+          }),
         });
       }
     },
