@@ -12,6 +12,8 @@
       visible: null,
       message: {
         error: '<h1 class="error">Failed to load annotation list.</h1>',
+        empty: '<h1 class="empty">No annotations available.</h1>',
+        noLists: '<h1 class="empty">No annotations found.</h1>',
       },
     }, options);
 
@@ -53,19 +55,21 @@
     },
 
     loadAnnotationLists: function(lists, clearAnnotations) {
+      var _this = this;
+
+      if (clearAnnotations) {
+        this.appendTo.find('.annotations').empty();
+      }
+      // Remove any error messages, if necessary
+      this.appendTo.find('.messages').empty();
+
       if (!lists) {
+        jQuery(this.message.noLists).appendTo(this.element.find('.messages'));
         return;
       }
       console.assert(typeof lists === 'string' || Array.isArray(lists),
         "[jhAnnotationTab#loadAnnotationLists] provided 'lists' must be a single string, or array of strings.");
 
-      var _this = this;
-
-      if (clearAnnotations) {
-        this.element.find('.annotations').empty();
-      }
-      // Remove any error messages, if necessary
-      this.element.find('.error').remove();
       if (typeof lists === 'string') {
         this.requestList(lists);
       } else {
@@ -86,7 +90,7 @@
       })
       .fail(function() {
         console.log('[jhAnnotationTab#requestList] Failed to load annotation list. ' + listId);
-        jQuery(_this.message.error).appendTo(_this.appendTo);
+        jQuery(_this.message.error).appendTo(this.appendTo.find('.messages'));
       })
       .always(function() {
 
@@ -102,6 +106,10 @@
     processAnnotationList: function(annotationList) {
       var annotations = [];
       var appendTo = this.appendTo.find('ul.annotations');
+
+      if (!annotationList.resources || annotationList.resources.length === 0) {
+        jQuery(this.message.empty).appendTo(this.appendTo.find('.messages'));
+      }
 
       // Massage data slightly, Handlebars cannot deal with weird JSON-LD
       // properties such as '@id', just change these to 'id'
@@ -149,6 +157,7 @@
 
     template: Handlebars.compile([
       '<div class="jhAnnotationTab {{position}}">',
+        '<div class="messages"></div>',
         '<ul class="annotations">',
           // '{{> annotationList}}',
         '</ul>',
