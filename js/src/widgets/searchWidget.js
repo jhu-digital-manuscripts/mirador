@@ -229,8 +229,6 @@ $.SearchWidget.prototype = {
       query = '(' + query + ' ' + operation + ' ' + frag + ')';
     }
 
-    // Trim leading and trailing parentheses
-    // query = query.slice(1, query.length - 1);
     return query;
   },
 
@@ -293,6 +291,11 @@ console.log("[SearchWidget] original : " + query);
       if (!input.default && input.class && input.class !== '') {
         element.hide();
       }
+    });
+
+    // Add functionality to 'remove' button
+    line.find('.advanced-search-remove').on('click', function() {
+      line.remove();
     });
 
     line.find('.advanced-search-categories').on('change', function(event) {
@@ -389,6 +392,9 @@ console.log("[SearchWidget] original : " + query);
           '<input type="text" class="{{class}}" placeholder="{{placeholder}}" {{#if query}}data-query="{{query}}"{{/if}}/>',
         '{{/each}}',
         '</div>',
+      '</td>',
+      '<td>',
+        '<button class="advanced-search-remove" type="button"><i class="fa fa-times"></i></button>',
       '</td></tr>',
     ].join(''));
 

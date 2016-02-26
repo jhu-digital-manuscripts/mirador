@@ -75,7 +75,6 @@
       jQuery(this.appendTo).empty();
       jQuery(this.queryMessage(decodeURIComponent(query))).appendTo(_this.appendTo);
 
-console.log('[SearchResults] making request ' + queryUrl);
       // Make the request
       var request = jQuery.ajax({
         url:   queryUrl,
