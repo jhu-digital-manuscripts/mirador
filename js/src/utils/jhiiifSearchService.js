@@ -70,6 +70,20 @@ $.JhiiifSearchService.prototype = {
     this.assignDefaults();
   },
 
+  /**
+   * Add default settings to any fields that don't have overriding
+   * settings.
+   *
+   * defaults:
+   * '{field}' : {
+   *   'class': 'advanced-search-{field}',
+   *   'type': 'text',
+   *   'query': '{field}',
+   *   'placeholder': 'Search {field}'
+   * }
+   *
+   * @return none
+   */
   assignDefaults: function() {
     var inputs = {};
     this.query.fields.forEach(function(field) {

@@ -126,8 +126,7 @@ $.SearchWidget.prototype = {
   performAdvancedSearch: function() {
     var _this = this;
 
-    var ands = [];
-    var ors = [];
+    var parts = [];
 
     this.element.find('.advanced-search-line').each(function(index, line) {
       line = jQuery(line);
@@ -142,49 +141,19 @@ $.SearchWidget.prototype = {
       .each(function(index, child) {
         child = jQuery(child);
 
-        var q = '';
-        if (child.is('input') && _this.searchService.search.inputs[category].type === 'dropdown') {
-          q = child.data('query') + ':\'' + _this.escapeTerm(child.val()) + "'";
-        } else {
-          q = [
-            child.data('query'),
-              _this.searchService.query.delimiters.field,
-              "'",
-              _this.escapeTerm(child.val()),
-              "'"
-           ].join('');
-        }
-
-        // Default to AND operation
-        switch (operation) {
-          default:
-            ands.push(q);
-            break;
-          case 'or':
-            ors.push(q);
-            break;
-        }
+        parts.push({
+          op: operation,
+          category: child.data('query'),
+          term: _this.escapeTerm(child.val())
+        });
       });
     });
 
-    var finalQuery = '';
-    var hasAnds = ands.length > 0;
-    var hasOrs = ors.length > 0;
+$.generateQuery(parts);
 
-    if (hasAnds && hasOrs) {
-      finalQuery = this.terms2query([
-        this.terms2query(ands, this.searchService.query.delimiters.and),
-        this.terms2query(ors, this.searchService.query.delimiters.or)
-      ], ors.length === 1 ? this.searchService.query.delimiters.or : this.searchService.query.delimiters.and);
-    } else if (hasAnds && !hasOrs) {
-      finalQuery = this.terms2query(ands, this.searchService.query.delimiters.and);
-    } else if (!hasAnds && hasOrs) {
-      finalQuery = this.terms2query(ors, this.searchService.query.delimiters.or);
-    }
-
-    if (finalQuery && finalQuery.length > 0) {
-      this.displaySearchWithin(finalQuery, _this.searchService.query.delimiters.and);
-    }
+    // if (finalQuery && finalQuery.length > 0) {
+    //   this.displaySearchWithin(finalQuery, _this.searchService.query.delimiters.and);
+    // }
   },
 
   /**
@@ -196,47 +165,6 @@ $.SearchWidget.prototype = {
    */
   escapeTerm: function(term) {
     return term ? term.replace("'", "\\'") : term;
-  },
-
-  /**
-   * Convert string inputs from the UI into a syntax that can be
-   * understood by the search service.
-   *
-   * @param  string terms array of escaped terms
-   * @return string       single formatted string following search syntax
-   */
-  terms2query: function(terms, operation) {
-    console.assert(terms, "Provided 'terms' must exist.");
-    if (!operation) {
-      operation = this.searchService.query.delimiters.and;
-    }
-    var _this = this;
-
-    // Return input if it is not an array
-    if (!jQuery.isArray(terms)) {
-      return terms;
-    }
-    // Short circuit if only 1 term exists
-    if (terms.length === 1) {
-      return terms[0];
-    }
-
-    var query = '';
-    var addOp = false;
-    terms.forEach(function(term) {
-      if (!term || term.length <= 0) {
-        return;
-      }
-
-      if (addOp) {
-        query += ' ' + operation + ' ';
-      } else {
-        addOp = true;
-      }
-      query += term;
-    });
-
-    return '(' + query + ')';
   },
 
   displaySearchWithin: function(query){
