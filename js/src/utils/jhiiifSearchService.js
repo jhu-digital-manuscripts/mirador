@@ -36,17 +36,12 @@ $.JhiiifSearchService = function(options) {
       },
       'inputs': {
         'symbol': {
-          // "label": "Symbols",
-          // "class": "advanced-search-symbols",
           "type": "dropdown",
           "choices": ['Asterisk', 'Bisectedcircle', 'Crown', 'JC', 'HT', 'LL', 'Mars', 'Mercury', 'Moon', 'Opposite_planets', 'Saturn', 'Square', 'SS', 'Sun', 'Venus'],
           'addBlank': true,
-          // 'query': 'symbol',
           'placeholder': 'Search symboled text'
         },
         'mark': {
-          // "label": "Marks",
-          // "class": "advanced-search-marks",
           "type": "dropdown",
           "choices": [
             'apostrophe', 'box', 'bracket', 'circumflex', 'colon', 'comma', 'dash', 'diacritic', 'dot', 'double_vertical_bar', 'equal_sign',
@@ -54,23 +49,13 @@ $.JhiiifSearchService = function(options) {
             'semicolon', 'slash', 'straight_quotation_mark', 'tick', 'tilde', 'triple_dash', 'vertical_bar', 'X-sign'
           ],
           'addBlank': true,
-          // 'query': 'mark',
           'placeholder': 'Search marked text.'
         },
         'marginalia': {
-          // 'label': "Marginalia",
-          // 'class': 'advanced-search-marginalia',
-          // 'type': 'text',
-          // 'placeholder': 'Search marginalia text',
-          // 'query': 'marginalia',
           'default': true
         },
         'underline': {
-          // 'label': 'Underlines',
-          // 'class': 'advanced-search-underlines',
-          // 'type': 'text',
           'placeholder': 'Search underlined text',
-          // 'query': 'underline'
         }
       }
     }

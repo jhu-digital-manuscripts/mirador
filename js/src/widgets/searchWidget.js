@@ -126,34 +126,62 @@ $.SearchWidget.prototype = {
   performAdvancedSearch: function() {
     var _this = this;
 
-    var queries = [];
-    _this.element.find('.advanced-search-line').each(function(index, line) {
+    var ands = [];
+    var ors = [];
+
+    this.element.find('.advanced-search-line').each(function(index, line) {
       line = jQuery(line);
       var category = line.find('.advanced-search-categories').val();
+      var operation = line.find('.advanced-search-operators').val();
 
       var inputs = line.find('.advanced-search-inputs').children()
+      .filter(function(index, child) {
+        child = jQuery(child);
+        return child.css('display') != 'none' && child.val() && child.val() !== '';
+      })
       .each(function(index, child) {
         child = jQuery(child);
 
-        // Only grab visible inputs
-        if (child.css('display') != 'none' && child.val() && child.val() !== '') {
+        var q = '';
+        if (child.is('input') && _this.searchService.search.inputs[category].type === 'dropdown') {
+          q = child.data('query') + ':\'' + _this.escapeTerm(child.val()) + "'";
+        } else {
+          q = [
+            child.data('query'),
+              _this.searchService.query.delimiters.field,
+              "'",
+              _this.escapeTerm(child.val()),
+              "'"
+           ].join('');
+        }
 
-          if (child.is('input') && _this.searchService.search.inputs[category].type === 'dropdown') {
-            queries.push(child.data('query') + ':\'' + _this.escapeTerm(child.val()) + "'");
-          } else {
-            queries.push([
-              child.data('query'),
-                _this.searchService.query.delimiters.field,
-                "'",
-                _this.escapeTerm(child.val()),
-                "'"
-             ].join(''));
-          }
+        // Default to AND operation
+        switch (operation) {
+          default:
+            ands.push(q);
+            break;
+          case 'or':
+            ors.push(q);
+            break;
         }
       });
     });
 
-    var finalQuery = this.terms2query(queries);
+    var finalQuery = '';
+    var hasAnds = ands.length > 0;
+    var hasOrs = ors.length > 0;
+
+    if (hasAnds && hasOrs) {
+      finalQuery = this.terms2query([
+        this.terms2query(ands, this.searchService.query.delimiters.and),
+        this.terms2query(ors, this.searchService.query.delimiters.or)
+      ], ors.length === 1 ? this.searchService.query.delimiters.or : this.searchService.query.delimiters.and);
+    } else if (hasAnds && !hasOrs) {
+      finalQuery = this.terms2query(ands, this.searchService.query.delimiters.and);
+    } else if (!hasAnds && hasOrs) {
+      finalQuery = this.terms2query(ors, this.searchService.query.delimiters.or);
+    }
+
     if (finalQuery && finalQuery.length > 0) {
       this.displaySearchWithin(finalQuery, _this.searchService.query.delimiters.and);
     }
@@ -194,42 +222,21 @@ $.SearchWidget.prototype = {
     }
 
     var query = '';
-    var frag = '';
-    var frag_start = false;
+    var addOp = false;
     terms.forEach(function(term) {
       if (!term || term.length <= 0) {
         return;
       }
-      // All terms
-      //  fragment already started?
-      //    yes : add '(' to beginning of fragment
-      //          append operator, current term, ')'
-      //          fragment ended
-      //          add '(' to start of query, append operator, fragment, ')'
-      //    no : start fragment
-      if (frag_start) {
-        frag = '(' + frag + ' ' + operation + ' ' + term + ')';
-        if (query.length === 0) {
-          query = frag;
-        } else {
-          query = '(' + query + ' '+ operation + ' '+ frag + ')';
-        }
 
-        frag_start = false;
-        frag = '';
+      if (addOp) {
+        query += ' ' + operation + ' ';
       } else {
-        frag = term;
-        frag_start = true;
+        addOp = true;
       }
+      query += term;
     });
 
-    // Could be a hanging term at the end if an odd number of terms were given.
-    // Add this to the end of the query
-    if (frag_start && frag && frag.length > 0) {
-      query = '(' + query + ' ' + operation + ' ' + frag + ')';
-    }
-
-    return query;
+    return '(' + query + ')';
   },
 
   displaySearchWithin: function(query){

@@ -18,9 +18,9 @@
       metadataListingCls:   'metadata-listing',
       query:                null,
       results:              null,
-      searchService:        null,
       searchPrefix:         'jhsearch',
-      searchCollection:     null
+      searchCollection:     null,
+      baseUrl:              null
     }, options);
 
     this.init();
@@ -30,8 +30,6 @@
 
     init: function() {
       this.registerHandlebars();
-      this.searchService = this.manifest.getSearchWithinService();
-
       this.search(this.query);
     },
 
