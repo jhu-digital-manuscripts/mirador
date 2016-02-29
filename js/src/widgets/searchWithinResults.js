@@ -30,7 +30,42 @@
 
     init: function() {
       this.registerHandlebars();
-      this.search(this.query);
+
+      if (this.query) {
+        // Query from UI
+        this.search(this.query);
+      } else if (this.queryUrl) {
+        // Initial URL value from changing manifests during a search
+        var parser = document.createElement('a');
+        parser.href = this.queryUrl;
+
+        var parts = parser.search.split('&');
+        var q = {};
+        parts.map(function(part, index, array) {
+          var moreParts = part.split('=');
+          if (moreParts.length !== 2) {
+            console.log('[SearchResults] malformed query string found in search URL: ' + this.queryUrl);
+            return;
+          }
+
+          if (moreParts[0].charAt(0) === '?') {
+            moreParts[0] = moreParts[0].substring(1);
+          }
+          q[moreParts[0]] = moreParts[1];
+        });
+
+        this.baseUrl = this.queryUrl.substring(0, this.queryUrl.indexOf('?'));
+
+        // Remove trailing slash
+        if (this.baseUrl.charAt(this.baseUrl.length - 1) === '/') {
+          this.baseUrl = this.baseUrl.slice(0, this.baseUrl.length - 1);
+        }
+        if (this.baseUrl.slice(this.baseUrl.lastIndexOf('/')+1) === this.searchPrefix) {
+          this.baseUrl = this.baseUrl.slice(0, this.baseUrl.length - this.searchPrefix.length);
+        }
+        
+        this.search(q.q, parseInt(q.o), parseInt(q.m), q.r);
+      }
     },
 
     /**
@@ -67,11 +102,16 @@
         queryUrl += '&o=' + offset;
       }
 
+      this.queryUrl = queryUrl;
+      this.searchFromUrl(queryUrl);
+    },
+
+    searchFromUrl: function(queryUrl) {
+      var _this = this;
       // Clear search related stuff
       this.searchResults = null;
 
       jQuery(this.appendTo).empty();
-      jQuery(this.queryMessage(decodeURIComponent(query))).appendTo(_this.appendTo);
 
       // Make the request
       var request = jQuery.ajax({
@@ -126,7 +166,6 @@
       .always(function() {
         // console.log('[SearchResults] query done.');
       });
-
     },
 
     /**
@@ -206,23 +245,19 @@
           // DO NOTHING for now
           // // Load manifest
           console.log("[SearchResults] click : changing manifest : " + manifestid);
-          // var manifest = new $.Manifest(manifestid, '');
-          // manifest.request.done(function(data) {
-          //   console.log("[SearchResults] manifest loaded : " + manifest.getId());
-          //   var currentWindow = _this.parent.parent;
-          //   currentWindow.element.remove();
-          //   currentWindow.update({
-          //     manifest: manifest,
-          //     currentCanvasID: canvasid,
-          //     searchWidgetAvailable: true,
-          //     searchWidget: _this
-          //   });
-          //   currentWindow.setCurrentCanvasID(canvasid);
-          //
-          //
-          // });
-
-
+          var manifest = new $.Manifest(manifestid, '');
+          manifest.request.done(function(data) {
+            console.log("[SearchResults] manifest loaded : " + manifest.getId());
+            var currentWindow = _this.parent.parent;
+            currentWindow.element.remove();
+            currentWindow.update({
+              manifest: manifest,
+              currentCanvasID: canvasid,
+              searchWidgetAvailable: true,
+              queryUrl: _this.queryUrl
+            });
+            currentWindow.setCurrentCanvasID(canvasid);
+          });
 
         } else {
           _this.parent.parent.setCurrentCanvasID(canvasid);

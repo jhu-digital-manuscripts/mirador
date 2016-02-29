@@ -20,7 +20,8 @@ $.SearchWidget = function(options) {
     element: null,
     width: 330,
     manifest: null, // Manifest object. To get search service: this.manifest.getSearchWithinService()
-    searchService: null
+    searchService: null,
+    queryUrl: null
   }, options);
 
   this.init();
@@ -43,6 +44,9 @@ $.SearchWidget.prototype = {
     this.element = jQuery(this.template(templateData)).appendTo(this.appendTo);
 
     this.bindEvents();
+    if (this.queryUrl && this.queryUrl.length > 0) {
+      this.searchFromUrl(this.queryUrl);
+    }
   },
 
   toggle: function() {
@@ -167,7 +171,22 @@ $.SearchWidget.prototype = {
     }
   },
 
+  searchFromUrl: function(url) {
+    console.assert(url && url.length > 0, '[SearchWidget#searchFromUrl] Must provide a URL.');
+    if (!url || url.length === 0) {
+      return;
+    }
+    var _this = this;
 
+    new $.SearchWithinResults({
+      manifest: _this.manifest,
+      appendTo: _this.element.find('.search-results-list'),
+      parent: _this,
+      canvasID: _this.parent.currentCanvasID,
+      baseUrl: _this.element.find('.search-within-object-select').val(),
+      queryUrl: url
+    });
+  },
 
   displaySearchWithin: function(query){
     var _this = this;

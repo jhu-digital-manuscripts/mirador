@@ -13,7 +13,8 @@
       layersTabAvailable: false,
       toolsTabAvailable: false,
       hasStructures:     false,
-      visible:           false
+      visible:           false,
+      queryUrl:          null,
     }, options);
 
     this.init();
@@ -113,6 +114,7 @@
           widgetId: 'searchTab',
           appendTo: _this.element.find('.tabContentArea'),
           width: 0,
+          queryUrl: _this.queryUrl,
           searchService: new $.JhiiifSearchService({
             manifest: _this.manifest,
           }),
