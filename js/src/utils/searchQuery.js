@@ -66,10 +66,15 @@
       query += part.category + ':\'' + $.escapeSearchTerm(part.term) + "'";
     });
 
-    query += Array(nestCount).fill(')').join('');
+    // Add end parentheses
+    for (var i = 0; i < nestCount; i++) {
+      query += ')';
+    }
+    // Surround entire query if necessary
     if (query.charAt(0) !== '(') {
       query = '(' + query + ')';
     }
+    
     return query;
   };
 
