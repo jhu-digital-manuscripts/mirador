@@ -2093,12 +2093,12 @@ a.mirador-icon-empty-slot [class^="icon-"] {
 .advanced-search-operators {
   -webkit-appearance: none;
   -moz-appearance: none;
-  width: 20px;
+  width: 35px;
   border-radius: 3px 0 0 3px;
   cursor: pointer;
 }
 .advanced-search-categories {
-  width: 100px;
+  width: 85px;
   border-radius: 0;
   margin-left: -1px;
   cursor: pointer;

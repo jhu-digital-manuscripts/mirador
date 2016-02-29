@@ -122,7 +122,7 @@ $.SearchWidget.prototype = {
     this.searchService.query.fields.forEach(function(field) {
       query.push({
         op: _this.searchService.query.delimiters.or,
-        category: _this.searchService.search.inputs[field].query,
+        category: _this.searchService.search.inputs[field.value].query,
         term: value
       });
     });
@@ -304,7 +304,7 @@ console.log("[SearchWidget] original : " + query);
             '</tbody></table>',
           '</div>',
           '<div class="advanced-search-btn-container">',
-            '<button class="advanced-search-add-btn" value="add">Add Line</button>',
+            '<button class="advanced-search-add-btn" value="add">Add Term</button>',
             '<button class="advanced-search-reset-btn">Reset</button>',
           '</div>',
           '<input type="submit" value="Search"/>',
@@ -351,7 +351,9 @@ console.log("[SearchWidget] original : " + query);
           '<option></option>',
         '{{/if}}',
         '{{#each choices}}',
-          '<option value="{{#if value}}{{value}}{{else}}{{this}}{{/if}}">{{#if label}}{{label}}{{else}}{{this}}{{/if}}</option>',
+          '<option value="{{#if value}}{{value}}{{else}}{{value}}{{/if}}">',
+            '{{#if label}}{{label}}{{else}}{{label}}{{/if}}',
+          '</option>',
         '{{/each}}',
       '</select>'
     ].join(''));

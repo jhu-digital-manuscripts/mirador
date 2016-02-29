@@ -156,9 +156,12 @@
           items: results.total,
           itemsOnPage: onPageCount,
           currentPage: this.float2int(1 + results.offset / onPageCount),
-          displayedPages: 3,
+          displayedPages: 2,
+          edges: 1,
           cssStyle: 'compact-theme',
           ellipsePageSet: true,
+          prevText: '<i class="fa fa-lg fa-angle-left"></i>',
+          nextText: '<i class="fa fa-lg fa-angle-right"></i>',
           onPageClick: function(pageNumber, event) {
             event.preventDefault();
 
