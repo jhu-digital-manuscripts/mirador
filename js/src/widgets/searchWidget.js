@@ -77,7 +77,9 @@ $.SearchWidget.prototype = {
     this.element.find(".js-perform-query").on('submit', function(event){
         event.preventDefault();
 
-        var query = _this.generateAllQuery(_this.element.find('.js-query').val());
+        var query = $.generateQuery(
+          _this.generateAllQuery(_this.element.find('.js-query').val())
+        );
         if (query && query.length > 0) {
           _this.displaySearchWithin(query);
         }
@@ -103,19 +105,29 @@ $.SearchWidget.prototype = {
     });
   },
 
+  /**
+   * Get an array for a search on all fields ORed together.
+   *
+   * @param  (string) value string search term
+   * @return array of objects:  {
+   *                  						op: (operation = |)
+   *                  						category: (search category),
+   *                  						term: (search term = input value)
+   *                  					}
+   */
   generateAllQuery: function(value) {
     var _this = this;
     var query = [];
 
     this.searchService.query.fields.forEach(function(field) {
-      query.push(
-        _this.searchService.search.inputs[field].query +
-        _this.searchService.query.delimiters.field + "'" +
-        _this.escapeTerm(value) + "'"
-      );
+      query.push({
+        op: _this.searchService.query.delimiters.or,
+        category: _this.searchService.search.inputs[field].query,
+        term: value
+      });
     });
 
-    return this.terms2query(query, this.searchService.query.delimiters.or);
+    return query;
   },
 
   /**
@@ -125,7 +137,6 @@ $.SearchWidget.prototype = {
    */
   performAdvancedSearch: function() {
     var _this = this;
-
     var parts = [];
 
     this.element.find('.advanced-search-line').each(function(index, line) {
@@ -142,30 +153,21 @@ $.SearchWidget.prototype = {
         child = jQuery(child);
 
         parts.push({
-          op: operation,
+          op: _this.searchService.query.delimiters[operation],
           category: child.data('query'),
-          term: _this.escapeTerm(child.val())
+          term: child.val()
         });
       });
     });
 
-$.generateQuery(parts);
+    var finalQuery = $.generateQuery(parts, this.searchService.query.delimiters.field);
 
-    // if (finalQuery && finalQuery.length > 0) {
-    //   this.displaySearchWithin(finalQuery, _this.searchService.query.delimiters.and);
-    // }
+    if (finalQuery && finalQuery.length > 0) {
+      this.displaySearchWithin(finalQuery, _this.searchService.query.delimiters.and);
+    }
   },
 
-  /**
-   * Properly escape a query term in preparation to be sent to the
-   * search service.
-   *
-   * @param  string term
-   * @return string      escaped term
-   */
-  escapeTerm: function(term) {
-    return term ? term.replace("'", "\\'") : term;
-  },
+
 
   displaySearchWithin: function(query){
     var _this = this;

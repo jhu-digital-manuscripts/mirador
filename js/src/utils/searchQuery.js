@@ -1,6 +1,93 @@
 (function($) {
 
   /**
+   * Generate a search query from an array of query parts.
+   *
+   * Expects input of array of query-part objects:
+   * queryPart: {
+   *   op: (string) boolean operator as the search service is expecting (& or |),
+   *   category: (string) search category,
+   *   term: (string)
+   * }
+   *
+   * Query generated attempts to capture precedence by nesting
+   * queries when the boolean operation changes. In the final query, each
+   * part will consist of the category and term separated by the
+   * categoryDelimter. If no delimiter is provided, it will default to
+   * a colon (':'). The search term is always surrounded by single quotes.
+   *
+   * Input:
+   * A & B & C | D & E | F
+   *
+   * Output:
+   * (A & B & (C | (D & (E | F))))
+   *
+   * All query terms will be escaped.
+   *
+   * @param queryParts - array of objects
+   * @param categoryDelimiter - character to delimit search category and search term
+   *
+   * @return (string)           query in JHIIIF format
+   */
+  $.generateQuery = function(queryParts, categoryDelimiter) {
+    if (!categoryDelimiter) {
+      categoryDelimiter = ':';
+    }
+
+    if (!queryParts || queryParts.length === 0) {
+      // List is empty or does not exist
+      return;
+    }
+    // Short circuit if only 1 part exists
+    if (queryParts.length === 1) {
+      return queryParts[0].category + categoryDelimiter + "'" + queryParts[0].term + "'";
+    }
+
+    // Start query
+    // each term:
+    //  operation the same as next?
+    //    yes: append
+    //    no: start nested query, append
+    var query = '';
+    var nestCount = 0;
+    queryParts.forEach(function(part, index, array) {
+      // Compare this operation to next operation
+      if (index > 0) {
+        query += ' ' + part.op + ' ';
+      }
+
+      if (index < array.length - 1) {
+        if (part.op !== array[index + 1].op) {
+          query += '(';
+          nestCount++;
+        }
+      }
+
+      query += part.category + ':\'' + $.escapeSearchTerm(part.term) + "'";
+    });
+
+    query += Array(nestCount).fill(')').join('');
+    if (query.charAt(0) !== '(') {
+      query = '(' + query + ')';
+    }
+    return query;
+  };
+
+  /**
+   * Properly escape a query term in preparation to be sent to the
+   * search service.
+   *
+   * @param  string term
+   * @return string      escaped term
+   */
+  $.escapeSearchTerm =  function(term) {
+    return term ? term.replace('\\', '\\\\').replace("'", "\\'") : term;
+  };
+
+// -----------------------------------------------------------------------------
+
+  /**
+   * Generate a search query from an array of query parts.
    * Expects input of array of query-part objects:
    * queryPart: {
    *   op: (string) [and|or],
@@ -8,61 +95,17 @@
    *   term: (string)
    * }
    *
-   * It is assumed that the query part term is already properly
-   * escaped.
+   * Output query groups all AND and OR operations together.
    *
-   * @param  queryParts array of objects
+   * Input:
+   * A & B & C | D & E | F
    *
-   * @return (string)           query in JHIIIF format
+   * Output:
+   * (A & B & C & E) & (D | F)
+   *
+   * @param  (array) queryParts
+   * @return (string)
    */
-  $.generateQuery = function(queryParts) {
-
-    // Start query
-    // append first term
-    // each subsequent terms:
-    //  operation the same as previous?
-    //    yes: append
-    //    no: start nested query
-
-    if (!queryParts || queryParts.length === 0) {
-      // List is empty or does not exist
-      return;
-    }
-
-    var query = '';
-
-    var currentOp = '';
-    var currentQueryCount = 0;
-    var nestCount = 0;
-    queryParts.forEach(function(part, index, array) {
-      if (index > 0) {
-        query += ' ' + part.op + ' ';
-      }
-
-      if (part.op !== currentOp) {
-        // Do not add '(' if this is the last part
-        if (index < array.length-1) {
-          query += '(';
-          nestCount++;
-        }
-
-        currentOp = part.op;
-
-        currentQueryCount = 0;
-      }
-
-      query += part.category + ':\'' + part.term + "'";
-      // currentQueryCount++;
-    });
-
-    // If lowest level nested query has only 1
-    // if (currentQueryCount < 2) {
-    //   nestCount--;
-    // }
-    query += Array(nestCount).fill(')').join('');
-console.log('[Test] ' + query);
-  };
-
   $.generateQuery2 = function(queryParts) {
     var ands = queryParts.filter(function(part) {
       return part.op === 'and';
@@ -94,6 +137,7 @@ console.log('[Test] ' + query);
     }
 
     console.log('[Test2] ' + query);
+    return query;
   };
 
   $.terms2query2 = function(terms, operation) {
@@ -120,6 +164,15 @@ console.log('[Test] ' + query);
     return '(' + query + ')';
   };
 
+  /**
+   * Generate a search query from an array of quer parts.
+   * This function will create nested queries all with the
+   * same boolean operation, where each query has only two
+   * sub queries.
+   *
+   * A & B & C & D & E -->
+   * A & (B & (C & (D & E)))
+   */
   // $.terms2query = function(terms, operation) {
   //   console.assert(terms, "Provided 'terms' must exist.");
   //   if (!operation) {
