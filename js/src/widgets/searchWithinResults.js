@@ -31,41 +31,64 @@
     init: function() {
       this.registerHandlebars();
 
+      this.element = jQuery(this.wrapper()).appendTo(this.appendTo);
+
       if (this.query) {
         // Query from UI
         this.search(this.query);
       } else if (this.queryUrl) {
         // Initial URL value from changing manifests during a search
-        var parser = document.createElement('a');
-        parser.href = this.queryUrl;
-
-        var parts = parser.search.split('&');
-        var q = {};
-        parts.map(function(part, index, array) {
-          var moreParts = part.split('=');
-          if (moreParts.length !== 2) {
-            console.log('[SearchResults] malformed query string found in search URL: ' + this.queryUrl);
-            return;
-          }
-
-          if (moreParts[0].charAt(0) === '?') {
-            moreParts[0] = moreParts[0].substring(1);
-          }
-          q[moreParts[0]] = moreParts[1];
-        });
-
-        this.baseUrl = this.queryUrl.substring(0, this.queryUrl.indexOf('?'));
-
-        // Remove trailing slash
-        if (this.baseUrl.charAt(this.baseUrl.length - 1) === '/') {
-          this.baseUrl = this.baseUrl.slice(0, this.baseUrl.length - 1);
-        }
-        if (this.baseUrl.slice(this.baseUrl.lastIndexOf('/')+1) === this.searchPrefix) {
-          this.baseUrl = this.baseUrl.slice(0, this.baseUrl.length - this.searchPrefix.length);
-        }
-        
-        this.search(q.q, parseInt(q.o), parseInt(q.m), q.r);
+        this.initFromUrl(this.queryUrl);
       }
+    },
+
+    /**
+     * Perform search from a URL. The URL parameter is parsed to obtain
+     * necessary information:
+     *  - baseUrl of search (which IIIF object is being searched in)
+     *  - search parameters (q, o, m, r)
+     *
+     * From this information, the search is conducted in the usual way
+     * in order to maintain paging functionality.
+     *
+     * TODO this could become obsolete if the Window is given a way to change
+     * 			manifests without clearing all window content
+     *
+     * @param  (string) url search ID
+     * @return none
+     */
+    initFromUrl: function(url) {
+      var parser = document.createElement('a');
+      parser.href = url;
+
+      var parts = parser.search.split('&');
+      var q = {};
+      parts.forEach(function(part, index, array) {
+        var moreParts = part.split('=');
+        if (moreParts.length !== 2) {
+          console.log('[SearchResults] malformed query string found in search URL: ' + url);
+          return;
+        }
+
+        if (moreParts[0].charAt(0) === '?') {
+          moreParts[0] = moreParts[0].substring(1);
+        }
+        q[moreParts[0]] = moreParts[1];
+      });
+
+      var baseUrl = url.substring(0, url.indexOf('?'));
+
+      // Remove trailing slash
+      if (baseUrl.charAt(baseUrl.length - 1) === '/') {
+        baseUrl = baseUrl.slice(0, baseUrl.length - 1);
+      }
+      // Remove search prefix if necessary
+      if (baseUrl.slice(baseUrl.lastIndexOf('/')+1) === this.searchPrefix) {
+        baseUrl = baseUrl.slice(0, baseUrl.length - this.searchPrefix.length);
+      }
+
+      this.baseUrl = baseUrl;
+      this.search(q.q, parseInt(q.o), parseInt(q.m), q.r);
     },
 
     /**
@@ -111,7 +134,7 @@
       // Clear search related stuff
       this.searchResults = null;
 
-      jQuery(this.appendTo).empty();
+      jQuery(this.appendTo).find('.search-results-container').empty();
 
       // Make the request
       var request = jQuery.ajax({
@@ -151,7 +174,7 @@
         }
         searchResults.offset += 1;
 
-        _this.element = jQuery(_this.template(searchResults)).appendTo(_this.appendTo);
+        jQuery(Handlebars.compile('{{> resultsList }}')(searchResults)).appendTo(_this.element.find('.search-results-container'));
 
         _this.bindEvents();
 
@@ -160,7 +183,7 @@
         }
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
-        console.log("[SearchResults] window=" + _this.parent.parent.id + " search query failed (" + queryUrl + ") " + errorThrown);
+        console.log("[SearchResults] window=" + _this.parent.parent.id + " search query failed (" + queryUrl + ") \n" + errorThrown);
         jQuery(_this.errorMessage()).appentTo(_this.appentTo);
       })
       .always(function() {
@@ -192,21 +215,21 @@
       var onPageCount = this.perPageCount;
 
       this.element.find('.search-results-pager').pagination({
-          items: results.total,
-          itemsOnPage: onPageCount,
-          currentPage: this.float2int(1 + results.offset / onPageCount),
-          displayedPages: 2,
-          edges: 1,
-          cssStyle: 'compact-theme',
-          ellipsePageSet: true,
-          prevText: '<i class="fa fa-lg fa-angle-left"></i>',
-          nextText: '<i class="fa fa-lg fa-angle-right"></i>',
-          onPageClick: function(pageNumber, event) {
-            event.preventDefault();
+        items: results.total,
+        itemsOnPage: onPageCount,
+        currentPage: this.float2int(1 + results.offset / onPageCount),
+        displayedPages: 2,
+        edges: 1,
+        cssStyle: 'compact-theme',
+        ellipsePageSet: true,
+        prevText: '<i class="fa fa-lg fa-angle-left"></i>',
+        nextText: '<i class="fa fa-lg fa-angle-right"></i>',
+        onPageClick: function(pageNumber, event) {
+          event.preventDefault();
 
-            var newOffset = (pageNumber - 1) * onPageCount;
-            _this.search(_this.query, newOffset, results.max_matches, results.resume);
-          }
+          var newOffset = (pageNumber - 1) * onPageCount;
+          _this.search(_this.query, newOffset, results.max_matches, results.resume);
+        }
       });
     },
 
@@ -242,12 +265,9 @@
         var manifestid = jQuery(this).data('manifestid');
 
         if (manifestid && manifestid !== _this.manifest.getId()) {
-          // DO NOTHING for now
           // // Load manifest
-          console.log("[SearchResults] click : changing manifest : " + manifestid);
           var manifest = new $.Manifest(manifestid, '');
-          manifest.request.done(function(data) {
-            console.log("[SearchResults] manifest loaded : " + manifest.getId());
+          manifest.request.one(function(data) {
             var currentWindow = _this.parent.parent;
             currentWindow.element.remove();
             currentWindow.update({
@@ -267,27 +287,25 @@
 
     registerHandlebars: function() {
       Handlebars.registerPartial('resultsList', [
-        '<div class="search-results-container">',
-          '<p>',
-            '{{#if last}}',
-            'Showing {{offset}} - {{last}} {{#if total}}out of {{total}}{{/if}}',
-            '{{/if}}',
-          '</p>',
-          '{{#each matches}}',
-            '<div class="result-wrapper js-show-canvas" data-objectid="{{object.id}}" {{#if manifest}}data-manifestid="{{manifest.id}}"{{/if}}>',
-              '<a class="search-result search-title">',
-                '{{offset}}) ',
-                '{{#if manifest}}',
-                  '{{manifest.label}} : ',
-                '{{/if}}',
-                '{{object.label}}',
-              '</a>',
-              '<div class="search-result result-paragraph">',
-                '{{{context}}}',
-              '</div>',
+        '<p>',
+          '{{#if last}}',
+          'Showing {{offset}} - {{last}} {{#if total}}out of {{total}}{{/if}}',
+          '{{/if}}',
+        '</p>',
+        '{{#each matches}}',
+          '<div class="result-wrapper js-show-canvas" data-objectid="{{object.id}}" {{#if manifest}}data-manifestid="{{manifest.id}}"{{/if}}>',
+            '<a class="search-result search-title">',
+              '{{offset}}) ',
+              '{{#if manifest}}',
+                '{{manifest.label}} : ',
+              '{{/if}}',
+              '{{object.label}}',
+            '</a>',
+            '<div class="search-result result-paragraph">',
+              '{{{context}}}',
             '</div>',
-          '{{/each}}',
-        '</div>',
+          '</div>',
+        '{{/each}}',
       ].join(''));
     },
 
@@ -309,10 +327,12 @@
      * 	var templateData = { template data goes here }
      * 	var htmlString = template(templateData);
      */
-    template: Handlebars.compile([
+    wrapper: Handlebars.compile([
       '<div>',
         '<div class="search-results-pager"></div>',
-        '{{> resultsList }}',
+        '<div class="search-results-container">',
+          '{{> resultsList }}',
+        '</div>',
       '</div>'
     ].join(""))};
 
