@@ -114,8 +114,7 @@
           widgetId: 'searchTab',
           appendTo: _this.element.find('.tabContentArea'),
           width: 0,
-          queryUrl: _this.queryUrl,
-          selectedResult: _this.selectedResult,
+          searchContext: _this.searchContext,
           searchService: new $.JhiiifSearchService({
             manifest: _this.manifest,
           }),

@@ -207,7 +207,7 @@ console.log("[SearchWidget] original : " + query);
         thumbInfo: {thumbsHeight: 80, listingCssCls: 'panel-listing-thumbs', thumbnailCls: 'panel-thumbnail-view'},
         query: query,
         baseUrl: _this.element.find('.search-within-object-select').val(),
-        selectedResult: _this.selectedResult
+        selectedResult: _this.searchContext.selectedResult
       });
     }
   },

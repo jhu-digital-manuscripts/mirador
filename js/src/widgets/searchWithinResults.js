@@ -314,11 +314,12 @@
               manifest: manifest,
               currentCanvasID: canvasid,
               searchWidgetAvailable: true,
-              queryUrl: _this.queryUrl,
-              selectedResult: {
-                objectid: canvasid,
-                manifestid: manifestid
-              },
+              searchContext: _this.buildContext(),
+              // queryUrl: _this.queryUrl,
+              // selectedResult: {
+              //   objectid: canvasid,
+              //   manifestid: manifestid
+              // },
             });
             currentWindow.setCurrentCanvasID(canvasid);
           });
@@ -327,6 +328,29 @@
           _this.parent.parent.setCurrentCanvasID(canvasid);
         }
       });
+    },
+
+    /**
+     * Build the context for the current state of this search.
+     *
+     * @return {[type]} [description]
+     */
+    buildContext: function() {
+      var _this = this;
+
+      var selectedEl = this.element.find('.search-results-container .selected');
+      var selected = {};
+      if (selectedEl) {
+        selected = {
+          objectid: selectedEl.data('objectid'),
+          manifestid: selectedEl.data('manifestid')
+        };
+      }
+
+      return {
+        queryUrl: _this.queryUrl,
+        selectedResult: selected,
+      };
     },
 
     registerHandlebars: function() {

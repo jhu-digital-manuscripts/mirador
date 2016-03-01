@@ -372,7 +372,7 @@
               panel: true,
               canvasID: _this.currentCanvasID,
               imagesList: _this.imagesList,
-              queryUrl: _this.queryUrl,
+              searchContext: _this.searchContext,
               selectedResult: _this.selectedResult,
               thumbInfo: {thumbsHeight: 80, listingCssCls: 'panel-listing-thumbs', thumbnailCls: 'panel-thumbnail-view'}
             });
