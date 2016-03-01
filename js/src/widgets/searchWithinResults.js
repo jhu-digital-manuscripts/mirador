@@ -154,25 +154,8 @@
           jQuery(_this.noResultsMessage()).appendTo(_this.appendTo);
         }
 
-        // Need to massage results slightly to make it parsable by Handlebars -
-        // @id cannot be parsed. Move this value to property "id"
-        // IDs must be stripped of any fragment selectors if necessary
-        // Also add index within total results list
-        searchResults.matches.forEach(function(match, index) {
-          match.offset = index + searchResults.offset + 1;
-
-          match.object.id = match.object['@id'].split('#')[0];
-          if (match.manifest) {
-            match.manifest.id = match.manifest['@id'].split('#')[0];
-          }
-        });
-
-        // Need to specify index of last result in total results
-        var length = searchResults.max_matches || searchResults.matches.length;
-        if (searchResults.offset >= 0 && length > 0) {
-          searchResults.last = parseInt(searchResults.offset) + parseInt(length);
-        }
-        searchResults.offset += 1;
+        searchResults = _this.selectResults(searchResults, _this.selectedResult);
+        searchResults = _this.massageForHandlebars(searchResults);
 
         jQuery(Handlebars.compile('{{> resultsList }}')(searchResults)).appendTo(_this.element.find('.search-results-container'));
 
@@ -189,6 +172,63 @@
       .always(function() {
         // console.log('[SearchResults] query done.');
       });
+    },
+
+    /**
+     * If there is a previously selected result, say from clicking on a
+     * search result pointing to a different manifest, select that result
+     *
+     * @param  {object} searchResults
+     * @param  {object} selectedResult
+     * @return search results with on set as selected
+     */
+    selectResults: function(searchResults, selectedResult) {
+      if (!searchResults || !selectedResult) {
+        return searchResults;
+      }
+
+      jQuery.grep(searchResults.matches, function(match, index) {
+        return match.object['@id'] === selectedResult.objectid &&
+          match.manifest ?
+            match.manifest['@id'] === selectedResult.manifestid :
+            selectedResult.manifestid === undefined;
+      })
+      .forEach(function(match) {
+        match.selected = true;
+      });
+
+      return searchResults;
+    },
+
+    /**
+     *
+     *  Need to massage results slightly to make it parsable by Handlebars -
+     *  @id cannot be parsed. Move this value to property "id" IDs must be
+     *  stripped of any fragment selectors if necessary
+     *
+     *  Also add index within total results list in order to display result number.
+     *
+     * @param  searchResults
+     * @return                massaged results
+     */
+    massageForHandlebars: function(searchResults) {
+      searchResults.matches.forEach(function(match, index) {
+        match.offset = index + searchResults.offset + 1;
+
+        match.object.id = match.object['@id'].split('#')[0];
+        if (match.manifest) {
+          match.manifest.id = match.manifest['@id'].split('#')[0];
+        }
+      });
+
+      // Need to specify index of last result in total results
+      var length = searchResults.max_matches || searchResults.matches.length;
+      if (searchResults.offset >= 0 && length > 0) {
+        searchResults.last = parseInt(searchResults.offset) + parseInt(length);
+      }
+      searchResults.offset += 1;
+
+      return searchResults;
     },
 
     /**
@@ -265,16 +305,20 @@
         var manifestid = jQuery(this).data('manifestid');
 
         if (manifestid && manifestid !== _this.manifest.getId()) {
-          // // Load manifest
+          // Load manifest
           var manifest = new $.Manifest(manifestid, '');
-          manifest.request.one(function(data) {
+          manifest.request.done(function(data) {
             var currentWindow = _this.parent.parent;
             currentWindow.element.remove();
             currentWindow.update({
               manifest: manifest,
               currentCanvasID: canvasid,
               searchWidgetAvailable: true,
-              queryUrl: _this.queryUrl
+              queryUrl: _this.queryUrl,
+              selectedResult: {
+                objectid: canvasid,
+                manifestid: manifestid
+              },
             });
             currentWindow.setCurrentCanvasID(canvasid);
           });
@@ -293,7 +337,7 @@
           '{{/if}}',
         '</p>',
         '{{#each matches}}',
-          '<div class="result-wrapper js-show-canvas" data-objectid="{{object.id}}" {{#if manifest}}data-manifestid="{{manifest.id}}"{{/if}}>',
+          '<div class="result-wrapper js-show-canvas{{#if selected}} selected{{/if}}" data-objectid="{{object.id}}" {{#if manifest}}data-manifestid="{{manifest.id}}"{{/if}}>',
             '<a class="search-result search-title">',
               '{{offset}}) ',
               '{{#if manifest}}',

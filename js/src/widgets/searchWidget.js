@@ -178,13 +178,15 @@ $.SearchWidget.prototype = {
     }
     var _this = this;
 
+    this.element.find('.search-results-list').empty();
     new $.SearchWithinResults({
       manifest: _this.manifest,
       appendTo: _this.element.find('.search-results-list'),
       parent: _this,
       canvasID: _this.parent.currentCanvasID,
       baseUrl: _this.element.find('.search-within-object-select').val(),
-      queryUrl: url
+      queryUrl: url,
+      selectedResult: _this.selectedResult,
     });
   },
 
@@ -194,6 +196,7 @@ $.SearchWidget.prototype = {
 console.log("[SearchWidget] original : " + query);
       query = encodeURIComponent(query);
 
+      this.element.find('.search-results-list').empty();
       new $.SearchWithinResults({
         manifest: _this.manifest,
         appendTo: _this.element.find(".search-results-list"),
@@ -203,7 +206,8 @@ console.log("[SearchWidget] original : " + query);
         imagesList: _this.imagesList,
         thumbInfo: {thumbsHeight: 80, listingCssCls: 'panel-listing-thumbs', thumbnailCls: 'panel-thumbnail-view'},
         query: query,
-        baseUrl: _this.element.find('.search-within-object-select').val()
+        baseUrl: _this.element.find('.search-within-object-select').val(),
+        selectedResult: _this.selectedResult
       });
     }
   },

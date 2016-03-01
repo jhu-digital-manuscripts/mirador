@@ -115,6 +115,7 @@
           appendTo: _this.element.find('.tabContentArea'),
           width: 0,
           queryUrl: _this.queryUrl,
+          selectedResult: _this.selectedResult,
           searchService: new $.JhiiifSearchService({
             manifest: _this.manifest,
           }),

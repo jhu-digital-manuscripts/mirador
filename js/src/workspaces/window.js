@@ -373,6 +373,7 @@
               canvasID: _this.currentCanvasID,
               imagesList: _this.imagesList,
               queryUrl: _this.queryUrl,
+              selectedResult: _this.selectedResult,
               thumbInfo: {thumbsHeight: 80, listingCssCls: 'panel-listing-thumbs', thumbnailCls: 'panel-thumbnail-view'}
             });
           }

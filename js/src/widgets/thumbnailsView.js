@@ -118,8 +118,8 @@
     },
 
     toggle: function(stateValue) {
-      if (stateValue) { 
-        this.show(); 
+      if (stateValue) {
+        this.show();
       } else {
         this.hide();
       }
