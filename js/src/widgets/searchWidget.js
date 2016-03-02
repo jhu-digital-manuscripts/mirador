@@ -21,7 +21,7 @@ $.SearchWidget = function(options) {
     width: 330,
     manifest: null, // Manifest object. To get search service: this.manifest.getSearchWithinService()
     searchService: null,
-    queryUrl: null
+    searchContext: {},
   }, options);
 
   this.init();
@@ -44,8 +44,8 @@ $.SearchWidget.prototype = {
     this.element = jQuery(this.template(templateData)).appendTo(this.appendTo);
 
     this.bindEvents();
-    if (this.queryUrl && this.queryUrl.length > 0) {
-      this.searchFromUrl(this.queryUrl);
+    if (this.searchContext && this.searchContext.queryUrl) {
+      this.searchFromUrl(this.searchContext.queryUrl);
     }
   },
 
@@ -185,8 +185,9 @@ $.SearchWidget.prototype = {
       parent: _this,
       canvasID: _this.parent.currentCanvasID,
       baseUrl: _this.element.find('.search-within-object-select').val(),
-      queryUrl: url,
-      selectedResult: _this.selectedResult,
+      searchContext: _this.searchContext,
+      // queryUrl: url,
+      // selectedResult: _this.selectedResult,
     });
   },
 
@@ -206,8 +207,9 @@ console.log("[SearchWidget] original : " + query);
         imagesList: _this.imagesList,
         thumbInfo: {thumbsHeight: 80, listingCssCls: 'panel-listing-thumbs', thumbnailCls: 'panel-thumbnail-view'},
         query: query,
+        searchContext: _this.searchContext,
         baseUrl: _this.element.find('.search-within-object-select').val(),
-        selectedResult: _this.searchContext.selectedResult
+        // selectedResult: _this.searchContext.selectedResult
       });
     }
   },

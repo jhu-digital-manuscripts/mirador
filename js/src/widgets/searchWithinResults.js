@@ -20,7 +20,8 @@
       results:              null,
       searchPrefix:         'jhsearch',
       searchCollection:     null,
-      baseUrl:              null
+      baseUrl:              null,
+      searchContext:        {},
     }, options);
 
     this.init();
@@ -36,9 +37,9 @@
       if (this.query) {
         // Query from UI
         this.search(this.query);
-      } else if (this.queryUrl) {
+      } else if (this.searchContext.queryUrl) {
         // Initial URL value from changing manifests during a search
-        this.initFromUrl(this.queryUrl);
+        this.initFromUrl(this.searchContext.queryUrl);
       }
     },
 
@@ -58,6 +59,9 @@
      * @return none
      */
     initFromUrl: function(url) {
+      console.assert(url, '[SearchResults#initFromUrl] provided URL must exist.');
+
+      // Parse URL with <a>
       var parser = document.createElement('a');
       parser.href = url;
 
@@ -154,7 +158,7 @@
           jQuery(_this.noResultsMessage()).appendTo(_this.appendTo);
         }
 
-        searchResults = _this.selectResults(searchResults, _this.selectedResult);
+        searchResults = _this.selectResults(searchResults, _this.searchContext.selectedResult);
         searchResults = _this.massageForHandlebars(searchResults);
 
         jQuery(Handlebars.compile('{{> resultsList }}')(searchResults)).appendTo(_this.element.find('.search-results-container'));
@@ -315,13 +319,8 @@
               currentCanvasID: canvasid,
               searchWidgetAvailable: true,
               searchContext: _this.buildContext(),
-              // queryUrl: _this.queryUrl,
-              // selectedResult: {
-              //   objectid: canvasid,
-              //   manifestid: manifestid
-              // },
             });
-            currentWindow.setCurrentCanvasID(canvasid);
+            // currentWindow.setCurrentCanvasID(canvasid); // This is needed ONLY for setting correct scroll position of thumbnails
           });
 
         } else {
