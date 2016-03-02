@@ -140,34 +140,22 @@
 
       jQuery(this.appendTo).find('.search-results-container').empty();
 
-      // Make the request
+      var cached = this.cache(queryUrl);
+      if (cached) {
+        // If result already cached, use that result
+        this.processResults(JSON.parse(cached));
+        return;
+      }
+
+      // Make the request if not found in cache
       var request = jQuery.ajax({
         url:   queryUrl,
-        dataType: 'json'
+        dataType: 'json',
+        cache: true,
       })
       .done(function(searchResults) {
-        _this.searchResults = searchResults;
-
-        // TODO this should be changed when proper perPage max is implemented in search service.
-        if (_this.perPageCount === undefined) {
-          _this.perPageCount = searchResults.max_matches || searchResults.matches.length;
-        }
-
-        // Check for bad or no results.
-        if (!searchResults || !searchResults.matches || searchResults.matches.length === 0) {
-          jQuery(_this.noResultsMessage()).appendTo(_this.appendTo);
-        }
-
-        searchResults = _this.selectResults(searchResults, _this.searchContext.selectedResult);
-        searchResults = _this.massageForHandlebars(searchResults);
-
-        jQuery(Handlebars.compile('{{> resultsList }}')(searchResults)).appendTo(_this.element.find('.search-results-container'));
-
-        _this.bindEvents();
-
-        if (_this.needsPager(searchResults)) {
-          _this.setPager(searchResults);
-        }
+        _this.cache(queryUrl, JSON.stringify(searchResults), true);
+        _this.processResults(searchResults);
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
         console.log("[SearchResults] window=" + _this.parent.parent.id + " search query failed (" + queryUrl + ") \n" + errorThrown);
@@ -176,6 +164,70 @@
       .always(function() {
         // console.log('[SearchResults] query done.');
       });
+    },
+
+    /**
+     * Read from or write to cache.
+     *
+     * If 'value' is provided, it will be stored in cache under key = id.
+     * If no 'value' is provided, it is read from cache using the provided
+     * id as the key.
+     *
+     * When writing to cache, it is possible that storate will be full. If this
+     * is the case, the write can be forced, which will clear the cache and
+     * attempt the write again.
+     *
+     * @param  (string) id    ID of object in cache
+     * @param  (string) value value to put into cache
+     * @param  (boolean) force - if writing, this will retry attempt if an error occurs
+     * @return cached object if reading from cache
+     */
+    cache: function(id, value, force) {
+      console.assert(id, '[SearchResults] cache ID must be provided');
+      var _this = this;
+
+      if (!value) {
+        // No value provided, read this ID from cache
+        return sessionStorage.getItem(id);
+
+      } else {
+        // Value provided, add this to cache
+        try {
+          sessionStorage.setItem(id, value);
+        } catch (e) {
+          if (e === 'QuotaExceededError' && force) {
+            sessionStorage.clear();
+            _this.cache(id, value, false);
+          } else {
+            console.log('[SearchResults] Unexpected error encountered while writing search result to cache. ' + e);
+          }
+        }
+      }
+    },
+
+    processResults: function(searchResults) {
+      this.searchResults = searchResults;
+
+      // TODO this should be changed when proper perPage max is implemented in search service.
+      if (this.perPageCount === undefined) {
+        this.perPageCount = searchResults.max_matches || searchResults.matches.length;
+      }
+
+      // Check for bad or no results.
+      if (!searchResults || !searchResults.matches || searchResults.matches.length === 0) {
+        jQuery(this.noResultsMessage()).appendTo(this.appendTo);
+      }
+
+      searchResults = this.selectResults(searchResults, this.searchContext.selectedResult);
+      searchResults = this.massageForHandlebars(searchResults);
+
+      jQuery(Handlebars.compile('{{> resultsList }}')(searchResults)).appendTo(this.element.find('.search-results-container'));
+
+      this.bindEvents();
+
+      if (this.needsPager(searchResults)) {
+        this.setPager(searchResults);
+      }
     },
 
     /**
