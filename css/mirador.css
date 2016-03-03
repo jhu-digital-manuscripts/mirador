@@ -2103,3 +2103,13 @@ a.mirador-icon-empty-slot [class^="icon-"] {
   margin-left: -1px;
   cursor: pointer;
 }
+.search-results-context-menu ul {
+  position: absolute;
+  background-color: #efefef;
+  width: 160px;
+  height: 132px;
+  text-align: center;
+  list-style: none;
+  margin-top: 9px;
+  padding: 0;
+}
