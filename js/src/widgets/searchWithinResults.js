@@ -22,6 +22,7 @@
       searchCollection:     null,
       baseUrl:              null,
       searchContext:        {},
+      loading:              '<i class="fa fa-fw fa-2x fa-spinner fa-spin"></i>',
     }, options);
 
     this.init();
@@ -139,11 +140,13 @@
       this.searchResults = null;
 
       jQuery(this.appendTo).find('.search-results-container').empty();
+      var loader = jQuery(this.loading).appendTo(this.element.find('.search-results-container'));
 
       var cached = this.cache(queryUrl);
       if (cached) {
         // If result already cached, use that result
         this.processResults(JSON.parse(cached));
+        loader.remove();
         return;
       }
 
@@ -162,7 +165,7 @@
         jQuery(_this.errorMessage()).appentTo(_this.appentTo);
       })
       .always(function() {
-        // console.log('[SearchResults] query done.');
+        loader.remove();
       });
     },
 
@@ -363,15 +366,33 @@
         if (manifestid && manifestid !== _this.manifest.getId()) {
           // Load manifest
           var manifest = new $.Manifest(manifestid, '');
+          var currentWindow = _this.parent.parent;
+
+          var relevantSlot = $.viewer.workspace.slots.filter(function(slot) {
+            return slot.window.manifest && slot.window.manifest['@id'] === manifestid;
+          });
+
           manifest.request.done(function(data) {
-            var currentWindow = _this.parent.parent;
-            currentWindow.element.remove();
-            currentWindow.update({
+            // Open result in current window
+            // currentWindow.element.remove();
+            // currentWindow.update({
+            //   manifest: manifest,
+            //   currentCanvasID: canvasid,
+            //   searchWidgetAvailable: true,
+            //   searchContext: _this.buildContext(),
+            // });
+
+            // Open result in new window (to the right)
+            $.viewer.workspace.splitRight(_this.parent.parent.parent);
+
+            var windowConfig = {
               manifest: manifest,
               currentCanvasID: canvasid,
-              searchWidgetAvailable: true,
-              searchContext: _this.buildContext(),
-            });
+              currentFocus: currentWindow.currentFocus,
+              targetSlot: $.viewer.workspace.getAvailableSlot()
+            };
+
+            $.viewer.workspace.addWindow(windowConfig);
             // currentWindow.setCurrentCanvasID(canvasid); // This is needed ONLY for setting correct scroll position of thumbnails
           });
 
