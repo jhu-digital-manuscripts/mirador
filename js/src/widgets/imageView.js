@@ -173,25 +173,6 @@
             _this.addAnnotationsLayer(_this.elemAnno);
           }
 
-          // if current annoState is 'none' that means it has been initialized but not used
-          // use annotationState to choose event
-          if (_this.hud.annoState.current === 'none') {
-              _this.hud.annoState.startup(null);
-            if (_this.annotationState === 'annoOnCreateOff') {
-              _this.hud.annoState.displayOn(null);
-            } else if (_this.annotationState === 'annoOnCreateOn') {
-              _this.hud.annoState.createOn(null);
-            }
-          } else {
-            // if the current state is not 'none' then we need to update the annotations layer,
-            // with the current state, for the new canvas
-            if (_this.hud.annoState.current === 'annoOnCreateOff') {
-              _this.hud.annoState.refreshCreateOff(null);
-            } else if (_this.hud.annoState.current === 'annoOnCreateOn') {
-              _this.hud.annoState.refreshCreateOn(null);
-            }
-          }
-
           // A hack. Pop the osd overlays layer after the canvas so
           // that annotations appear.
           jQuery(_this.osd.canvas).children().first().remove().appendTo(_this.osd.canvas);
