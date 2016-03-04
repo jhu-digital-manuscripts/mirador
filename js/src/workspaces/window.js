@@ -871,7 +871,7 @@ if (typeof list === 'string') {
       '<div class="manifest-info">',
         '<div class="window-manifest-navigation">',
           '{{#if sidePanel}}',
-            '<a href="javascript:;" class="mirador-btn mirador-icon-toc" title="View/Hide Table of Contents"><i class="fa fa-list fa-lg fa-fw"></i></a>',
+            '<a href="javascript:;" class="mirador-btn mirador-icon-toc" title="View/Hide side bar"><i class="fa fa-list fa-lg fa-fw"></i></a>',
           '{{/if}}',
           '<a href="javascript:;" class="mirador-btn mirador-icon-image-view" role="button" aria-label="Change Image Mode"><i class="fa fa-photo fa-lg fa-fw"></i>',
             '<ul class="dropdown image-list">',
