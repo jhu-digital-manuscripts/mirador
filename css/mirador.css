@@ -2106,10 +2106,32 @@ a.mirador-icon-empty-slot [class^="icon-"] {
 .search-results-context-menu ul {
   position: absolute;
   background-color: #efefef;
-  width: 160px;
-  height: 132px;
   text-align: center;
   list-style: none;
   margin-top: 9px;
-  padding: 0;
+  padding: 10px;
+  border: 2px solid black;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
 }
+.search-results-context-menu ul li {
+  padding: 5px 0px;
+  border-bottom: 1px solid black;
+}
+.search-results-context-menu ul li:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+/*.context-menu-icon-caret-square-o-down:before {
+  content: "\f150";
+}
+.context-menu-icon-caret-square-o-up:before {
+  content: "\f151";
+}
+.context-menu-icon-caret-square-o-right:before {
+  content: "\f152";
+}
+.context-menu-icon-caret-square-o-left:before {
+  content: "\f191";
+}*/

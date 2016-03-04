@@ -37,7 +37,8 @@ module.exports = function(grunt) {
     'js/lib/mousetrap.min.js',
     'js/lib/isfahan.js',
     'js/lib/i18next.min.js',
-    'bower_components/simplePagination.js/jquery.simplePagination.js'
+    'bower_components/simplePagination.js/jquery.simplePagination.js',
+    'bower_components/jQuery-contextMenu/dist/*.js'
   ],
 
   // libraries/plugins for running tests
@@ -97,7 +98,8 @@ module.exports = function(grunt) {
         'css/jquery.qtip.min.css',
         'css/mirador.css',
         '!css/mirador-combined.css',
-        'bower_components/simplePagination.js/simplePagination.css'
+        'bower_components/simplePagination.js/simplePagination.css',
+        'bower_components/jQuery-contextMenu/dist/*.css'
         ],
         dest: 'build/mirador/css/mirador-combined.css'
       }

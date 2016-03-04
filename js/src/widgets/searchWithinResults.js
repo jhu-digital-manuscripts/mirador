@@ -231,6 +231,8 @@
       if (this.needsPager(searchResults)) {
         this.setPager(searchResults);
       }
+
+      this.setupContextMenu();
     },
 
     /**
@@ -345,42 +347,6 @@
     bindEvents: function() {
       var _this = this;
 
-      this.element.find('.js-show-canvas').on('contextmenu', function(event) {
-        event.preventDefault();
-
-        var currentWindow = _this.parent.parent;
-        var canvasid = jQuery(this).data('objectid');
-        var manifestid = jQuery(this).data('manifestid');
-
-        // var clickPosition = _this.getClickPosition(event);
-
-        // Escape early if invalid data is found
-        if (!canvasid) {
-          console.log("[SearchResult] No object to navigate to.");
-          return;
-        } else if (typeof canvasid !== 'string') {
-          console.log("[SearchResult] Result clicked object ID not a string. (" + canvasid + ")");
-        }
-
-        var doContextMenu = function() { console.log('[SearchResults] context menu! 1234');
-          new $.SearchWithinResultsMenu({
-            slotAddress: currentWindow.slotAddress,
-            manifestId: manifestid,
-            objectId: canvasid,
-            appendTo: _this.element,
-            clickX: event.clientX,
-            clickY: event.clientY,
-          });
-        };
-
-        _this.resultClicked({
-          canvasid: canvasid,
-          manifestid: manifestid,
-          onThisManifest: doContextMenu,
-          onDifferentManifest: doContextMenu,
-        });
-      });
-
       this.element.find('.js-show-canvas').on("click", function(event) {
         var currentWindow = _this.parent.parent;
         var canvasid = jQuery(this).data('objectid');
@@ -428,20 +394,6 @@
         var manifest = new $.Manifest(manifestid, '');
         manifest.request.done(function(data) {
           options.onDifferentManifest(manifest);
-/*
-          // Open result in new window (to the right)
-          $.viewer.workspace.splitRight(_this.parent.parent.parent);
-
-          var windowConfig = {
-            manifest: manifest,
-            currentCanvasID: canvasid,
-            currentFocus: currentWindow.currentFocus,
-            targetSlot: $.viewer.workspace.getAvailableSlot()
-          };
-
-          $.viewer.workspace.addWindow(windowConfig);
-
- */
         });
 
       } else {
@@ -449,24 +401,53 @@
       }
     },
 
-    getClickPosition: function(e) {
-      var parentPosition = getPosition(e.currentTarget);
-      return {
-        x: e.clientX - parentPosition.x,
-        y: e.clientY - parentPosition.y
-      };
-    },
+    setupContextMenu: function() {
+      var _this = this;
+      var currentWindow = this.parent.parent;
+      var currentSlot = currentWindow.parent;
 
-    getPosition: function(element) {
-      var xPosition = 0;
-      var yPosition = 0;
+      this.element.find('.search-results-container').contextMenu({
+        selector: '.result-wrapper',
+        items: {
+          'above': {name: 'Open in slot above'},
+          'below': {name: 'Open in slot below'},
+          'left': {name: 'Open in slot left'},
+          'right': {name: 'Open in slot right'},
+        },
+        callback: function(key, options) {
+          var canvasid = jQuery(this).data('objectid');
+          var manifestid = jQuery(this).data('manifestid');
 
-      while (element) {
-          xPosition += (element.offsetLeft - element.scrollLeft + element.clientLeft);
-          yPosition += (element.offsetTop - element.scrollTop + element.clientTop);
-          element = element.offsetParent;
-      }
-      return { x: xPosition, y: yPosition };
+          switch (key) {
+            case 'above':
+              $.viewer.workspace.splitUp(currentSlot);
+              break;
+            case 'below':
+              $.viewer.workspace.splitDown(currentSlot);
+              break;
+            case 'left':
+              $.viewer.workspace.splitLeft(currentSlot);
+              break;
+            case 'right':
+              $.viewer.workspace.splitRight(currentSlot);
+              break;
+            default:  // Do nothing
+              return;
+          }
+
+          var manifest = new $.Manifest(manifestid, '');
+          manifest.request.done(function(data) {
+            var windowConfig = {
+              manifest: manifest,
+              currentCanvasID: canvasid,
+              currentFocus: currentWindow.currentFocus,
+              targetSlot: $.viewer.workspace.getAvailableSlot()
+            };
+
+            $.viewer.workspace.addWindow(windowConfig);
+          });
+        }
+      });
     },
 
     /**
