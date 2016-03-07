@@ -435,17 +435,22 @@
               return;
           }
 
-          var manifest = new $.Manifest(manifestid, '');
-          manifest.request.done(function(data) {
-            var windowConfig = {
-              manifest: manifest,
-              currentCanvasID: canvasid,
-              currentFocus: currentWindow.currentFocus,
-              targetSlot: $.viewer.workspace.getAvailableSlot()
-            };
+          var windowConfig = {
+            manifest: _this.manifest,
+            currentCanvasID: canvasid,
+            currentFocus: currentWindow.currentFocus,
+            slotAddress: $.viewer.workspace.getAvailableSlot().layoutAddress
+          };
 
+          if (_this.manifest['@id'] !== manifestid) {
+            var manifest = new $.Manifest(manifestid, '');
+            manifest.request.done(function(data) {
+              windowConfig.manifest = manifest;
+              $.viewer.workspace.addWindow(windowConfig);
+            });
+          } else {
             $.viewer.workspace.addWindow(windowConfig);
-          });
+          }
         }
       });
     },
