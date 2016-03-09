@@ -19,6 +19,8 @@ $.JhiiifSearchService = function(options) {
         {value: 'numeral', label: 'Numeral'},
         {value: 'drawing', label: 'Drawing'},
         {value: 'image_name', label: 'Page label'},
+        {value: 'cross_reference', label: 'Cross reference'},
+        {value: 'emphasis', label: 'Emphasis'}
       ],
       fieldRegex: /[A-Za-z]/,
       operators: {
