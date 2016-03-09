@@ -74,19 +74,19 @@
       var _this = this;
       this.osdOptions.osdBounds = this.osd.viewport.getBounds(true);
       jQuery.publish("imageBoundsUpdated", {
-        id: _this.parent.id, 
+        id: _this.parent.id,
           osdBounds: {
-            x: _this.osdOptions.osdBounds.x, 
-            y: _this.osdOptions.osdBounds.y, 
-            width: _this.osdOptions.osdBounds.width, 
+            x: _this.osdOptions.osdBounds.x,
+            y: _this.osdOptions.osdBounds.y,
+            width: _this.osdOptions.osdBounds.width,
             height: _this.osdOptions.osdBounds.height
           }
       });
     },
 
     toggle: function(stateValue) {
-      if (stateValue) { 
-        this.show(); 
+      if (stateValue) {
+        this.show();
       } else {
         this.hide();
       }

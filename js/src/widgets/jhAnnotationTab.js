@@ -27,7 +27,7 @@
       this.registerWidget();
       this.element = jQuery(this.template()).appendTo(this.appendTo);
       this.bindEvents();
-      this.processCurrentManifest();
+      // this.processCurrentManifest();
     },
 
     bindEvents: function() {
