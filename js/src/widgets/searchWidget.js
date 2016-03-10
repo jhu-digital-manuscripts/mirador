@@ -123,10 +123,11 @@ $.SearchWidget.prototype = {
     var _this = this;
     var query = [];
 
-    this.searchService.query.fields.forEach(function(field) {
+    this.searchService.search.settings.fields.forEach(function(field) {
       query.push({
         op: _this.searchService.query.delimiters.or,
-        category: _this.searchService.search.inputs[field.value].query,
+        // category: _this.searchService.search.settings.fields[field.value].query,
+        category: field.field,
         term: value
       });
     });
@@ -229,7 +230,7 @@ console.log("[SearchWidget] original : " + query);
       'search': this.searchService.search,
       'query': this.searchService.query
     };
-    templateData.search.categories.choices = this.searchService.query.fields;
+    // templateData.search.categories.choices = this.searchService.query.fields;
 
     var line = template(templateData);
 
@@ -239,9 +240,8 @@ console.log("[SearchWidget] original : " + query);
 
     // Hide all inputs except for the Default choice
     // Makes sure ENTER key presses activate advanced search
-    Object.keys(this.searchService.search.inputs).forEach(function (key) {
-      var input = _this.searchService.search.inputs[key];
-      var element = line.find(_this.classNamesToSelector(input.class));
+    this.searchService.search.settings.fields.forEach(function (field) {
+      var element = line.find(_this.classNamesToSelector(field.class));
 
       element.keypress(function(event) {
         if (event.which == 13) {
@@ -250,7 +250,7 @@ console.log("[SearchWidget] original : " + query);
         }
       });
 
-      if (!input.default && input.class && input.class !== '') {
+      if (!field.default && field.class && field.class !== '') {
         element.hide();
       }
     });
@@ -268,7 +268,11 @@ console.log("[SearchWidget] original : " + query);
       user_inputs.find('select').hide();
       user_inputs.find('input').hide();
 
-      user_inputs.find(_this.classNamesToSelector(_this.searchService.search.inputs[jSelector.val()].class)).show();
+      user_inputs.find(
+        _this.classNamesToSelector(
+          _this.searchService.getField(jSelector.val()).class
+        )
+      ).show();
     });
 
   },
@@ -347,7 +351,7 @@ console.log("[SearchWidget] original : " + query);
       '</td>',
       '<td>',
         '<div class="advanced-search-inputs">',
-        '{{#each search.inputs}}',
+        '{{#each search.settings.fields}}',
           '{{#ifCond type "===" "dropdown"}}',
             '{{> searchDropDown this}}',
           '{{/ifCond}}',
