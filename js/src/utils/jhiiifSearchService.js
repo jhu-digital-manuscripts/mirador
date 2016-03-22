@@ -30,50 +30,62 @@ $.JhiiifSearchService = function(options) {
           {
             'field': 'marginalia',
             'label': 'Marginalia',
+            'description': '',
           },
           {
             'field': 'underline',
             'label': 'Underline',
+            'description': '',
           },
           {
             'field': 'object_type',
             'label': 'Object Type',
+            'description': '',
           },
           {
             'field': 'object_label',
             'label': 'Object Label',
+            'description': '',
           },
           {
             'field': 'manifest_label',
             'label': 'Book Title',
+            'description': '',
           },
           {
             'field': 'errata',
             'label': 'Errata',
+            'description': '',
           },
           {
             'field': 'numeral',
             'label': 'Numeral',
+            'description': '',
           },
           {
             'field': 'drawing',
             'label': 'Drawing',
+            'description': '',
           },
           {
             'field': 'image_name',
             'label': 'Page name',
+            'description': '',
           },
           {
             'field': 'cross_reference',
             'label': 'Cross Reference',
+            'description': '',
           },
           {
             'field': 'emphasis',
             'label': 'Emphasis',
+            'description': '',
           },
           {
             'field': 'symbol',
             'label': 'Symbol',
+            'description': '',
             'enum': [
               {value: 'Asterisk', label: 'Asterisk'},
               {value: 'Bisectedcircle', label: 'Bisectedcircle'},
@@ -95,6 +107,7 @@ $.JhiiifSearchService = function(options) {
           {
             'field': 'mark',
             'label': 'Mark',
+            'description': '',
             'enum': [
               {value: 'apostrophe', label: 'Apostrophe'},
               {value: 'box', label: 'Box'},
@@ -141,8 +154,27 @@ $.JhiiifSearchService = function(options) {
 
 $.JhiiifSearchService.prototype = {
   init: function() {
-    // TODO grab info.json from search service
+    console.log('[SearchService] mirador init data: ' + JSON.stringify(Mirador.viewer.data, null, 2));
+
+    this.makeInfoRequest(this.manifest.getSearchWithinInfoUrl());
     this.assignDefaults();
+  },
+
+  makeInfoRequest: function(searchUrl) {
+    var _this = this;
+    console.log('[SearchService] will make info req to: ' + this.manifest.getSearchWithinInfoUrl());
+    jQuery.ajax({
+      url: searchUrl,
+      dataType: 'json',
+      cache: true,
+    })
+    .done(function(data) {
+      // Overwrite any properties already present
+      jQuery.extend(true, _this.search.settings, data);
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+      console.log('[JH-IIIF Search Service] info request failed. (' + _this.manifest.getSearchWithinInfoUrl() + ')\n' + errorThrown);
+    });
   },
 
   /**
@@ -187,7 +219,7 @@ $.JhiiifSearchService.prototype = {
       categories.choices.push({'value': field.field, 'label': field.label});
     });
 
-    // Override defaults with values already in 'search.inputs'
+    // Override defaults with values already in 'search.settings.fields'
     jQuery.extend(true, fields, this.search.settings.fields);
     this.search.settings.fields = fields;
 

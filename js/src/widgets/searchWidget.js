@@ -5,8 +5,9 @@
  *                          {
  *                          	parent: parent window that contains this widget,
  *                          	appendTo: the element in the parent to attach this widget,
- *                          	manifest: the Manifest object, containing manifest data/helper functions
- *                          	search: widget configs     ** TODO currently hardcoded below
+ *                          	manifest: the Manifest object, containing manifest data/helper functions,
+ *                          	searchService: search service,
+ *                          	searchContext: config info from JH-IIIF Search Service info request,
  *                          }
  * @return {[type]}         Search Within widget
  */

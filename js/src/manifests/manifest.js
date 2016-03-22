@@ -181,22 +181,24 @@
       return dummyManifest;
     },
     // my added function
-    getSearchWithinService: function(){
+
+    /**
+     * Get the search service definition from this manifest.
+     *
+     * @return {obect} service - service definition including @context, @id, profile
+     */
+    getSearchWithinService: function() {
       var _this = this;
       var serviceProperty = _this.jsonLd.service;
 
       var service = {};
-      if (serviceProperty.constructor === Array){
-        for (var i = 0; i < serviceProperty.length; i++){
-          if (serviceProperty[i]["@context"] === "http://iiif.io/api/search/0/context.json"){
-            //returns the first service object with the correct contest
-            service = serviceProperty[i];
-            break;
-          }
-        }
+      if (Array.isArray(serviceProperty)) {
+        serviceProperty
+        .filter(function(service) { return service['@context'] === "http://iiif.io/api/search/0/context.json"; })
+        .forEach(function(service) { _this.service = service; });
       }
-      else if (_this.jsonLd.service["@context"] === "http://iiif.io/api/search/0/context.json" ||
-          _this.jsonLd.service["@context"] === "http://manuscriptlib.org/jhiff/search/context.json"){
+      else if (serviceProperty["@context"] === "http://iiif.io/api/search/0/context.json" ||
+          serviceProperty["@context"] === "http://manuscriptlib.org/jhiff/search/context.json") {
         service = _this.jsonLd.service;
       }
       else {
@@ -204,6 +206,11 @@
         service = null;
       }
       return service;
+    },
+
+    getSearchWithinInfoUrl: function() {
+      var url = this.getSearchWithinService()['@id'];
+      return (url.charAt(url.length - 1) === '/' ? url : url + '/') + 'info.json';
     },
 
     /**
