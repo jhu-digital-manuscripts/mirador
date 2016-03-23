@@ -26,125 +26,125 @@ $.JhiiifSearchService = function(options) {
         'label': 'Archaeology of Reading collection'
       },
       'settings': {
-        'fields': [
+        "fields": [
           {
-            'field': 'marginalia',
-            'label': 'Marginalia',
-            'description': '',
+            "field": "marginalia",
+            "label": "Marginalia",
+            "description": "Notes written by a reader"
           },
           {
-            'field': 'underline',
-            'label': 'Underline',
-            'description': '',
+            "field": "underline",
+            "label": "Underline",
+            "description": "Words or phrases in the printed text that have been underlined."
           },
           {
-            'field': 'object_type',
-            'label': 'Object Type',
-            'description': '',
+            "field": "object_type",
+            "label": "Object Type",
+            "description": ""
           },
           {
-            'field': 'object_label',
-            'label': 'Object Label',
-            'description': '',
+            "field": "object_label",
+            "label": "Object label",
+            "description": ""
           },
           {
-            'field': 'manifest_label',
-            'label': 'Book Title',
-            'description': '',
+            "field": "manifest_label",
+            "label": "Book Title",
+            "description": ""
           },
           {
-            'field': 'errata',
-            'label': 'Errata',
-            'description': '',
+            "field": "errata",
+            "label": "Errata",
+            "description": "Corrections made by a reader to the printed text."
           },
           {
-            'field': 'numeral',
-            'label': 'Numeral',
-            'description': '',
+            "field": "numeral",
+            "label": "Numeral",
+            "description": "Numbers written in the book."
           },
           {
-            'field': 'drawing',
-            'label': 'Drawing',
-            'description': '',
+            "field": "drawing",
+            "label": "Drawing",
+            "description": "Drawings or diagrams."
           },
           {
-            'field': 'image_name',
-            'label': 'Page name',
-            'description': '',
+            "field": "image_name",
+            "label": "Page name",
+            "description": ""
           },
           {
-            'field': 'cross_reference',
-            'label': 'Cross Reference',
-            'description': '',
+            "field": "cross_reference",
+            "label": "Cross Reference",
+            "description": "A reference to an external book."
           },
           {
-            'field': 'emphasis',
-            'label': 'Emphasis',
-            'description': '',
+            "field": "emphasis",
+            "label": "Emphasis",
+            "description": "Words or phrases within the readers marginal notes that have been underlined or otherwise emphasized."
           },
           {
-            'field': 'symbol',
-            'label': 'Symbol',
-            'description': '',
-            'enum': [
-              {value: 'Asterisk', label: 'Asterisk'},
-              {value: 'Bisectedcircle', label: 'Bisectedcircle'},
-              {value: 'Crown', label: 'Crown'},
-              {value: 'JC', label: 'JC'},
-              {value: 'HT', label: 'HT'},
-              {value: 'LL', label: 'LL'},
-              {value: 'Mars', label: 'Mars'},
-              {value: 'Mercury', label: 'Mercury'},
-              {value: 'Moon', label: 'Moon'},
-              {value: 'Opposite_planets', label: 'Opposite Planets'},
-              {value: 'Saturn', label: 'Saturn'},
-              {value: 'Square', label: 'Square'},
-              {value: 'SS', label: 'SS'},
-              {value: 'Sun', label: 'Sun'},
-              {value: 'Venus', label: 'Venus'},
-            ],
+            "field": "symbol",
+            "label": "Symbol",
+            "description": "Simple drawings that carry some abstract and consistent meaning.",
+            "enum": [
+              {"value": "Asterisk", "label": "Asterisk"},
+              {"value": "Bisectedcircle", "label": "Bisectedcircle"},
+              {"value": "Crown", "label": "Crown"},
+              {"value": "JC", "label": "JC"},
+              {"value": "HT", "label": "HT"},
+              {"value": "LL", "label": "LL"},
+              {"value": "Mars", "label": "Mars"},
+              {"value": "Mercury", "label": "Mercury"},
+              {"value": "Moon", "label": "Moon"},
+              {"value": "Opposite_planets", "label": "Opposite Planets"},
+              {"value": "Saturn", "label": "Saturn"},
+              {"value": "Square", "label": "Square"},
+              {"value": "SS", "label": "SS"},
+              {"value": "Sun", "label": "Sun"},
+              {"value": "Venus", "label": "Venus"}
+            ]
           },
           {
-            'field': 'mark',
-            'label': 'Mark',
-            'description': '',
-            'enum': [
-              {value: 'apostrophe', label: 'Apostrophe'},
-              {value: 'box', label: 'Box'},
-              {value: 'bracket', label: 'Bracket'},
-              {value: 'circumflex', label: 'Circumflex'},
-              {value: 'colon', label: 'Colon'},
-              {value: 'comma', label: 'Comma'},
-              {value: 'dash', label: 'Dash'},
-              {value: 'diacritic', label: 'Diacritic'},
-              {value: 'dot', label: 'Dot'},
-              {value: 'double_vertical_bar', label: 'Double Vertical Bar'},
-              {value: 'equal_sign', label: 'Equal Sign'},
-              {value: 'est_mark', label: 'Est Mark'},
-              {value: 'hash', label: 'Hash'},
-              {value: 'horizontal_bar', label: 'Horizontal Bar'},
-              {value: 'page_break', label: 'Page Break'},
-              {value: 'pen_trial', label: 'Pen Trial'},
-              {value: 'plus_sign', label: 'Plus Sign'},
-              {value: 'quotation_mark', label: 'Quotation Mark'},
-              {value: 'scribble', label: 'Scribble'},
-              {value: 'section_sign', label: 'Section Sign'},
-              {value: 'semicolon', label: 'Semicolon'},
-              {value: 'slash', label: 'Slash'},
-              {value: 'straight_quotation_mark', label: 'Straight Quotation Mark'},
-              {value: 'tick', label: 'Tick'},
-              {value: 'tilde', label: 'Tilde'},
-              {value: 'triple_dash', label: 'Triple Dash'},
-              {value: 'vertical_bar', label: 'Vertical Bar'},
-              {value: 'sign', label: 'Sign'},
-            ],
-          },
+            "field": "mark",
+            "label": "Mark",
+            "description": "Pen marks made on a page that may not have consistent abstract meaning. Those marks not covered by 'Symbol'",
+            "enum": [
+              {"value": "apostrophe", "label": "Apostrophe"},
+              {"value": "box", "label": "Box"},
+              {"value": "bracket", "label": "Bracket"},
+              {"value": "circumflex", "label": "Circumflex"},
+              {"value": "colon", "label": "Colon"},
+              {"value": "comma", "label": "Comma"},
+              {"value": "dash", "label": "Dash"},
+              {"value": "diacritic", "label": "Diacritic"},
+              {"value": "dot", "label": "Dot"},
+              {"value": "double_vertical_bar", "label": "Double Vertical Bar"},
+              {"value": "equal_sign", "label": "Equal Sign"},
+              {"value": "est_mark", "label": "Est Mark"},
+              {"value": "hash", "label": "Hash"},
+              {"value": "horizontal_bar", "label": "Horizontal Bar"},
+              {"value": "page_break", "label": "Page Break"},
+              {"value": "pen_trial", "label": "Pen Trial"},
+              {"value": "plus_sign", "label": "Plus Sign"},
+              {"value": "quotation_mark", "label": "Quotation Mark"},
+              {"value": "scribble", "label": "Scribble"},
+              {"value": "section_sign", "label": "Section Sign"},
+              {"value": "semicolon", "label": "Semicolon"},
+              {"value": "slash", "label": "Slash"},
+              {"value": "straight_quotation_mark", "label": "Straight Quotation Mark"},
+              {"value": "tick", "label": "Tick"},
+              {"value": "tilde", "label": "Tilde"},
+              {"value": "triple_dash", "label": "Triple Dash"},
+              {"value": "vertical_bar", "label": "Vertical Bar"},
+              {"value": "sign", "label": "Sign"}
+            ]
+          }
         ],
-        'default-fields': [
-          'marginalia', 'underline', 'symbol', 'mark', 'object_type', 'object_label',
-          'manifest_label', 'errata', 'numeral', 'drawing', 'image_name',
-          'cross_reference', 'emphasis'
-        ],
+        "default-fields": [
+          "marginalia", "underline", "symbol", "mark", "object_type", "object_label",
+          "manifest_label", "errata", "numeral", "drawing", "image_name",
+          "cross_reference", "emphasis"
+        ]
       }
     }
   }, options);
