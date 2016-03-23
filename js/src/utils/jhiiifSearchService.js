@@ -154,15 +154,13 @@ $.JhiiifSearchService = function(options) {
 
 $.JhiiifSearchService.prototype = {
   init: function() {
-    console.log('[SearchService] mirador init data: ' + JSON.stringify(Mirador.viewer.data, null, 2));
-
     this.makeInfoRequest(this.manifest.getSearchWithinInfoUrl());
     this.assignDefaults();
   },
 
   makeInfoRequest: function(searchUrl) {
     var _this = this;
-    console.log('[SearchService] will make info req to: ' + this.manifest.getSearchWithinInfoUrl());
+
     jQuery.ajax({
       url: searchUrl,
       dataType: 'json',

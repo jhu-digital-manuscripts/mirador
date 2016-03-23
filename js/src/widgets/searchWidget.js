@@ -82,8 +82,10 @@ $.SearchWidget.prototype = {
     this.element.find(".js-perform-query").on('submit', function(event){
         event.preventDefault();
 
-        var query = $.generateQuery(
-          _this.generateAllQuery(_this.element.find('.js-query').val())
+        var query = $.generateBasicQuery(
+          _this.element.find('.js-query').val(),
+          _this.searchService.search.settings.fields,
+          _this.searchService.query.delimiters.or
         );
         if (query && query.length > 0) {
           _this.displaySearchWithin(query);
@@ -108,32 +110,6 @@ $.SearchWidget.prototype = {
       });
       _this.addAdvancedSearchLine();
     });
-  },
-
-  /**
-   * Get an array for a search on all fields ORed together.
-   *
-   * @param  (string) value string search term
-   * @return array of objects:  {
-   *                  						op: (operation = |)
-   *                  						category: (search category),
-   *                  						term: (search term = input value)
-   *                  					}
-   */
-  generateAllQuery: function(value) {
-    var _this = this;
-    var query = [];
-
-    this.searchService.search.settings.fields.forEach(function(field) {
-      query.push({
-        op: _this.searchService.query.delimiters.or,
-        // category: _this.searchService.search.settings.fields[field.value].query,
-        category: field.field,
-        term: value
-      });
-    });
-
-    return query;
   },
 
   /**
@@ -214,10 +190,6 @@ console.log("[SearchWidget] original : " + query);
         // selectedResult: _this.searchContext.selectedResult
       });
     }
-  },
-
-  isValidInput: function(input) {
-    return input && input !== '';
   },
 
   /**

@@ -1,6 +1,31 @@
 (function($) {
 
   /**
+   * Generate a "basic search" query that searches for the given
+   * term across all default fields.
+   *
+   * @param  {String} term - term to search for
+   * @param  {array}  fields-array of fields
+   * @param  {String} operation - character delimiter representing the
+   *                            	desired boolean operation
+   * @return {String}      query for sending to the search service
+   */
+  $.generateBasicQuery = function(term, fields, operation) {
+    var _this = this;
+    var query = [];
+
+    fields.forEach(function(field) {
+      query.push({
+        op: operation,
+        category: field.field,
+        term: term
+      });
+    });
+
+    return $.generateQuery(query);
+  };
+
+  /**
    * Generate a search query from an array of query parts.
    *
    * Expects input of array of query-part objects:
@@ -74,7 +99,7 @@
     if (query.charAt(0) !== '(') {
       query = '(' + query + ')';
     }
-    
+
     return query;
   };
 
