@@ -2020,7 +2020,7 @@ a.mirador-icon-empty-slot [class^="icon-"] {
   top: 0;
   height: 100%;
   width: 310px;
-  padding-left: 0 10px;
+  padding: 0 10px;
 }
 .search-results-list .query {
   font-style: italic;

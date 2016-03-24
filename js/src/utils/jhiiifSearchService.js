@@ -88,7 +88,7 @@ $.JhiiifSearchService = function(options) {
             "description": "Simple drawings that carry some abstract and consistent meaning.",
             "enum": [
               {"value": "Asterisk", "label": "Asterisk"},
-              {"value": "Bisectedcircle", "label": "Bisectedcircle"},
+              {"value": "Bisected_circle", "label": "Bisected Circle"},
               {"value": "Crown", "label": "Crown"},
               {"value": "JC", "label": "JC"},
               {"value": "HT", "label": "HT"},
