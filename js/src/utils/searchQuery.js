@@ -17,7 +17,7 @@
     fields.forEach(function(field) {
       query.push({
         op: operation,
-        category: field.field,
+        category: typeof field === 'object' ? field.name : field,
         term: term
       });
     });

@@ -11,6 +11,7 @@
   $.SearchWithinResults = function(options) {
 
     jQuery.extend(this, {
+      appendTo:             null,
       manifest:             null,
       element:              null,
       parent:               null,
@@ -162,7 +163,7 @@
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
         console.log("[SearchResults] window=" + _this.parent.parent.id + " search query failed (" + queryUrl + ") \n" + errorThrown);
-        jQuery(_this.errorMessage()).appentTo(_this.appentTo);
+        jQuery(_this.errorMessage()).appendTo(_this.appendTo);
       })
       .always(function() {
         loader.remove();

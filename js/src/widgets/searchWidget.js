@@ -22,10 +22,19 @@ $.SearchWidget = function(options) {
     width: 330,
     manifest: null, // Manifest object. To get search service: this.manifest.getSearchWithinService()
     searchService: null,
+    messages: {
+      'no-term': '<span class="error">No search term was found.</span>',
+      'no-defaults': '<span class="error">No fields defined for basic search.</span>',
+    },
     searchContext: {},
   }, options);
 
-  this.init();
+  var _this = this;
+
+  this.searchService.initializer.always(function() {
+    _this.init();
+  });
+
 };
 
 $.SearchWidget.prototype = {
@@ -65,51 +74,67 @@ $.SearchWidget.prototype = {
       }
     });
 
-    this.element.find('.search-disclose-btn-more').on('click', function() {
-      _this.element.find('#search-form').hide('fast');
-      _this.element.find('.search-disclose').show('fast');
-      _this.element.find('.search-disclose-btn-more').hide();
-      _this.element.find('.search-disclose-btn-less').show();
-    });
-
-    this.element.find('.search-disclose-btn-less').on('click', function() {
-      _this.element.find('#search-form').show('fast');
-      _this.element.find('.search-disclose').hide('fast');
-      _this.element.find('.search-disclose-btn-less').hide();
-      _this.element.find('.search-disclose-btn-more').show();
-    });
-
     this.element.find(".js-perform-query").on('submit', function(event){
         event.preventDefault();
+        var messages = _this.element.find('.pre-search-message');
+        var searchTerm = _this.element.find('.js-query').val();
 
-        var query = $.generateBasicQuery(
-          _this.element.find('.js-query').val(),
-          _this.searchService.search.settings.fields,
-          _this.searchService.query.delimiters.or
-        );
-        if (query && query.length > 0) {
-          _this.displaySearchWithin(query);
+        messages.empty();
+
+        if (_this.searchService.getDefaultFields().length === 0) {
+          jQuery(_this.messages['no-defaults']).appendTo(messages);
+        }
+
+        if (searchTerm && searchTerm.length > 0) {
+          var query = $.generateBasicQuery(
+            searchTerm,
+            _this.searchService.getDefaultFields(),
+            _this.searchService.query.delimiters.or
+          );
+          if (query && query.length > 0) {
+            _this.displaySearchWithin(query);
+          }
+        } else {
+          jQuery(_this.messages['no-term']).appendTo(messages);
         }
     });
 
-    this.addAdvancedSearchLine();
-    this.element.find(".perform-advanced-search").on('submit', function(event) {
-      event.preventDefault();
-      _this.performAdvancedSearch();
-    });
-
-    this.element.find('.advanced-search-add-btn').on('click', function(e) {
-      e.preventDefault();
-      _this.addAdvancedSearchLine();
-    });
-
-    this.element.find('.advanced-search-reset-btn').on('click', function(e) {
-      e.preventDefault();
-      _this.element.find('.advanced-search-line').each(function(index, line) {
-        jQuery(line).remove();
+    if (this.searchService.search.settings.fields.length > 0) {
+      this.element.find('.search-disclose-btn-more').on('click', function() {
+        _this.element.find('#search-form').hide('fast');
+        _this.element.find('.search-disclose').show('fast');
+        _this.element.find('.search-disclose-btn-more').hide();
+        _this.element.find('.search-disclose-btn-less').show();
       });
-      _this.addAdvancedSearchLine();
-    });
+
+      this.element.find('.search-disclose-btn-less').on('click', function() {
+        _this.element.find('#search-form').show('fast');
+        _this.element.find('.search-disclose').hide('fast');
+        _this.element.find('.search-disclose-btn-less').hide();
+        _this.element.find('.search-disclose-btn-more').show();
+      });
+
+      this.addAdvancedSearchLine();
+
+      this.element.find(".perform-advanced-search").on('submit', function(event) {
+        event.preventDefault();
+        _this.element.find('.pre-search-message').empty();
+        _this.performAdvancedSearch();
+      });
+
+      this.element.find('.advanced-search-add-btn').on('click', function(e) {
+        e.preventDefault();
+        _this.addAdvancedSearchLine();
+      });
+
+      this.element.find('.advanced-search-reset-btn').on('click', function(e) {
+        e.preventDefault();
+        _this.element.find('.advanced-search-line').each(function(index, line) {
+          jQuery(line).remove();
+        });
+        _this.addAdvancedSearchLine();
+      });
+    }
   },
 
   /**
@@ -293,6 +318,7 @@ console.log("[SearchWidget] original : " + query);
             '{{> advancedSearch }}',
           '</div>',
         '</div>',
+        '<p class="pre-search-message"></p>',
         '<div class="search-results-list"></div>',
       '</div>',
     ].join(''));
@@ -328,7 +354,7 @@ console.log("[SearchWidget] original : " + query);
           '{{#ifCond type "===" "dropdown"}}',
             '{{> searchDropDown this}}',
           '{{/ifCond}}',
-          '<input type="text" class="{{class}}" placeholder="{{placeholder}}" {{#if query}}data-query="{{query}}"{{/if}}/>',
+          '<input type="text" class="{{class}}" placeholder="{{placeholder}}" {{#if name}}data-query="{{name}}"{{/if}}/>',
         '{{/each}}',
         '</div>',
       '</td>',
@@ -348,7 +374,7 @@ console.log("[SearchWidget] original : " + query);
      * }
      */
     Handlebars.registerPartial('searchDropDown', [
-      '<select class="{{class}}" {{#if query}}data-query="{{query}}{{/if}}">',
+      '<select class="{{class}}" {{#if name}}data-query="{{name}}{{/if}}">',
         '{{#if addBlank}}',
           '<option></option>',
         '{{/if}}',
