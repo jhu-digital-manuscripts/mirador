@@ -236,6 +236,12 @@ console.log("[SearchWidget] original : " + query);
       this.element.find('.advanced-search-lines table tbody').children().last()
     );
 
+    // For only the first line, hide the boolean operator
+    var num_lines = this.element.find('.advanced-search-line').length;
+    if (num_lines === 1) {
+      line.find('.advanced-search-operators').hide();
+    }
+
     // Hide all inputs except for the Default choice
     // Makes sure ENTER key presses activate advanced search
     this.searchService.search.settings.fields.forEach(function (field) {
@@ -256,6 +262,15 @@ console.log("[SearchWidget] original : " + query);
     // Add functionality to 'remove' button
     line.find('.advanced-search-remove').on('click', function() {
       line.remove();
+
+      // Make sure 1st line has boolean operator hidden
+      _this.element.find('.advanced-search-line').each(function(index, element) {
+        if (index === 0) {
+          jQuery(element).find('.advanced-search-operators').hide();
+        } else {
+          jQuery(element).find('.advanced-search-operators').show();
+        }
+      });
     });
 
     line.find('.advanced-search-categories').on('change', function(event) {
