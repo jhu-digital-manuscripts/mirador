@@ -672,7 +672,7 @@
         default:
           break;
       }
-
+console.log('[Window] setting canvas ID -> ' + canvasID);
       jQuery.publish(('currentCanvasIDUpdated.' + _this.id), canvasID);
     },
 

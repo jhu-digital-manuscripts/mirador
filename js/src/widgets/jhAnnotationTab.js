@@ -15,6 +15,7 @@
         empty: '<h1 class="empty">No annotations available.</h1>',
         noLists: '<h1 class="empty">No annotations found.</h1>',
       },
+      pendingRequests: {},
     }, options);
 
     this.init();
@@ -27,7 +28,7 @@
       this.registerWidget();
       this.element = jQuery(this.template()).appendTo(this.appendTo);
       this.bindEvents();
-      // this.processCurrentManifest();
+      this.processCurrentManifest();
     },
 
     bindEvents: function() {
@@ -81,20 +82,31 @@
 
     requestList: function(listId) {
       var _this = this;
-      jQuery.ajax({
-        url:   listId,
-        dataType: 'json'
-      })
-      .done(function(data) {
-        _this.processAnnotationList(data);
-      })
-      .fail(function() {
-        console.log('[jhAnnotationTab#requestList] Failed to load annotation list. ' + listId);
-        jQuery(_this.message.error).appendTo(this.appendTo.find('.messages'));
-      })
-      .always(function() {
 
-      });
+      // If there is already a request for this annotation list
+      // do nothing but wait for it to complete
+      if (this.pendingRequests[listId]) {
+        return;
+      }
+
+      this.pendingRequests[listId] =
+        jQuery.ajax({
+          url:   listId,
+          dataType: 'json'
+        })
+        .done(function(data) {
+          _this.processAnnotationList(data);
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+          console.log('[jhAnnotationTab#requestList] Failed to load annotation list. (' + listId + '): ' + errorThrown);
+          jQuery(_this.message.error).appendTo(this.appendTo.find('.messages'));
+        })
+        .always(function() {
+          if (_this.pendingRequests[listId]) {
+            // Remove key/value from pendingRequests
+            _this.pendingRequests[listId] = undefined;
+          }
+        });
     },
 
     /**
@@ -145,12 +157,17 @@
         '{{#each annotations}}',
           '<li class="annotationItem {{#if this.selected}}selected{{/if}}" data-id="{{this.id}}">',
             '{{#ifCond this.resource.type "==" "cnt:ContentAsText"}}',
-              '<div class="editable {{this.id}}">{{{this.resource.chars}}}</div>',
+              '<div class="editable">{{{this.resource.chars}}}</div>',
             '{{/ifCond}}',
             // Could add other conditions here to match other annotation types
           '</li>',
         '{{/each}}',
       ].join(''));
+
+      Handlebars.registerPartial('pageLeft', '<span class="aor-icon side-left"></span>');
+      Handlebars.registerPartial('pageRight','<span class="aor-icon side-right"></span>');
+      Handlebars.registerPartial('pageTop', '<span class="aor-icon side-top"></span>');
+      Handlebars.registerPartial('pageBottom', '<span class="aor-icon side-bottom"></span>');
 
       $.registerHandlebarsHelpers();
     },
