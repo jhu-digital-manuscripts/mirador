@@ -87,11 +87,11 @@ $.JhiiifSearchService.prototype = {
       var fieldInfo = {};
 
       fieldInfo.class = 'advanced-search-' + field.name;
-      fieldInfo.type = field.enum ? 'dropdown' : 'text';
+      fieldInfo.type = field.values ? 'dropdown' : 'text';
       fieldInfo.query = field.name;
       fieldInfo.placeholder = field.label;
-      if (field.enum) {
-        fieldInfo.choices = field.enum;
+      if (field.values) {
+        fieldInfo.choices = field.values;
       }
 
       if (index === 0) {
