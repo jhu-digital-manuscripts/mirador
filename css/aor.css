@@ -5,7 +5,7 @@
   float: left;
   width: 12px;
   height: 12px;
-  margin-right: 8px;
+  margin: 1px;
   border-radius: 3px;
   border: 2px solid black;
 }
@@ -48,4 +48,47 @@
 }
 .side-top.side-within .inner {
   margin-top: -2px;
+}
+
+/* Styles for orientation arrows */
+.aor-icon-container {
+  float: left;
+  height: 25px;
+  width: 25px;
+  margin-right: 8px;
+}
+
+.aor-icon-container .orientation {
+  position: relative;
+  float: left;
+  width: 0;
+  height: 0;
+}
+
+.orientation.arrow-top {
+  left: 3px;
+  border-bottom: 6px solid black;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+}
+
+.orientation.arrow-bottom {
+  left: 3px;
+  border-top: 6px solid black;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+}
+
+.orientation.arrow-left {
+  top: 3px;
+  border-right: 6px solid black;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+}
+
+.orientation.arrow-right {
+  top: 3px;
+  border-left: 6px solid black;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
 }
