@@ -27,6 +27,7 @@ $.SearchWidget = function(options) {
       'no-defaults': '<span class="error">No fields defined for basic search.</span>',
     },
     searchContext: {},
+    inputClasses: []
   }, options);
 
   var _this = this;
@@ -52,6 +53,9 @@ $.SearchWidget.prototype = {
     };
 
     this.element = jQuery(this.template(templateData)).appendTo(this.appendTo);
+    this.inputClasses = this.searchService.search.settings.fields.map(function(field) {
+      return 'advanced-search-' + field.name;
+    });
 
     this.bindEvents();
     if (this.searchContext && this.searchContext.queryUrl) {
@@ -278,14 +282,10 @@ console.log("[SearchWidget] original : " + query);
       var user_inputs = line.find('.advanced-search-inputs');
 
       // Hide all input/select fields
-      user_inputs.find('select').hide();
-      user_inputs.find('input').hide();
-
-      user_inputs.find(
-        _this.classNamesToSelector(
-          _this.searchService.getField(jSelector.val()).class
-        )
-      ).show();
+      user_inputs.children().hide();
+      user_inputs
+          .find(_this.classNamesToSelector(_this.searchService.getField(jSelector.val()).class))
+          .show();
     });
 
   },
@@ -367,15 +367,31 @@ console.log("[SearchWidget] original : " + query);
         '<div class="advanced-search-inputs">',
         '{{#each search.settings.fields}}',
           '{{#ifCond type "===" "dropdown"}}',
-            '{{> searchDropDown this}}',
+            // '{{> searchDropDown this}}',
+            '{{> combobox this}}',
+          '{{else}}',
+            '<input type="text" class="{{class}}" placeholder="{{placeholder}}" ',
+                  '{{#if name}}data-query="{{name}}"{{/if}}/>',
           '{{/ifCond}}',
-          '<input type="text" class="{{class}}" placeholder="{{placeholder}}" {{#if name}}data-query="{{name}}"{{/if}}/>',
         '{{/each}}',
         '</div>',
       '</td>',
       '<td>',
         '<button class="advanced-search-remove" type="button"><i class="fa fa-times"></i></button>',
       '</td></tr>',
+    ].join(''));
+
+    Handlebars.registerPartial('combobox', [
+      '<div class="advanced-search-combo {{class}}">',
+        '<select class="{{class}}" onchange="this.nextElementSibling.value=this.value">',
+            '<option value=""></option>',
+            '{{#each values}}',
+              '<option value="{{value}}">{{label}}</option>',
+            '{{/each}}',
+        '</select>',
+        '<input type="text" name="{{name}}" value="" class="{{class}}" ',
+              'onchange="this.previousElementSibling.selectedIndex = -1"/>',
+      '</div>',
     ].join(''));
 
     /**

@@ -92,3 +92,152 @@
   border-top: 6px solid transparent;
   border-bottom: 6px solid transparent;
 }
+
+
+/*
+ * ##############################
+ * Search Panel
+ * ##############################
+ */
+
+.searchResults  {
+  overflow: auto;
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 310px;
+  padding: 0 10px;
+}
+.search-results-list .query {
+  font-style: italic;
+  color: grey;
+}
+.result-wrapper {
+  border-bottom: 1px solid gray;
+  padding: 5px 0 8px 5px;
+  border-radius: 5px;
+}
+.js-show-canvas:hover {
+  background-color: #D8D8D8;
+}
+.js-show-canvas {
+  cursor: pointer;
+}
+.search-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+}
+.js-close-search-within {
+  margin-top: 0;
+  background: none;
+  color: rgb( 146, 145, 145 );
+  box-sizing: border-box;
+}
+.search-disclose {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.search-disclose-btn-more,
+.search-disclose-btn-less {
+  text-decoration: underline;
+  margin-bottom: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid rgb( 146, 145, 145 );
+  padding-bottom: 10px;
+  width: 100%;
+}
+.advanced-search-lines input {
+  padding: 2px 0;
+  width: 150px;
+}
+.advanced-search-lines select {
+  padding: 2px;
+}
+.advanced-search-line button {
+  margin-left: -1px;
+  height: 20px;
+}
+.advanced-search-line {
+  border-bottom: 1px solid rgb( 146, 145, 145 );
+}
+.search-results-list .result-wrapper .result-paragraph .highlight {
+  background-color: rgb(255, 255, 0);
+  padding: 0px 5px;
+  color: black;
+}
+.search-results-container .selected {
+  background-color: #D8D8D8;
+}
+.advanced-search-line table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+.advanced-search-line table td {
+  padding: 5px 0;
+  margin: 0;
+  float: left;
+}
+.advanced-search-selector {
+  width: 120px;
+}
+.advanced-search-operators {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 36px;
+  height: 21px;
+  margin-right: -1px;
+  border-radius: 3px 0 0 3px;
+  cursor: pointer;
+}
+.advanced-search-categories {
+  float:right;
+  width: 85px;
+  border-radius: 0;
+  cursor: pointer;
+}
+.search-results-context-menu ul {
+  position: absolute;
+  background-color: #efefef;
+  text-align: center;
+  list-style: none;
+  margin-top: 9px;
+  padding: 10px;
+  border: 2px solid black;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+.search-results-context-menu ul li {
+  padding: 5px 0px;
+  border-bottom: 1px solid black;
+}
+.search-results-context-menu ul li:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+/*
+ * Combo box widget
+ */
+.advanced-search-combo {
+  position: relative;
+  background-color: white;
+  border: solid grey 1px;
+  width: 150px;
+}
+.advanced-search-combo select {
+  border: none;
+  width: 100%;
+  margin: 0;
+  padding: 3px 0;
+}
+.advanced-search-combo input {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 130px;
+  border:none;
+}
+.advanced-search-combo select:focus, .select-editable input:focus {
+  outline:none;
+}
