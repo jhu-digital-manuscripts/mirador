@@ -99,7 +99,9 @@
  * Search Panel
  * ##############################
  */
-
+.search-within-object-select {
+  width: 100%;
+}
 .searchResults  {
   overflow: auto;
   position: absolute;
@@ -229,13 +231,13 @@
   border: none;
   width: 100%;
   margin: 0;
-  padding: 3px 0;
 }
 .advanced-search-combo input {
   position: absolute;
   top: 0px;
   left: 0px;
   width: 130px;
+  padding: 3px 0;
   border:none;
 }
 .advanced-search-combo select:focus, .select-editable input:focus {

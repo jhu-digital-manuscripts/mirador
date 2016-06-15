@@ -368,7 +368,8 @@ console.log("[SearchWidget] original : " + query);
         '{{#each search.settings.fields}}',
           '{{#ifCond type "===" "dropdown"}}',
             // '{{> searchDropDown this}}',
-            '{{> combobox this}}',
+            // '{{> combobox this}}',
+            '{{> datalist this }}',
           '{{else}}',
             '<input type="text" class="{{class}}" placeholder="{{placeholder}}" ',
                   '{{#if name}}data-query="{{name}}"{{/if}}/>',
@@ -381,17 +382,31 @@ console.log("[SearchWidget] original : " + query);
       '</td></tr>',
     ].join(''));
 
-    Handlebars.registerPartial('combobox', [
-      '<div class="advanced-search-combo {{class}}">',
-        '<select class="{{class}}" onchange="this.nextElementSibling.value=this.value">',
+    // Handlebars.registerPartial('combobox', [
+    //   '<div class="advanced-search-combo {{class}}">',
+    //     '<select class="{{class}}" onchange="this.nextElementSibling.value=this.value">',
+    //         '<option value=""></option>',
+    //         '{{#each values}}',
+    //           '<option value="{{value}}">{{label}}</option>',
+    //         '{{/each}}',
+    //     '</select>',
+    //     '<input type="text" name="{{name}}" value="" class="{{class}}" ',
+    //           'onchange="this.previousElementSibling.selectedIndex = -1"/>',
+    //   '</div>',
+    // ].join(''));
+
+    Handlebars.registerPartial('datalist', [
+      '<div class="{{class}}">',
+      '<input type="text" name="{{name}}" value="" class="{{class}}" placeholder="{{placeholder}}" list="{{class}}-datalist" />',
+        '<datalist id="{{class}}-datalist">',
+          '<select>', // <select> fallback for Safari
             '<option value=""></option>',
             '{{#each values}}',
               '<option value="{{value}}">{{label}}</option>',
             '{{/each}}',
-        '</select>',
-        '<input type="text" name="{{name}}" value="" class="{{class}}" ',
-              'onchange="this.previousElementSibling.selectedIndex = -1"/>',
-      '</div>',
+          '</select>',
+        '</datalist>',
+      '</div>'
     ].join(''));
 
     /**
