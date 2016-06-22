@@ -26,8 +26,7 @@ $.SearchWidget = function(options) {
       'no-term': '<span class="error">No search term was found.</span>',
       'no-defaults': '<span class="error">No fields defined for basic search.</span>',
     },
-    searchContext: {},
-    inputClasses: []
+    searchContext: {}
   }, options);
 
   var _this = this;
@@ -53,9 +52,6 @@ $.SearchWidget.prototype = {
     };
 
     this.element = jQuery(this.template(templateData)).appendTo(this.appendTo);
-    this.inputClasses = this.searchService.search.settings.fields.map(function(field) {
-      return 'advanced-search-' + field.name;
-    });
 
     this.bindEvents();
     if (this.searchContext && this.searchContext.queryUrl) {
@@ -155,7 +151,7 @@ $.SearchWidget.prototype = {
       var category = line.find('.advanced-search-categories').val();
       var operation = line.find('.advanced-search-operators').val();
 
-      var inputs = line.find('.advanced-search-inputs').children()
+      var inputs = line.find('.advanced-search-inputs input')
       .filter(function(index, child) {
         child = jQuery(child);
         return child.css('display') != 'none' && child.val() && child.val() !== '';
@@ -367,8 +363,6 @@ console.log("[SearchWidget] original : " + query);
         '<div class="advanced-search-inputs">',
         '{{#each search.settings.fields}}',
           '{{#ifCond type "===" "dropdown"}}',
-            // '{{> searchDropDown this}}',
-            // '{{> combobox this}}',
             '{{> datalist this }}',
           '{{else}}',
             '<input type="text" class="{{class}}" placeholder="{{placeholder}}" ',
@@ -382,22 +376,10 @@ console.log("[SearchWidget] original : " + query);
       '</td></tr>',
     ].join(''));
 
-    // Handlebars.registerPartial('combobox', [
-    //   '<div class="advanced-search-combo {{class}}">',
-    //     '<select class="{{class}}" onchange="this.nextElementSibling.value=this.value">',
-    //         '<option value=""></option>',
-    //         '{{#each values}}',
-    //           '<option value="{{value}}">{{label}}</option>',
-    //         '{{/each}}',
-    //     '</select>',
-    //     '<input type="text" name="{{name}}" value="" class="{{class}}" ',
-    //           'onchange="this.previousElementSibling.selectedIndex = -1"/>',
-    //   '</div>',
-    // ].join(''));
-
     Handlebars.registerPartial('datalist', [
       '<div class="{{class}}">',
-      '<input type="text" name="{{name}}" value="" class="{{class}}" placeholder="{{placeholder}}" list="{{class}}-datalist" />',
+      '<input type="text" name="{{name}}" value="" class="{{class}}" placeholder="{{placeholder}}" ',
+            'list="{{class}}-datalist" {{#if name}}data-query="{{name}}"{{/if}} />',
         '<datalist id="{{class}}-datalist">',
           '<select>', // <select> fallback for Safari
             '<option value=""></option>',

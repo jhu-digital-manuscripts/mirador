@@ -149,6 +149,9 @@
   padding-bottom: 10px;
   width: 100%;
 }
+.advanced-search-lines table td {
+  padding: 4px 0;
+}
 .advanced-search-lines input {
   padding: 2px 0;
   width: 150px;
@@ -242,4 +245,23 @@
 }
 .advanced-search-combo select:focus, .select-editable input:focus {
   outline:none;
+}
+
+/**
+ * jQuery combobox
+ */
+.custom-combobox {
+  position: relative;
+  display: inline-block;
+}
+.custom-combobox-toggle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin-left: -1px;
+  padding: 0;
+}
+.custom-combobox-input {
+  margin: 0;
+  padding: 5px 10px;
 }
