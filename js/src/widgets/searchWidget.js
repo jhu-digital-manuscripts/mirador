@@ -154,15 +154,30 @@ $.SearchWidget.prototype = {
       var inputs = line.find('.advanced-search-inputs input')
       .filter(function(index, child) {
         child = jQuery(child);
-        return child.css('display') != 'none' && child.val() && child.val() !== '';
+        return child.css('display') != 'none' && child.data('query') == category && child.val() && child.val() !== '';
       })
       .each(function(index, child) {
         child = jQuery(child);
 
+        // Check this category to see if it has a list of possible values.
+        // If so, check the input value against the list of possible value labels.
+        var term = child.val();
+        var category = child.data('query');
+        var possibleField = _this.searchService.search.settings.fields
+        .filter(function(field) { // Filter on search fields with matching name
+          return field.name == category && field.values;
+        })
+        .forEach(function(field) {
+          var matchingVals = field.values.filter(function(val) { return val.label === term; });
+          if (matchingVals && matchingVals.length > 0) {
+            term = matchingVals[0].value;
+          }
+        });
+
         parts.push({
           op: _this.searchService.query.delimiters[operation],
-          category: child.data('query'),
-          term: child.val()
+          category: category,
+          term: term
         });
       });
     });
@@ -384,7 +399,8 @@ console.log("[SearchWidget] original : " + query);
           '<select>', // <select> fallback for Safari
             '<option value=""></option>',
             '{{#each values}}',
-              '<option value="{{value}}">{{label}}</option>',
+              // '<option value="{{value}}">{{label}}</option>',
+              '<option value="{{label}}">{{label}}</option>',
             '{{/each}}',
           '</select>',
         '</datalist>',

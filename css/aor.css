@@ -220,6 +220,9 @@
   padding-bottom: 0;
   border-bottom: 0;
 }
+.advanced-search-btn-container {
+  margin: 10px 0;
+}
 
 /*
  * Combo box widget
