@@ -159,6 +159,9 @@
 .advanced-search-lines select {
   padding: 2px;
 }
+.advanced-search-inputs select {
+  width: 154px;
+}
 .advanced-search-line button {
   margin-left: -1px;
   height: 20px;
