@@ -145,42 +145,6 @@ $.SearchWidget.prototype = {
   performAdvancedSearch: function() {
     var _this = this;
     var parts = [];
-console.log('[SearchWidget] PERFORMING SEARCH');
-    // this.element.find('.advanced-search-line').each(function(index, line) {
-    //   line = jQuery(line);
-    //   var category = line.find('.advanced-search-categories').val();
-    //   var operation = line.find('.advanced-search-operators').val();
-    //
-    //   var inputs = line.find('.advanced-search-inputs input')
-    //   .filter(function(index, child) {
-    //     child = jQuery(child);
-    //     return child.css('display') != 'none' && child.val() && child.val() !== '';
-    //   })
-    //   .each(function(index, child) {
-    //     child = jQuery(child);
-    //
-    //     // Check this category to see if it has a list of possible values.
-    //     // If so, check the input value against the list of possible value labels.
-    //     var term = child.val();
-    //     var category = child.data('query');
-    //     var possibleField = _this.searchService.search.settings.fields
-    //     .filter(function(field) { // Filter on search fields with matching name
-    //       return field.name == category && field.values;
-    //     })
-    //     .forEach(function(field) {
-    //       var matchingVals = field.values.filter(function(val) { return val.label === term; });
-    //       if (matchingVals && matchingVals.length > 0) {
-    //         term = matchingVals[0].value;
-    //       }
-    //     });
-    //
-    //     parts.push({
-    //       op: _this.searchService.query.delimiters[operation],
-    //       category: category,
-    //       term: term
-    //     });
-    //   });
-    // });
 
     this.element.find('.advanced-search-line').each(function(index, line) {
       line = jQuery(line);
@@ -204,7 +168,7 @@ console.log('[SearchWidget] PERFORMING SEARCH');
     });
 
     var finalQuery = $.generateQuery(parts, this.searchService.query.delimiters.field);
-console.log('[SearchWidget] final query = ' + finalQuery);
+
     if (finalQuery && finalQuery.length > 0) {
       this.displaySearchWithin(finalQuery, _this.searchService.query.delimiters.and);
     }
@@ -409,42 +373,6 @@ console.log("[SearchWidget] original : " + query);
         '<button class="advanced-search-remove" type="button"><i class="fa fa-times"></i></button>',
       '</td></tr>',
     ].join(''));
-
-    // Handlebars.registerPartial('advancedSearchLine', [
-    //   // Select search category
-    //   '<tr class="advanced-search-line"><td>',
-    //     '<div class="advanced-search-selector">',
-    //       '{{> searchDropDown query.operators}}',
-    //       '{{> searchDropDown search.categories }}',
-    //     '</div>',
-    //   '</td>',
-    //   '<td>',
-    //     '<div class="advanced-search-inputs">',
-    //     '{{#each search.settings.fields}}',
-    //       '{{#ifCond type "===" "dropdown"}}',
-    //         '{{> datalist this }}',
-    //       '{{else}}',
-    //         '<input type="text" class="{{class}}" placeholder="{{placeholder}}" {{#if name}}data-query="{{name}}"{{/if}}/>',
-    //       '{{/ifCond}}',
-    //     '{{/each}}',
-    //     '</div>',
-    //   '</td>',
-    //   '<td>',
-    //     '<button class="advanced-search-remove" type="button"><i class="fa fa-times"></i></button>',
-    //   '</td></tr>',
-    // ].join(''));
-
-    // Handlebars.registerPartial('datalist', [
-    //   '<div class="{{class}}">',
-    //       '<select>',
-    //         '<option value=""></option>',
-    //         '{{#each values}}',
-    //           '<option value="{{value}}" {{#if description}}title={{description}}{{/if}}>{{label}}</option>',
-    //         '{{/each}}',
-    //       '</select>',
-    //     '<input type="text" name="{{name}}" value="" class="{{class}}" placeholder="{{placeholder}}" {{#if name}}data-query="{{name}}"{{/if}} />',
-    //   '</div>'
-    // ].join(''));
 
     /**
      * Create a drop down. Required context:
