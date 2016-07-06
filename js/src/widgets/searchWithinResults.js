@@ -94,7 +94,7 @@
       }
 
       this.baseUrl = baseUrl;
-      this.search(q.q, parseInt(q.o), parseInt(q.m), q.r);
+      this.search(q.q, parseInt(q.o), parseInt(q.m), q.so);
     },
 
     /**
@@ -107,11 +107,11 @@
      * @param  'string' resumeToken (OPTIONAL) resume token for the search service to resume a paged search
      * @return                      the JSON-LD search results from the search service
      */
-    search: function(query, offset, numExpected, resumeToken) {
+    search: function(query, offset, numExpected, sortOrder) {
       console.assert(query && typeof query === 'string', "Query must exist and must be a String");
       console.assert(offset ? typeof offset === 'number' : true, "Offset value provided must be a number.");
       console.assert(numExpected ? typeof numExpected === 'number' : true, "numExpected value provided must be a number.");
-      console.assert(resumeToken ? typeof resumeToken === 'string' : true, "Resume token value provided must be a string.");
+      console.assert(sortOrder ? typeof sortOrder === 'string' : true, "sortOrder value provided must be a string.");
       var _this = this;
 
       this.query = query;
@@ -124,9 +124,11 @@
       if (numExpected) {
         queryUrl += '&m=' + numExpected;
       }
-      // if (resumeToken) {
-      //   queryUrl += '&r=' + resumeToken;
-      // }
+      if (sortOrder) {
+        queryUrl += '&so=' + sortOrder;
+      } else {
+        queryUrl += '&so=' + _this.searchContext.sortOrder;
+      }
       if (offset) {
         queryUrl += '&o=' + offset;
       }
@@ -139,7 +141,7 @@
       var _this = this;
       // Clear search related stuff
       this.searchResults = null;
-
+console.log('[Searching] ' + queryUrl);
       jQuery(this.appendTo).find('.search-results-container').empty();
       var loader = jQuery(this.loading).appendTo(this.element.find('.search-results-container'));
 

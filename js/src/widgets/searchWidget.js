@@ -180,6 +180,7 @@ $.SearchWidget.prototype = {
       return;
     }
     var _this = this;
+    this.searchContext.sortOrder = this.element.find('.search-results-sorter select').val();
 
     this.element.find('.search-results-list').empty();
     new $.SearchWithinResults({
@@ -199,6 +200,7 @@ $.SearchWidget.prototype = {
     if (query !== "") {
 console.log("[SearchWidget] original : " + query);
       query = encodeURIComponent(query);
+      this.searchContext.sortOrder = this.element.find('.search-results-sorter select').val();
 
       this.element.find('.search-results-list').empty();
       new $.SearchWithinResults({
@@ -324,6 +326,14 @@ console.log("[SearchWidget] original : " + query);
         '</form>',
         '<div class="search-disclose-btn-more">Advanced Search</div>',
         '<div class="search-disclose-btn-less" style="display: none;">Basic Search</div>',
+        '<p class="search-results-sorter">',
+          '<label>Sort results by: ',
+            '<select>',
+              '<option value="relevance">Relevance</option>',
+              '<option value="index">Page Order</option>',
+            '</select>',
+          '</label>',
+        '</p>',
         '<div class="search-disclose-container">',
           '<div class="search-disclose" style="display: none;">',
             '{{> advancedSearch }}',
