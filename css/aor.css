@@ -148,8 +148,10 @@
   text-decoration: underline;
   margin-bottom: 10px;
   cursor: pointer;
-  padding-bottom: 10px;
   width: 100%;
+}
+.search-results-sorter {
+  margin-bottom: 10px;
 }
 .advanced-search-lines table td {
   padding: 4px 0;
@@ -157,16 +159,22 @@
 .advanced-search-lines input {
   padding: 2px 0;
   width: 150px;
+  border-radius: 0;
+  height: 16px;
 }
 .advanced-search-lines select {
   padding: 2px;
+  height: 24px;
 }
 .advanced-search-inputs select {
   width: 154px;
+  padding: 0;
+  border-radius: 0;
 }
 .advanced-search-line button {
   margin-left: -1px;
-  height: 20px;
+  height: 24px;
+  border-radius: 0;
 }
 .advanced-search-line {
   border-bottom: 1px solid rgb( 146, 145, 145 );
@@ -195,7 +203,6 @@
   -webkit-appearance: none;
   -moz-appearance: none;
   width: 36px;
-  height: 21px;
   margin-right: -1px;
   border-radius: 3px 0 0 3px;
   cursor: pointer;
@@ -272,4 +279,51 @@
 .custom-combobox-input {
   margin: 0;
   padding: 5px 10px;
+}
+
+/* Tooltip container */
+.tooltip {
+   position: relative;
+   display: inline-block;
+   border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+   visibility: hidden;
+   width: 120px;
+   background-color: #555;
+   color: #fff;
+   text-align: center;
+   padding: 5px 0;
+   border-radius: 6px;
+
+   /* Position the tooltip text */
+   position: absolute;
+   z-index: 1;
+   bottom: 125%;
+   left: 50%;
+   margin-left: -60px;
+
+   /* Fade in tooltip */
+   opacity: 0;
+   transition: opacity 1s;
+}
+
+/* Tooltip arrow */
+.tooltip .tooltiptext::after {
+   content: "";
+   position: absolute;
+   top: 100%;
+   left: 50%;
+   margin-left: -5px;
+   border-width: 5px;
+   border-style: solid;
+   border-color: #555 transparent transparent transparent;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+   visibility: visible;
+   opacity: 1;
 }

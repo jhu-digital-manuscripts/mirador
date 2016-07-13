@@ -100,7 +100,7 @@ $.JhiiifSearchService.prototype = {
       }
 
       fields.push(fieldInfo);
-      categories.choices.push({'value': field.name, 'label': field.label});
+      categories.choices.push({'value': field.name, 'label': field.label, 'description': field.description});
     });
 
     // Override defaults with values already in 'search.settings.fields'
