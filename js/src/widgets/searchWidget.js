@@ -57,6 +57,13 @@ $.SearchWidget.prototype = {
     if (this.searchContext && this.searchContext.queryUrl) {
       this.searchFromUrl(this.searchContext.queryUrl);
     }
+
+    var description_template = Handlebars.compile('{{> searchDescription}}');
+
+    this.element.tooltip({
+      items: '.search-description-icon',
+      content: description_template(_this.searchService.search.settings.fields),
+    });
   },
 
   toggle: function() {
@@ -346,6 +353,7 @@ console.log("[SearchWidget] original : " + query);
 
     Handlebars.registerPartial('advancedSearch', [
       '<div class="advanced-search">',
+        '<i class="fa fa-2x fa-question-circle search-description-icon" title="This is a title."></i>',
         '<form id="advanced-search-form" class="perform-advanced-search">',
           '<div class="advanced-search-lines">',
             '<table><tbody>',
@@ -405,6 +413,33 @@ console.log("[SearchWidget] original : " + query);
           '</option>',
         '{{/each}}',
       '</select>'
+    ].join(''));
+
+    Handlebars.registerPartial('searchDescription', [
+      '<p>',
+        '<p>',
+          'The <i>Advanced Search</i> tool allows a user to create a query focused on specific search fields. Different terms ',
+          'can be combined in a complex boolean query to yield more precise results. The following fields are available to search: ',
+        '</p>',
+        '<ul>',
+        '{{#each this}}',
+          '<li>',
+            '<b>{{label}}</b>',
+            '{{#if description}}',
+              ': {{description}}',
+            '{{/if}}',
+            '{{#if values}}',
+              '<br>Can take values: ',
+              '<i>',
+                '{{#each values}}',
+                  '{{label}}, ',
+                '{{/each}}',
+              '</i>',
+            '{{/if}}',
+          '</li>',
+        '{{/each}}',
+        '</ul>',
+      '</p>'
     ].join(''));
 
     $.registerHandlebarsHelpers();

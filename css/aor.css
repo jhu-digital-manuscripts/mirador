@@ -327,3 +327,16 @@
    visibility: visible;
    opacity: 1;
 }
+
+.search-description-icon {
+  position: absolute;
+  left: 15px;
+}
+
+.ui-tooltip {
+  max-width: 500px;
+}
+
+.ui-tooltip-content {
+  margin: 0 5px;
+}
