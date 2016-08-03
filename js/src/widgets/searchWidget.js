@@ -63,6 +63,7 @@ $.SearchWidget.prototype = {
     this.element.tooltip({
       items: '.search-description-icon',
       content: description_template(_this.searchService.search.settings.fields),
+      position: { my: "left+20 top", at: "right top-50" },
     });
   },
 
