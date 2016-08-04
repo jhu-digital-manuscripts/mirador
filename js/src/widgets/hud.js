@@ -414,7 +414,7 @@
                                  '<i class="fa fa-minus-circle"></i>',
                                  '</a>',
                                  '<a class="mirador-osd-go-home hud-control" role="button" aria-label="Reset image bounds">',
-                                 '<i class="fa fa-home"></i>',
+                                 '<i class="fa fa-refresh"></i>',
                                  '<a class="mirador-osd-rotate-left hud-control ">',
                                  '<i class="fa fa-3x fa-rotate-left "></i>',    // Rotate right icon
                                  '</a>',
