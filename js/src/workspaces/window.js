@@ -899,7 +899,7 @@ if (typeof list === 'string') {
           '{{/if}}',
         '</div>',
         // '<div class="layout-controls">',
-          // '<a href="javascript:;" class="mirador-btn mirador-icon-pin-window" title="Pin this window"><i class="fa fa-2x fa-fw fa-thumb-tack"></i></a>',
+          '<a href="javascript:;" class="mirador-btn mirador-icon-pin-window" title="Pin this window"><i class="fa fa-2x fa-fw fa-thumb-tack"></i></a>',
           '{{#if displayLayout}}',
             '<a href="javascript:;" class="mirador-btn mirador-icon-window-menu" title="{{t "changeLayout"}}"><i class="fa fa-table fa-2x fa-fw"></i>',
               '<ul class="dropdown slot-controls">',
