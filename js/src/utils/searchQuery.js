@@ -111,7 +111,7 @@
    * @return string      escaped term
    */
   $.escapeSearchTerm =  function(term) {
-    return term ? term.replace('\\', '\\\\').replace("'", "\\'") : term;
+    return term ? term.replace(/\\/g, '\\\\').replace(/'/g, "\\'") : term;
   };
 
 // -----------------------------------------------------------------------------
