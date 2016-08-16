@@ -207,6 +207,10 @@
   border-radius: 3px 0 0 3px;
   cursor: pointer;
 }
+/* Get rid of dropdown arrow in IE */
+.advanced-search-operators::-ms-espand {
+  display: none;
+}
 .advanced-search-categories {
   float:right;
   width: 85px;
@@ -236,101 +240,18 @@
   margin: 10px 0;
 }
 
-/*
- * Combo box widget
- */
-.advanced-search-combo {
-  position: relative;
-  background-color: white;
-  border: solid grey 1px;
-  width: 150px;
-}
-.advanced-search-combo select {
-  border: none;
-  width: 100%;
-  margin: 0;
-}
-.advanced-search-combo input {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  width: 130px;
-  padding: 3px 0;
-  border:none;
-}
-.advanced-search-combo select:focus, .select-editable input:focus {
-  outline:none;
-}
 
 /**
- * jQuery combobox
+ * Advanced search description icon + tooltip
  */
-.custom-combobox {
-  position: relative;
-  display: inline-block;
-}
-.custom-combobox-toggle {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  margin-left: -1px;
-  padding: 0;
-}
-.custom-combobox-input {
-  margin: 0;
-  padding: 5px 10px;
-}
-
-/* Tooltip container */
-.tooltip {
-   position: relative;
-   display: inline-block;
-   border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
-}
-
-/* Tooltip text */
-.tooltip .tooltiptext {
-   visibility: hidden;
-   width: 120px;
-   background-color: #555;
-   color: #fff;
-   text-align: center;
-   padding: 5px 0;
-   border-radius: 6px;
-
-   /* Position the tooltip text */
-   position: absolute;
-   z-index: 1;
-   bottom: 125%;
-   left: 50%;
-   margin-left: -60px;
-
-   /* Fade in tooltip */
-   opacity: 0;
-   transition: opacity 1s;
-}
-
-/* Tooltip arrow */
-.tooltip .tooltiptext::after {
-   content: "";
-   position: absolute;
-   top: 100%;
-   left: 50%;
-   margin-left: -5px;
-   border-width: 5px;
-   border-style: solid;
-   border-color: #555 transparent transparent transparent;
-}
-
-/* Show the tooltip text when you mouse over the tooltip container */
-.tooltip:hover .tooltiptext {
-   visibility: visible;
-   opacity: 1;
-}
-
 .search-description-icon {
   position: absolute;
   left: 15px;
+  color: gray;
+}
+
+.search-description-icon:hover {
+  color: black;
 }
 
 .ui-tooltip {
