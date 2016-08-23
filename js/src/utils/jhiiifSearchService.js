@@ -23,7 +23,7 @@ $.JhiiifSearchService = function(options) {
     },
     search : {
       'collection': { // TODO get this information from 'collectionUri' property in initial Mirador config!
-        'id': 'http://rosetest.library.jhu.edu/iiif-pres/collection/aorcollection',
+        'id': 'http://jdm.library.jhu.edu/iiif-pres/collection/aorcollection',
         'label': 'Archaeology of Reading collection'
       },
       'settings': {
@@ -37,7 +37,17 @@ $.JhiiifSearchService = function(options) {
 };
 
 $.JhiiifSearchService.prototype = {
-  init: function() {
+  init: function() {console.log('[SearchService] (' + JSON.stringify(Mirador.saveController.currentConfig.data, null, 2) + ')');
+    var data = Mirador.saveController.currentConfig.data;
+    data = data.filter(function(datum) { return datum.collectionUri && datum.collectionUri !== ''; });
+
+    if (data && Array.isArray(data) && data.length > 0) {
+      this.search.collection.id = data[0].collectionUri;
+      if (data[0].label && data[0].label !== '') {
+        this.search.collection.label = data[0].label;
+      }
+    }
+
     this.makeInfoRequest(this.manifest.getSearchWithinInfoUrl());
   },
 

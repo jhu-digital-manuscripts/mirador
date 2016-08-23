@@ -382,7 +382,7 @@ console.log('[Searching] ' + queryUrl);
                 searchWidgetAvailable: true,
                 searchContext: _this.buildContext(),
               });
-              // currentWindow.setCurrentCanvasID(canvasid); // This is needed ONLY for setting correct scroll position of thumbnails
+              currentWindow.setCurrentCanvasID(canvasid); // This is needed ONLY for setting correct scroll position of thumbnails
             }
           });
         }
