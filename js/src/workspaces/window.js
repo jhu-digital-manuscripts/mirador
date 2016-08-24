@@ -67,7 +67,7 @@
       fullScreenAvailable : true,
       displayLayout: true,
       layoutOptions : {
-        "newObject" : true,
+        "newObject" : false,
         "close" : true,
         "slotRight" : true,
         "slotLeft" : true,
@@ -268,12 +268,12 @@
 
       jQuery.subscribe('sidePanelStateUpdated.' + this.id, function(event, state) {
         if (state.open) {
-            _this.element.find('.fa-list').switchClass('fa-list', 'fa-caret-down');
+            _this.element.find('.fa-bars').switchClass('fa-bars', 'fa-caret-down');
             _this.element.find('.mirador-icon-toc').addClass('selected');
             _this.element.find('.view-container').removeClass('maximised');
         } else {
             _this.element.find('.mirador-icon-toc').removeClass('selected');
-            _this.element.find('.fa-caret-down').switchClass('fa-caret-down', 'fa-list');
+            _this.element.find('.fa-caret-down').switchClass('fa-caret-down', 'fa-bars');
             _this.element.find('.view-container').addClass('maximised');
         }
     });
@@ -485,11 +485,11 @@
       }
 
       if (visible && sidePanelMinimized) {
-        tocIconElement.find('.fa-list').switchClass('fa-list', 'fa-caret-down');
+        tocIconElement.find('.fa-bars').switchClass('fa-bars', 'fa-caret-down');
         sidePanelElement.removeClass('minimized').width(width).css('border-right', '1px solid lightgray');
         viewContainerElement.css('margin-right', width);
       } else if (!visible && !sidePanelMinimized) {
-        tocIconElement.find('.fa-caret-down').switchClass('fa-caret-down', 'fa-list');
+        tocIconElement.find('.fa-caret-down').switchClass('fa-caret-down', 'fa-bars');
         viewContainerElement.css('margin-right', 0);
         sidePanelElement.addClass('minimized').css('border', 'none').width(0);
       }
@@ -875,9 +875,11 @@ if (typeof list === 'string') {
       '<div class="manifest-info">',
         '<div class="window-manifest-navigation">',
           '{{#if sidePanel}}',
-            '<a href="javascript:;" class="mirador-btn mirador-icon-toc" title="View/Hide side bar"><i class="fa fa-list fa-lg fa-fw"></i></a>',
+            '<a href="javascript:;" class="mirador-btn mirador-icon-toc" title="View/Hide side bar"><i class="fa fa-bars fa-lg fa-fw"></i></a>',
           '{{/if}}',
-          '<a href="javascript:;" class="mirador-btn mirador-icon-image-view" role="button" aria-label="Change Image Mode"><i class="fa fa-photo fa-lg fa-fw"></i>',
+          '<a href="javascript:;" class="mirador-btn mirador-icon-image-view" role="button" aria-label="Change Image Mode">',
+            '<i class="fa fa-photo fa-lg fa-fw"></i>',
+            '<i class="fa fa-chevron-down"></i>',
             '<ul class="dropdown image-list">',
               '{{#if ImageView}}',
                 '<li class="single-image-option"><i class="fa fa-photo fa-lg fa-fw"></i> {{t "imageView"}}</li>',
@@ -901,7 +903,9 @@ if (typeof list === 'string') {
         // '<div class="layout-controls">',
           // '<a href="javascript:;" class="mirador-btn mirador-icon-pin-window" title="Pin this window"><i class="fa fa-2x fa-fw fa-thumb-tack"></i></a>',
           '{{#if displayLayout}}',
-            '<a href="javascript:;" class="mirador-btn mirador-icon-window-menu" title="{{t "changeLayout"}}"><i class="fa fa-table fa-2x fa-fw"></i>',
+            '<a href="javascript:;" class="mirador-btn mirador-icon-window-menu" title="{{t "changeLayout"}}">',
+              '<i class="fa fa-th-large fa-2x fa-fw"></i>',
+              '<i class="fa fa-chevron-down fa-lg"></i>',
               '<ul class="dropdown slot-controls">',
                 '{{#if layoutOptions.newObject}}',
                   '<li class="new-object-option"><i class="fa fa-plus-square fa-lg fa-fw"></i> {{t "newObject"}}</li>',

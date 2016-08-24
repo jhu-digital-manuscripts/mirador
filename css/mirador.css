@@ -143,6 +143,20 @@ a {
   outline: none;
 }
 
+.mirador-main-menu .change-layout,
+.mirador-main-menu .fullscreen-viewer {
+  cursor: pointer;
+  display: inline-block;
+  height: 20px;
+  margin: 0 2px -7px 0;
+  opacity: 0.8;
+}
+
+.mirador-main-menu .change-layout:hover,
+.mirador-main-menu .fullscreen-viewer:hover {
+  opacity: 1;
+}
+
 .mirador-main-menu .icon-bookmark-workspace,
 .mirador-main-menu .icon-load-window,
 .mirador-main-menu .icon-window-options,
@@ -1875,16 +1889,22 @@ a.mirador-icon-empty-slot [class^="icon-"] {
 .mirador-viewer a.mirador-icon-window-menu:hover,
 .mirador-viewer a.mirador-icon-home:hover,
 .mirador-viewer a.mirador-icon-toc:hover,
-.mirador-viewer a.mirador-icon-search-within:hover {
+.mirador-viewer a.mirador-icon-search-within:hover,
+.mirador-viewer a.mirador-icon-metadata-view:hover {
   color: black;
 }
 
-.mirador-viewer a.mirador-icon-image-view.selected,
+/*.mirador-viewer a.mirador-icon-image-view.selected,*/
 .mirador-viewer a.mirador-icon-thumbs-view.selected,
 .mirador-viewer a.mirador-icon-toc.selected,
 .mirador-viewer a.mirador-icon-metadata-view.selected,
 .mirador-viewer a.mirador-icon-search-within.selected {
   color: black;
+}
+
+.mirador-icon-window-menu,
+.mirador-icon-image-view {
+  width: 40px;
 }
 
 .mirador-viewer a.mirador-icon-copy {
