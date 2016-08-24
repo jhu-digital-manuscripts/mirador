@@ -433,7 +433,7 @@ console.log("[SearchWidget] original : " + query);
               '<br>Can take values: ',
               '<i>',
                 '{{#each values}}',
-                  '{{label}}, ',
+                  '{{#if @first}}{{else}},{{/if}} {{label}}',
                 '{{/each}}',
               '</i>',
             '{{/if}}',
