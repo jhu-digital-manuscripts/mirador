@@ -9,7 +9,8 @@
       annoState: null,
       showAnnotations: true,
       annoEndpointAvailable: false,
-      fullScreenAvailable: true
+      fullScreenAvailable: true,
+      pinned: false
     }, options);
 
     this.init();
@@ -51,6 +52,14 @@
     },
     listenForActions: function() {
         var _this = this;
+
+        jQuery.subscribe('windowPinUpdated.' + _this.parent.parent.id, function(event, status) {
+          _this.togglePinned(status);
+        });
+    },
+
+    togglePinned: function(isPinned) {
+      this.pinned = isPinned;
     },
 
     /**
@@ -116,11 +125,15 @@
       lastCanvasId = _this.parent.imagesList[_this.parent.imagesList.length-1]['@id'];
 
       this.parent.element.find('.mirador-osd-next').on('click', function() {
-        _this.parent.next();
+        if (!_this.pinned) {
+          _this.parent.next();
+        }
       });
 
       this.parent.element.find('.mirador-osd-previous').on('click', function() {
-        _this.parent.previous();
+        if (!_this.pinned) {
+          _this.parent.previous();
+        }
       });
 
       this.parent.element.find('.mirador-osd-annotations-layer').on('click', function() {

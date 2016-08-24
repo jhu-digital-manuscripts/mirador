@@ -14,6 +14,7 @@
       defaultThumbHeight:   150,
       parent:               null,
       panel:                false,
+      pinned:               false,
       lazyLoadingFactor:    1.5  //should be >= 1
     }, options);
 
@@ -108,12 +109,20 @@
       //add any other events that would trigger thumbnail display (resize, etc)
 
       _this.element.find('.thumbnail-image').on('click', function() {
+        if (_this.pinned) {
+          return;
+        }
+        
         var canvasID = jQuery(this).attr('data-image-id');
         _this.parent.setCurrentCanvasID(canvasID);
       });
 
       jQuery.subscribe(('currentCanvasIDUpdated.' + _this.parent.id), function(event) {
         _this.currentImageChanged();
+      });
+
+      jQuery.subscribe('windowPinUpdated.' + _this.parent.id, function(event, status) {
+        _this.pinned = status;
       });
     },
 

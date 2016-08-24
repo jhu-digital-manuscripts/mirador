@@ -866,7 +866,7 @@ console.log('[Window] setting canvas ID -> ' + canvasID);
 
       this.element.find('.mirador-icon-pin-window').on('click', function() {
         _this.togglePinWindow();
-        jQuery.publish('windowPinUpdate.' + _this.id, _this.pinned);
+        jQuery.publish('windowPinUpdated.' + _this.id, _this.pinned);
       });
     },
 
