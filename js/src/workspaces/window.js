@@ -75,7 +75,8 @@
         "slotBelow" : true
       },
       searchWidget: null,
-      searchWidgetVisible: false
+      searchWidgetVisible: false,
+      pinned: false
     }, options);
 
     this.init();
@@ -261,7 +262,7 @@
       jQuery.subscribe('layoutChanged', function(event, layoutRoot) {
         if ($.viewer.workspace.slots.length <= 1) {
           _this.element.find('.remove-object-option').hide();
-        } else {
+        } else if (!_this.pinned) {
           _this.element.find('.remove-object-option').show();
         }
       });
@@ -734,15 +735,6 @@ console.log('[Window] setting canvas ID -> ' + canvasID);
 
       if (url !== false) {
         jQuery.get(url, function(list) {
-
-// ------- TODO REMOVE THIS ----------------------------------------------------
-// ------- artifact of loading static text file --------------------------------
-if (typeof list === 'string') {
-  list = JSON.parse(list);
-}
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
           _this.annotationsList = _this.annotationsList.concat(list.resources);
           jQuery.each(_this.annotationsList, function(index, value) {
             // if there is no ID for this annotation, set a random one
@@ -841,7 +833,9 @@ if (typeof list === 'string') {
       });
 
       this.element.find('.new-object-option').on('click', function() {
-        _this.parent.addItem();
+        if (!_this.pinned) {
+          _this.parent.addItem();
+        }
       });
 
       this.element.find('.remove-object-option').on('click', function() {
@@ -865,8 +859,32 @@ if (typeof list === 'string') {
       });
 
       this.element.find('.mirador-icon-home').on('click', function() {
-        _this.parent.addItem();
+        if (!_this.pinned) {
+          _this.parent.addItem();
+        }
       });
+
+      this.element.find('.mirador-icon-pin-window').on('click', function() {
+        _this.togglePinWindow();
+        jQuery.publish('windowPinUpdate.' + _this.id, _this.pinned);
+      });
+    },
+
+    togglePinWindow: function() {
+      var removeOptionEl = this.element.find('.remove-object-option');
+      var pinOptionEl = this.element.find('.mirador-icon-pin-window');
+      this.pinned = !this.pinned;
+      this.element.find('.slot-controls').removeAttr('height');
+
+      if (this.pinned) {
+        pinOptionEl.addClass('selected');
+        removeOptionEl.hide();
+      } else {
+        pinOptionEl.removeClass('selected');
+        if ($.viewer.workspace.slots.length > 1) {
+          removeOptionEl.show();
+        }
+      }
     },
 
     // template should be based on workspace type
