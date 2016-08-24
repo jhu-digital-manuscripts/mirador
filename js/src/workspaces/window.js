@@ -878,9 +878,11 @@ console.log('[Window] setting canvas ID -> ' + canvasID);
 
       if (this.pinned) {
         pinOptionEl.addClass('selected');
+        pinOptionEl.attr('title', 'Unpin this window');
         removeOptionEl.hide();
       } else {
         pinOptionEl.removeClass('selected');
+        pinOptionEl.attr('title', 'Pin this window');
         if ($.viewer.workspace.slots.length > 1) {
           removeOptionEl.show();
         }
