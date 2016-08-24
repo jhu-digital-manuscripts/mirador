@@ -37,7 +37,7 @@ $.JhiiifSearchService = function(options) {
 };
 
 $.JhiiifSearchService.prototype = {
-  init: function() {console.log('[SearchService] (' + JSON.stringify(Mirador.saveController.currentConfig.data, null, 2) + ')');
+  init: function() {
     var data = Mirador.saveController.currentConfig.data;
     data = data.filter(function(datum) { return datum.collectionUri && datum.collectionUri !== ''; });
 
