@@ -880,6 +880,8 @@ console.log('[Window] setting canvas ID -> ' + canvasID);
     togglePinWindow: function() {
       var removeOptionEl = this.element.find('.remove-object-option');
       var pinOptionEl = this.element.find('.mirador-icon-pin-window');
+      var closeBtnEl = this.element.find('.mirador-icon-close');
+
       this.pinned = !this.pinned;
       this.element.find('.slot-controls').removeAttr('height');
 
@@ -887,11 +889,13 @@ console.log('[Window] setting canvas ID -> ' + canvasID);
         pinOptionEl.addClass('selected');
         pinOptionEl.attr('title', 'Unpin this window');
         removeOptionEl.hide();
+        closeBtnEl.hide();
       } else {
         pinOptionEl.removeClass('selected');
         pinOptionEl.attr('title', 'Pin this window');
         if ($.viewer.workspace.slots.length > 1) {
           removeOptionEl.show();
+          closeBtnEl.show();
         }
       }
     },
@@ -931,7 +935,6 @@ console.log('[Window] setting canvas ID -> ' + canvasID);
           '<a href="javascript:;" class="mirador-btn mirador-icon-close" title="Close window">',
             '<i class="fa fa-fw fa-2x fa-times"></i>',
           '</a>',
-          '<a href="javascript:;" class="mirador-btn mirador-icon-pin-window" title="Pin this window"><i class="fa fa-2x fa-fw fa-thumb-tack"></i></a>',
           '{{#if displayLayout}}',
             '<a href="javascript:;" class="mirador-btn mirador-icon-window-menu" title="{{t "changeLayout"}}">',
               '<i class="fa fa-th-large fa-2x fa-fw"></i>',
@@ -958,6 +961,7 @@ console.log('[Window] setting canvas ID -> ' + canvasID);
               '</ul>',
             '</a>',
             '<a href="javascript:;" class="mirador-btn mirador-icon-home" title="Open book gallery"><i class="fa fa-home fa-2x fa-fw"></i></a>',
+            '<a href="javascript:;" class="mirador-btn mirador-icon-pin-window" title="Pin this window"><i class="fa fa-2x fa-fw fa-thumb-tack"></i></a>',
           // '</div>',
         '{{/if}}',
         // ----- Search within widget -----
