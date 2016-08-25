@@ -75,7 +75,8 @@
         "slotBelow" : true
       },
       searchWidget: null,
-      searchWidgetVisible: false
+      searchWidgetVisible: false,
+      pinned: false
     }, options);
 
     this.init();
@@ -263,7 +264,7 @@
         if ($.viewer.workspace.slots.length <= 1) {
           _this.element.find('.remove-object-option').hide();
           _this.element.find('.mirador-icon-close').hide();
-        } else {
+        } else if (!_this.pinned) {
           _this.element.find('.remove-object-option').show();
           _this.element.find('.mirador-icon-close').show();
         }
@@ -835,7 +836,9 @@ console.log('[Window] setting canvas ID -> ' + canvasID);
       });
 
       this.element.find('.new-object-option').on('click', function() {
-        _this.parent.addItem();
+        if (!_this.pinned) {
+          _this.parent.addItem();
+        }
       });
 
       this.element.find('.remove-object-option').on('click', function() {
@@ -859,12 +862,38 @@ console.log('[Window] setting canvas ID -> ' + canvasID);
       });
 
       this.element.find('.mirador-icon-home').on('click', function() {
-        _this.parent.addItem();
+        if (!_this.pinned) {
+          _this.parent.addItem();
+        }
+      });
+
+      this.element.find('.mirador-icon-pin-window').on('click', function() {
+        _this.togglePinWindow();
+        jQuery.publish('windowPinUpdated.' + _this.id, _this.pinned);
       });
 
       this.element.find('.mirador-icon-close').on('click', function() {
         $.viewer.workspace.removeNode(_this.parent);
       });
+    },
+
+    togglePinWindow: function() {
+      var removeOptionEl = this.element.find('.remove-object-option');
+      var pinOptionEl = this.element.find('.mirador-icon-pin-window');
+      this.pinned = !this.pinned;
+      this.element.find('.slot-controls').removeAttr('height');
+
+      if (this.pinned) {
+        pinOptionEl.addClass('selected');
+        pinOptionEl.attr('title', 'Unpin this window');
+        removeOptionEl.hide();
+      } else {
+        pinOptionEl.removeClass('selected');
+        pinOptionEl.attr('title', 'Pin this window');
+        if ($.viewer.workspace.slots.length > 1) {
+          removeOptionEl.show();
+        }
+      }
     },
 
     // template should be based on workspace type
@@ -902,6 +931,7 @@ console.log('[Window] setting canvas ID -> ' + canvasID);
           '<a href="javascript:;" class="mirador-btn mirador-icon-close" title="Close window">',
             '<i class="fa fa-fw fa-2x fa-times"></i>',
           '</a>',
+          '<a href="javascript:;" class="mirador-btn mirador-icon-pin-window" title="Pin this window"><i class="fa fa-2x fa-fw fa-thumb-tack"></i></a>',
           '{{#if displayLayout}}',
             '<a href="javascript:;" class="mirador-btn mirador-icon-window-menu" title="{{t "changeLayout"}}">',
               '<i class="fa fa-th-large fa-2x fa-fw"></i>',
