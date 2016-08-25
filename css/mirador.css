@@ -1874,7 +1874,8 @@ a.mirador-icon-empty-slot [class^="icon-"] {
 }
 
 .mirador-viewer a.mirador-icon-home,
-.mirador-viewer a.mirador-icon-window-menu {
+.mirador-viewer a.mirador-icon-window-menu,
+.mirador-viewer a.mirador-icon-close {
   float:left;
   background: none;
   color: rgb( 146, 145, 145 );
@@ -1890,7 +1891,8 @@ a.mirador-icon-empty-slot [class^="icon-"] {
 .mirador-viewer a.mirador-icon-home:hover,
 .mirador-viewer a.mirador-icon-toc:hover,
 .mirador-viewer a.mirador-icon-search-within:hover,
-.mirador-viewer a.mirador-icon-metadata-view:hover {
+.mirador-viewer a.mirador-icon-metadata-view:hover,
+.mirador-viewer a.mirador-icon-close:hover {
   color: black;
 }
 
@@ -1905,6 +1907,10 @@ a.mirador-icon-empty-slot [class^="icon-"] {
 .mirador-icon-window-menu,
 .mirador-icon-image-view {
   width: 40px;
+}
+
+.mirador-icon-window-menu .fa-chevron-down {
+  transform: translateY(-3px);
 }
 
 .mirador-viewer a.mirador-icon-copy {

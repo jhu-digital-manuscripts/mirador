@@ -68,7 +68,7 @@
       displayLayout: true,
       layoutOptions : {
         "newObject" : false,
-        "close" : true,
+        "close" : false,
         "slotRight" : true,
         "slotLeft" : true,
         "slotAbove" : true,
@@ -190,6 +190,7 @@
 
       if ($.viewer.workspace.slots.length <= 1) {
         _this.element.find('.remove-object-option').hide();
+        _this.element.find('.mirador-icon-close').hide();
       }
 
       this.bindEvents();
@@ -261,8 +262,10 @@
       jQuery.subscribe('layoutChanged', function(event, layoutRoot) {
         if ($.viewer.workspace.slots.length <= 1) {
           _this.element.find('.remove-object-option').hide();
+          _this.element.find('.mirador-icon-close').hide();
         } else {
           _this.element.find('.remove-object-option').show();
+          _this.element.find('.mirador-icon-close').show();
         }
       });
 
@@ -734,15 +737,6 @@ console.log('[Window] setting canvas ID -> ' + canvasID);
 
       if (url !== false) {
         jQuery.get(url, function(list) {
-
-// ------- TODO REMOVE THIS ----------------------------------------------------
-// ------- artifact of loading static text file --------------------------------
-if (typeof list === 'string') {
-  list = JSON.parse(list);
-}
-// -----------------------------------------------------------------------------
-// -----------------------------------------------------------------------------
-
           _this.annotationsList = _this.annotationsList.concat(list.resources);
           jQuery.each(_this.annotationsList, function(index, value) {
             // if there is no ID for this annotation, set a random one
@@ -867,6 +861,10 @@ if (typeof list === 'string') {
       this.element.find('.mirador-icon-home').on('click', function() {
         _this.parent.addItem();
       });
+
+      this.element.find('.mirador-icon-close').on('click', function() {
+        $.viewer.workspace.removeNode(_this.parent);
+      });
     },
 
     // template should be based on workspace type
@@ -901,7 +899,9 @@ if (typeof list === 'string') {
           '{{/if}}',
         '</div>',
         // '<div class="layout-controls">',
-          // '<a href="javascript:;" class="mirador-btn mirador-icon-pin-window" title="Pin this window"><i class="fa fa-2x fa-fw fa-thumb-tack"></i></a>',
+          '<a href="javascript:;" class="mirador-btn mirador-icon-close" title="Close window">',
+            '<i class="fa fa-fw fa-2x fa-times"></i>',
+          '</a>',
           '{{#if displayLayout}}',
             '<a href="javascript:;" class="mirador-btn mirador-icon-window-menu" title="{{t "changeLayout"}}">',
               '<i class="fa fa-th-large fa-2x fa-fw"></i>',
