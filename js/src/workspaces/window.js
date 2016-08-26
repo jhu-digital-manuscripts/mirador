@@ -898,6 +898,8 @@ console.log('[Window] setting canvas ID -> ' + canvasID);
           closeBtnEl.show();
         }
       }
+
+      jQuery.publish('windowPinned.' + this.id, this.pinned);
     },
 
     // template should be based on workspace type
@@ -937,7 +939,7 @@ console.log('[Window] setting canvas ID -> ' + canvasID);
           '</a>',
           '{{#if displayLayout}}',
             // '<a href="javascript:;" class="mirador-btn mirador-icon-window-menu" title="{{t "changeLayout"}}">',
-            '<a href="javascript:;" class="mirador-btn mirador-icon-window-menu" title="Add slot">', 
+            '<a href="javascript:;" class="mirador-btn mirador-icon-window-menu" title="Add slot">',
               '<i class="fa fa-th-large fa-2x fa-fw"></i>',
               '<i class="fa fa-chevron-down fa-lg"></i>',
               '<ul class="dropdown slot-controls">',

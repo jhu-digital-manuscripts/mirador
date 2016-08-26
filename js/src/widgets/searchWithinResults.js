@@ -23,6 +23,7 @@
       searchCollection:     null,
       baseUrl:              null,
       searchContext:        {},
+      pinned:               false,
       loading:              '<i class="fa fa-fw fa-2x fa-spinner fa-spin"></i>',
     }, options);
 
@@ -349,13 +350,20 @@ console.log('[Searching] ' + queryUrl);
 
     bindEvents: function() {
       var _this = this;
+      var window = this.parent.parent;
+
+      jQuery.subscribe('windowPinned.' + window.id, function(event, status) {
+        _this.pinned = status;
+      });
 
       this.element.find('.js-show-canvas').on("click", function(event) {
+        if (_this.pinned) {
+          return;
+        }
+
         var currentWindow = _this.parent.parent;
         var canvasid = jQuery(this).data('objectid');
         var manifestid = jQuery(this).data('manifestid');
-
-
 
         // Escape early if invalid data is found
         if (!canvasid) {

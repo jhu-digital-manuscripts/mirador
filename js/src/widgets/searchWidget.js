@@ -26,7 +26,8 @@ $.SearchWidget = function(options) {
       'no-term': '<span class="error">No search term was found.</span>',
       'no-defaults': '<span class="error">No fields defined for basic search.</span>',
     },
-    searchContext: {}
+    searchContext: {},
+    pinned: false,
   }, options);
 
   var _this = this;
@@ -73,6 +74,10 @@ $.SearchWidget.prototype = {
 
   bindEvents: function() {
     var _this = this;
+
+    jQuery.subscribe('windowPinned.' + this.windowId, function(event, status) {
+      _this.pinned = status;
+    });
 
     jQuery.subscribe('tabSelected.' + this.windowId, function(event, data) {
       if (data.id === _this.widgetId) {
@@ -198,6 +203,7 @@ $.SearchWidget.prototype = {
       canvasID: _this.parent.currentCanvasID,
       baseUrl: _this.element.find('.search-within-object-select').val(),
       searchContext: _this.searchContext,
+      pinned: _this.pinned,
       // queryUrl: url,
       // selectedResult: _this.selectedResult,
     });
@@ -222,6 +228,7 @@ console.log("[SearchWidget] original : " + query);
         query: query,
         searchContext: _this.searchContext,
         baseUrl: _this.element.find('.search-within-object-select').val(),
+        pinned: _this.pinned,
         // selectedResult: _this.searchContext.selectedResult
       });
     }
