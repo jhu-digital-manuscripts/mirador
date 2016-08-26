@@ -8,7 +8,8 @@
       parent: null,
       workspace: null,
       maxRows: null,
-      maxColumns: null
+      maxColumns: null,
+      pinned: {"dummyWindow": false}
     }, options);
 
     this.init();
@@ -41,6 +42,10 @@
         _this.hide();
       });
 
+      jQuery.subscribe('windowPinned', function(event, data) {
+        _this.pinned[data.windowId] = data.status;
+      });
+
       _this.element.find('.grid-item').on('click', function() {
         var gridString = jQuery(this).data('gridstring');
         _this.onSelect(gridString);
@@ -50,7 +55,7 @@
         var gridString = jQuery(this).data('gridstring');
         _this.onHover(gridString);
       });
-      
+
       _this.element.find('.select-grid').on('mouseout', function() {
         _this.element.find('.grid-item').removeClass('hovered');
         _this.element.find('.grid-instructions').show();
@@ -60,6 +65,9 @@
 
     onSelect: function(gridString) {
       var _this = this;
+      if (!this.isBigEnough(gridString)) {
+        return;
+      }
       var layoutDescription = $.layoutDescriptionFromGridString(gridString);
       _this.workspace.resetLayout(layoutDescription);
       _this.parent.toggleWorkspacePanel();
@@ -71,13 +79,39 @@
       highestColumn = gridString.charAt(2),
       gridItems = _this.element.find('.grid-item');
       gridItems.removeClass('hovered');
-      gridItems.filter(function(index) {
-        var element = jQuery(this);
-        var change = element.data('gridstring').charAt(0) <= highestRow && element.data('gridstring').charAt(2)<=highestColumn;
-        return change;
-      }).addClass('hovered');
+      if (this.isBigEnough(gridString)) {
+        gridItems.filter(function(index) {
+          var element = jQuery(this);
+          var griddata = element.data('gridstring');
+          // TODO uses questionable hack that will break if either max_row or
+          // max_col is greater than 9
+          return  griddata.charAt(0) <= highestRow && griddata.charAt(2) <= highestColumn;
+        }).addClass('hovered');
+      }
       _this.element.find('.grid-instructions').hide();
       _this.element.find('.grid-text').text(gridString).show();
+    },
+
+    /**
+     * Is the specified grid string large enough to fit all pinned windows.
+     *
+     * @return TRUE iff specified grid contains enough cells
+     *         FALSE if grid is too small or not properly formatted
+     */
+    isBigEnough: function(gridString) {
+      var _this = this;
+      var parts = gridString.split('x');
+      if (parts.length !== 2) {
+        return false;
+      }
+
+      var rows = parseInt(parts[0]);
+      var cols = parseInt(parts[1]);
+      var minCells = Object.keys(this.pinned)
+          .filter(function(key) { return _this.pinned[key]; })
+          .length;
+
+      return rows * cols >= minCells;
     },
 
     hide: function() {
@@ -111,4 +145,3 @@
   };
 
 }(Mirador));
-

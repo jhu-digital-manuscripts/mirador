@@ -75,8 +75,10 @@ $.SearchWidget.prototype = {
   bindEvents: function() {
     var _this = this;
 
-    jQuery.subscribe('windowPinned.' + this.windowId, function(event, status) {
-      _this.pinned = status;
+    jQuery.subscribe('windowPinned', function(event, data) {
+      if (data.windowId === _this.windowId) {
+        _this.pinned = data.status;
+      }
     });
 
     jQuery.subscribe('tabSelected.' + this.windowId, function(event, data) {

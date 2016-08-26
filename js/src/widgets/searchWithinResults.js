@@ -352,8 +352,10 @@ console.log('[Searching] ' + queryUrl);
       var _this = this;
       var window = this.parent.parent;
 
-      jQuery.subscribe('windowPinned.' + window.id, function(event, status) {
-        _this.pinned = status;
+      jQuery.subscribe('windowPinned', function(event, data) {
+        if (window.id === data.windowId) {
+          _this.pinned = status;
+        }
       });
 
       this.element.find('.js-show-canvas').on("click", function(event) {

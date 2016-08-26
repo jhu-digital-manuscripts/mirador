@@ -306,8 +306,7 @@
       // take the windows array and place
       // as many windows into places as can
       // fit.
-      var _this = this,
-      deletedWindows;
+      var _this = this;
 
       if (_this.windows.length > _this.slots.length) {
         // splice modifies the original array and
@@ -320,7 +319,12 @@
         // The event was not called in the calculateLayout
         // function because we need the other windows to remain,
         // so we filter them here.
-        _this.windows.splice(0, _this.windows.length -_this.slots.length).forEach(function(removedWindow){
+        _this.windows.sort(function(a, b) {
+          // Compare windows to sort them in the array:
+          //  Put pinned windows first
+          return a.pinned - b.pinned;
+        })
+        .splice(0, _this.windows.length -_this.slots.length).forEach(function(removedWindow){
           jQuery.publish('windowRemoved', removedWindow.id);
         });
       }
@@ -335,7 +339,8 @@
           parent: slot,
           appendTo: slot.element,
           currentCanvasID: window.currentCanvasID,
-          currentFOcus: window.currentFocus
+          currentFOcus: window.currentFocus,
+          pinned: window.pinned
         });
       });
     },

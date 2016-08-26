@@ -112,7 +112,7 @@
         if (_this.pinned) {
           return;
         }
-        
+
         var canvasID = jQuery(this).attr('data-image-id');
         _this.parent.setCurrentCanvasID(canvasID);
       });
@@ -121,8 +121,10 @@
         _this.currentImageChanged();
       });
 
-      jQuery.subscribe('windowPinUpdated.' + _this.parent.id, function(event, status) {
-        _this.pinned = status;
+      jQuery.subscribe('windowPinned', function(event, data) {
+        if (data.windowId == _this.parent.id) {
+          _this.pinned = data.status;
+        }
       });
     },
 

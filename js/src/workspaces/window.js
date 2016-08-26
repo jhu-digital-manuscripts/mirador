@@ -206,6 +206,11 @@
         jQuery.publish('sidePanelToggled.' + _this.id);
         this.sidePanelVisibility(this.sidePanelVisible, '0s');
       }
+
+      if (this.pinned) {
+        this.pinned = !this.pinned;   // ugh...
+        this.togglePinWindow();
+      }
     },
 
     update: function(options) {
@@ -869,7 +874,6 @@ console.log('[Window] setting canvas ID -> ' + canvasID);
 
       this.element.find('.mirador-icon-pin-window').on('click', function() {
         _this.togglePinWindow();
-        jQuery.publish('windowPinUpdated.' + _this.id, _this.pinned);
       });
 
       this.element.find('.mirador-icon-close').on('click', function() {
@@ -899,7 +903,7 @@ console.log('[Window] setting canvas ID -> ' + canvasID);
         }
       }
 
-      jQuery.publish('windowPinned.' + this.id, this.pinned);
+      jQuery.publish('windowPinned', { "windowId": this.id, "status": this.pinned });
     },
 
     // template should be based on workspace type
