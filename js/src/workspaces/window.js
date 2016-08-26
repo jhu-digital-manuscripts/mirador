@@ -383,6 +383,7 @@
               imagesList: _this.imagesList,
               searchContext: _this.searchContext,
               selectedResult: _this.selectedResult,
+              pinned: _this.pinned,
               thumbInfo: {thumbsHeight: 80, listingCssCls: 'panel-listing-thumbs', thumbnailCls: 'panel-thumbnail-view'}
             });
           }
@@ -438,7 +439,8 @@
               annotationsTabAvailable: annotationsTabAvailable,
               searchAvailable: searchAvailable,
               hasStructures: hasStructures,
-              visible: _this.sidePanelVisible
+              visible: _this.sidePanelVisible,
+              pinned: _this.pinned
         });
       } else {
         this.sidePanel.update('annotations', annotationsTabAvailable);

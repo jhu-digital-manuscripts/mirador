@@ -15,6 +15,7 @@
       hasStructures:     false,
       visible:           false,
       queryUrl:          null,
+      pinned:            false,
     }, options);
 
     this.init();
@@ -115,6 +116,7 @@
           appendTo: _this.element.find('.tabContentArea'),
           width: 0,
           searchContext: _this.searchContext ? _this.searchContext : {},
+          pinned: _this.pinned,
           searchService: new $.JhiiifSearchService({
             manifest: _this.manifest,
           }),
