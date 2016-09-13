@@ -83,9 +83,9 @@
         renderingData.tabs = tabs;
         if(renderingData.tabs.length === 1){
           // TODO: temporary logic to minimize side panel if only tab is toc and toc is empty
-          if (renderingData.tabs[0].name === 'toc' && !_this.parent.hasStructures) {
-            jQuery.publish("sidePanelVisibilityByTab." + _this.windowId, false);
-          }
+          // if (renderingData.tabs[0].name === 'toc' && !_this.parent.hasStructures) {
+          //   jQuery.publish("sidePanelVisibilityByTab." + _this.windowId, false);
+          // }
 
           // don't show button if only one tab
           renderingData.tabs = [];

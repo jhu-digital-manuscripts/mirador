@@ -1,22 +1,35 @@
 (function($) {
 
  $.JhAnnotationTab = function(options) {
-    jQuery.extend(true, this, {
-      element: null,
-      appendTo: null,
-      parent: null,
-      windowId: null,
-      tabId: null,
-      manifest: null,           // Manfist object
-      currentCanvasID: null,    // ID of canvas currently being displayed
-      visible: null,
-      message: {
-        error: '<h1 class="error">Failed to load annotation list.</h1>',
-        empty: '<h1 class="empty">No annotations available.</h1>',
-        noLists: '<h1 class="empty">No annotations found.</h1>',
-      },
-      pendingRequests: {},
-    }, options);
+    // jQuery.extend(true, this, {
+    //   element: null,
+    //   appendTo: null,
+    //   windowId: null,
+    //   tabId: null,
+    //   manifest: null,           // Manfist object
+    //   currentCanvasID: null,    // ID of canvas currently being displayed
+    //   visible: null,
+    //   message: {
+    //     error: '<h1 class="error">Failed to load annotation list.</h1>',
+    //     empty: '<h1 class="empty">No annotations available.</h1>',
+    //     noLists: '<h1 class="empty">No annotations found.</h1>',
+    //   },
+    //   pendingRequests: {},
+    // }, options);
+
+    this.element = options.element;
+    this.appendTo = jQuery(options.appendTo);
+    this.windowId = options.windowId;
+    this.tabId = options.tabId;
+    this.manifest = options.manifest;
+    this.currentCanvasID = options.currentCanvasID;
+    this.visible = options.visible;
+    this.pendingRequests = {};
+    this.message = {
+      error: '<h1 class="error">Failed to load annotation list.</h1>',
+      empty: '<h1 class="empty">No annotations available.</h1>',
+      noLists: '<h1 class="empty">No annotations found.</h1>',
+    };
 
     this.init();
   };

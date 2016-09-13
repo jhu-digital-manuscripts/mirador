@@ -1,21 +1,36 @@
 (function($) {
 
   $.SidePanel= function(options) {
-    jQuery.extend(true, this, {
-      element:           null,
-      appendTo:          null,
-      parent:            null,
-      manifest:          null,
-      panelState:        {},
-      tocTabAvailable:   false,
-      annotationsTabAvailable: true,
-      searchTabAvailable: true,
-      layersTabAvailable: false,
-      toolsTabAvailable: false,
-      hasStructures:     false,
-      visible:           false,
-      queryUrl:          null,
-    }, options);
+    // jQuery.extend(true, this, {
+    //   element:           null,
+    //   appendTo:          null,
+    //   parent:            null,
+    //   manifest:          null,
+    //   panelState:        {},
+    //   tocTabAvailable:   false,
+    //   annotationsTabAvailable: true,
+    //   searchTabAvailable: true,
+    //   layersTabAvailable: false,
+    //   toolsTabAvailable: false,
+    //   hasStructures:     false,
+    //   visible:           false,
+    //   queryUrl:          null,
+    // }, options);
+
+    this.canvasID = options.canvasID;
+    this.element = options.element;
+    this.appendTo = jQuery(options.appendTo);
+    this.parent = options.parent;
+    this.manifest = options.manifest;
+    this.panelState = options.panelState ? options.panelState : {};
+    this.tocTabAvailable = options.tocTabAvailable;
+    this.annotationsTabAvailable = true;
+    this.searchTabAvailable = true;
+    this.layersTabAvailable = false;
+    this.toolsTabAvailable = false;
+    this.hasStructures = options.hasStructures;
+    this.visible = options.visible;
+    this.queryUrl = options.queryUrl;
 
     this.init();
   };
@@ -82,7 +97,7 @@
         windowId: this.parent.id,
         appendTo: this.appendTo,
         tabs : this.panelState.tabs,
-        parent : this
+        // parent : this
       });
 
       if (this.tocTabAvailable) {
@@ -98,7 +113,7 @@
       if (_this.annotationsTabAvailable) {
         new $.JhAnnotationTab({
           manifest: _this.manifest,
-          parent: _this.parent,
+          // parent: _this.parent,
           appendTo: _this.element.find('.tabContentArea'),
           tabId: 'annotationsTab',
           windowId: _this.parent.id,

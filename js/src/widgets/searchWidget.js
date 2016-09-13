@@ -13,21 +13,35 @@
  */
 $.SearchWidget = function(options) {
 
-  jQuery.extend(this, {
-    parent: null,   // Window object. To get window ID: this.parent.id
-    windowId: null,
-    widgetId: null,
-    appendTo: null,
-    element: null,
-    width: 330,
-    manifest: null, // Manifest object. To get search service: this.manifest.getSearchWithinService()
-    searchService: null,
-    messages: {
-      'no-term': '<span class="error">No search term was found.</span>',
-      'no-defaults': '<span class="error">No fields defined for basic search.</span>',
-    },
-    searchContext: {}
-  }, options);
+  // jQuery.extend(this, {
+  //   windowId: null,
+  //   widgetId: null,
+  //   appendTo: null,
+  //   element: null,
+  //   width: 330,
+  //   manifest: null, // Manifest object. To get search service: this.manifest.getSearchWithinService()
+  //   searchService: null,
+  //   messages: {
+  //     'no-term': '<span class="error">No search term was found.</span>',
+  //     'no-defaults': '<span class="error">No fields defined for basic search.</span>',
+  //   },
+  //   searchContext: {}
+  // }, options);
+
+  this.element = null;
+  this.parent = options.parent;
+  this.windowId = options.windowId;
+  this.widgetId = options.widgetId;
+  this.appendTo = jQuery(options.appendTo);
+  this.width = 330;
+  this.manifest = options.manifest;
+  this.searchService = options.searchService;
+  this.searchContext = {};
+  this.messages = {
+    'no-term': '<span class="error">No search term was found.</span>',
+    'no-defaults': '<span class="error">No fields defined for basic search.</span>',
+  };
+_service = this.searchService;
 
   var _this = this;
 

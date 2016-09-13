@@ -906,7 +906,7 @@ console.log('[Window] setting canvas ID -> ' + canvasID);
       '<div class="manifest-info">',
         '<div class="window-manifest-navigation">',
           '{{#if sidePanel}}',
-            '<a href="javascript:;" class="mirador-btn mirador-icon-toc" title="View/Hide side bar"><i class="fa fa-bars fa-lg fa-fw"></i></a>',
+            '<a href="javascript:;" class="mirador-btn mirador-icon-toc" title="View Transcriptions & Search"><i class="fa fa-bars fa-lg fa-fw"></i></a>',
           '{{/if}}',
           '<a href="javascript:;" class="mirador-btn mirador-icon-image-view" role="button" aria-label="Change Image Mode">',
             '<i class="fa fa-photo fa-lg fa-fw"></i>',

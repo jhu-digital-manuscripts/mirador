@@ -1,37 +1,67 @@
 (function($) {
 
 $.JhiiifSearchService = function(options) {
-  jQuery.extend(this, {
-    id: null,
-    initializer: null,
-    profile: null,
-    context: null,
-    manifest: null,
-    query: {
-      operators: {
-        'class': 'advanced-search-operators',
-        'choices': [
-          {value: 'and', label: 'AND'},
-          {value: 'or', label: 'OR'}
-        ]
-      },
-      delimiters: {
-        'and': '&',
-        'or': '|',
-        'field': ':'
-      }
+  // jQuery.extend(this, {
+  //   id: null,
+  //   initializer: null,
+  //   profile: null,
+  //   context: null,
+  //   manifest: null,
+  //   query: {
+  //     operators: {
+  //       'class': 'advanced-search-operators',
+  //       'choices': [
+  //         {value: 'and', label: 'AND'},
+  //         {value: 'or', label: 'OR'}
+  //       ]
+  //     },
+  //     delimiters: {
+  //       'and': '&',
+  //       'or': '|',
+  //       'field': ':'
+  //     }
+  //   },
+  //   search : {
+  //     'collection': { // TODO get this information from 'collectionUri' property in initial Mirador config!
+  //       'id': 'http://jdm.library.jhu.edu/iiif-pres/collection/aorcollection',
+  //       'label': 'Archaeology of Reading collection'
+  //     },
+  //     'settings': {
+  //       "fields": [],
+  //       "default-fields": []
+  //     }
+  //   }
+  // }, options);
+
+  this.id = options.id;
+  this.initializer = null;
+  this.profile = options.profile;
+  this.context = options.context;
+  this.manifest = options.manifest;
+  this.query = {
+    operators: {
+      'class': 'advanced-search-operators',
+      'choices': [
+        {value: 'and', label: 'AND'},
+        {value: 'or', label: 'OR'}
+      ]
     },
-    search : {
-      'collection': { // TODO get this information from 'collectionUri' property in initial Mirador config!
-        'id': 'http://jdm.library.jhu.edu/iiif-pres/collection/aorcollection',
-        'label': 'Archaeology of Reading collection'
-      },
-      'settings': {
-        "fields": [],
-        "default-fields": []
-      }
+    delimiters: {
+      'and': '&',
+      'or': '|',
+      'field': ':'
     }
-  }, options);
+  };
+  this.search = {
+    'collection': { // TODO get this information from 'collectionUri' property in initial Mirador config!
+      'id': 'http://jdm.library.jhu.edu/iiif-pres/collection/aorcollection',
+      'label': 'Archaeology of Reading collection'
+    },
+    'settings': {
+      "fields": [],
+      "default-fields": []
+    }
+  };
 
   this.init();
 };

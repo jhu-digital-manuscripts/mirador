@@ -10,21 +10,35 @@
    */
   $.SearchWithinResults = function(options) {
 
-    jQuery.extend(this, {
-      appendTo:             null,
-      manifest:             null,
-      element:              null,
-      parent:               null,
-      metadataTypes:        null,
-      metadataListingCls:   'metadata-listing',
-      query:                null,
-      results:              null,
-      searchPrefix:         'jhsearch',
-      searchCollection:     null,
-      baseUrl:              null,
-      searchContext:        {},
-      loading:              '<i class="fa fa-fw fa-2x fa-spinner fa-spin"></i>',
-    }, options);
+    // jQuery.extend(this, {
+    //   appendTo:             null,
+    //   manifest:             null,
+    //   element:              null,
+    //   parent:               null,
+    //   metadataTypes:        null,
+    //   metadataListingCls:   'metadata-listing',
+    //   query:                null,
+    //   results:              null,
+    //   searchPrefix:         'jhsearch',
+    //   searchCollection:     null,
+    //   baseUrl:              null,
+    //   searchContext:        {},
+    //   loading:              '<i class="fa fa-fw fa-2x fa-spinner fa-spin"></i>',
+    // }, options);
+    this.appendTo = jQuery(options.appendTo);
+    this.manifest = options.manifest;
+    this.element = options.element;
+    this.parent = options.parent;
+    this.metadataTypes = options.metadataTypes;
+    this.metadataListingCls = options.metadataListingCls;
+    this.query = options.query;
+    this.results = options.results;
+    this.searchPrefix = options.searchPrefix ? options.searchPrefix : "jhsearch";
+    this.searchCollection = options.searchCollection;
+    this.baseUrl = options.baseUrl;
+    this.searchContext = options.searchContext;
+    this.loading = '<i class="fa fa-fw fa-2x fa-spinner fa-spin"></i>';
+    this.panel = options.panel;
 
     this.init();
   };
