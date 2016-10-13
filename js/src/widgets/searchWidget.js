@@ -41,7 +41,6 @@ $.SearchWidget = function(options) {
     'no-term': '<span class="error">No search term was found.</span>',
     'no-defaults': '<span class="error">No fields defined for basic search.</span>',
   };
-_service = this.searchService;
 
   var _this = this;
 

@@ -39,6 +39,7 @@
     this.searchContext = options.searchContext;
     this.loading = '<i class="fa fa-fw fa-2x fa-spinner fa-spin"></i>';
     this.panel = options.panel;
+    this.pinned = options.pinned;
 
     this.init();
   };
