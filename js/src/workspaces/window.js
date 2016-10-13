@@ -206,6 +206,11 @@
         jQuery.publish('sidePanelToggled.' + _this.id);
         this.sidePanelVisibility(this.sidePanelVisible, '0s');
       }
+
+      if (this.pinned) {
+        this.pinned = !this.pinned;   // ugh...
+        this.togglePinWindow();
+      }
     },
 
     update: function(options) {
@@ -378,6 +383,7 @@
               imagesList: _this.imagesList,
               searchContext: _this.searchContext,
               selectedResult: _this.selectedResult,
+              pinned: _this.pinned,
               thumbInfo: {thumbsHeight: 80, listingCssCls: 'panel-listing-thumbs', thumbnailCls: 'panel-thumbnail-view'}
             });
           }
@@ -433,7 +439,8 @@
               annotationsTabAvailable: annotationsTabAvailable,
               searchAvailable: searchAvailable,
               hasStructures: hasStructures,
-              visible: _this.sidePanelVisible
+              visible: _this.sidePanelVisible,
+              pinned: _this.pinned
         });
       } else {
         this.sidePanel.update('annotations', annotationsTabAvailable);
@@ -869,7 +876,6 @@ console.log('[Window] setting canvas ID -> ' + canvasID);
 
       this.element.find('.mirador-icon-pin-window').on('click', function() {
         _this.togglePinWindow();
-        jQuery.publish('windowPinUpdated.' + _this.id, _this.pinned);
       });
 
       this.element.find('.mirador-icon-close').on('click', function() {
@@ -898,6 +904,8 @@ console.log('[Window] setting canvas ID -> ' + canvasID);
           closeBtnEl.show();
         }
       }
+
+      jQuery.publish('windowPinned', { "windowId": this.id, "status": this.pinned });
     },
 
     // template should be based on workspace type
@@ -936,7 +944,8 @@ console.log('[Window] setting canvas ID -> ' + canvasID);
             '<i class="fa fa-fw fa-2x fa-times"></i>',
           '</a>',
           '{{#if displayLayout}}',
-            '<a href="javascript:;" class="mirador-btn mirador-icon-window-menu" title="{{t "changeLayout"}}">',
+            // '<a href="javascript:;" class="mirador-btn mirador-icon-window-menu" title="{{t "changeLayout"}}">',
+            '<a href="javascript:;" class="mirador-btn mirador-icon-window-menu" title="Add slot">',
               '<i class="fa fa-th-large fa-2x fa-fw"></i>',
               '<i class="fa fa-chevron-down fa-lg"></i>',
               '<ul class="dropdown slot-controls">',

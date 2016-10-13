@@ -53,8 +53,10 @@
     listenForActions: function() {
         var _this = this;
 
-        jQuery.subscribe('windowPinUpdated.' + _this.parent.parent.id, function(event, status) {
-          _this.togglePinned(status);
+        jQuery.subscribe('windowPinned', function(event, data) {
+          if (_this.windowId === data.windowId) {
+            _this.togglePinned(data.status);
+          }
         });
     },
 

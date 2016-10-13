@@ -46,9 +46,18 @@
   $.SearchWithinResults.prototype = {
 
     init: function() {
+      var _this = this;
+      var window = this.parent.parent;
+
       this.registerHandlebars();
 
       this.element = jQuery(this.wrapper()).appendTo(this.appendTo);
+
+      jQuery.subscribe('windowPinned', function(event, data) {
+        if (window.id === data.windowId) {
+          _this.pinned = data.status;
+        }
+      });
 
       if (this.query) {
         // Query from UI
@@ -365,11 +374,13 @@ console.log('[Searching] ' + queryUrl);
       var _this = this;
 
       this.element.find('.js-show-canvas').on("click", function(event) {
+        if (_this.pinned) {
+          return;
+        }
+
         var currentWindow = _this.parent.parent;
         var canvasid = jQuery(this).data('objectid');
         var manifestid = jQuery(this).data('manifestid');
-
-
 
         // Escape early if invalid data is found
         if (!canvasid) {

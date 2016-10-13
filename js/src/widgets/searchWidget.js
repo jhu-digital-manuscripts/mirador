@@ -88,6 +88,12 @@ $.SearchWidget.prototype = {
   bindEvents: function() {
     var _this = this;
 
+    jQuery.subscribe('windowPinned', function(event, data) {
+      if (data.windowId === _this.windowId) {
+        _this.pinned = data.status;
+      }
+    });
+
     jQuery.subscribe('tabSelected.' + this.windowId, function(event, data) {
       if (data.id === _this.widgetId) {
         _this.element.show();
@@ -212,6 +218,7 @@ $.SearchWidget.prototype = {
       canvasID: _this.parent.currentCanvasID,
       baseUrl: _this.element.find('.search-within-object-select').val(),
       searchContext: _this.searchContext,
+      pinned: _this.pinned,
       // queryUrl: url,
       // selectedResult: _this.selectedResult,
     });
@@ -236,6 +243,7 @@ console.log("[SearchWidget] original : " + query);
         query: query,
         searchContext: _this.searchContext,
         baseUrl: _this.element.find('.search-within-object-select').val(),
+        pinned: _this.pinned,
         // selectedResult: _this.searchContext.selectedResult
       });
     }
