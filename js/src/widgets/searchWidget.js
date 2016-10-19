@@ -1,32 +1,6 @@
 (function($) {
 
-/**
- * @param  {[type]} options init params, required
- *                          {
- *                          	parent: parent window that contains this widget,
- *                          	appendTo: the element in the parent to attach this widget,
- *                          	manifest: the Manifest object, containing manifest data/helper functions,
- *                          	searchService: search service,
- *                          	searchContext: config info from JH-IIIF Search Service info request,
- *                          }
- * @return {[type]}         Search Within widget
- */
 $.SearchWidget = function(options) {
-
-  // jQuery.extend(this, {
-  //   windowId: null,
-  //   widgetId: null,
-  //   appendTo: null,
-  //   element: null,
-  //   width: 330,
-  //   manifest: null, // Manifest object. To get search service: this.manifest.getSearchWithinService()
-  //   searchService: null,
-  //   messages: {
-  //     'no-term': '<span class="error">No search term was found.</span>',
-  //     'no-defaults': '<span class="error">No fields defined for basic search.</span>',
-  //   },
-  //   searchContext: {}
-  // }, options);
 
   this.element = null;
   this.parent = options.parent;
@@ -35,12 +9,32 @@ $.SearchWidget = function(options) {
   this.appendTo = jQuery(options.appendTo);
   this.width = 330;
   this.manifest = options.manifest;
-  this.searchService = options.searchService;
+  /*
+   * Array holding all search services. Not all services are necessarily
+   * fully initialized.
+   *
+   * [
+   *    {   // Service 1, already initialized, ready to use
+   *      "label": "Search service 1",
+   *      "id": "service-1-id",
+   *      "service": { ... }   // This will be an instance of JhiiifSearchService
+   *    },
+   *    {   // Service 2, not initialized, not ready to use
+   *      "label": "Search service 2",
+   *      "id": "service-2-id"
+   *    }
+   * ]
+   *
+   */
+  this.searchServices = options.searchServices || {};
+  this.searchService = null;
   this.searchContext = {};
   this.messages = {
     'no-term': '<span class="error">No search term was found.</span>',
     'no-defaults': '<span class="error">No fields defined for basic search.</span>',
   };
+
+  if (searchServices)
 
   var _this = this;
 
@@ -53,37 +47,54 @@ $.SearchWidget = function(options) {
 $.SearchWidget.prototype = {
 
   init: function() {
-    console.assert(this.searchService, '[SearchWidget] searchService MUST be supplied when creating this widget.');
-    var _this = this;
-    this.registerWidget();
+    // Initialize this.searchService using the first value in searchServiceIds array
 
-    var templateData = {};
-    templateData.search = this.searchService.search;
-    templateData.search.manifest = {
-      'id': this.manifest.getId(),
-      'label': this.manifest.getLabel()
-    };
+  },
 
-    this.element = jQuery(this.template(templateData)).appendTo(this.appendTo);
-
-    this.bindEvents();
-    if (this.searchContext && this.searchContext.queryUrl) {
-      this.searchFromUrl(this.searchContext.queryUrl);
+  /**
+   * @returns jQuery promise that resolves when a search service with the
+   *          desired ID is found. The service may be cached in memory, or
+   *          it may be retrieved by following the ID to get the service info.json
+   *          #getService("service-url-id").done(function(jhiiifSearchService) { ... });
+   */
+  getService: function(id) {
+    if (!id) {
+      console.log("[SearchTab](window:" + this.windowId + ") failed to get search service, no ID provided.");
+      return;
     }
 
-    var description_template = Handlebars.compile('{{> searchDescription}}');
+    var service = jQuery.deferred();
 
-    this.element.tooltip({
-      items: '.search-description-icon',
-      content: description_template(_this.searchService.search.settings.fields),
-      position: { my: "left+20 top", at: "right top-50" },
+    var s = this.searchServices.filter(function(service) {
+      return service.id === id;
     });
+    if (s.length === 1 && s[0].service) {
+      service.resolve(s[0].service);
+    } else if (s.length > 0) {
+      var _this = this;
+      var jhservice = new $.JhiiifSearchService({ "id": s[0].id });
+      jhservice.initializer.done(function() {
+        s[0].service = jhservice;
+        service.resolve(jhservice);
+      });
+    }
+
+    return jQuery.when(service);
   },
 
   toggle: function() {
     this.element.stop().slideFadeToggle(300);
   },
 
+  /**
+   * Bind handlers to all events in this widget.
+   * * Handlers are bound to application events through the application
+   * event bus.
+   * * Handlers are bound to top level UI elements, such as the
+   * search button.
+   *
+   * @return nothing
+   */
   bindEvents: function() {
     var _this = this;
 

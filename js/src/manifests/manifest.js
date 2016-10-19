@@ -267,6 +267,9 @@
     },
     getLabel: function() {
       return this.jsonLd.label;
+    },
+    within: function() {
+      return this.jsonLd.within;
     }
 
   };

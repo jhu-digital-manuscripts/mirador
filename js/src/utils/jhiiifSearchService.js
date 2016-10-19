@@ -1,37 +1,28 @@
 (function($) {
 
+/**
+
+  {
+    id:string,    // URL ID of the search service
+    initializer,  // jQuery ajax object, allowing code with an instance of
+                  // this to act when the ajax call is complete by chaining a
+                  // '.done()' method call. This should be used to know when
+                  // the service is initialized after the info.json has been received
+    profile,
+    context,
+    manifest,
+    query: {
+      operators   // Details about search operators UI
+      delimiters  // Details of various query delimiters: AND operator, OR operator, field/value delimiter
+    },
+    settings: {
+      fields      // Array of search fields
+      default-fields  // Array of strings representing all fields that should be contained in a simple search
+    }
+  }
+
+ */
 $.JhiiifSearchService = function(options) {
-  // jQuery.extend(this, {
-  //   id: null,
-  //   initializer: null,
-  //   profile: null,
-  //   context: null,
-  //   manifest: null,
-  //   query: {
-  //     operators: {
-  //       'class': 'advanced-search-operators',
-  //       'choices': [
-  //         {value: 'and', label: 'AND'},
-  //         {value: 'or', label: 'OR'}
-  //       ]
-  //     },
-  //     delimiters: {
-  //       'and': '&',
-  //       'or': '|',
-  //       'field': ':'
-  //     }
-  //   },
-  //   search : {
-  //     'collection': { // TODO get this information from 'collectionUri' property in initial Mirador config!
-  //       'id': 'http://jdm.library.jhu.edu/iiif-pres/collection/aorcollection',
-  //       'label': 'Archaeology of Reading collection'
-  //     },
-  //     'settings': {
-  //       "fields": [],
-  //       "default-fields": []
-  //     }
-  //   }
-  // }, options);
 
   this.id = options.id;
   this.initializer = null;
@@ -53,10 +44,10 @@ $.JhiiifSearchService = function(options) {
     }
   };
   this.search = {
-    'collection': { // TODO get this information from 'collectionUri' property in initial Mirador config!
-      'id': 'http://jdm.library.jhu.edu/iiif-pres/collection/aorcollection',
-      'label': 'Archaeology of Reading collection'
-    },
+    // 'collection': { // TODO get this information from 'collectionUri' property in initial Mirador config!
+    //   'id': 'http://jdm.library.jhu.edu/iiif-pres/collection/aorcollection',
+    //   'label': 'Archaeology of Reading collection'
+    // },
     'settings': {
       "fields": [],
       "default-fields": []
@@ -68,17 +59,18 @@ $.JhiiifSearchService = function(options) {
 
 $.JhiiifSearchService.prototype = {
   init: function() {
-    var data = Mirador.saveController.currentConfig.data;
-    data = data.filter(function(datum) { return datum.collectionUri && datum.collectionUri !== ''; });
+    // var data = Mirador.saveController.currentConfig.data;
+    // data = data.filter(function(datum) { return datum.collectionUri && datum.collectionUri !== ''; });
+    //
+    // if (data && Array.isArray(data) && data.length > 0) {
+    //   this.search.collection.id = data[0].collectionUri;
+    //   if (data[0].label && data[0].label !== '') {
+    //     this.search.collection.label = data[0].label;
+    //   }
+    // }
 
-    if (data && Array.isArray(data) && data.length > 0) {
-      this.search.collection.id = data[0].collectionUri;
-      if (data[0].label && data[0].label !== '') {
-        this.search.collection.label = data[0].label;
-      }
-    }
-
-    this.makeInfoRequest(this.manifest.getSearchWithinInfoUrl());
+    // this.makeInfoRequest(this.manifest.getSearchWithinInfoUrl());
+    this.makeInfoRequest(this.id);
   },
 
   makeInfoRequest: function(searchUrl) {
@@ -94,7 +86,7 @@ $.JhiiifSearchService.prototype = {
       jQuery.extend(true, _this.search.settings, data);
     })
     .fail(function(jqXHR, textStatus, errorThrown) {
-      console.log('[JH-IIIF Search Service] info request failed. (' + _this.manifest.getSearchWithinInfoUrl() + ')\n' + errorThrown);
+      console.log('[JH-IIIF Search Service] info request failed. (' + _this.id + ')\n' + errorThrown);
     })
     .always(function() {
       _this.assignDefaults();
@@ -167,9 +159,9 @@ $.JhiiifSearchService.prototype = {
     return this.search.settings['default-fields'];
   },
 
-  getServiceUrl: function() {
-    return this.manifest.getSearchWithinService();
-  },
+  // getServiceUrl: function() {
+  //   return this.manifest.getSearchWithinService();
+  // },
 };
 
 }(Mirador));

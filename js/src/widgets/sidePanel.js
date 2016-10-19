@@ -122,19 +122,61 @@
       }
 
       if (_this.searchTabAvailable) {
-        new $.SearchWidget({
-          manifest: _this.manifest,
-          parent: _this.parent,
-          windowId: _this.parent.id,
-          widgetId: 'searchTab',
-          appendTo: _this.element.find('.tabContentArea'),
-          width: 0,
-          searchContext: _this.searchContext ? _this.searchContext : {},
-          pinned: _this.pinned,
-          searchService: new $.JhiiifSearchService({
+        var manifestSearch = this.manifest.getSearchWithinService();
+        if (!manifestSearch.label) {
+          manifestSearch.label = this.manifest.label;
+        }
+
+        var services = [manifestSearch];
+
+        if (this.manifest.within()) {
+          jQuery.getJSON(this.manifest.within())
+            .done(function(collection) {
+              if (!collection) {
+                return;
+              }
+
+              if (Array.isArray(collection.service)) {
+                collection.service.
+                filter(function(service) {
+                  return service["@context"] === "http://manuscriptlib.org/jhiff/search/context.json";
+                })
+                .forEach(function(service) {
+                  services.push(service);
+                });
+              } else if (collection.service && collection.service["@context"] === "http://manuscriptlib.org/jhiff/search/context.json") {
+                services.push(collection.service);
+              }
+            })
+            .always(function() {
+              new $.SearchWidget({
+                manifest: _this.manifest,
+                parent: _this.parent,
+                windowId: _this.parent.id,
+                widgetId: 'searchTab',
+                appendTo: _this.element.find('.tabContentArea'),
+                width: 0,
+                searchContext: _this.searchContext ? _this.searchContext : {},
+                pinned: _this.pinned,
+                searchServices: services
+              });
+            });
+        } else {
+          new $.SearchWidget({
             manifest: _this.manifest,
-          }),
-        });
+            parent: _this.parent,
+            windowId: _this.parent.id,
+            widgetId: 'searchTab',
+            appendTo: _this.element.find('.tabContentArea'),
+            width: 0,
+            searchContext: _this.searchContext ? _this.searchContext : {},
+            pinned: _this.pinned,
+            // searchService: new $.JhiiifSearchService({
+            //   "id": _this.manifest.getSearchWithinInfoUrl()
+            // }),
+            searchServices: services
+          });
+        }
       }
     },
 
