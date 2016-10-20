@@ -35,6 +35,16 @@ $.SearchWidget = function(options) {
     'no-defaults': '<span class="error">No fields defined for basic search.</span>',
   };
 
+
+// -----------------------------------------------------------------
+// ----- TODO: REMOVE ----------------------------------------------
+this.searchServices.push({
+  "id": "http://rosetest.library.jhu.edu/iiif-pres/collection/aorcollection/jhsearch",
+  "label": "AoR Collection"
+});
+// -----------------------------------------------------------------
+// -----------------------------------------------------------------
+
   this.registerWidget();    // Register the Handlerbars partials
   this.init();
 };
@@ -59,6 +69,15 @@ $.SearchWidget.prototype = {
    */
   switchSearchServices: function(service) {
     var _this = this;
+
+    if (typeof service === 'string') {
+      this.getService(service).always(function(service) {
+        _this.switchSearchServices(service);
+      });
+      return;
+    }
+    this.searchService = service;
+
     /*
       Template data: {
         "search": jhiiifSearchService.search,
@@ -92,7 +111,6 @@ $.SearchWidget.prototype = {
 
     // Assuming the UI was created successfully, set the current
     // search service to the one provided to this function
-    this.searchService = service;
     this.listenForActions();
   },
 
@@ -137,6 +155,7 @@ $.SearchWidget.prototype = {
    * Bind handlers to all events in this widget.
    * * Handlers are bound to application events through the application
    * event bus.
+   * * Add a handler to deal with switching search services
    *
    * @return nothing
    */
@@ -155,6 +174,11 @@ $.SearchWidget.prototype = {
       } else {
         _this.element.hide();
       }
+    });
+
+    this.element.find(".search-within-object-select").on("change", function() {
+      var selected = jQuery(this).val();
+      _this.switchSearchServices(selected);
     });
   },
 
