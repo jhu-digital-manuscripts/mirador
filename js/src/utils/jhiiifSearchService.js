@@ -44,10 +44,6 @@ $.JhiiifSearchService = function(options) {
     }
   };
   this.search = {
-    // 'collection': { // TODO get this information from 'collectionUri' property in initial Mirador config!
-    //   'id': 'http://jdm.library.jhu.edu/iiif-pres/collection/aorcollection',
-    //   'label': 'Archaeology of Reading collection'
-    // },
     'settings': {
       "fields": [],
       "default-fields": []
@@ -59,18 +55,7 @@ $.JhiiifSearchService = function(options) {
 
 $.JhiiifSearchService.prototype = {
   init: function() {
-    // var data = Mirador.saveController.currentConfig.data;
-    // data = data.filter(function(datum) { return datum.collectionUri && datum.collectionUri !== ''; });
-    //
-    // if (data && Array.isArray(data) && data.length > 0) {
-    //   this.search.collection.id = data[0].collectionUri;
-    //   if (data[0].label && data[0].label !== '') {
-    //     this.search.collection.label = data[0].label;
-    //   }
-    // }
-
-    // this.makeInfoRequest(this.manifest.getSearchWithinInfoUrl());
-    this.makeInfoRequest(this.id);
+    this.makeInfoRequest(this.getInfoUrl(this.id));
   },
 
   makeInfoRequest: function(searchUrl) {
@@ -158,6 +143,10 @@ $.JhiiifSearchService.prototype = {
   getDefaultFields: function() {
     return this.search.settings['default-fields'];
   },
+
+  getInfoUrl: function() {
+    return this.id + (this.id.endsWith("/") ? "" : "/") + "info.json";
+  }
 
   // getServiceUrl: function() {
   //   return this.manifest.getSearchWithinService();

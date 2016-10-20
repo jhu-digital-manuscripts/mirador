@@ -9,22 +9,6 @@
    * (http://iiif.io/api/search/0.9/)
    */
   $.SearchWithinResults = function(options) {
-
-    // jQuery.extend(this, {
-    //   appendTo:             null,
-    //   manifest:             null,
-    //   element:              null,
-    //   parent:               null,
-    //   metadataTypes:        null,
-    //   metadataListingCls:   'metadata-listing',
-    //   query:                null,
-    //   results:              null,
-    //   searchPrefix:         'jhsearch',
-    //   searchCollection:     null,
-    //   baseUrl:              null,
-    //   searchContext:        {},
-    //   loading:              '<i class="fa fa-fw fa-2x fa-spinner fa-spin"></i>',
-    // }, options);
     this.appendTo = jQuery(options.appendTo);
     this.manifest = options.manifest;
     this.element = options.element;
@@ -113,9 +97,9 @@
         baseUrl = baseUrl.slice(0, baseUrl.length - 1);
       }
       // Remove search prefix if necessary
-      if (baseUrl.slice(baseUrl.lastIndexOf('/')+1) === this.searchPrefix) {
-        baseUrl = baseUrl.slice(0, baseUrl.length - this.searchPrefix.length);
-      }
+      // if (baseUrl.slice(baseUrl.lastIndexOf('/')+1) === this.searchPrefix) {
+      //   baseUrl = baseUrl.slice(0, baseUrl.length - this.searchPrefix.length);
+      // }
 
       this.baseUrl = baseUrl;
       this.search(q.q, parseInt(q.o), parseInt(q.m), q.so);
@@ -141,10 +125,11 @@
       this.query = query;
 
       // Create request URL from parameters
-      var queryUrl = this.baseUrl +
-          (this.baseUrl.charAt(this.baseUrl.length - 1) !== '/' ? '/' : '');
+      var queryUrl = this.baseUrl; //+
+          // (this.baseUrl.charAt(this.baseUrl.length - 1) !== '/' ? '/' : '');
 
-      queryUrl += this.searchPrefix + '?q=' + this.query;
+      // queryUrl += this.searchPrefix + '?q=' + this.query;
+      queryUrl += "?q=" + this.query;
       if (numExpected) {
         queryUrl += '&m=' + numExpected;
       }

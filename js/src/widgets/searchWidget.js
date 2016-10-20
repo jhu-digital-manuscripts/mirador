@@ -7,6 +7,7 @@ $.SearchWidget = function(options) {
   this.windowId = options.windowId;
   this.widgetId = options.widgetId;
   this.appendTo = jQuery(options.appendTo);
+  this.element = null;
   this.width = 330;
   this.manifest = options.manifest;
   /*
@@ -34,21 +35,65 @@ $.SearchWidget = function(options) {
     'no-defaults': '<span class="error">No fields defined for basic search.</span>',
   };
 
-  if (searchServices)
-
-  var _this = this;
-
-  this.searchService.initializer.always(function() {
-    _this.init();
-  });
-
+  this.registerWidget();    // Register the Handlerbars partials
+  this.init();
 };
 
 $.SearchWidget.prototype = {
 
   init: function() {
-    // Initialize this.searchService using the first value in searchServiceIds array
+    var _this = this;
 
+    // Initialize this.searchService using the first value in searchServiceIds array
+    if (this.searchServices.length > 0) {
+      this.getService(this.searchServices[0].id).done(function(service) {
+        _this.switchSearchServices(service);
+        _this.bindEvents();
+      });
+    }
+  },
+
+  /**
+   * Reset advanced search UI and rebuild using settings from
+   * the provided search service.
+   */
+  switchSearchServices: function(service) {
+    var _this = this;
+    /*
+      Template data: {
+        "search": jhiiifSearchService.search,
+        "otherServices": _this.searchServices     // Should this be trimmed? (does it matter?)
+      }
+     */
+    var templateData = {
+      "search": service.search,
+      "otherServices": _this.searchServices
+    };
+
+    if (!this.element) {
+      // Widget has not been initialized
+      this.element = jQuery(this.template(templateData)).appendTo(this.appendTo);
+    } else {
+      var advancedSearchEl = this.element.find(".search-disclose");
+
+      advancedSearchEl.empty();
+      advancedSearchEl.append(
+        Handlebars.compile("{{> advancedSearch}}")(templateData)
+      );
+    }
+
+    var description_template = Handlebars.compile('{{> searchDescription}}');
+
+    this.element.tooltip({
+      items: '.search-description-icon',
+      content: description_template(service.search.settings.fields),
+      position: { my: "left+20 top", at: "right top-50" },
+    });
+
+    // Assuming the UI was created successfully, set the current
+    // search service to the one provided to this function
+    this.searchService = service;
+    this.listenForActions();
   },
 
   /**
@@ -63,7 +108,7 @@ $.SearchWidget.prototype = {
       return;
     }
 
-    var service = jQuery.deferred();
+    var service = jQuery.Deferred();
 
     var s = this.searchServices.filter(function(service) {
       return service.id === id;
@@ -71,6 +116,8 @@ $.SearchWidget.prototype = {
     if (s.length === 1 && s[0].service) {
       service.resolve(s[0].service);
     } else if (s.length > 0) {
+      // Only ONE should appear here, as it matches IDs, however, if
+      // for some reason, more than one are matched, just pick the first
       var _this = this;
       var jhservice = new $.JhiiifSearchService({ "id": s[0].id });
       jhservice.initializer.done(function() {
@@ -90,8 +137,6 @@ $.SearchWidget.prototype = {
    * Bind handlers to all events in this widget.
    * * Handlers are bound to application events through the application
    * event bus.
-   * * Handlers are bound to top level UI elements, such as the
-   * search button.
    *
    * @return nothing
    */
@@ -111,6 +156,13 @@ $.SearchWidget.prototype = {
         _this.element.hide();
       }
     });
+  },
+
+  /**
+   * Bind handlers to listen for UI actions.
+   */
+  listenForActions: function() {
+    var _this = this;
 
     this.element.find(".js-perform-query").on('submit', function(event){
         event.preventDefault();
@@ -229,6 +281,7 @@ $.SearchWidget.prototype = {
       baseUrl: _this.element.find('.search-within-object-select').val(),
       searchContext: _this.searchContext,
       pinned: _this.pinned,
+      searchPrefix: ""
       // queryUrl: url,
       // selectedResult: _this.selectedResult,
     });
@@ -254,6 +307,7 @@ console.log("[SearchWidget] original : " + query);
         searchContext: _this.searchContext,
         baseUrl: _this.element.find('.search-within-object-select').val(),
         pinned: _this.pinned,
+        searchPrefix: ""
         // selectedResult: _this.searchContext.selectedResult
       });
     }
@@ -355,8 +409,9 @@ console.log("[SearchWidget] original : " + query);
           '<p>',
             'Search within: ',
             '<select class="search-within-object-select">',
-              '<option value="{{search.manifest.id}}">{{search.manifest.label}}</option>',
-              '<option value="{{search.collection.id}}">{{search.collection.label}}</option>',
+              '{{#each otherServices}}',
+                '<option value="{{id}}">{{label}}</option>',
+              '{{/each}}',
             '</select>',
           '</p>',
         '</div>',

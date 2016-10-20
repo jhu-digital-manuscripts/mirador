@@ -129,13 +129,15 @@
 
         var services = [manifestSearch];
 
+        // If the manifest has a 'within' property, fetch that [parent collection]
+        // and add its search service if it exists
+        // Else, just add the search service from the manifest
         if (this.manifest.within()) {
           jQuery.getJSON(this.manifest.within())
             .done(function(collection) {
               if (!collection) {
                 return;
               }
-
               if (Array.isArray(collection.service)) {
                 collection.service.
                 filter(function(service) {
@@ -146,38 +148,47 @@
                 });
               } else if (collection.service && collection.service["@context"] === "http://manuscriptlib.org/jhiff/search/context.json") {
                 services.push(collection.service);
+              } else {
+                console.log("[SidePanel] parent collection has no search service.");
               }
             })
             .always(function() {
-              new $.SearchWidget({
-                manifest: _this.manifest,
-                parent: _this.parent,
-                windowId: _this.parent.id,
-                widgetId: 'searchTab',
-                appendTo: _this.element.find('.tabContentArea'),
-                width: 0,
-                searchContext: _this.searchContext ? _this.searchContext : {},
-                pinned: _this.pinned,
-                searchServices: services
-              });
+              _this.createSearchWidget(services);
             });
         } else {
-          new $.SearchWidget({
-            manifest: _this.manifest,
-            parent: _this.parent,
-            windowId: _this.parent.id,
-            widgetId: 'searchTab',
-            appendTo: _this.element.find('.tabContentArea'),
-            width: 0,
-            searchContext: _this.searchContext ? _this.searchContext : {},
-            pinned: _this.pinned,
-            // searchService: new $.JhiiifSearchService({
-            //   "id": _this.manifest.getSearchWithinInfoUrl()
-            // }),
-            searchServices: services
-          });
+          _this.createSearchWidget(services);
         }
       }
+    },
+
+    /**
+     * Replace property "@id" with "id"
+     */
+    massageServiceBlock: function(service) {
+      if (service["@id"]) {
+        service.id = service["@id"];
+      }
+      return service;
+    },
+
+    createSearchWidget: function(services) {
+      var _this = this;
+
+      services.forEach(function(service) {
+        service = _this.massageServiceBlock(service);
+      });
+console.log();
+      new $.SearchWidget({
+        manifest: _this.manifest,
+        parent: _this.parent,
+        windowId: _this.parent.id,
+        widgetId: 'searchTab',
+        appendTo: _this.element.find('.tabContentArea'),
+        width: 0,
+        searchContext: _this.searchContext ? _this.searchContext : {},
+        pinned: _this.pinned,
+        searchServices: services
+      });
     },
 
     update: function(name, availability) {
