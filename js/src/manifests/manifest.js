@@ -195,11 +195,15 @@
       if (Array.isArray(serviceProperty)) {
         serviceProperty
         .filter(function(service) { return service['@context'] === "http://iiif.io/api/search/0/context.json"; })
-        .forEach(function(service) { _this.service = service; });
+        .forEach(function(service) {
+          _this.service = service;
+          _this.service.label = _this.jsonLd.label;
+        });
       }
       else if (serviceProperty["@context"] === "http://iiif.io/api/search/0/context.json" ||
           serviceProperty["@context"] === "http://manuscriptlib.org/jhiff/search/context.json") {
         service = _this.jsonLd.service;
+        service.label = this.jsonLd.label;
       }
       else {
         //no service object with the right context is found

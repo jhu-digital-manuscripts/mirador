@@ -35,16 +35,6 @@ $.SearchWidget = function(options) {
     'no-defaults': '<span class="error">No fields defined for basic search.</span>',
   };
 
-
-// -----------------------------------------------------------------
-// ----- TODO: REMOVE ----------------------------------------------
-this.searchServices.push({
-  "id": "http://rosetest.library.jhu.edu/iiif-pres/collection/aorcollection/jhsearch",
-  "label": "AoR Collection"
-});
-// -----------------------------------------------------------------
-// -----------------------------------------------------------------
-
   this.registerWidget();    // Register the Handlerbars partials
   this.init();
 };

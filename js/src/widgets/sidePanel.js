@@ -144,9 +144,11 @@
                   return service["@context"] === "http://manuscriptlib.org/jhiff/search/context.json";
                 })
                 .forEach(function(service) {
+                  service.label = collection.label;
                   services.push(service);
                 });
               } else if (collection.service && collection.service["@context"] === "http://manuscriptlib.org/jhiff/search/context.json") {
+                collection.service.label = collection.label;
                 services.push(collection.service);
               } else {
                 console.log("[SidePanel] parent collection has no search service.");
