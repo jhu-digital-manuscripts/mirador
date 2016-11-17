@@ -35,6 +35,19 @@ $.SearchWidget = function(options) {
     'no-defaults': '<span class="error">No fields defined for basic search.</span>',
   };
 
+// -----------------------------------------------------------------------------
+// ----- REMOVE ----------------------------------------------------------------
+  // this.searchServices.push({
+  //   "id": "http://rosetest.library.jhu.edu/iiif-pres/collection/rosecollection/jhsearch",
+  //   "label": "Roman de la Rose collection"
+  // });
+  this.searchServices.push({
+    "id": "http://localhost:8080/iiif-pres/collection/top/jhsearch",
+    "label": "All JHU collections"
+  });
+// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
   this.registerWidget();    // Register the Handlerbars partials
   this.init();
 };
