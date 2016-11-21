@@ -41,7 +41,7 @@
 
 // -----------------------------------------------------------------------------
 // ----- REMOVE ----------------------------------------------------------------
-      this.searchServices.push({
+      this.addSearchService({
         "id": "http://localhost:8080/iiif-pres/collection/top/jhsearch",
         "label": "All JHU collections"
       });
@@ -88,10 +88,10 @@
       var _this = this;
       // handle interface events
       this.element.find('form#url-load-form').on('submit', function(event) {
-          event.preventDefault();
-          var url = jQuery(this).find('input').val();
-          _this.parent.addManifestFromUrl(url, "(Added from URL)");
-          //console.log('trying to add from URL');
+        event.preventDefault();
+        var url = jQuery(this).find('input').val();
+        _this.parent.addManifestFromUrl(url, "(Added from URL)");
+        //console.log('trying to add from URL');
       });
 
       this.element.find('.remove-object-option').on('click', function() {
@@ -101,6 +101,8 @@
       // handle subscribed events
       jQuery.subscribe("searchServiceDiscovered", function(event, data) {
         _this.addSearchService(data);
+
+
       });
 
       jQuery.subscribe('manifestsPanelVisible.set', function(_, stateValue) {
@@ -114,18 +116,21 @@
       });
 
       // Filter manifests based on user input
-      this.element.find('#manifest-search').on('keyup input', function() {
-       if (this.value.length > 0) {
-        _this.element.find('.items-listing li').show().filter(function() {
-         return jQuery(this).text().toLowerCase().indexOf(_this.element.find('#manifest-search').val().toLowerCase()) === -1;
-        }).hide();
-       } else {
-        _this.element.find('.items-listing li').show();
-       }
-      });
+      // this.element.find('#manifest-search').on('keyup input', function() {
+      //  if (this.value.length > 0) {
+      //   _this.element.find('.items-listing li').show().filter(function() {
+      //    return jQuery(this).text().toLowerCase().indexOf(_this.element.find('#manifest-search').val().toLowerCase()) === -1;
+      //   }).hide();
+      //  } else {
+      //   _this.element.find('.items-listing li').show();
+      //  }
+      // });
 
       this.element.find('#manifest-search-form').on('submit', function(event) {
         event.preventDefault();
+
+        // Do searchy stuff
+
       });
 
       jQuery(window).resize($.throttle(function(){
@@ -137,7 +142,12 @@
     },
 
     addSearchService: function(service) {
-      _this.searchServices.push(data);
+      this.searchServices.push(service);
+      var id = service.id || service["@id"];
+      var label = service.label || id;
+
+      this.element.find("#manifest-search-form select")
+        .append(jQuery("<option value=\"" + id + "\">" + label + "</option>"));
     },
 
     hide: function() {
@@ -147,7 +157,6 @@
 
     show: function() {
       var _this = this;
-
       jQuery(this.element).show({effect: "fade", duration: 160, easing: "easeInCubic"});
     },
 
@@ -165,8 +174,13 @@
               '</form>',
             '{{/if}}',
             '<form action="" id="manifest-search-form">',
-              '<label for="manifest-search">{{t "filterObjects"}}:</label>',
+              '<label for="manifest-search">Search: </label>',
               '<input id="manifest-search" type="text" name="manifest-filter">',
+              '<label for="search-service-select">Within: </label>',
+              '<select id="search-service-select" name="service-picker"></select>',
+              '<button type="submit">',
+                '<i class="fa fa-lg fa-search"></i>',
+              '</button>',
             '</form>',
           '</div>',
         '</div>',

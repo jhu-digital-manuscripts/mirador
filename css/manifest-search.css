@@ -1,0 +1,33 @@
+#manifest-search-form select {
+  margin-right: 25px;
+  height: 29px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: white;
+  border: 1px solid #d3d3d3;
+}
+
+#manifest-search-form input[type="text"] {
+  padding: 0 6px;
+  width: 250px;
+  margin-right: 25px;
+}
+
+#manifest-search-form button {
+  height: 29px;
+  padding: 3px 12px;
+  color: gray;
+  background: white;
+  border: 1px solid #d3d3d3;
+  border-radius: 3px;
+  transition: 0.15s;
+}
+
+#manifest-search-form button:active {
+  background: #d3d3d3;
+}
+
+  color: black;
+#manifest-search-form button:hover {
+  border: 1px solid black;
+}

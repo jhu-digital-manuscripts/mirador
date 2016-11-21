@@ -101,6 +101,7 @@ module.exports = function(grunt) {
         'bower_components/simplePagination.js/simplePagination.css',
         'bower_components/jQuery-contextMenu/dist/*.css',
         'css/aor.css',
+        'css/manifest-search.css'
         ],
         dest: 'build/mirador/css/mirador-combined.css'
       }
