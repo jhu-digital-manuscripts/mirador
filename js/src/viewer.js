@@ -22,13 +22,21 @@
         'optionsPanelVisible': false,
         'bookmarkPanelVisible': false
       },
-      manifests:             []
+      manifests:             [],
+      searchServices: []
     }, $.DEFAULT_SETTINGS, options);
 
     // get initial manifests
     this.element = this.element || jQuery('#' + this.id);
 
     if (this.data) {
+
+// At this point, 'this.data' holds the initialized data
+//  > in our case, 3 collection URIs
+// For each data.collectionUri
+//  > load collection
+//  > check for search service
+
       this.init();
     }
   };
@@ -207,12 +215,31 @@
           var url = manifest.manifestUri;
           _this.addManifestFromUrl(url, manifest.location ? manifest.location : '');
         } else if (manifest.hasOwnProperty('collectionUri')) {
+          // Loading collection, then loading each manifest in this collection.
           jQuery.getJSON(manifest.collectionUri).done(function (data, status, jqXHR) {
             if (data.hasOwnProperty('manifests')){
               jQuery.each(data.manifests, function (ci, mfst) {
                 _this.addManifestFromUrl(mfst['@id'], manifest.location);
               });
             }
+
+            // Look for search services
+            if (data.hasOwnProperty("service")) {
+              if (Array.isArray(data.service)) {
+                data.service.forEach(function(service) {
+                  if ($.isJHSearchService(service)) {
+                    service.label = data.label;
+                    jQuery.publish("searchServiceDiscovered", service);
+                    // _this.searchServices.push(service);
+                  }
+                });
+              } else if ($.isJHSearchService(data.service)) {
+                data.service.label = data.label;
+                jQuery.publish("searchServiceDiscovered", data.service);
+                //_this.searchServices.push(data.service);
+              }
+            }
+
           }).fail(function(jqXHR, status, error) {
             console.log(jqXHR, status, error);
           });

@@ -71,6 +71,10 @@ $.objectArrayIndexOf = function(myArray, searchTerm, property) {
     return metadata.details.label || '';
   };
 
+  $.isJHSearchService = function(service) {
+    return service && service['@context'] === 'http://manuscriptlib.org/jhiff/search/context.json';
+  };
+
   /*
      miscellaneous utilities
      */
