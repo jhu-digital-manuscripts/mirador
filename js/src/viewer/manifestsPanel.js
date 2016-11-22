@@ -60,7 +60,7 @@
      */
     getSearchService: function(id) {
       if (!id) {
-        console.log("[SearchTab](window:" + this.windowId + ") failed to get search service, no ID provided.");
+        console.log("[ManifestsPanel] Failed to get search service, no ID provided.");
         return;
       }
 
