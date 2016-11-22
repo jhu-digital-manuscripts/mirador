@@ -42,7 +42,8 @@
 // -----------------------------------------------------------------------------
 // ----- REMOVE ----------------------------------------------------------------
       this.addSearchService({
-        "id": "http://localhost:8080/iiif-pres/collection/top/jhsearch",
+        // "id": "http://localhost:8080/iiif-pres/collection/top/jhsearch",
+        "id": "http://rosetest.library.jhu.edu/iiif-pres/collection/top/jhsearch",
         "label": "All JHU collections"
       });
 // -----------------------------------------------------------------------------
@@ -79,6 +80,8 @@
           s[0].service = jhservice;
           service.resolve(jhservice);
         });
+      } else {
+        console.log("[ManifestsPanel] No search service found for ID: " + id);
       }
 
       return jQuery.when(service);
@@ -101,8 +104,6 @@
       // handle subscribed events
       jQuery.subscribe("searchServiceDiscovered", function(event, data) {
         _this.addSearchService(data);
-
-
       });
 
       jQuery.subscribe('manifestsPanelVisible.set', function(_, stateValue) {
@@ -128,8 +129,34 @@
 
       this.element.find('#manifest-search-form').on('submit', function(event) {
         event.preventDefault();
+        var searchTerm = jQuery("#manifest-search").val();
+
+        if (!searchTerm || searchTerm.length === 0) {
+          return;
+        }
 
         // Do searchy stuff
+        var serviceId = jQuery("#search-service-select").val();
+        var serviceReq = _this.getSearchService(serviceId);
+
+        serviceReq.done(function(service) {
+          if (service.getDefaultFields().length === 0) {
+            // jQuery(_this.messages['no-defaults']).appendTo(messages);
+            console.log("[ManifestsPanel] No default search fields specified " +
+                "for this service. Cannot do search.\nID: " + serviceId);
+          }
+
+          var query = $.generateBasicQuery(
+            searchTerm,
+            service.getDefaultFields(),
+            service.query.delimiters.or
+          );
+
+          if (query && query.length > 0) {
+            // _this.displaySearchWithin(query);
+            console.log("### " + query);
+          }
+        });
 
       });
 
@@ -142,9 +169,13 @@
     },
 
     addSearchService: function(service) {
-      this.searchServices.push(service);
       var id = service.id || service["@id"];
       var label = service.label || id;
+
+      // Search service will likely NOT have an 'id' property, but instead
+      //  have a '@id' property. Change this to 'id' for things to work.
+      service.id = id;
+      this.searchServices.push(service);
 
       this.element.find("#manifest-search-form select")
         .append(jQuery("<option value=\"" + id + "\">" + label + "</option>"));
