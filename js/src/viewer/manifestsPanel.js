@@ -11,7 +11,8 @@
       manifestListElement:        null,
       manifestLoadStatusIndicator: null,
       resultsWidth:               0,
-      searchServices: []
+      searchServices: [],
+      cachedKeys: []
     }, options);
 
     var _this = this;
@@ -42,8 +43,8 @@
 // -----------------------------------------------------------------------------
 // ----- REMOVE ----------------------------------------------------------------
       this.addSearchService({
-        // "id": "http://localhost:8080/iiif-pres/collection/top/jhsearch",
-        "id": "http://rosetest.library.jhu.edu/iiif-pres/collection/top/jhsearch",
+        "id": "http://localhost:8080/iiif-pres/collection/top/jhsearch",
+        // "id": "http://rosetest.library.jhu.edu/iiif-pres/collection/top/jhsearch",
         "label": "All JHU collections"
       });
 // -----------------------------------------------------------------------------
@@ -116,6 +117,10 @@
         _this.element.find('#manifest-search').keyup();
       });
 
+      this.element.find(".browser-search-results .controls .close").on("click", function() {
+        _this.element.find(".browser-search-results").hide();
+      });
+
       // Filter manifests based on user input
       // this.element.find('#manifest-search').on('keyup input', function() {
       //  if (this.value.length > 0) {
@@ -155,6 +160,7 @@
           if (query && query.length > 0) {
             // _this.displaySearchWithin(query);
             console.log("### " + query);
+            _this.doSearch(service, query);
           }
         });
 
@@ -168,6 +174,50 @@
       }, 50, true));
     },
 
+    /**
+     * @param searchService service block { "id": "...", "@context": "...", ... }
+     * @param query search query {string}
+     * @param (optional) offset {int} results offset for paging
+     * @param (optional) numExpected {int} number of results to return for paging
+     * @param (optional) sortOrder {string} (index|relevance) Default value: relevance
+     */
+    doSearch: function(searchService, query, offset, numExpected, sortOrder) {
+      var _this = this;
+      var queryUrl = searchService.id + "?q=" + encodeURIComponent(query);
+
+      if (offset && typeof offset === 'number') {
+        queryUrl += "&o=" + offset;
+      }
+      if (numExpected && typeof numExpected === 'number') {
+        queryUrl += "&m=" + numExpected;
+      }
+      if (sortOrder) {
+        queryUrl += "&so=" + (sortOrder === "index" ? sortOrder : "relevance");
+      }
+
+      // Can cache search results here
+      var cached = this.cache(queryUrl);
+      if (cached) {
+        // If result already cached, use that result
+        this.handleResults(JSON.parse(cached));
+        return;
+      }
+
+      // Make the request if not found in cache
+      var request = jQuery.ajax({
+        url:   queryUrl,
+        dataType: 'json',
+        cache: true,
+      })
+      .done(function(searchResults) {
+        _this.cache(queryUrl, JSON.stringify(searchResults), true);
+        _this.handleResults(searchResults);
+      })
+      .fail(function(jqXHR, textStatus, errorThrown) {
+        console.log("[SearchResults] window=" + _this.parent.parent.id + " search query failed (" + queryUrl + ") \n" + errorThrown);
+      });
+    },
+
     addSearchService: function(service) {
       var id = service.id || service["@id"];
       var label = service.label || id;
@@ -179,6 +229,62 @@
 
       this.element.find("#manifest-search-form select")
         .append(jQuery("<option value=\"" + id + "\">" + label + "</option>"));
+    },
+
+    /**
+     * Read from or write to cache.
+     *
+     * If 'value' is provided, it will be stored in cache under key = id.
+     * If no 'value' is provided, it is read from cache using the provided
+     * id as the key.
+     *
+     * When writing to cache, it is possible that storate will be full. If this
+     * is the case, the write can be forced, which will clear the cache and
+     * attempt the write again.
+     *
+     * @param  (string) id    ID of object in cache
+     * @param  (string) value value to put into cache
+     * @param  (boolean) force - if writing, this will retry attempt if an error occurs
+     * @return cached object if reading from cache
+     */
+    cache: function(id, value, force) {
+      console.assert(id, '[SearchResults] cache ID must be provided');
+      var _this = this;
+
+      if (!value) {
+        // No value provided, read this ID from cache
+        return sessionStorage.getItem(id);
+
+      } else {
+        // Value provided, add this to cache
+        try {
+          this.cachedKeys.push(id);
+          sessionStorage.setItem(id, value);
+        } catch (e) {
+          if (e === 'QuotaExceededError' && force) {
+            // sessionStorage.clear();
+            this.cachedKeys.forEach(function(key) { sessionStorage.removeItem(key); });
+            this.cachedKeys = [];
+            _this.cache(id, value, false);
+          } else {
+            console.log('[SearchResults] Unexpected error encountered while writing search result to cache. ' + e);
+          }
+        }
+      }
+    },
+
+    handleResults: function(searchResults) {
+      if (!searchResults) {
+        return;
+      }
+
+      var _this = this;
+      this.element.find(".browser-search-results").show();
+      new $.BrowserSearchResults({
+        appendTo: _this.element.find(".results-items"),
+        viewer: _this.parent,
+        searchResults: searchResults
+      });
     },
 
     hide: function() {
@@ -219,6 +325,13 @@
             '<ul class="items-listing">',
             '</ul>',
           '</div>',
+      '</div>',
+      // New search results modal
+      '<div class="browser-search-results">',
+        '<div class="controls">',
+          '<i class="fa fa-2x fa-times close"></i>',
+        '</div>',
+        '<div class="results-items"></div>',
       '</div>',
       '</div>'
     ].join(''))

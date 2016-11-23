@@ -13,7 +13,7 @@
 
   $.BrowserSearchResults.prototype = {
     init: function() {
-
+      console.log("Hello search! " + JSON.stringify(this.searchResults, null, 2));
     },
 
     template: Handlebars.compile([
