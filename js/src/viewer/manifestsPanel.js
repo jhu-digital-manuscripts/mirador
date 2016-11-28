@@ -121,17 +121,6 @@
         _this.element.find(".browser-search-results").hide();
       });
 
-      // Filter manifests based on user input
-      // this.element.find('#manifest-search').on('keyup input', function() {
-      //  if (this.value.length > 0) {
-      //   _this.element.find('.items-listing li').show().filter(function() {
-      //    return jQuery(this).text().toLowerCase().indexOf(_this.element.find('#manifest-search').val().toLowerCase()) === -1;
-      //   }).hide();
-      //  } else {
-      //   _this.element.find('.items-listing li').show();
-      //  }
-      // });
-
       this.element.find('#manifest-search-form').on('submit', function(event) {
         event.preventDefault();
         var searchTerm = jQuery("#manifest-search").val();
@@ -283,7 +272,9 @@
       new $.BrowserSearchResults({
         appendTo: _this.element.find(".results-items"),
         viewer: _this.parent,
-        searchResults: searchResults
+        searchResults: searchResults,
+        hideParent: _this.hide,
+        manifestListItems: _this.manifestListItems
       });
     },
 
