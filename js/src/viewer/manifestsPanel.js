@@ -12,7 +12,18 @@
       manifestLoadStatusIndicator: null,
       resultsWidth:               0,
       searchServices: [],
-      cachedKeys: []
+      cachedKeys: [],
+      /*    searchService, query, offset, numExpected, sortOrder
+       * Search currently displayed. Useful for paging.
+       * {
+       *  "service": { "ID of search service" },
+       *  "query": "String query",
+       *  "offset": {integer} offset of currently displayed results page,
+       *  "numExpected": {integer} max number of results per page,
+       *  "sortOrder": "String: sort order of results. (index|relevance)"
+       * }
+       */
+      currentSearch: null
     }, options);
 
     var _this = this;
@@ -172,6 +183,17 @@
      */
     doSearch: function(searchService, query, offset, numExpected, sortOrder) {
       var _this = this;
+
+      // Set this search as the current search, so that it can be re-used
+      // by the pager
+      _this.currentSearch = {
+        "service": searchService,
+        "query": query,
+        "offset": offset,
+        "numExpected": numExpected,
+        "sortOrder": sortOrder
+      };
+
       var queryUrl = searchService.id + "?q=" + encodeURIComponent(query);
 
       if (offset && typeof offset === 'number') {
@@ -203,7 +225,7 @@
         _this.handleResults(searchResults);
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
-        console.log("[SearchResults] window=" + _this.parent.parent.id + " search query failed (" + queryUrl + ") \n" + errorThrown);
+        console.log("[ManifestBrowser] search query failed (" + queryUrl + ") \n" + errorThrown);
       });
     },
 
@@ -268,6 +290,14 @@
       }
 
       var _this = this;
+      if (!this.perPageCount) {
+        this.perPageCount = searchResults.max_matches || searchResults.matches.length;
+      }
+
+      if (this.needsPager(searchResults)) {
+        this.setPager(searchResults);
+      }
+
       this.element.find(".browser-search-results").show();
       new $.BrowserSearchResults({
         appendTo: _this.element.find(".results-items"),
@@ -276,6 +306,64 @@
         hideParent: _this.hide,
         manifestListItems: _this.manifestListItems
       });
+    },
+
+    /**
+     * Look for necessary properties that point to the need for paging.
+     *
+     * @param  results IIIF Search results
+     * @return TRUE if paging is needed
+     */
+    needsPager: function(results) {
+      return results.offset > 0 ||
+          results.offset + (results.max_matches || results.matches.length) < results.total;
+    },
+
+    /**
+     * Initialize search results pager. It is assumed that it has already
+     * been determined whether or not the pager needs to be created.
+     * If a pager is created, it will be inserted into the DOM.
+     *
+     * @param  results - IIIF Search results
+     */
+    setPager: function(results) {
+      var _this = this;
+      // var onPageCount = results.max_matches || results.matches.length;
+      var onPageCount = this.perPageCount;
+
+      this.element.find('.results-pager').pagination({
+        items: results.total,
+        itemsOnPage: onPageCount,
+        currentPage: this.float2int(1 + results.offset / onPageCount),
+        displayedPages: 2,
+        edges: 1,
+        cssStyle: 'compact-theme',
+        ellipsePageSet: true,
+        prevText: '<i class="fa fa-lg fa-angle-left"></i>',
+        nextText: '<i class="fa fa-lg fa-angle-right"></i>',
+        onPageClick: function(pageNumber, event) {
+          event.preventDefault();
+
+          var newOffset = (pageNumber - 1) * onPageCount;
+          _this.doSearch(
+            _this.currentSearch.service,
+            _this.currentSearch.query,
+            newOffset,
+            _this.currentSearch.numExpected,
+            _this.currentSearch.sortOrder
+          );
+        }
+      });
+    },
+
+    /**
+     * Do a Bitwise OR to truncate decimal
+     *
+     * @param  num original number, could be integer or decimal
+     * @return integer with any decimal part of input truncated (no rounding)
+     */
+    float2int: function(num) {
+      return num | 0;
     },
 
     hide: function() {
@@ -322,6 +410,12 @@
         '<div class="controls">',
           '<i class="fa fa-2x fa-times close"></i>',
         '</div>',
+        '<div class="results-pager"></div>',
+        '<p>',
+          '{{#if last}}',
+          'Showing {{offset}} - {{last}} {{#if total}}out of {{total}}{{/if}}',
+          '{{/if}}',
+        '</p>',
         '<div class="results-items"></div>',
       '</div>',
       '</div>'

@@ -15,7 +15,6 @@
 
   $.BrowserSearchResults.prototype = {
     init: function() {
-      console.log("Hello search! ");
       jQuery(this.appendTo).empty();
       this.searchResults = this.massageForHandlebars(this.searchResults);
 
@@ -68,6 +67,10 @@
     bindEvents: function() {
       var _this = this;
 
+      this.appendTo.find("#results-to-top").on("click", function(event) {
+        _this.appendTo.scrollTop();
+      });
+
       this.appendTo.find(".js-show-canvas").on("click", function(event) {
         var clickedEl = jQuery(this);
 
@@ -116,11 +119,6 @@
     errorMessage: Handlebars.compile('<h1>An error occurred while searching.</h1>'),
 
     template: Handlebars.compile([
-      '<p>',
-        '{{#if last}}',
-        'Showing {{offset}} - {{last}} {{#if total}}out of {{total}}{{/if}}',
-        '{{/if}}',
-      '</p>',
       '{{#each matches}}',
         '<div class="result-wrapper js-show-canvas{{#if selected}} selected{{/if}}" data-objectid="{{object.id}}" ',
                 '{{#if manifest}}data-manifestid="{{manifest.id}}"{{/if}} data-objecttype="{{object.type}}">',
@@ -136,6 +134,7 @@
           '</div>',
         '</div>',
       '{{/each}}',
+      '<p><a id="results-to-top">Back to top</a></p>'
     ].join(''))
 
   };
