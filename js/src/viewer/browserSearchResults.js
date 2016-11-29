@@ -68,7 +68,8 @@
       var _this = this;
 
       this.appendTo.find("#results-to-top").on("click", function(event) {
-        _this.appendTo.scrollTop();
+        // _this.appendTo.scrollTop(0);
+        _this.appendTo.animate({scrollTop:0}, 150);
       });
 
       this.appendTo.find(".js-show-canvas").on("click", function(event) {

@@ -295,7 +295,18 @@
       }
 
       if (this.needsPager(searchResults)) {
+        var pagerText = this.element.find(".results-pager-text");
+        pagerText.empty();
+        pagerText.append(this.resultsPagerText({
+          "offset": (searchResults.offset + 1),
+          "total": searchResults.total,
+          "last": (parseInt(searchResults.offset) + this.perPageCount)
+        }));
+
         this.setPager(searchResults);
+        this.showPager();
+      } else {
+        this.hidePager();
       }
 
       this.element.find(".browser-search-results").show();
@@ -306,6 +317,18 @@
         hideParent: _this.hide,
         manifestListItems: _this.manifestListItems
       });
+    },
+
+    showPager: function() {
+      this.element.find(".results-pager").show();
+      this.element.find(".results-pager-text").show();
+      this.element.find(".results-items").css("top", "107px");
+    },
+
+    hidePager: function() {
+      this.element.find(".results-pager").hide();
+      this.element.find(".results-pager-text").hide();
+      this.element.find(".results-items").css("top", "42px");
     },
 
     /**
@@ -345,6 +368,7 @@
           event.preventDefault();
 
           var newOffset = (pageNumber - 1) * onPageCount;
+          _this.element.find(".browser-search-results .results-items").scrollTop(0);
           _this.doSearch(
             _this.currentSearch.service,
             _this.currentSearch.query,
@@ -375,6 +399,12 @@
       var _this = this;
       jQuery(this.element).show({effect: "fade", duration: 160, easing: "easeInCubic"});
     },
+
+    resultsPagerText: Handlebars.compile([
+      '{{#if last}}',
+        'Showing {{offset}} - {{last}} {{#if total}}out of {{total}}{{/if}}',
+      '{{/if}}',
+    ].join('')),
 
     template: Handlebars.compile([
       '<div id="manifest-select-menu">',
@@ -411,11 +441,7 @@
           '<i class="fa fa-2x fa-times close"></i>',
         '</div>',
         '<div class="results-pager"></div>',
-        '<p>',
-          '{{#if last}}',
-          'Showing {{offset}} - {{last}} {{#if total}}out of {{total}}{{/if}}',
-          '{{/if}}',
-        '</p>',
+        '<p class="results-pager-text"></p>',
         '<div class="results-items"></div>',
       '</div>',
       '</div>'
