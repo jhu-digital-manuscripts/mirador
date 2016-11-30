@@ -1,10 +1,13 @@
-#manifest-search-form select {
-  margin-right: 25px;
+#load-controls select {
   height: 29px;
   padding: 1px 6px;
   border-radius: 3px;
   background: white;
   border: 1px solid #d3d3d3;
+}
+
+#search-service-select {
+  margin: 25px;
 }
 
 #manifest-search-form input[type="text"] {
@@ -13,7 +16,7 @@
   margin-right: 25px;
 }
 
-#manifest-search-form button {
+#load-controls button {
   height: 29px;
   padding: 3px 12px;
   color: gray;
@@ -23,11 +26,11 @@
   transition: 0.15s;
 }
 
-#manifest-search-form button:active {
+#load-controls button:active {
   background: #d3d3d3;
 }
 
-#manifest-search-form button:hover {
+#load-controls button:hover {
   color: black;
   border: 1px solid black;
 }
@@ -78,4 +81,21 @@
 #results-to-top {
   color: blue;
   cursor: pointer;
+}
+
+/* Advanced search stuff */
+#load-controls .search-disclose {
+  padding-left: 36px;
+}
+#load-controls .advanced-search-selector {
+  width: 172px;
+}
+#load-controls .advanced-search-operators {
+  width: 42px;
+}
+#load-controls .advanced-search-categories {
+  width: 130px;
+}
+#load-controls .advanced-search-line input {
+  padding: 1px 6px;
 }
