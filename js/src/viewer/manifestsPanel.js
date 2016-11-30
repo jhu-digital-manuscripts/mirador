@@ -35,6 +35,7 @@
 
     init: function() {
       var _this = this;
+      this.registerWidget();
 
       jQuery.unsubscribe("searchServiceDiscovered");
       this.element = jQuery(this.template({
@@ -62,6 +63,7 @@
 // -----------------------------------------------------------------------------
 
       this.bindEvents();
+      this.listenForActions();
     },
 
     /**
@@ -97,6 +99,58 @@
       }
 
       return jQuery.when(service);
+    },
+
+    /**
+     * Reset advanced search UI and rebuild using settings from
+     * the provided search service.
+     */
+    switchSearchServices: function(service) {
+      var _this = this;
+
+      if (typeof service === 'string') {
+        this.getSearchService(service).always(function(service) {
+          _this.switchSearchServices(service);
+        });
+        return;
+      }
+      this.searchService = service;
+
+      /*
+        Template data: {
+          "search": jhiiifSearchService.search,
+          "otherServices": _this.searchServices     // Should this be trimmed? (does it matter?)
+        }
+       */
+      var templateData = {
+        "search": service.search,
+        "otherServices": _this.searchServices
+      };
+
+      if (!this.element) {
+        // Widget has not been initialized
+        this.element = jQuery(this.template(templateData)).appendTo(this.appendTo);
+      } else {
+        var advancedSearchEl = this.element.find(".search-disclose");
+
+        advancedSearchEl.empty();
+        advancedSearchEl.append(
+          Handlebars.compile("{{> advancedSearch}}")(templateData)
+        );
+      }
+
+      var description_template = Handlebars.compile('{{> searchDescription}}');
+
+      this.element.tooltip({
+        items: '.search-description-icon',
+        content: description_template(service.search.settings.fields),
+        position: { my: "left+20 top", at: "right top-50" },
+      });
+
+      // Assuming the UI was created successfully, set the current
+      // search service to the one provided to this function
+      this.listenForActions();
+      this.addAdvancedSearchLine();
     },
 
     bindEvents: function() {
@@ -141,10 +195,15 @@
         }
 
         // Do searchy stuff
-        var serviceId = jQuery("#search-service-select").val();
-        var serviceReq = _this.getSearchService(serviceId);
+        var doAdvancedSearch = _this.element.find(".search-disclose").css("display") !== "none";
 
-        serviceReq.done(function(service) {
+        var serviceId = jQuery("#search-service-select").val();
+        _this.getSearchService(serviceId).done(function(service) {
+          if (doAdvancedSearch) {
+            _this.performAdvancedSearch();
+            return;
+          }
+
           if (service.getDefaultFields().length === 0) {
             // jQuery(_this.messages['no-defaults']).appendTo(messages);
             console.log("[ManifestsPanel] No default search fields specified " +
@@ -158,12 +217,17 @@
           );
 
           if (query && query.length > 0) {
-            // _this.displaySearchWithin(query);
-            console.log("### " + query);
             _this.doSearch(service, query);
           }
         });
 
+      });
+
+// -----------------------------------------------------------------------------
+// ----- Advanced search stuff -------------------------------------------------
+// -----------------------------------------------------------------------------
+      this.element.find("#search-service-select").on("change", function() {
+        _this.switchSearchServices(jQuery(this).val());
       });
 
       jQuery(window).resize($.throttle(function(){
@@ -172,6 +236,37 @@
         clone.remove();
         jQuery.publish("manifestPanelWidthChanged", _this.resultsWidth);
       }, 50, true));
+
+      this.element.find('.search-disclose-btn-more').on('click', function() {
+        // _this.element.find('#search-form').hide('fast');
+        _this.element.find('.search-disclose').show('fast');
+        _this.element.find('.search-disclose-btn-more').hide();
+        _this.element.find('.search-disclose-btn-less').show();
+      });
+
+      this.element.find('.search-disclose-btn-less').on('click', function() {
+        // _this.element.find('#search-form').show('fast');
+        _this.element.find('.search-disclose').hide('fast');
+        _this.element.find('.search-disclose-btn-less').hide();
+        _this.element.find('.search-disclose-btn-more').show();
+      });
+    },
+
+    listenForActions: function() {
+      var _this = this;
+
+      this.element.find('.advanced-search-add-btn').on('click', function(e) {
+        e.preventDefault();
+        _this.addAdvancedSearchLine();
+      });
+
+      this.element.find('.advanced-search-reset-btn').on('click', function(e) {
+        e.preventDefault();
+        _this.element.find('.advanced-search-line').each(function(index, line) {
+          jQuery(line).remove();
+        });
+        _this.addAdvancedSearchLine();
+      });
     },
 
     /**
@@ -229,7 +324,43 @@
       });
     },
 
+    performAdvancedSearch: function() {
+      var _this = this;
+      var parts = [];
+
+      this.getSearchService(this.element.find("#search-service-select").val()).done(function(service) {
+        _this.element.find('.advanced-search-line').each(function(index, line) {
+          line = jQuery(line);
+          var category = line.find('.advanced-search-categories').val();
+          var operation = line.find('.advanced-search-operators').val();
+
+          var inputs = line.find('.advanced-search-inputs').children()
+          .filter(function(index, child) {
+            child = jQuery(child);
+            return child.css('display') != 'none' && child.val() && child.val() !== '';
+          })
+          .each(function(index, child) {
+            child = jQuery(child);
+
+            parts.push({
+              op: service.query.delimiters[operation],
+              category: child.data('query'),
+              term: child.val()
+            });
+          });
+        });
+
+        var finalQuery = $.generateQuery(parts, service.query.delimiters.field);
+
+        if (finalQuery && finalQuery.length > 0) {
+          _this.doSearch(service, finalQuery);
+        }
+      });
+    },
+
     addSearchService: function(service) {
+      var _this = this;
+
       var id = service.id || service["@id"];
       var label = service.label || id;
 
@@ -240,6 +371,13 @@
 
       this.element.find("#manifest-search-form select")
         .append(jQuery("<option value=\"" + id + "\">" + label + "</option>"));
+
+      if (!this.advancedSearchSet) {
+        this.getSearchService(id).done(function(searchService) {
+          _this.addAdvancedSearchLine();
+        });
+        this.advancedSearchSet = true;
+      }
     },
 
     /**
@@ -322,13 +460,20 @@
     showPager: function() {
       this.element.find(".results-pager").show();
       this.element.find(".results-pager-text").show();
-      this.element.find(".results-items").css("top", "107px");
+      this.element.find(".results-items").css("top", this.getResultsTop() + "px");
     },
 
     hidePager: function() {
       this.element.find(".results-pager").hide();
       this.element.find(".results-pager-text").hide();
-      this.element.find(".results-items").css("top", "42px");
+      this.element.find(".results-items").css("top", this.getResultsTop + "px");
+    },
+
+    getResultsTop: function() {
+      return this.element.find(".controls").outerHeight(true) +
+          this.element.find(".advanced-search").outerHeight(true) +
+          this.element.find(".results-pager").outerHeight(true) +
+          this.element.find(".results-pager-text").outerHeight(true);
     },
 
     /**
@@ -390,6 +535,89 @@
       return num | 0;
     },
 
+    /**
+     * Add a new line to the Advanced Search widget.
+     */
+    addAdvancedSearchLine: function() {
+      var _this = this;
+      var template = Handlebars.compile('{{> advancedSearchLine }}');
+
+      this.getSearchService(this.element.find("#search-service-select").val()).done(function(searchService) {
+        var templateData = {
+          'search': searchService.search,
+          'query': searchService.query
+        };
+        // templateData.search.categories.choices = this.searchService.query.fields;
+
+        var line = template(templateData);
+
+        line = jQuery(line).insertAfter(
+          _this.element.find('.advanced-search-lines table tbody').children().last()
+        );
+
+        // For only the first line, hide the boolean operator
+        var num_lines = _this.element.find('.advanced-search-line').length;
+        if (num_lines === 1) {
+          line.find('.advanced-search-operators').hide();
+        }
+
+        // Hide all inputs except for the Default choice
+        // Makes sure ENTER key presses activate advanced search
+        searchService.search.settings.fields.forEach(function (field) {
+          var element = line.find(_this.classNamesToSelector(field.class));
+
+          element.keypress(function(event) {
+            if (event.which == 13) {
+              event.preventDefault();
+              _this.performAdvancedSearch();
+            }
+          });
+
+          if (!field.default && field.class && field.class !== '') {
+            element.hide();
+          }
+        });
+
+        // Add functionality to 'remove' button
+        line.find('.advanced-search-remove').on('click', function() {
+          line.remove();
+
+          // Make sure 1st line has boolean operator hidden
+          _this.element.find('.advanced-search-line').each(function(index, element) {
+            if (index === 0) {
+              jQuery(element).find('.advanced-search-operators').hide();
+            } else {
+              jQuery(element).find('.advanced-search-operators').show();
+            }
+          });
+        });
+
+        line.find('.advanced-search-categories').on('change', function(event) {
+          var jSelector = jQuery(event.target);
+          var user_inputs = line.find('.advanced-search-inputs');
+
+          // Hide all input/select fields
+          user_inputs.children().hide();
+          user_inputs
+              .find(_this.classNamesToSelector(searchService.getField(jSelector.val()).class))
+              .show();
+        });
+      });
+    },
+
+    classNamesToSelector: function(name) {
+      // Convert class name(s) to CSS selectors
+      var selector = '';
+      name.split(/\s+/).forEach(function(str) {
+        if (str.charAt(0) !== '.') {
+          selector += '.';
+        }
+        selector += str + ' ';
+      });
+
+      return selector;
+    },
+
     hide: function() {
       var _this = this;
       jQuery(this.element).hide({effect: "fade", duration: 160, easing: "easeOutCubic"});
@@ -405,6 +633,100 @@
         'Showing {{offset}} - {{last}} {{#if total}}out of {{total}}{{/if}}',
       '{{/if}}',
     ].join('')),
+
+    registerWidget: function() {
+      $.registerHandlebarsHelpers();
+
+      Handlebars.registerPartial('advancedSearch', [
+        '<div class="advanced-search">',
+          '<i class="fa fa-2x fa-question-circle search-description-icon" title="This is a title."></i>',
+          '<form id="advanced-search-form" class="perform-advanced-search">',
+            '<div class="advanced-search-lines">',
+              '<table><tbody>',
+                '<tr></tr>',
+              '</tbody></table>',
+            '</div>',
+            '<div class="advanced-search-btn-container">',
+              '<button type="button" class="advanced-search-add-btn" value="add">Add Term</button>',
+              '<button type="button" class="advanced-search-reset-btn">Reset</button>',
+            '</div>',
+          '</form>',
+        '</div>'
+      ].join(''));
+
+      Handlebars.registerPartial('advancedSearchLine', [
+        // Select search category
+        '<tr class="advanced-search-line"><td>',
+          '<div class="advanced-search-selector">',
+            '{{> searchDropDown query.operators}}',
+            '{{> searchDropDown search.categories }}',
+          '</div>',
+        '</td>',
+        '<td>',
+          '<div class="advanced-search-inputs">',
+          '{{#each search.settings.fields}}',
+            '{{#ifCond type "===" "dropdown"}}',
+              '{{> searchDropDown this}}',
+            '{{/ifCond}}',
+            '<input type="text" class="{{class}}" placeholder="{{placeholder}}" {{#if name}}data-query="{{name}}"{{/if}}/>',
+          '{{/each}}',
+          '</div>',
+        '</td>',
+        '<td>',
+          '<button class="advanced-search-remove" type="button"><i class="fa fa-times"></i></button>',
+        '</td></tr>',
+      ].join(''));
+
+      /**
+       * Create a drop down. Required context:
+       * {
+       *   'label': human readable label for the dropdown
+       *   'class': CSS class for the dropdown
+       *   'choices': array of string options for the dropdown
+       *   'query': OPTIONAL will go in data-query attribute
+       *   'addBlank': OPTIONAL set to TRUE to add a blank option at the top
+       * }
+       */
+      Handlebars.registerPartial('searchDropDown', [
+        '<select class="{{class}}" {{#if name}}data-query="{{name}}"{{/if}}>',
+          '{{#if addBlank}}',
+            '<option></option>',
+          '{{/if}}',
+          '{{#each choices}}',
+            '<option value="{{#if value}}{{value}}{{else}}{{value}}{{/if}}" {{#if description}}title="{{description}}"{{/if}}>',
+              '{{label}}',
+            '</option>',
+          '{{/each}}',
+        '</select>'
+      ].join(''));
+
+      Handlebars.registerPartial('searchDescription', [
+        '<p>',
+          '<p>',
+            'The <i>Advanced Search</i> tool allows a user to create a query focused on specific search fields. Different terms ',
+            'can be combined in a complex boolean query to yield more precise results. The following fields are available to search: ',
+          '</p>',
+          '<ul>',
+          '{{#each this}}',
+            '<li>',
+              '<b>{{label}}</b>',
+              '{{#if description}}',
+                ': {{description}}',
+              '{{/if}}',
+              '{{#if values}}',
+                '<br>Can take values: ',
+                '<i>',
+                  '{{#each values}}',
+                    '{{#if @first}}{{else}},{{/if}} {{label}}',
+                  '{{/each}}',
+                '</i>',
+              '{{/if}}',
+            '</li>',
+          '{{/each}}',
+          '</ul>',
+        '</p>'
+      ].join(''));
+    },
 
     template: Handlebars.compile([
       '<div id="manifest-select-menu">',
@@ -428,6 +750,13 @@
                 '<i class="fa fa-lg fa-search"></i>',
               '</button>',
             '</form>',
+            '<div class="search-disclose-btn-more">Advanced Search</div>',
+            '<div class="search-disclose-btn-less" style="display: none;">Basic Search</div>',
+            '<div class="search-disclose-container">',
+              '<div class="search-disclose" style="display: none;">',
+                '{{> advancedSearch }}',
+              '</div>',
+            '</div>',
           '</div>',
         '</div>',
           '<div class="select-results">',
