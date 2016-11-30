@@ -261,3 +261,8 @@
 .ui-tooltip-content {
   margin: 0 5px;
 }
+
+.external-link {
+  color: blue;
+  text-decoration: underline;
+}
