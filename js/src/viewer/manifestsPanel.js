@@ -189,21 +189,19 @@
       this.element.find('#manifest-search-form').on('submit', function(event) {
         event.preventDefault();
         var searchTerm = jQuery("#manifest-search").val();
+        var doAdvancedSearch = _this.element.find(".search-disclose").css("display") !== "none";
 
+        if (doAdvancedSearch) {
+          _this.performAdvancedSearch();
+          return;
+        }
         if (!searchTerm || searchTerm.length === 0) {
           return;
         }
 
         // Do searchy stuff
-        var doAdvancedSearch = _this.element.find(".search-disclose").css("display") !== "none";
-
         var serviceId = jQuery("#search-service-select").val();
         _this.getSearchService(serviceId).done(function(service) {
-          if (doAdvancedSearch) {
-            _this.performAdvancedSearch();
-            return;
-          }
-
           if (service.getDefaultFields().length === 0) {
             // jQuery(_this.messages['no-defaults']).appendTo(messages);
             console.log("[ManifestsPanel] No default search fields specified " +
