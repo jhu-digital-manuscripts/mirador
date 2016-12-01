@@ -25,6 +25,14 @@
   margin-right: 25px;
 }
 
+#manifest-search-form .messages {
+  display: inline-block;
+  color: red;
+  font-size: 12px;
+  font-style: italic;
+  margin-left: 64px;
+}
+
 #load-controls button {
   height: 29px;
   padding: 3px 12px;

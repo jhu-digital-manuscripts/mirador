@@ -191,11 +191,14 @@
         var searchTerm = jQuery("#manifest-search").val();
         var doAdvancedSearch = _this.element.find(".search-disclose").css("display") !== "none";
 
+        _this.clearMessages();
+
         if (doAdvancedSearch) {
           _this.performAdvancedSearch();
           return;
         }
         if (!searchTerm || searchTerm.length === 0) {
+          _this.showMessage("No search terms found.");
           return;
         }
 
@@ -255,11 +258,14 @@
 
       this.element.find('.advanced-search-add-btn').on('click', function(e) {
         e.preventDefault();
+        _this.clearMessages();
         _this.addAdvancedSearchLine();
       });
 
       this.element.find('.advanced-search-reset-btn').on('click', function(e) {
         e.preventDefault();
+        _this.clearMessages();
+
         _this.element.find('.advanced-search-line').each(function(index, line) {
           jQuery(line).remove();
         });
@@ -352,6 +358,8 @@
 
         if (finalQuery && finalQuery.length > 0) {
           _this.doSearch(service, finalQuery);
+        } else {
+          _this.showMessage("Cannot do advanced search, no search terms found.");
         }
       });
     },
@@ -371,9 +379,17 @@
         .append(jQuery("<option value=\"" + id + "\">" + label + "</option>"));
 
       if (!this.advancedSearchSet) {
-        this.getSearchService(id).done(function(searchService) {
-          _this.addAdvancedSearchLine();
-        });
+        this.switchSearchServices(id);
+        // this.getSearchService(id).done(function(searchService) {
+          // var description_template = Handlebars.compile('{{> searchDescription}}');
+          //
+          // this.element.tooltip({
+          //   items: '.search-description-icon',
+          //   content: description_template(service.search.settings.fields),
+          //   position: { my: "left+20 top", at: "right top-50" },
+          // });
+          // _this.addAdvancedSearchLine();
+        // });
         this.advancedSearchSet = true;
       }
     },
@@ -578,6 +594,7 @@
           var element = line.find(_this.classNamesToSelector(field.class));
 
           element.keypress(function(event) {
+            _this.clearMessages();
             if (event.which == 13) {
               event.preventDefault();
               _this.performAdvancedSearch();
@@ -592,6 +609,7 @@
         // Add functionality to 'remove' button
         line.find('.advanced-search-remove').on('click', function() {
           line.remove();
+          _this.clearMessages();
 
           // Make sure 1st line has boolean operator hidden
           _this.element.find('.advanced-search-line').each(function(index, element) {
@@ -606,6 +624,7 @@
         line.find('.advanced-search-categories').on('change', function(event) {
           var jSelector = jQuery(event.target);
           var user_inputs = line.find('.advanced-search-inputs');
+          _this.clearMessages();
 
           // Hide all input/select fields
           user_inputs.children().hide();
@@ -639,6 +658,16 @@
     show: function() {
       var _this = this;
       jQuery(this.element).show({effect: "fade", duration: 160, easing: "easeInCubic"});
+    },
+
+    clearMessages: function() {
+      this.element.find(".messages").empty();
+    },
+
+    showMessage: function(message) {
+      if (message && message.length > 0) {
+        this.element.find(".messages").text(message);
+      }
     },
 
     resultsPagerText: Handlebars.compile([
@@ -762,6 +791,7 @@
               '<button type="submit">',
                 '<i class="fa fa-lg fa-search"></i>',
               '</button>',
+              '<p class="messages"></p>',
             '</form>',
             '<div class="search-disclose-btn-more">Advanced Search</div>',
             '<div class="search-disclose-btn-less" style="display: none;">Basic Search</div>',
