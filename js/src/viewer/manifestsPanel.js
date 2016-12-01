@@ -55,8 +55,8 @@
 // -----------------------------------------------------------------------------
 // ----- REMOVE ----------------------------------------------------------------
       this.addSearchService({
-        "id": "http://localhost:8080/iiif-pres/collection/top/jhsearch",
-        // "id": "http://rosetest.library.jhu.edu/iiif-pres/collection/top/jhsearch",
+        // "id": "http://localhost:8080/iiif-pres/collection/top/jhsearch",
+        "id": "http://rosetest.library.jhu.edu/iiif-pres-cni/collection/top/jhsearch",
         "label": "All JHU collections"
       });
 // -----------------------------------------------------------------------------
@@ -236,17 +236,17 @@
       }, 50, true));
 
       this.element.find('.search-disclose-btn-more').on('click', function() {
-        // _this.element.find('#search-form').hide('fast');
-        _this.element.find('.search-disclose').show('fast');
         _this.element.find('.search-disclose-btn-more').hide();
         _this.element.find('.search-disclose-btn-less').show();
+        _this.element.find(".search-disclose").css({"display": "block"});
+        _this.setResultsContainerPosition();
       });
 
       this.element.find('.search-disclose-btn-less').on('click', function() {
-        // _this.element.find('#search-form').show('fast');
-        _this.element.find('.search-disclose').hide('fast');
         _this.element.find('.search-disclose-btn-less').hide();
         _this.element.find('.search-disclose-btn-more').show();
+        _this.element.find(".search-disclose").css({"display": "none"});
+        _this.setResultsContainerPosition();
       });
     },
 
@@ -430,6 +430,16 @@
         this.perPageCount = searchResults.max_matches || searchResults.matches.length;
       }
 
+      this.element.find(".browser-search-results").show();
+      new $.BrowserSearchResults({
+        appendTo: _this.element.find(".results-items"),
+        viewer: _this.parent,
+        searchResults: searchResults,
+        hideParent: _this.hide,
+        manifestListItems: _this.manifestListItems
+      });
+      this.setResultsContainerPosition();
+
       if (this.needsPager(searchResults)) {
         var pagerText = this.element.find(".results-pager-text");
         pagerText.empty();
@@ -444,34 +454,36 @@
       } else {
         this.hidePager();
       }
-
-      this.element.find(".browser-search-results").show();
-      new $.BrowserSearchResults({
-        appendTo: _this.element.find(".results-items"),
-        viewer: _this.parent,
-        searchResults: searchResults,
-        hideParent: _this.hide,
-        manifestListItems: _this.manifestListItems
-      });
     },
 
     showPager: function() {
+      this.pagerVisible = true;
       this.element.find(".results-pager").show();
       this.element.find(".results-pager-text").show();
       this.element.find(".results-items").css("top", this.getResultsTop() + "px");
     },
 
     hidePager: function() {
+      this.pagerVisible = false;
       this.element.find(".results-pager").hide();
       this.element.find(".results-pager-text").hide();
-      this.element.find(".results-items").css("top", this.getResultsTop + "px");
+      this.element.find(".results-items").css("top", this.getResultsTop() + "px");
     },
 
     getResultsTop: function() {
-      return this.element.find(".controls").outerHeight(true) +
-          this.element.find(".advanced-search").outerHeight(true) +
-          this.element.find(".results-pager").outerHeight(true) +
-          this.element.find(".results-pager-text").outerHeight(true);
+      var h = this.element.find(".controls").outerHeight(true);
+
+      if (this.pagerVisible) {
+        h += this.element.find(".results-pager").outerHeight(true) +
+            this.element.find(".results-pager-text").outerHeight(true);
+      }
+
+      return h;
+    },
+
+    setResultsContainerPosition: function() {
+      this.element.find(".browser-search-results")
+        .css("top", this.element.find(".manifest-panel-controls").outerHeight(true)+"px");
     },
 
     /**
@@ -601,6 +613,8 @@
               .show();
         });
       });
+
+      this.setResultsContainerPosition();
     },
 
     classNamesToSelector: function(name) {
