@@ -482,8 +482,9 @@
     },
 
     setResultsContainerPosition: function() {
-      this.element.find(".browser-search-results")
-        .css("top", this.element.find(".manifest-panel-controls").outerHeight(true)+"px");
+      var h = this.element.find(".manifest-panel-controls").outerHeight(true) + 16;
+      this.element.find(".browser-search-results").css("top", h+"px");
+      this.element.find(".select-results").css("top", h+"px");
     },
 
     /**
