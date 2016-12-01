@@ -96,7 +96,6 @@
         }
 
         $.viewer.workspace.addWindow(windowConfig);
-        _this.hideParent();
       });
     },
 
@@ -109,6 +108,7 @@
         return relevant[0].manifest;
       } else {
         // TODO Will there be cases where results are from manifests not already included in 'manifestListItems' ?
+        console.error("[BrowserSearchResults] No manifest was found. " + manifestId);
         return null;
       }
     },
