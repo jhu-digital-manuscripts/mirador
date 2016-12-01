@@ -135,7 +135,7 @@
 
         advancedSearchEl.empty();
         advancedSearchEl.append(
-          Handlebars.compile("{{> advancedSearch}}")(templateData)
+          Handlebars.compile("{{> browserAdvancedSearch}}")(templateData)
         );
       }
 
@@ -650,7 +650,7 @@
     registerWidget: function() {
       $.registerHandlebarsHelpers();
 
-      Handlebars.registerPartial('advancedSearch', [
+      Handlebars.registerPartial('browserAdvancedSearch', [
         '<div class="advanced-search">',
           '<i class="fa fa-2x fa-question-circle search-description-icon" title="This is a title."></i>',
           '<form id="advanced-search-form" class="perform-advanced-search">',
@@ -767,7 +767,7 @@
             '<div class="search-disclose-btn-less" style="display: none;">Basic Search</div>',
             '<div class="search-disclose-container">',
               '<div class="search-disclose" style="display: none;">',
-                '{{> advancedSearch }}',
+                '{{> browserAdvancedSearch }}',
               '</div>',
             '</div>',
           '</div>',
