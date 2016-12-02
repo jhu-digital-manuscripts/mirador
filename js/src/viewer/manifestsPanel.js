@@ -619,6 +619,7 @@
               jQuery(element).find('.advanced-search-operators').show();
             }
           });
+          _this.setResultsContainerPosition();
         });
 
         line.find('.advanced-search-categories').on('change', function(event) {
@@ -689,8 +690,12 @@
               '</tbody></table>',
             '</div>',
             '<div class="advanced-search-btn-container">',
-              '<button type="button" class="advanced-search-add-btn" value="add">Add Term</button>',
-              '<button type="button" class="advanced-search-reset-btn">Reset</button>',
+              '<button type="button" class="advanced-search-add-btn" value="add">',
+                '<i class="fa fa-lg fa-plus" title="Add search term"></i>',
+              '</button>',
+              '<button type="button" class="advanced-search-reset-btn">',
+                '<i class="fa fa-lg fa-undo" title="Reset advanced search"></i>',
+              '</button>',
             '</div>',
           '</form>',
         '</div>'
@@ -715,7 +720,9 @@
           '</div>',
         '</td>',
         '<td>',
-          '<button class="advanced-search-remove" type="button"><i class="fa fa-times"></i></button>',
+          '<button class="advanced-search-remove" type="button" title="Remove this search term">',
+            '<i class="fa fa-times"></i>',
+          '</button>',
         '</td></tr>',
       ].join(''));
 

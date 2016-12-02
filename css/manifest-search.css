@@ -7,6 +7,10 @@
   margin-top: 0;
 }
 
+#manifest-select-menu .advanced-search-btn-container button {
+  margin-right: 12px;
+}
+
 #load-controls select {
   height: 29px;
   padding: 1px 6px;
