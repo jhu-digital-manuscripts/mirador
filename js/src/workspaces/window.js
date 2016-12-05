@@ -667,7 +667,7 @@
       var _this = this;
       this.currentCanvasID = canvasID;
       jQuery.publish('removeTooltips.' + _this.id);
-      jQuery.unsubscribe(('annotationListLoaded.' + _this.id));
+      // jQuery.unsubscribe(('annotationListLoaded.' + _this.id));
       while(_this.annotationsList.length > 0) {
         _this.annotationsList.pop();
       }
@@ -754,7 +754,7 @@ console.log('[Window] setting canvas ID -> ' + canvasID);
             // indicate this is a manifest annotation - which affects the UI
             value.endpoint = "manifest";
           });
-          jQuery.publish('annotationListLoaded.' + _this.id);
+          jQuery.publish('annotationListLoaded.' + _this.id, {"annotations": _this.annotationsList});
         });
       }
 
