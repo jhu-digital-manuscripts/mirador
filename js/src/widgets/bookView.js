@@ -327,7 +327,9 @@
       });
       this.parent.updateFocusImages(this.focusImages);
       // Request that annotation lists from both images are loaded
-      jQuery.publish("requestAnnotationLists." + _this.windowId, {"requests": stitchList});
+      jQuery.publish("requestAnnotationLists." + _this.windowId,
+        {"requests": stitchList.map(function(el) { return el["@id"]; })}
+      );
       return stitchList;
     }
   };

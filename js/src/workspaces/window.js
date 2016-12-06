@@ -750,10 +750,14 @@ console.log('[Window] setting canvas ID -> ' + canvasID);
        Merge all annotations for current image/canvas from various sources
        Pass to any widgets that will use this list
        */
-    getAnnotations: function() {
+    getAnnotations: function(canvasId) {
       //first look for manifest annotations
+      if (!canvasId || canvasId.length === 0) {
+        canvasId = this.currentCanvasID;
+      }
+
       var _this = this,
-          url = _this.manifest.getAnnotationsListUrl(_this.currentCanvasID);
+          url = _this.manifest.getAnnotationsListUrl(canvasId);
 
       if (url !== false) {
         jQuery.get(url, function(list) {
@@ -766,7 +770,12 @@ console.log('[Window] setting canvas ID -> ' + canvasID);
             // indicate this is a manifest annotation - which affects the UI
             value.endpoint = "manifest";
           });
-          jQuery.publish('annotationListLoaded.' + _this.id, {"annotations": _this.annotationsList});
+          jQuery.publish('annotationListLoaded.' + _this.id,
+              {
+                "annotations": _this.annotationsList,
+                "canvas": _this.manifest.getCanvasLabel(canvasId)
+              }
+          );
         });
       }
 
