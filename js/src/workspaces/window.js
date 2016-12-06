@@ -296,6 +296,18 @@
 
     bindAnnotationEvents: function() {
       var _this = this;
+
+      jQuery.subscribe("requestAnnotationLists." + _this.id, function(event, data) {
+        _this.annotationsList.length = 0;
+        // calling #getAnnotations() will publish events: annotationListLoaded.<windowId>
+        if (Array.isArray(data.requests)) {
+          data.requests.forEach(function(req) { _this.getAnnotations(req); });
+        } else if (typeof data.requests === 'string') {
+          _this.getAnnotations(data.requests);
+        }
+        // If data.requests is a non-string/non-array object, do nothing
+      });
+
       jQuery.subscribe('annotationCreated.'+_this.id, function(event, oaAnno, osdOverlay) {
         var annoID;
         //first function is success callback, second is error callback

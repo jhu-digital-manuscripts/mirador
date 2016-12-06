@@ -30,7 +30,7 @@
 
   $.BookView.prototype = {
 
-    init: function() {
+    init: function() {console.log("[BookView] init");
       if (this.canvasID !== null) {
         this.currentImgIndex = $.getImageIndexById(this.imagesList, this.canvasID);
       }
@@ -122,7 +122,7 @@
       this.currentImg = this.imagesList[this.currentImgIndex];
       var newList = this.getStitchList();
       var is_same = this.stitchList.length == newList.length && this.stitchList.every(function(element, index) {
-        return element === newList[index]; 
+        return element === newList[index];
       });
       if (!is_same) {
         this.stitchList = newList;
@@ -244,6 +244,11 @@
       }
     },
 
+    /**
+     *
+     *
+     * @return list of canvases to stitch together
+     */
     getStitchList: function() {
       // Need to check metadata for object type and viewing direction
       // Default to 'paged' and 'left-to-right'
@@ -321,6 +326,8 @@
         _this.focusImages.push(image['@id']);
       });
       this.parent.updateFocusImages(this.focusImages);
+      // Request that annotation lists from both images are loaded
+      jQuery.publish("requestAnnotationLists." + _this.windowId, {"requests": stitchList});
       return stitchList;
     }
   };
