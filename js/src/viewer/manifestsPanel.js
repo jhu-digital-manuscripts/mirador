@@ -242,6 +242,8 @@
         _this.element.find('.search-disclose-btn-more').hide();
         _this.element.find('.search-disclose-btn-less').show();
         _this.element.find(".search-disclose").css({"display": "block"});
+        _this.element.find("#manifest-search").prop("disabled", true);
+        _this.element.find("#manifest-search").addClass("disabled");
         _this.setResultsContainerPosition();
       });
 
@@ -249,6 +251,8 @@
         _this.element.find('.search-disclose-btn-less').hide();
         _this.element.find('.search-disclose-btn-more').show();
         _this.element.find(".search-disclose").css({"display": "none"});
+        _this.element.find("#manifest-search").prop("disabled", false);
+        _this.element.find("#manifest-search").removeClass("disabled");
         _this.setResultsContainerPosition();
       });
     },

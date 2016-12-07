@@ -1,3 +1,11 @@
+#load-controls input {
+  color: black;
+}
+
+#load-controls input.disabled {
+  opacity: 0.25;
+}
+
 #manifest-select-menu .select-results {
   position: absolute;
   top: 145px;

@@ -42,7 +42,8 @@ $.SearchWidget = function(options) {
   //   "label": "Roman de la Rose collection"
   // });
   this.searchServices.push({
-    "id": "http://localhost:8080/iiif-pres/collection/top/jhsearch",
+    // "id": "http://localhost:8080/iiif-pres/collection/top/jhsearch",
+    "id": "http://rosetest.library.jhu.edu/iiif-pres-cni/collection/top/jhsearch",
     "label": "All JHU collections"
   });
 // -----------------------------------------------------------------------------
