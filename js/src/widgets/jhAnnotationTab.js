@@ -51,6 +51,7 @@
       var annotations = [];
       var appendTo = this.appendTo.find('ul.annotations');
 
+      this.appendTo.find(".messages").empty();
       appendTo.empty();
       appendTo.scrollTop(0);
 
