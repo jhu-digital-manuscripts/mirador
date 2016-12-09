@@ -15,7 +15,8 @@
       windowId:             null,
       panel:                false,
       lazyLoadingFactor:    1.5,  //should be >= 1
-      eventEmitter:         null
+      eventEmitter:         null,
+      pinned:               false,
     }, options);
 
     this.init();
@@ -122,14 +123,24 @@
       //add any other events that would trigger thumbnail display (resize, etc)
 
       _this.element.find('.thumbnail-image').on('click', function() {
+        if (_this.pinned) {
+          return;
+        }
+
         var canvasID = jQuery(this).attr('data-image-id');
         _this.eventEmitter.publish('SET_CURRENT_CANVAS_ID.' + _this.windowId, canvasID);
+      });
+
+      jQuery.subscribe('windowPinned', function(event, data) {
+        if (data.windowId == _this.parent.id) {
+          _this.pinned = data.status;
+        }
       });
     },
 
     toggle: function(stateValue) {
-      if (stateValue) { 
-        this.show(); 
+      if (stateValue) {
+        this.show();
       } else {
         this.hide();
       }

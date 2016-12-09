@@ -77,7 +77,9 @@
         availableAnnotationStylePickers: this.state.getStateProperty('availableAnnotationStylePickers'),
         availableAnnotationTools: this.availableAnnotationTools,
         state: this.state,
-        eventEmitter: this.eventEmitter
+        eventEmitter: this.eventEmitter,
+        fullScreenAvailable : this.fullScreenAvailable,
+        editorPanelConfig: this.editorPanelConfig
       });
 
       this.bindEvents();

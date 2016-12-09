@@ -425,7 +425,8 @@
           state: _this.state,
           appendTo: slot.element,
           canvasID: window.canvasID,
-          viewType: window.viewType
+          viewType: window.viewType,
+          pinned: window.pinned
         });
       });
     },
@@ -476,6 +477,9 @@
 
       if (targetSlot.window) {
         _this.eventEmitter.publish('REMOVE_WINDOW', targetSlot.window.id);
+      }
+      if (_this.editorPanelConfig) {
+        windowConfig.editorPanelConfig = _this.editorPanelConfig;
       }
 
       windowConfig.slotAddress = targetSlot.layoutAddress;

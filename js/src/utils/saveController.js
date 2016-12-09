@@ -108,6 +108,10 @@
        history.replaceState(this.currentConfig, "Mirador Session", cleanURL+"#"+this.sessionID);
       }
 
+      if (config.editorPanel) {
+        this.currentConfig.editorPanelConfig = config.editorPanelConfig;
+      }
+
       this.bindEvents();
 
     },

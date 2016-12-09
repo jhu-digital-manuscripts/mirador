@@ -27,7 +27,9 @@
     "URIjs": "https://github.com/medialize/URI.js.git#~1.13.2",
     "paper": "git://github.com/paperjs/paper.js.git#*",
     "spectrum": "git://github.com/bgrins/spectrum.git#*",
-    "qtip2": "~2.2.1"
+    "qtip2": "~2.2.1",
+    "jQuery-contextMenu": "^2.1.1",
+    "simplePagination.js": "jquery.simplePagination#*"
   },
   "resolutions": {
     "jquery": ">=1.7.2"

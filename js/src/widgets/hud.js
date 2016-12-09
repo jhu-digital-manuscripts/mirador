@@ -7,7 +7,9 @@
       windowId:  null,
       annoState: null,
       annoEndpointAvailable: false,
-      eventEmitter: null
+      eventEmitter: null,
+      fullScreenAvailable: true,
+      pinned: false
     }, options);
 
     this.init();
@@ -24,7 +26,8 @@
         showNextPrev : this.showNextPrev,
         showBottomPanel : typeof this.bottomPanelAvailable === 'undefined' ? true : this.bottomPanelAvailable,
         showAnno : showAnno,
-        showImageControls : showImageControls
+        showImageControls : showImageControls,
+        showFullScreen : this.fullScreenAvailable
       })).appendTo(this.appendTo);
 
       if (showAnno || showImageControls) {
@@ -44,7 +47,67 @@
       }
 
       this.listenForActions();
-      this.bindEvents();
+    },
+
+    togglePinned: function(isPinned) {
+      this.pinned = isPinned;
+    },
+
+    /**
+     * Go to zero degrees rotation of the image in OpenSeadragon.
+     * The number of degrees to rotate is calculated based on current
+     * rotation.
+     *
+     * @param  integer animationTime animation time in milliseconds (ms)
+     * @return NONE
+     */
+    goHomeRotation: function(animationTime) {
+      var viewport = this.parent.osd.viewport;
+
+      var currentDeg = viewport.getRotation() % 360;
+
+      var clockwise = 360 - currentDeg;
+      var counterClockwise = currentDeg;
+
+      var degrees = Math.min(clockwise, counterClockwise);
+      if (degrees === counterClockwise) {
+        degrees *= -1;
+      }
+
+      this.setImageRotation(degrees, animationTime);
+    },
+
+    /**
+     * Rotate the image in OpenSeadragon by the specified number of
+     * degrees (-360, 360). If zero animation time is specified, there
+     * will be no animation.
+     *
+     * @param  integer degrees       amount to rotate image in degrees
+     * @param  integer animationTime time to complete rotation animation in milliseconds (ms)
+     * @return NONE
+     */
+    setImageRotation: function(degrees, animationTime) {
+      var _this = this;
+      var animationFactor = 30;
+      var viewport = this.parent.osd.viewport;
+
+      if (animationTime !== 0) {
+        animationTime = animationTime / animationFactor;
+        degrees = degrees / animationFactor;
+
+        var iteration = 1;
+        var interval = window.setInterval(function() {
+          if (iteration++ > animationFactor) {
+            window.clearInterval(interval);
+            return;
+          }
+
+          viewport.setRotation(viewport.getRotation() + degrees);
+        },
+        animationTime);
+      } else {
+        viewport.setRotation(viewport.getRotation() + degrees);
+      }
     },
 
     listenForActions: function() {
@@ -66,10 +129,12 @@
           _this.annoState.choosePointer();
         }
       });
-    },
 
-    bindEvents: function() {
-      var _this = this;
+      this.eventEmitter.subscribe('windowPinned', function(event, data) {
+        if (_this.windowId === data.windowId) {
+          _this.togglePinned(data.status);
+        }
+      });
     },
 
     createStateMachines: function() {
@@ -259,7 +324,13 @@
                                  '<i class="fa fa-minus-circle"></i>',
                                  '</a>',
                                  '<a class="mirador-osd-go-home hud-control" role="button" aria-label="Reset image bounds">',
-                                 '<i class="fa fa-home"></i>',
+                                 '<i class="fa fa-refresh"></i>',
+                                 '<a class="mirador-osd-rotate-left hud-control ">',
+                                 '<i class="fa fa-3x fa-rotate-left "></i>',    // Rotate right icon
+                                 '</a>',
+                                 '<a class="mirador-osd-rotate-right hud-control ">',
+                                 '<i class="fa fa-3x fa-rotate-right "></i>',    // Rotate right icon
+                                 '</a>',
                                  '</a>',
                                  '</div>',
                                  '</div>'

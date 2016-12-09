@@ -83,7 +83,7 @@
         bindEvents: function() {
             var _this = this;
             //change 'change-layout' to mouseover events rather than click?
-            this.element.find('.change-layout').on('click', function() { 
+            this.element.find('.change-layout').on('click', function() {
               _this.eventEmitter.publish('TOGGLE_WORKSPACE_PANEL');
               //remove active class from other buttons
               _this.element.find('.bookmark-workspace').removeClass('active');
@@ -94,7 +94,7 @@
               }
             });
 
-            this.element.find('.bookmark-workspace').on('click', function() { 
+            this.element.find('.bookmark-workspace').on('click', function() {
               _this.eventEmitter.publish('TOGGLE_BOOKMARK_PANEL');
               //remove active class from other buttons
               _this.element.find('.change-layout').removeClass('active');

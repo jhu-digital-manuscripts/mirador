@@ -1,4 +1,4 @@
-(function($) {
+   (function($) {
 
     $.AnnotationsTab = function(options) {
         jQuery.extend(true, this, {
@@ -45,7 +45,6 @@
         },
         loadTabComponents: function() {
             var _this = this;
-
         },
         tabStateUpdated: function(visible) {
             var localState = this.localState();
@@ -141,6 +140,12 @@
                 _this.deselectList(listId);
             });
 
+            jQuery.subscribe('editorPanelToggled.' + _this.windowId, function(event, status) {
+                if (!status) {
+                    _this.deselectList(_this.state().selectedList);
+                }
+            });
+
         },
         bindEvents: function() {
             var _this = this,
@@ -157,6 +162,14 @@
                     _this.eventEmitter.publish('listSelected.' + _this.windowId, listClicked);
                 }
 
+            });
+
+            jQuery.subscribe('tabSelected.' + this.windowId, function(event, data) {
+              if (data.id === _this.annoTabState.id) {
+                _this.element.show();
+              } else {
+                _this.element.hide();
+              }
             });
 
         },
@@ -176,20 +189,23 @@
 
             if (state.visible) {
                 this.element.show();
-            } else {
-                this.element.hide();
             }
+
+            // TODO why is state.visible ALWAYS false(or undefined) only after changing manifests??
+            //else {
+            //    this.element.hide();
+            //}
         },
         template: Handlebars.compile([
-            '<div class="annotationsPanel">',
+          '<div class="annotationsPanel">',
             '<ul class="annotationSources">',
-            '{{#each annotationSources}}',
-            '<li class="annotationListItem {{#if this.selected}}selected{{/if}} {{#if this.focused }}focused{{/if}}" data-id="{{this.annotationSource}}">',
-                    '<span>{{this.annotationSource}}</span>',
-            '</li>',
-            '{{/each}}',
+              '{{#each annotationSources}}',
+                '<li class="annotationListItem {{#if this.selected}}selected{{/if}} {{#if this.focused }}focused{{/if}}" data-id="{{this.annotationSource}}">',
+                  '<span>{{this.annotationSource}}</span>',
+                '</li>',
+              '{{/each}}',
             '</ul>',
-            '</div>',
+          '</div>',
         ].join(''))
     };
 

@@ -6,7 +6,7 @@
 
       jQuery.extend({
         preserveViewport: true,
-        visibilityRatio:  1,
+        visibilityRatio:  0.6,
         minZoomLevel:     0,
         defaultZoomLevel: 0,
         blendTime:        0.1,

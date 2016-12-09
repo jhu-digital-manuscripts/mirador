@@ -4,6 +4,13 @@
     return str.replace(/^\s+|\s+$/g, '');
   };
 
+$.objectArrayIndexOf = function(myArray, searchTerm, property) {
+    for(var i = 0, len = myArray.length; i < len; i++) {
+        if (myArray[i][property] === searchTerm) return i;
+    }
+    return -1;
+};
+
   /* --------------------------------------------------------------------------
      Methods related to manifest data
      -------------------------------------------------------------------------- */
@@ -56,9 +63,9 @@
     return thumbnailUrl;
   };
 
-  /* 
-     miscellaneous utilities
-     */
+  /*
+   miscellaneous utilities
+   */
 
   $.getQueryParams = function(url) {
     var assoc  = {};
@@ -191,17 +198,17 @@
     // Javascript does not have range expansions quite yet,
     // long live the humble for loop.
     // Use a closure to contain the column and row variables.
-    for (var i = 0, c = columns; i < c; i++) { 
+    for (var i = 0, c = columns; i < c; i++) {
       var column = { type: 'column'};
 
       if (rowsPerColumn > 1) {
         column.children = [];
-        for (var j = 0, r = rowsPerColumn; j < r; j++) { 
+        for (var j = 0, r = rowsPerColumn; j < r; j++) {
           column.children.push({
             type: 'row'
           });
         }
-      } 
+      }
 
       layoutDescription.children.push(column);
     }
@@ -259,6 +266,53 @@
 
   $.fullscreenElement = function() {
     return (document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement);
+  };
+
+  $.registerHandlebarsHelpers = function() {
+    /**
+     * Handlebars helper that allows the evaluation of 2 input boolean comparisons.
+     * Follows standard JS rules. Due to the way Handlebars helpers handles
+     * parameters, the operator must be surrounded by quotes, either double or
+     * single.
+     *
+     * Possible operators:
+     * 	* '=='    equals
+     * 	* '==='   strict equals
+     * 	* '<'     less than
+     * 	* '<='    less than or equal to
+     * 	* '>'     greater than
+     * 	* '>='    greater than or equal to
+     * 	* '&&'    AND
+     * 	* '||'    OR
+     *
+     * To use, in a Handlebars template:
+     * 		{{#ifCond var1 OPERATOR var2}}
+     * Example:
+     * 		{{#ifCond v1 '===' v2}}
+     */
+    Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
+      switch (operator) {
+        case '==':
+          return (v1 == v2) ? options.fn(this) : options.inverse(this);
+        case '===':
+          return (v1 === v2) ? options.fn(this) : options.inverse(this);
+        case '<':
+          return (v1 < v2) ? options.fn(this) : options.inverse(this);
+        case '<=':
+          return (v1 <= v2) ? options.fn(this) : options.inverse(this);
+        case '>':
+          return (v1 > v2) ? options.fn(this) : options.inverse(this);
+        case '>=':
+          return (v1 >= v2) ? options.fn(this) : options.inverse(this);
+        case '&&':
+          return (v1 && v2) ? options.fn(this) : options.inverse(this);
+        case '||':
+          return (v1 || v2) ? options.fn(this) : options.inverse(this);
+        default:
+          return options.inverse(this);
+      }
+    });
+    
   };
 
 }(Mirador));

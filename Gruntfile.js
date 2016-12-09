@@ -39,7 +39,9 @@ module.exports = function(grunt) {
     'js/lib/paper-full.min.js',
     'js/lib/spectrum.js',
     'js/lib/i18next.min.js',
-    'js/lib/modernizr.custom.js'
+    'js/lib/modernizr.custom.js',
+    'bower_components/simplePagination.js/jquery.simplePagination.js',
+    'bower_components/jQuery-contextMenu/dist/*.js'
   ],
 
   // source files
@@ -87,7 +89,10 @@ module.exports = function(grunt) {
           'css/jquery.qtip.min.css',
           'css/spectrum.css',
           'css/mirador.css',
-          'css/material-icons.css'
+          'css/material-icons.css',
+          'bower_components/simplePagination.js/simplePagination.css',
+          'bower_components/jQuery-contextMenu/dist/*.css',
+          'css/aor.css'
         ],
         dest: 'build/mirador/css/mirador-combined.css'
       }

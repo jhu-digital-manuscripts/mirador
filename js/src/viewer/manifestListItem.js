@@ -189,7 +189,7 @@
         if (newMaxPreviewWidth < _this.maxPreviewImagesWidth ) {
           while (_this.imagesTotalWidth >= newMaxPreviewWidth) {
             image = _this.tplData.images.pop();
-            
+
             if (image) {
               _this.imagesTotalWidth -= (image.width + _this.margin);
 

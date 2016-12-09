@@ -4,6 +4,7 @@
 
     jQuery.extend(true, this, {
       annotationsList:   null,
+      currentAnnosList:  null,
       viewer:            null,
       drawTool:          null,
       selected:          null,
@@ -43,7 +44,25 @@
         _this.annotationsList = _this.state.getWindowAnnotationsList(_this.windowId);
         _this.updateRenderer();
       });
+
     },
+    // filterList: function(listId){
+    //   var _this = this;
+    //
+    //   var window = $.viewer.workspace.windows
+    //     // Return array of only those 'windows' whose ID matches the current window ID
+    //     .filter(function(window) { return window.id == _this.windowId; }
+    //   );
+    //
+    //   var annos = null;
+    //
+    //   if(listId === null){
+    //     annos = window[0].annotationsList;
+    //   }else{
+    //     annos = window[0].annotationsList.filter(function(annotation){
+    //       if(annotation.endpoint === listId){
+    //         return true;
+    //       }
 
     bindEvents: function() {
       var _this = this;
@@ -89,6 +108,7 @@
         osdViewer: _this.viewer,
         parent: _this,
         list: _this.annotationsList, // must be passed by reference.
+        //list: _this.parent.parent.editorPanel.state.annotations,
         visible: false,
         windowId: _this.windowId,
         state: _this.state,

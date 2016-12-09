@@ -40,7 +40,8 @@
         jsonLd: null,
         location: location,
         uri: manifestUri,
-        request: null
+        request: null,
+        canvasMap: null
       });
 
       this.init(manifestUri);
@@ -58,6 +59,15 @@
 
       this.request.done(function(jsonLd) {
         _this.jsonLd = jsonLd;
+        _this.buildCanvasMap();
+      });
+    },
+    buildCanvasMap: function() {
+      var _this = this;
+      this.canvasMap = {};
+
+      this.getCanvases().forEach(function(canvas) {
+        _this.canvasMap[canvas['@id']] = canvas;
       });
     },
     initFromInfoJson: function(infoJsonUrl) {
@@ -193,7 +203,103 @@
       };
 
       return dummyManifest;
+    },
+    // my added function
+
+    /**
+     * Get the search service definition from this manifest.
+     *
+     * @return {obect} service - service definition including @context, @id, profile
+     */
+    getSearchWithinService: function() {
+      var _this = this;
+      var serviceProperty = _this.jsonLd.service;
+
+      var service = {};
+      if (Array.isArray(serviceProperty)) {
+        serviceProperty
+        .filter(function(service) { return service['@context'] === "http://iiif.io/api/search/0/context.json"; })
+        .forEach(function(service) {
+          _this.service = service;
+          _this.service.label = _this.jsonLd.label;
+        });
+      }
+      else if (serviceProperty["@context"] === "http://iiif.io/api/search/0/context.json" ||
+          serviceProperty["@context"] === "http://manuscriptlib.org/jhiff/search/context.json") {
+        service = _this.jsonLd.service;
+        service.label = this.jsonLd.label;
+      }
+      else {
+        //no service object with the right context is found
+        service = null;
+      }
+      return service;
+    },
+
+    getSearchWithinInfoUrl: function() {
+      var url = this.getSearchWithinService()['@id'];
+      return (url.charAt(url.length - 1) === '/' ? url : url + '/') + 'info.json';
+    },
+
+    /**
+     * Get all annotation lists for the given canvas. Each canvas can define
+     * zero or more annotation lists for transcriptions or annotations under
+     * its 'otherContent' property. If exactly one is defined, this
+     * property will be a simple string. If more than one are defined, it
+     * will be an array of strings. If no annotation lists are defined,
+     * return UNDEFINED.
+     *
+     * @param  string canvasId URI ID
+     * @return single annotation list ID or array of IDs
+     */
+    getAnnotationLists: function(canvasId) {
+      console.assert(canvasId && canvasId !== '', '[Manifest#getAnnotationLists] "canvasId" must be specified.');
+      var canvas = this.canvasMap[canvasId.split('#')[0]];
+
+      if (canvas && canvas.otherContent) {
+        if (Array.isArray(canvas.otherContent)) {
+          var results = [];
+
+          canvas.otherContent
+          // .filter(function(content) {
+          //   return content['@type'] === 'sc:AnnotationList';
+          // })
+          .forEach(function(content) {
+            results.push(content['@id']);
+          });
+
+          return results;
+        } else if (typeof canvas.otherContent === 'object') {
+          return canvas.otherContent['@id'];
+        } else if (typeof canvas.otherContent === 'string') {
+          return canvas.otherContent;
+        }
+      }
+    },
+
+    /**
+     * Get the label of the a canvas by ID, removing any region fragments
+     * if necessary
+     *
+     * @param  {[type]} canvasId ID of desired canvas
+     * @return {[type]}          string
+     */
+    getCanvasLabel: function(canvasId) {
+      console.assert(canvasId && canvasId !== '', "No canvasId was specified.");
+      var canvas = this.canvasMap[canvasId.split('#')[0]];
+      return canvas ? canvas.label : undefined;
+    },
+
+    getId: function() {
+      return this.jsonLd['@id'];
+    },
+    getLabel: function() {
+      return this.jsonLd.label;
+    },
+    within: function() {
+      return this.jsonLd.within;
     }
+
   };
 
 }(Mirador));

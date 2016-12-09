@@ -392,6 +392,11 @@ bindEvents: function() {
       }
     },
 
+    /**
+     *
+     *
+     * @return list of canvases to stitch together
+     */
     getStitchList: function() {
       // Need to check metadata for object type and viewing direction
       // Default to 'paged' and 'left-to-right'
@@ -469,6 +474,7 @@ bindEvents: function() {
         _this.focusImages.push(image['@id']);
       });
       _this.eventEmitter.publish('UPDATE_FOCUS_IMAGES.' + this.windowId, {array: this.focusImages});
+      _this.eventEmitter.publish("requestAnnotationLists." + _this.windowId, {"requests": stitchList.map(function(el) { return el["@id"]; })});
       return stitchList;
     }
   };

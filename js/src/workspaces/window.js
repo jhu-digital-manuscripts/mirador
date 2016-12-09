@@ -20,23 +20,34 @@
       focusOverlaysAvailable: {
         'ThumbnailsView': {
           'overlay' : {'MetadataView' : false},
-          'bottomPanel' : {'' : false}
+          'sidePanel' : {'SidePanel' : false},
+          'bottomPanel' : {'' : false},
         },
         'ImageView': {
           'overlay' : {'MetadataView' : false},
-          'bottomPanel' : {'ThumbnailsView' : true}
+          'sidePanel' : {'SidePanel' : false},
+          'bottomPanel' : {'ThumbnailsView' : true},
         },
         'ScrollView': {
           'overlay' : {'MetadataView' : false},
-          'bottomPanel' : {'' : false}
+          'sidePanel' : {'TableOfContents' : false},
+          'bottomPanel' : {'' : false},
         },
         'BookView': {
           'overlay' : {'MetadataView' : false},
-          'bottomPanel' : {'ThumbnailsView' : true}
+          'sidePanel' : {'SidePanel' : false},
+          'bottomPanel' : {'ThumbnailsView' : true},
         }
       },
       windowOptions: null,
       sidePanel: null, //the actual module for the side panel
+      // sidePanelAvailable: true,
+      // sidePanelOptions: {
+      //   "toc" : true,
+      //   "annotations" : true,
+      //   "search" : true,
+      // },
+      // sidePanelVisible: false,
       annotationsAvailable: {
         'ThumbnailsView' : false,
         'ImageView' : true,
@@ -51,7 +62,21 @@
         "BookView" : "fa fa-columns fa-lg fa-fw",
         "ScrollView" : "fa fa-ellipsis-h fa-lg fa-fw",
         "ThumbnailsView" : "fa fa-th fa-lg fa-rotate-90 fa-fw"
-      }
+      },
+      // annotationState : 'annoOff',
+      // fullScreenAvailable : true,
+      // displayLayout: true,
+      // layoutOptions : {
+      //   "newObject" : false,
+      //   "close" : false,
+      //   "slotRight" : true,
+      //   "slotLeft" : true,
+      //   "slotAbove" : true,
+      //   "slotBelow" : true
+      // },
+      // searchWidget: null,
+      // searchWidgetVisible: false,
+      pinned: false
     }, options);
 
     this.init();
@@ -131,6 +156,16 @@
         });
       } else {
         templateData.MetadataView = true;
+      }
+
+      if (typeof this.searchWidgetAvailable !== 'undefined' && !this.searchWidgetAvailable) {
+        // Set the 'searchWidget' overlay not available in all views
+        jQuery.each(this.focusOverlaysAvailable, function(key, value) {
+          _this.focusOverlaysAvailable[key].overlay = {'': false};
+        });
+        templateData.searchPanel = false;
+      } else {
+        templateData.searchPanel = true;
       }
 
       //determine if any buttons should be hidden in template
@@ -221,6 +256,7 @@
 
       if (_this.state.getSlots().length <= 1) {
         _this.element.find('.remove-object-option').hide();
+        _this.element.find('.mirador-icon-close').hide();
       }
 
       this.bindEvents();
@@ -231,6 +267,11 @@
         this.bottomPanelVisibility(this.bottomPanelVisible);
       }
       this.sidePanelVisibility(this.sidePanelVisible, '0s');
+
+      if (this.pinned) {
+        this.pinned = !this.pinned;   // ugh...
+        this.togglePinWindow();
+      }
 
       this.events.push(this.eventEmitter.subscribe('windowRemoved',function(event,id){
         if(_this.id === id){
@@ -448,6 +489,7 @@
       this.sidePanel = null;
       this.bottomPanel = null;
       this.overlay = null;
+      this.searchWidget = null;
     },
 
     // only panels and overlay available to this view, make rest hidden while on this view
@@ -467,11 +509,14 @@
               panel: true,
               canvasID: _this.canvasID,
               imagesList: _this.imagesList,
+              searchContext: _this.searchContext,
+              selectedResult: _this.selectedResult,
+              pinned: _this.pinned,
               thumbInfo: {thumbsHeight: 80, listingCssCls: 'panel-listing-thumbs', thumbnailCls: 'panel-thumbnail-view'}
             });
           }
 
-          //refresh displayed in case TableOfContents module changed it
+          //refresh displayed in case SidePanel module changed it
           displayed = _this.focusOverlaysAvailable[state][panelType][view];
 
           //toggle any valid panels
@@ -506,6 +551,7 @@
       tocAvailable = _this.sidePanelOptions.toc,
       annotationsTabAvailable = _this.sidePanelOptions.annotations,
       layersTabAvailable = _this.sidePanelOptions.layers,
+      searchAvailable = _this.sidePanelOptions.search,
       hasStructures = true;
 
       var structures = _this.manifest.getStructures();
@@ -524,7 +570,10 @@
               layersTabAvailable: layersTabAvailable,
               tocTabAvailable: tocAvailable,
               annotationsTabAvailable: annotationsTabAvailable,
-              hasStructures: hasStructures
+              searchAvailable: searchAvailable,
+              hasStructures: hasStructures,
+              visible: _this.sidePanelVisible,
+              pinned: _this.pinned
         });
       } else {
         this.sidePanel.update('annotations', annotationsTabAvailable);
@@ -549,7 +598,7 @@
     /*setTOCBoolean: function(boolValue) {
       var _this = this;
       jQuery.each(this.focusOverlaysAvailable, function(key, value) {
-        _this.focusOverlaysAvailable[key].sidePanel.TableOfContents = boolValue;
+        _this.focusOverlaysAvailable[key].sidePanel.SidePanel = boolValue;
       });
       //remove thumbnail icon if not available for this object
       if (!boolValue) {
@@ -597,7 +646,6 @@
         bottomPanelVisible: visible
       });
     },
-
     adjustFocusSize: function(panelType, panelState) {
       if (panelType === 'bottomPanel') {
         this.focusModules[this.viewType].adjustHeight('focus-max-height', panelState);
@@ -608,6 +656,7 @@
 
     toggleMetadataOverlay: function(focusState) {
       var _this = this;
+      //returns boolean, true or false
       var currentState = this.focusOverlaysAvailable[focusState].overlay.MetadataView;
       if (currentState) {
         this.element.find('.mirador-icon-metadata-view').removeClass('selected');
@@ -620,7 +669,7 @@
           this.overlay.MetadataView = !currentState;
         }
       });
-      //and then do toggling for current focus
+      // and then do toggling for current focus
       this.togglePanels('overlay', !currentState, 'MetadataView', focusState);
     },
 
@@ -687,7 +736,8 @@
           bottomPanelAvailable: this.bottomPanelAvailable,
           annoEndpointAvailable: this.annoEndpointAvailable,
           canvasControls: this.canvasControls,
-          annotationState : this.canvasControls.annotations.annotationState
+          annotationState : this.canvasControls.annotations.annotationState,
+          editorPanelConfig: this.editorPanelConfig
         });
       } else {
         var view = this.focusModules.ImageView;
@@ -752,6 +802,7 @@
         _this.annotationsList.pop();
       }
       this.getAnnotations();
+
       switch(this.currentImageMode) {
         case 'ImageView':
           this.toggleImageView(this.canvasID);
@@ -787,8 +838,12 @@
        Merge all annotations for current image/canvas from various sources
        Pass to any widgets that will use this list
        */
-    getAnnotations: function() {
+    getAnnotations: function(canvasId) {
       //first look for manifest annotations
+      if (!canvasId || canvasId.length === 0) {
+        canvasId = this.currentCanvasID;
+      }
+
       var _this = this,
       urls = _this.manifest.getAnnotationsListUrls(_this.canvasID);
 
@@ -818,7 +873,7 @@
         options = _this.state.getStateProperty('annotationEndpoint').options || {}; //grab anything from the config that should be passed directly to the endpoint
         options.name = _this.state.getStateProperty('annotationEndpoint').name;
         // One annotation endpoint per window, the endpoint
-        // is a property of the instance.
+        // is a property of the whole app instance.
         if ( _this.endpoint && _this.endpoint !== null ) {
           _this.endpoint.set('dfd', dfd);
         } else {
@@ -827,6 +882,7 @@
           options.imagesList = _this.imagesList;
           options.eventEmitter = _this.eventEmitter;
           _this.endpoint = new $[module](options);
+          _this.endpoint.name = name;
         }
         _this.endpoint.search({ "uri" : _this.canvasID});
 
@@ -926,82 +982,107 @@
       });
     },
 
+    togglePinWindow: function() {
+      var removeOptionEl = this.element.find('.remove-object-option');
+      var pinOptionEl = this.element.find('.mirador-icon-pin-window');
+      var closeBtnEl = this.element.find('.mirador-icon-close');
+
+      this.pinned = !this.pinned;
+      this.element.find('.slot-controls').removeAttr('height');
+
+      if (this.pinned) {
+        pinOptionEl.addClass('selected');
+        pinOptionEl.attr('title', 'Unpin this window');
+        removeOptionEl.hide();
+        closeBtnEl.hide();
+      } else {
+        pinOptionEl.removeClass('selected');
+        pinOptionEl.attr('title', 'Pin this window');
+        if ($.viewer.workspace.slots.length > 1) {
+          removeOptionEl.show();
+          closeBtnEl.show();
+        }
+      }
+
+      jQuery.publish('windowPinned', { "windowId": this.id, "status": this.pinned });
+    },
+
     // template should be based on workspace type
     template: Handlebars.compile([
-                                 '<div class="window">',
-                                 '<div class="manifest-info">',
-                                 '<div class="window-manifest-navigation">',
-                                 '<a href="javascript:;" class="mirador-btn mirador-icon-view-type" role="button" title="{{t "viewTypeTooltip"}}" aria-label="{{t "viewTypeTooltip"}}">',
-                                 '<i class="{{currentFocusClass}}"></i>',
-                                 '<i class="fa fa-caret-down"></i>',
-                                 '<ul class="dropdown image-list">',
-                                 '{{#if ImageView}}',
-                                 '<li class="single-image-option"><i class="{{iconClasses.ImageView}}"></i> {{t "imageView"}}</li>',
-                                 '{{/if}}',
-                                 '{{#if BookView}}',
-                                 '<li class="book-option"><i class="{{iconClasses.BookView}}"></i> {{t "bookView"}}</li>',
-                                 '{{/if}}',
-                                 '{{#if ScrollView}}',
-                                 '<li class="scroll-option"><i class="{{iconClasses.ScrollView}}"></i> {{t "scrollView"}}</li>',
-                                 '{{/if}}',
-                                 '{{#if ThumbnailsView}}',
-                                 '<li class="thumbnails-option"><i class="{{iconClasses.ThumbnailsView}}"></i> {{t "thumbnailsView"}}</li>',
-                                 '{{/if}}',
-                                 '</ul>',
-                                 '</a>',
-                                 '{{#if MetadataView}}',
-                                 '<a href="javascript:;" class="mirador-btn mirador-icon-metadata-view mirador-tooltip" role="button" title="{{t "metadataTooltip"}}" aria-label="{{t "metadataTooltip"}}">',
-                                 '<i class="fa fa-info-circle fa-lg fa-fw"></i>',
-                                 '</a>',
-                                 '{{/if}}',
-                                 '{{#if showFullScreen}}',
-                                 '<a class="mirador-btn mirador-osd-fullscreen mirador-tooltip" role="button" title="{{t "fullScreenWindowTooltip"}}" aria-label="{{t "fullScreenWindowTooltip"}}">',
-                                 '<i class="fa fa-lg fa-fw fa-expand"></i>',
-                                 '</a>',
-                                 '{{/if}}',
-                                 '</div>',
-                                 '{{#if layoutOptions.close}}',
-                                 '<a href="javascript:;" class="mirador-btn mirador-close-window remove-object-option mirador-tooltip" title="{{t "closeTooltip"}}" aria-label="{{t "closeTooltip"}}"><i class="fa fa-times fa-lg fa-fw"></i></a>',
-                                 '{{/if}}',
-                                 '{{#if displayLayout}}',
-                                 '<a href="javascript:;" class="mirador-btn mirador-icon-window-menu" title="{{t "changeLayoutTooltip"}}" aria-label="{{t "changeLayoutTooltip"}}"><i class="fa fa-th-large fa-lg fa-fw"></i><i class="fa fa-caret-down"></i>',
-                                 '<ul class="dropdown slot-controls">',
-                                 '{{#if layoutOptions.newObject}}',
-                                 '<li class="new-object-option"><i class="fa fa-refresh fa-lg fa-fw"></i> {{t "newObject"}}</li>',
-                                 '<hr class="menu-divider"/>',
-                                 '{{/if}}',
-                                 '{{#if layoutOptions.slotRight}}',
-                                 '<li class="add-slot-right"><i class="fa fa-arrow-circle-right fa-lg fa-fw"></i> {{t "addSlotRight"}}</li>',
-                                 '{{/if}}',
-                                 '{{#if layoutOptions.slotLeft}}',
-                                 '<li class="add-slot-left"><i class="fa fa-arrow-circle-left fa-lg fa-fw"></i> {{t "addSlotLeft"}}</li>',
-                                 '{{/if}}',
-                                 '{{#if layoutOptions.slotAbove}}',
-                                 '<li class="add-slot-above"><i class="fa fa-arrow-circle-up fa-lg fa-fw"></i> {{t "addSlotAbove"}}</li>',
-                                 '{{/if}}',
-                                 '{{#if layoutOptions.slotBelow}}',
-                                 '<li class="add-slot-below"><i class="fa fa-arrow-circle-down fa-lg fa-fw"></i> {{t "addSlotBelow"}}</li>',
-                                 '{{/if}}',
-                                 '</ul>',
-                                 '</a>',
-                                 '{{/if}}',
-                                 '{{#if sidePanel}}',
-                                 '<a href="javascript:;" class="mirador-btn mirador-icon-toc selected mirador-tooltip" title="{{t "sidePanelTooltip"}}" aria-label="{{t "sidePanelTooltip"}}"><i class="fa fa-bars fa-lg fa-fw"></i></a>',
-                                 '{{/if}}',
-                                 '<h3 class="window-manifest-title" title="{{title}}" aria-label="{{title}}">{{title}}</h3>',
-                                 '</div>',
-                                 '<div class="content-container">',
-                                 '{{#if sidePanel}}',
-                                 '<div class="sidePanel">',
-                                 '</div>',
-                                 '{{/if}}',
-                                 '<div class="overlay"></div>',
-                                 '<div class="view-container {{#unless sidePanel}}focus-max-width{{/unless}}">',
-                                 '<div class="bottomPanel">',
-                                 '</div>',
-                                 '</div>',
-                                 '</div>',
-                                 '</div>'
+      '<div class="window">',
+        '<div class="manifest-info">',
+          '<div class="window-manifest-navigation">',
+            '<a href="javascript:;" class="mirador-btn mirador-icon-view-type" role="button" title="{{t "viewTypeTooltip"}}" aria-label="{{t "viewTypeTooltip"}}">',
+              '<i class="{{currentFocusClass}}"></i>',
+              '<i class="fa fa-caret-down"></i>',
+              '<ul class="dropdown image-list">',
+                '{{#if ImageView}}',
+                  '<li class="single-image-option"><i class="{{iconClasses.ImageView}}"></i> {{t "imageView"}}</li>',
+                '{{/if}}',
+                '{{#if BookView}}',
+                  '<li class="book-option"><i class="{{iconClasses.BookView}}"></i> {{t "bookView"}}</li>',
+                '{{/if}}',
+                '{{#if ScrollView}}',
+                  '<li class="scroll-option"><i class="{{iconClasses.ScrollView}}"></i> {{t "scrollView"}}</li>',
+                '{{/if}}',
+                '{{#if ThumbnailsView}}',
+                  '<li class="thumbnails-option"><i class="{{iconClasses.ThumbnailsView}}"></i> {{t "thumbnailsView"}}</li>',
+                '{{/if}}',
+              '</ul>',
+            '</a>',
+            '{{#if MetadataView}}',
+              '<a href="javascript:;" class="mirador-btn mirador-icon-metadata-view mirador-tooltip" role="button" title="{{t "metadataTooltip"}}" aria-label="{{t "metadataTooltip"}}">',
+                '<i class="fa fa-info-circle fa-lg fa-fw"></i>',
+              '</a>',
+            '{{/if}}',
+            '{{#if showFullScreen}}',
+              '<a class="mirador-btn mirador-osd-fullscreen mirador-tooltip" role="button" title="{{t "fullScreenWindowTooltip"}}" aria-label="{{t "fullScreenWindowTooltip"}}">',
+                '<i class="fa fa-lg fa-fw fa-expand"></i>',
+              '</a>',
+            '{{/if}}',
+          '</div>',
+          '{{#if layoutOptions.close}}',
+            '<a href="javascript:;" class="mirador-btn mirador-close-window remove-object-option mirador-tooltip" title="{{t "closeTooltip"}}" aria-label="{{t "closeTooltip"}}"><i class="fa fa-times fa-lg fa-fw"></i></a>',
+          '{{/if}}',
+          '{{#if displayLayout}}',
+            '<a href="javascript:;" class="mirador-btn mirador-icon-window-menu" title="{{t "changeLayoutTooltip"}}" aria-label="{{t "changeLayoutTooltip"}}"><i class="fa fa-th-large fa-lg fa-fw"></i><i class="fa fa-caret-down"></i>',
+              '<ul class="dropdown slot-controls">',
+                '{{#if layoutOptions.newObject}}',
+                  '<li class="new-object-option"><i class="fa fa-refresh fa-lg fa-fw"></i> {{t "newObject"}}</li>',
+                  '<hr class="menu-divider"/>',
+                '{{/if}}',
+                '{{#if layoutOptions.slotRight}}',
+                  '<li class="add-slot-right"><i class="fa fa-arrow-circle-right fa-lg fa-fw"></i> {{t "addSlotRight"}}</li>',
+                '{{/if}}',
+                '{{#if layoutOptions.slotLeft}}',
+                  '<li class="add-slot-left"><i class="fa fa-arrow-circle-left fa-lg fa-fw"></i> {{t "addSlotLeft"}}</li>',
+                '{{/if}}',
+                '{{#if layoutOptions.slotAbove}}',
+                  '<li class="add-slot-above"><i class="fa fa-arrow-circle-up fa-lg fa-fw"></i> {{t "addSlotAbove"}}</li>',
+                '{{/if}}',
+                '{{#if layoutOptions.slotBelow}}',
+                  '<li class="add-slot-below"><i class="fa fa-arrow-circle-down fa-lg fa-fw"></i> {{t "addSlotBelow"}}</li>',
+                '{{/if}}',
+              '</ul>',
+            '</a>',
+            '<a href="javascript:;" class="mirador-btn mirador-icon-home" title="Open book gallery"><i class="fa fa-home fa-2x fa-fw"></i></a>',
+            '<a href="javascript:;" class="mirador-btn mirador-icon-pin-window" title="Pin this window"><i class="fa fa-2x fa-fw fa-thumb-tack"></i></a>',
+          '{{/if}}',
+          '{{#if sidePanel}}',
+            '<a href="javascript:;" class="mirador-btn mirador-icon-toc selected mirador-tooltip" title="{{t "sidePanelTooltip"}}" aria-label="{{t "sidePanelTooltip"}}"><i class="fa fa-bars fa-lg fa-fw"></i></a>',
+          '{{/if}}',
+          '<h3 class="window-manifest-title" title="{{title}}" aria-label="{{title}}">{{title}}</h3>',
+        '</div>',
+        '<div class="content-container">',
+          '{{#if sidePanel}}',
+            '<div class="sidePanel"></div>',
+          '{{/if}}',
+          '<div class="overlay"></div>',
+          '<div class="view-container {{#unless sidePanel}}focus-max-width{{/unless}}">',
+            '<div class="bottomPanel"></div>',
+            '</div>',
+        '</div>',
+      '</div>'
     ].join(''))
   };
 

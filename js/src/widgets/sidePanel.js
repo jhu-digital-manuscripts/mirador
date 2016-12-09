@@ -14,6 +14,11 @@
       state:             null,
       eventEmitter:      null
     }, options);
+    this.canvasID = options.canvasID;
+    this.parent = options.parent;
+    this.searchTabAvailable = true;
+    this.visible = options.visible;
+    this.queryUrl = options.queryUrl;
 
     this.init();
   };
@@ -28,43 +33,48 @@
             name : 'toc',
             options : {
               available: _this.tocTabAvailable,
-              id:'tocTab', 
+              id:'tocTab',
               label:'Index'
             }
           },
-          /*{
-           name : 'annotations',
-           options : {
-           available: _this.annotationsTabAvailable,
-           id:'annotationsTab', 
-           label:'Annotations'
-           }
-           },*/
           {
-            name : 'layers',
+            name : 'annotations',
             options : {
-              available: _this.layersTabAvailable,
-              id:'layersTab', 
-              label:'Layers'
+              available: _this.annotationsTabAvailable,
+              id:'annotationsTab',
+              label:'Annotations'
             }
           },
-          /*{
-           name : 'tools',
-           options : {
-           available: _this.toolsTabAvailable,
-           id:'toolsTab', 
-           label:'Tools'
-           }
-           }*/
+          {
+            name: 'search',
+            options: {
+              available: _this.searchTabAvailable,
+              id: 'searchTab',
+              label: 'Search'
+            }
+          },
         ],
-        width: 280,
-        open: true
+        width: 330,
+        open: _this.visible
       }, true);
 
       this.listenForActions();
-      this.render(this.updateState());
+      this.render(this.state());
 
       this.loadSidePanelComponents();
+    },
+
+    /**
+     * Return all tabs with the requested ID.
+     *
+     * @param  string id
+     * @return array containing all tabs (0 or more)
+     */
+    getTabObject: function(id) {
+      console.assert(id && typeof id === 'string', 'The requested ID cannot be blank and must be a string.');
+      return this.panelState.tabs.filter(function(tab) {
+        return tab.options.id === id;
+      });
     },
 
     loadSidePanelComponents: function() {
@@ -88,15 +98,26 @@
           eventEmitter: this.eventEmitter
         });
       }
+
       if (_this.annotationsTabAvailable) {
-        new $.AnnotationsTab({
+        new $.JhAnnotationTab({
           manifest: _this.manifest,
-          windowId: this.windowId,
+          // parent: _this.parent,
           appendTo: _this.element.find('.tabContentArea'),
-          state: _this.state,
-          eventEmitter: _this.eventEmitter
+          tabId: 'annotationsTab',
+          windowId: _this.parent.id,
+          currentCanvasID: this.parent.currentCanvasID,
         });
       }
+      // if (_this.annotationsTabAvailable) {
+      //   new $.AnnotationsTab({
+      //     manifest: _this.manifest,
+      //     windowId: this.windowId,
+      //     appendTo: _this.element.find('.tabContentArea'),
+      //     state: _this.state,
+      //     eventEmitter: _this.eventEmitter
+      //   });
+      // }
       if (_this.layersTabAvailable) {
         new $.LayersTab({
           manifest: _this.manifest,
@@ -108,6 +129,75 @@
         });
       }
 
+      if (_this.searchTabAvailable) {
+        var manifestSearch = this.manifest.getSearchWithinService();
+        if (!manifestSearch.label) {
+          manifestSearch.label = this.manifest.label;
+        }
+
+        var services = [manifestSearch];
+
+        // If the manifest has a 'within' property, fetch that [parent collection]
+        // and add its search service if it exists
+        // Else, just add the search service from the manifest
+        if (this.manifest.within()) {
+          jQuery.getJSON(this.manifest.within())
+            .done(function(collection) {
+              if (!collection) {
+                return;
+              }
+              if (Array.isArray(collection.service)) {
+                collection.service.
+                filter(function(service) {
+                  return service["@context"] === "http://manuscriptlib.org/jhiff/search/context.json";
+                })
+                .forEach(function(service) {
+                  service.label = collection.label;
+                  services.push(service);
+                });
+              } else if (collection.service && collection.service["@context"] === "http://manuscriptlib.org/jhiff/search/context.json") {
+                collection.service.label = collection.label;
+                services.push(collection.service);
+              } else {
+                console.log("[SidePanel] parent collection has no search service.");
+              }
+            })
+            .always(function() {
+              _this.createSearchWidget(services);
+            });
+        } else {
+          _this.createSearchWidget(services);
+        }
+      }
+    },
+
+    /**
+     * Replace property "@id" with "id"
+     */
+    massageServiceBlock: function(service) {
+      if (service["@id"]) {
+        service.id = service["@id"];
+      }
+      return service;
+    },
+
+    createSearchWidget: function(services) {
+      var _this = this;
+
+      services.forEach(function(service) {
+        service = _this.massageServiceBlock(service);
+      });
+      new $.SearchWidget({
+        manifest: _this.manifest,
+        parent: _this.parent,
+        windowId: _this.parent.id,
+        widgetId: 'searchTab',
+        appendTo: _this.element.find('.tabContentArea'),
+        width: 0,
+        searchContext: _this.searchContext ? _this.searchContext : {},
+        pinned: _this.pinned,
+        searchServices: services
+      });
     },
 
     update: function(name, availability) {
@@ -206,11 +296,11 @@
       if (!enableSidePanel) {
         jQuery(this.appendTo).hide();
         _this.eventEmitter.publish('ADD_CLASS.'+this.windowId, 'focus-max-width');
-        _this.eventEmitter.publish('HIDE_ICON_TOC.'+this.windowId);                
+        _this.eventEmitter.publish('HIDE_ICON_TOC.'+this.windowId);
       } else {
         jQuery(this.appendTo).show({effect: "fade", duration: 300, easing: "easeInCubic"});
         _this.eventEmitter.publish('REMOVE_CLASS.'+this.windowId, 'focus-max-width');
-        _this.eventEmitter.publish('SHOW_ICON_TOC.'+this.windowId);                
+        _this.eventEmitter.publish('SHOW_ICON_TOC.'+this.windowId);
       }
     }
   };
