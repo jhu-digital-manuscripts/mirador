@@ -1,3 +1,73 @@
+/* Modifying base Mirador junk */
+.view-container {
+  margin-left: 0;
+}
+
+.tabContentArea {
+  width: 100%;
+  border-right: 0;
+  border-left: 2px solid lightgray;
+  overflow: auto;
+}
+
+.tabContentArea ul {
+  list-style-type: none;
+  padding: 0 18px;
+  margin: 0;
+}
+
+.sidePanel {
+  /* Reposition side panel to right side */
+  left: initial;
+  right: 0;
+  /* Now make it look better */
+  padding: 0;
+}
+
+.sidePanel h2 {
+  margin: 18px 0;
+}
+
+.manifest-info .mirador-btn {
+  float: left;
+}
+
+.window-manifest-navigation {
+  width: auto;
+}
+
+.mirador-viewer .mirador-icon-image-view,
+.mirador-viewer .mirador-icon-window-menu {
+  width: 36px;
+}
+
+.mirador-viewer .mirador-icon-home,
+.mirador-viewer .mirador-icon-pin-window,
+.mirador-viewer .mirador-icon-image-view {
+  color: rgb( 146, 145, 145 );
+}
+
+.mirador-viewer .mirador-icon-home:hover,
+.mirador-viewer .mirador-icon-pin-window:hover,
+.mirador-viewer .mirador-icon-image-view:hover {
+  color: black;
+}
+
+/* Rotate HUD controls */
+.mirador-osd-rotate-left {
+  position: absolute;
+  top: 43px;
+  left: 44px;
+  font-size: 33%;
+}
+
+.mirador-osd-rotate-right {
+  position: absolute;
+  top: 44px;
+  left: 85px;
+  font-size: 33%;
+}
+
 /*
  * Stylesheet for AoR specific customizations
  */

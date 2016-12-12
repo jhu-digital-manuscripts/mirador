@@ -41,13 +41,6 @@
       },
       windowOptions: null,
       sidePanel: null, //the actual module for the side panel
-      // sidePanelAvailable: true,
-      // sidePanelOptions: {
-      //   "toc" : true,
-      //   "annotations" : true,
-      //   "search" : true,
-      // },
-      // sidePanelVisible: false,
       annotationsAvailable: {
         'ThumbnailsView' : false,
         'ImageView' : true,
@@ -63,19 +56,6 @@
         "ScrollView" : "fa fa-ellipsis-h fa-lg fa-fw",
         "ThumbnailsView" : "fa fa-th fa-lg fa-rotate-90 fa-fw"
       },
-      // annotationState : 'annoOff',
-      // fullScreenAvailable : true,
-      // displayLayout: true,
-      // layoutOptions : {
-      //   "newObject" : false,
-      //   "close" : false,
-      //   "slotRight" : true,
-      //   "slotLeft" : true,
-      //   "slotAbove" : true,
-      //   "slotBelow" : true
-      // },
-      // searchWidget: null,
-      // searchWidgetVisible: false,
       pinned: false
     }, options);
 
@@ -615,17 +595,17 @@
 
     sidePanelVisibility: function(visible, transitionDuration) {
       var _this = this;
-      _this.sidePanelVisible = visible,
-      tocIconElement = this.element.find('.mirador-icon-toc'),
-      sidePanelElement = this.element.find('.sidePanel'),
-      viewContainerElement = this.element.find('.view-container');
+      _this.sidePanelVisible = visible;
+      var tocIconElement = this.element.find('.mirador-icon-toc');
+      var sidePanelElement = this.element.find('.sidePanel');
+      var viewContainerElement = this.element.find('.view-container');
 
       sidePanelElement.css('transition-duration', transitionDuration);
       viewContainerElement.css('transition', transitionDuration);
       if (visible && sidePanelElement.hasClass('minimized')) {
         tocIconElement.addClass('selected');
-        sidePanelElement.removeClass('minimized').width(280).css('border-right', '1px solid lightgray');
-        viewContainerElement.css('margin-left', 280);
+        sidePanelElement.removeClass('minimized').width(330).css('border-left', '1px solid lightgray');
+        viewContainerElement.css('margin-right', 330);
       } else if (!visible && !sidePanelElement.hasClass('minimized')) {
         tocIconElement.removeClass('selected');
         viewContainerElement.css('margin-left', 0);
