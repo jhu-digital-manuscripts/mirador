@@ -3,17 +3,29 @@
   margin-left: 0;
 }
 
+.sidePanel .tabGroup ul {
+  padding-left: 10px;
+  margin-bottom: 0;
+}
+
 .tabContentArea {
   width: 100%;
+  height: calc(100% - 38px);
   border-right: 0;
   border-left: 2px solid lightgray;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .tabContentArea ul {
   list-style-type: none;
   padding: 0 18px;
   margin: 0;
+}
+
+.tabContentArea ul > li {
+  border-bottom: 1px solid gray;
+  padding-bottom: 10px;
 }
 
 .sidePanel {
