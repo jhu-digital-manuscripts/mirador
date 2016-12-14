@@ -628,7 +628,7 @@
         viewContainerElement.css('margin-right', 330);
       } else if (!visible && !sidePanelElement.hasClass('minimized')) {
         tocIconElement.removeClass('selected');
-        viewContainerElement.css('margin-left', 0);
+        viewContainerElement.css('margin-right', 0);
         sidePanelElement.addClass('minimized').css('border', 'none').width(0);
       }
       _this.eventEmitter.publish(('windowUpdated'), {
