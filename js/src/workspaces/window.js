@@ -235,6 +235,7 @@
       }
 
       if (_this.state.getSlots().length <= 1) {
+        // _this.eventEmitter.publish("HIDE_REMOVE_OBJECT." + _this.windowId);
         _this.element.find('.remove-object-option').hide();
         _this.element.find('.mirador-icon-close').hide();
       }
@@ -306,10 +307,14 @@
 
       _this.events.push(_this.eventEmitter.subscribe('HIDE_REMOVE_OBJECT.' + _this.id, function(event) {
         _this.element.find('.remove-object-option').hide();
+        _this.element.find(".mirador-icon-close").hide();
       }));
 
       _this.events.push(this.eventEmitter.subscribe('SHOW_REMOVE_OBJECT.' + _this.id, function(event) {
-        _this.element.find('.remove-object-option').show();
+        if (!_this.pinned) {
+          _this.element.find('.remove-object-option').show();
+          _this.element.find(".mirador-icon-close").show();
+        }
       }));
 
       _this.events.push(_this.eventEmitter.subscribe('sidePanelStateUpdated.' + this.id, function(event, state) {
@@ -980,12 +985,23 @@
       this.element.find('.add-slot-above').on('click', function() {
         _this.eventEmitter.publish('SPLIT_UP_FROM_WINDOW', _this.id);
       });
+
+      this.element.find('.mirador-icon-home').on('click', function() {
+        if (!_this.pinned)
+          _this.eventEmitter.publish("ADD_ITEM_FROM_WINDOW", _this.id);
+      });
+
+      this.element.find('.mirador-icon-pin-window').on('click', function() {
+        _this.togglePinWindow();
+      });
+
+      this.element.find('.mirador-icon-close').on('click', function() {
+        $.viewer.workspace.removeNode(_this.parent);
+      });
     },
 
     togglePinWindow: function() {
-      var removeOptionEl = this.element.find('.remove-object-option');
       var pinOptionEl = this.element.find('.mirador-icon-pin-window');
-      var closeBtnEl = this.element.find('.mirador-icon-close');
 
       this.pinned = !this.pinned;
       this.element.find('.slot-controls').removeAttr('height');
@@ -993,14 +1009,13 @@
       if (this.pinned) {
         pinOptionEl.addClass('selected');
         pinOptionEl.attr('title', 'Unpin this window');
-        removeOptionEl.hide();
-        closeBtnEl.hide();
+        this.eventEmitter.publish("HIDE_REMOVE_OBJECT." + this.id);
       } else {
         pinOptionEl.removeClass('selected');
         pinOptionEl.attr('title', 'Pin this window');
-        if ($.viewer.workspace.slots.length > 1) {
-          removeOptionEl.show();
-          closeBtnEl.show();
+
+        if (this.state.getSlots().length > 1) {
+          this.eventEmitter.publish("SHOW_REMOVE_OBJECT." + this.id);
         }
       }
 

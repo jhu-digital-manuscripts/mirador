@@ -131,8 +131,8 @@
         _this.eventEmitter.publish('SET_CURRENT_CANVAS_ID.' + _this.windowId, canvasID);
       });
 
-      jQuery.subscribe('windowPinned', function(event, data) {
-        if (data.windowId == _this.parent.id) {
+      this.eventEmitter.subscribe('windowPinned', function(event, data) {
+        if (data.windowId == _this.windowId) {
           _this.pinned = data.status;
         }
       });

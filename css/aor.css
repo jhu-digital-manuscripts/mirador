@@ -65,6 +65,15 @@
   color: black;
 }
 
+.mirador-viewer .mirador-icon-pin-window.selected {
+  transform: rotate(0);
+  color: black;
+}
+
+.mirador-viewer .mirador-icon-pin-window {
+  transform: rotate(45deg);
+}
+
 /* Rotate HUD controls */
 .mirador-osd-rotate-left {
   position: absolute;
