@@ -33,7 +33,7 @@
 
       this.eventEmitter.subscribe("ANNOTATIONS_LIST_UPDATED", function(event, data) {
         if (data.windowId === _this.windowId) {
-          _this.processAnnotationList(data.canvas, data.annotationsList);
+          _this.processAnnotationList(data.canvasLabel, data.annotationsList);
         }
       });
 
@@ -56,6 +56,7 @@
       var annotations = [];
       var appendTo = this.appendTo.find('ul.annotations');
 
+      this.appendTo.find(".messages").empty();
       appendTo.empty();
       appendTo.scrollTop(0);
 

@@ -415,6 +415,18 @@
 
     bindAnnotationEvents: function() {
       var _this = this;
+
+      _this.eventEmitter.subscribe("requestAnnotationLists." + _this.id, function(event, data) {
+        _this.annotationsList.length = 0;
+        // calling #getAnnotations() will publish events: annotationListLoaded.<windowId>
+        if (Array.isArray(data.requests)) {
+          data.requests.forEach(function(req) { _this.getAnnotations(req); });
+        } else if (typeof data.requests === 'string') {
+          _this.getAnnotations(data.requests);
+        }
+        // If data.requests is a non-string/non-array object, do nothing
+      });
+
       _this.eventEmitter.subscribe('annotationCreated.'+_this.id, function(event, oaAnno, eventCallback) {
         var annoID;
         //first function is success callback, second is error callback
@@ -846,11 +858,11 @@
     getAnnotations: function(canvasId) {
       //first look for manifest annotations
       if (!canvasId || canvasId.length === 0) {
-        canvasId = this.currentCanvasID;
+        canvasId = this.canvasID;
       }
 
       var _this = this,
-      urls = _this.manifest.getAnnotationsListUrls(_this.canvasID);
+          urls = _this.manifest.getAnnotationsListUrls(canvasId);
 
       if (urls.length !== 0) {
         jQuery.each(urls, function(index, url) {
@@ -866,7 +878,12 @@
             });
             // publish event only if one url fetch is successful
             _this.annotationsList = _this.annotationsList.concat(annotations);
-            _this.eventEmitter.publish('ANNOTATIONS_LIST_UPDATED', {windowId: _this.id, annotationsList: _this.annotationsList});
+
+            _this.eventEmitter.publish('ANNOTATIONS_LIST_UPDATED', {
+              windowId: _this.id,
+              canvasLabel: _this.manifest.getCanvasLabel(canvasId),
+              annotationsList: _this.annotationsList
+            });
           });
         });
       }

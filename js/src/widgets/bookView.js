@@ -121,7 +121,7 @@
       });
     },
 
-bindEvents: function() {
+    bindEvents: function() {
       var _this = this;
 
       this.element.find('.mirador-osd-next').on('click', function() {
@@ -474,7 +474,9 @@ bindEvents: function() {
         _this.focusImages.push(image['@id']);
       });
       _this.eventEmitter.publish('UPDATE_FOCUS_IMAGES.' + this.windowId, {array: this.focusImages});
-      _this.eventEmitter.publish("requestAnnotationLists." + _this.windowId, {"requests": stitchList.map(function(el) { return el["@id"]; })});
+      _this.eventEmitter.publish("requestAnnotationLists." + _this.windowId, {
+        "requests": stitchList.map(function(el) { return el["@id"]; })
+      });
       return stitchList;
     }
   };
