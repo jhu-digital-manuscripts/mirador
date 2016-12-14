@@ -1,18 +1,21 @@
 (function($) {
 
  $.JhAnnotationTab = function(options) {
-    this.element = options.element;
-    this.appendTo = jQuery(options.appendTo);
-    this.windowId = options.windowId;
-    this.tabId = options.tabId;
-    this.manifest = options.manifest;
-    this.visible = options.visible;
-    this.pendingRequests = {};
-    this.message = {
-      error: '<h1 class="error">Failed to load annotation list.</h1>',
-      empty: '<h1 class="empty">No annotations available.</h1>',
-      noLists: '<h1 class="empty">No annotations found.</h1>',
-    };
+    jQuery.extend(true, this, {
+      element: null,
+      appendTo: null,
+      windowId: null,
+      tabId: null,
+      manifest: null,
+      visible: false,
+      pendingRequests: {},
+      eventEmitter: null,
+      message: {
+        error: '<h1 class="error">Failed to load annotation list.</h1>',
+        empty: '<h1 class="empty">No annotations available.</h1>',
+        noLists: '<h1 class="empty">No annotations found.</h1>',
+      }
+    }, options);
 
     this.init();
   };
@@ -28,12 +31,14 @@
     bindEvents: function() {
       var _this = this;
 
-      jQuery.subscribe("annotationListLoaded." + this.windowId, function(event, data) {
-        _this.processAnnotationList(data.canvas, data.annotations);
+      this.eventEmitter.subscribe("ANNOTATIONS_LIST_UPDATED", function(event, data) {
+        if (data.windowId === _this.windowId) {
+          _this.processAnnotationList(data.canvas, data.annotationsList);
+        }
       });
 
-      jQuery.subscribe('tabSelected.' + this.windowId, function(event, data) {
-        if (data.id === _this.tabId) {
+      this.eventEmitter.subscribe('tabStateUpdated.' + this.windowId, function(event, data) {
+        if (data.tabs[data.selectedTabIndex].options.id === _this.tabId) {
           _this.element.show();
         } else {
           _this.element.hide();

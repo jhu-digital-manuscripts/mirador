@@ -2,15 +2,8 @@
 
 $.SearchWidget = function(options) {
 
-  this.element = null;
-  this.parent = options.parent;
-  this.windowId = options.windowId;
-  this.widgetId = options.widgetId;
-  this.appendTo = jQuery(options.appendTo);
-  this.element = null;
-  this.width = 330;
-  this.manifest = options.manifest;
   /*
+   * searchServices :
    * Array holding all search services. Not all services are necessarily
    * fully initialized.
    *
@@ -27,13 +20,23 @@ $.SearchWidget = function(options) {
    * ]
    *
    */
-  this.searchServices = options.searchServices || {};
-  this.searchService = null;
-  this.searchContext = {};
-  this.messages = {
-    'no-term': '<span class="error">No search term was found.</span>',
-    'no-defaults': '<span class="error">No fields defined for basic search.</span>',
-  };
+  jQuery.extend(true, this, {
+    element: null,
+    appendTo: null,
+    canvasId: null,
+    windowId: null,
+    tabId: null,
+    eventEmitter: null,
+    width: 330,
+    manifest: null,
+    searchService: null,
+    searchContext: {},
+    messages: {
+      'no-term': '<span class="error">No search term was found.</span>',
+      'no-defaults': '<span class="error">No fields defined for basic search.</span>',
+    },
+    searchServices: {},
+  }, options);
 
   this.registerWidget();    // Register the Handlerbars partials
   this.init();
@@ -152,14 +155,14 @@ $.SearchWidget.prototype = {
   bindEvents: function() {
     var _this = this;
 
-    jQuery.subscribe('windowPinned', function(event, data) {
+    this.eventEmitter.subscribe('windowPinned', function(event, data) {
       if (data.windowId === _this.windowId) {
         _this.pinned = data.status;
       }
     });
 
-    jQuery.subscribe('tabSelected.' + this.windowId, function(event, data) {
-      if (data.id === _this.widgetId) {
+    this.eventEmitter.subscribe('tabStateUpdated.' + this.windowId, function(event, data) {
+      if (data.tabs[data.selectedTabIndex].options.id === _this.tabId) {
         _this.element.show();
       } else {
         _this.element.hide();
@@ -288,10 +291,11 @@ $.SearchWidget.prototype = {
 
     this.element.find('.search-results-list').empty();
     new $.SearchWithinResults({
+      windowId: _this.windowId,
       manifest: _this.manifest,
+      eventEmitter: _this.eventEmitter,
       appendTo: _this.element.find('.search-results-list'),
-      parent: _this,
-      canvasID: _this.parent.currentCanvasID,
+      canvasID: _this.canvasID,
       baseUrl: _this.element.find('.search-within-object-select').val(),
       searchContext: _this.searchContext,
       pinned: _this.pinned,
@@ -310,11 +314,13 @@ console.log("[SearchWidget] original : " + query);
 
       this.element.find('.search-results-list').empty();
       new $.SearchWithinResults({
+        windowId: _this.windowId,
         manifest: _this.manifest,
+        eventEmitter: _this.eventEmitter,
         appendTo: _this.element.find(".search-results-list"),
         parent: _this,
         panel: true,
-        canvasID: _this.parent.currentCanvasID,
+        canvasID: _this.canvasID,
         imagesList: _this.imagesList,
         thumbInfo: {thumbsHeight: 80, listingCssCls: 'panel-listing-thumbs', thumbnailCls: 'panel-thumbnail-view'},
         query: query,

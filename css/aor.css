@@ -23,7 +23,7 @@
   margin: 0;
 }
 
-.tabContentArea ul > li {
+.tabContentArea ul > li.annotationItems {
   border-bottom: 1px solid gray;
   padding-bottom: 10px;
 }

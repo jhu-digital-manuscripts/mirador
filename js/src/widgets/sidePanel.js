@@ -2,6 +2,8 @@
 
   $.SidePanel= function(options) {
     jQuery.extend(true, this, {
+      windowId: null,
+      pinned: null,
       element:           null,
       appendTo:          null,
       manifest:          null,
@@ -15,7 +17,6 @@
       eventEmitter:      null
     }, options);
     this.canvasID = options.canvasID;
-    this.parent = options.parent;
     this.searchTabAvailable = true;
     this.visible = options.visible;
     this.queryUrl = options.queryUrl;
@@ -59,7 +60,7 @@
       }, true);
 
       this.listenForActions();
-      this.render(this.state());
+      this.render(this.updateState());
 
       this.loadSidePanelComponents();
     },
@@ -105,8 +106,9 @@
           // parent: _this.parent,
           appendTo: _this.element.find('.tabContentArea'),
           tabId: 'annotationsTab',
-          windowId: _this.parent.id,
-          currentCanvasID: this.parent.currentCanvasID,
+          windowId: _this.windowId,
+          canvasID: _this.canvasID,
+          eventEmitter: _this.eventEmitter
         });
       }
       // if (_this.annotationsTabAvailable) {
@@ -189,14 +191,14 @@
       });
       new $.SearchWidget({
         manifest: _this.manifest,
-        parent: _this.parent,
-        windowId: _this.parent.id,
-        widgetId: 'searchTab',
+        windowId: _this.windowId,
+        tabId: 'searchTab',
         appendTo: _this.element.find('.tabContentArea'),
         width: 0,
         searchContext: _this.searchContext ? _this.searchContext : {},
         pinned: _this.pinned,
-        searchServices: services
+        searchServices: services,
+        eventEmitter: _this.eventEmitter
       });
     },
 

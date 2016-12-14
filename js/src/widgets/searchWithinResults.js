@@ -9,10 +9,10 @@
    * (http://iiif.io/api/search/0.9/)
    */
   $.SearchWithinResults = function(options) {
+    this.windowId = options.windowId;
     this.appendTo = jQuery(options.appendTo);
     this.manifest = options.manifest;
     this.element = options.element;
-    this.parent = options.parent;
     this.metadataTypes = options.metadataTypes;
     this.metadataListingCls = options.metadataListingCls;
     this.query = options.query;
@@ -24,6 +24,7 @@
     this.loading = '<i class="fa fa-fw fa-2x fa-spinner fa-spin"></i>';
     this.panel = options.panel;
     this.pinned = options.pinned;
+    this.eventEmitter = options.eventEmitter;
 
     this.init();
   };
@@ -32,14 +33,13 @@
 
     init: function() {
       var _this = this;
-      var window = this.parent.parent;
 
       this.registerHandlebars();
 
       this.element = jQuery(this.wrapper()).appendTo(this.appendTo);
 
       jQuery.subscribe('windowPinned', function(event, data) {
-        if (window.id === data.windowId) {
+        if (_this.windowId === data.windowId) {
           _this.pinned = data.status;
         }
       });
@@ -173,7 +173,7 @@ console.log('[Searching] ' + queryUrl);
         _this.processResults(searchResults);
       })
       .fail(function(jqXHR, textStatus, errorThrown) {
-        console.log("[SearchResults] window=" + _this.parent.parent.id + " search query failed (" + queryUrl + ") \n" + errorThrown);
+        console.log("[SearchResults] window=" + _this.windowId + " search query failed (" + queryUrl + ") \n" + errorThrown);
         jQuery(_this.errorMessage()).appendTo(_this.appendTo);
       })
       .always(function() {
@@ -364,7 +364,6 @@ console.log('[Searching] ' + queryUrl);
           return;
         }
 
-        var currentWindow = _this.parent.parent;
         var canvasid = jQuery(this).data('objectid');
         var manifestid = jQuery(this).data('manifestid');
 
@@ -384,16 +383,27 @@ console.log('[Searching] ' + queryUrl);
           _this.resultClicked({
             canvasid: canvasid,
             manifestid: manifestid,
-            onThisManifest: function() { _this.parent.parent.setCurrentCanvasID(canvasid); },
+            onThisManifest: function() {
+              _this.eventEmitter.publish("SET_CURRENT_CANVAS_ID." + _this.windowId, canvasid);
+            },
             onDifferentManifest: function(manifest) {
-              currentWindow.element.remove();
-              currentWindow.update({
+              // currentWindow.element.remove();
+              // currentWindow.update({
+              //   manifest: manifest,
+              //   currentCanvasID: canvasid,
+              //   searchWidgetAvailable: true,
+              //   searchContext: _this.buildContext(),
+              // });
+              // currentWindow.setCurrentCanvasID(canvasid); // This is needed ONLY for setting correct scroll position of thumbnails
+
+              _this.eventEmitter.publish("UPDATE_WINDOW." + _this.windowId, {
+                // id: _this.windowId,
                 manifest: manifest,
-                currentCanvasID: canvasid,
+                canvasID: canvasid,
                 searchWidgetAvailable: true,
                 searchContext: _this.buildContext(),
               });
-              currentWindow.setCurrentCanvasID(canvasid); // This is needed ONLY for setting correct scroll position of thumbnails
+              // _this.eventEmitter.publish("SET_CURRENT_CANVAS_ID." + _this.windowId, canvasid);
             }
           });
         }
@@ -416,57 +426,57 @@ console.log('[Searching] ' + queryUrl);
     },
 
     setupContextMenu: function() {
-      var _this = this;
-      var currentWindow = this.parent.parent;
-      var currentSlot = currentWindow.parent;
-
-      this.element.find('.search-results-container').contextMenu({
-        selector: '.result-wrapper',
-        items: {
-          'above': {name: 'Open in slot above'},
-          'below': {name: 'Open in slot below'},
-          'left': {name: 'Open in slot left'},
-          'right': {name: 'Open in slot right'},
-        },
-        callback: function(key, options) {
-          var canvasid = jQuery(this).data('objectid');
-          var manifestid = jQuery(this).data('manifestid');
-
-          switch (key) {
-            case 'above':
-              $.viewer.workspace.splitUp(currentSlot);
-              break;
-            case 'below':
-              $.viewer.workspace.splitDown(currentSlot);
-              break;
-            case 'left':
-              $.viewer.workspace.splitLeft(currentSlot);
-              break;
-            case 'right':
-              $.viewer.workspace.splitRight(currentSlot);
-              break;
-            default:  // Do nothing
-              return;
-          }
-
-          var windowConfig = {
-            manifest: _this.manifest,
-            currentCanvasID: canvasid,
-            currentFocus: currentWindow.currentFocus,
-            slotAddress: $.viewer.workspace.getAvailableSlot().layoutAddress
-          };
-
-          if (_this.manifest['@id'] !== manifestid) {
-            var manifest = new $.Manifest(manifestid, '');
-            manifest.request.done(function(data) {
-              windowConfig.manifest = manifest;
-              $.viewer.workspace.addWindow(windowConfig);
-            });
-          } else {
-            $.viewer.workspace.addWindow(windowConfig);
-          }
-        }
-      });
+      // var _this = this;
+      // var currentWindow = this.parent.parent;
+      // var currentSlot = currentWindow.parent;
+      //
+      // this.element.find('.search-results-container').contextMenu({
+      //   selector: '.result-wrapper',
+      //   items: {
+      //     'above': {name: 'Open in slot above'},
+      //     'below': {name: 'Open in slot below'},
+      //     'left': {name: 'Open in slot left'},
+      //     'right': {name: 'Open in slot right'},
+      //   },
+      //   callback: function(key, options) {
+      //     var canvasid = jQuery(this).data('objectid');
+      //     var manifestid = jQuery(this).data('manifestid');
+      //
+      //     switch (key) {
+      //       case 'above':
+      //         $.viewer.workspace.splitUp(currentSlot);
+      //         break;
+      //       case 'below':
+      //         $.viewer.workspace.splitDown(currentSlot);
+      //         break;
+      //       case 'left':
+      //         $.viewer.workspace.splitLeft(currentSlot);
+      //         break;
+      //       case 'right':
+      //         $.viewer.workspace.splitRight(currentSlot);
+      //         break;
+      //       default:  // Do nothing
+      //         return;
+      //     }
+      //
+      //     var windowConfig = {
+      //       manifest: _this.manifest,
+      //       currentCanvasID: canvasid,
+      //       currentFocus: currentWindow.currentFocus,
+      //       slotAddress: $.viewer.workspace.getAvailableSlot().layoutAddress
+      //     };
+      //
+      //     if (_this.manifest['@id'] !== manifestid) {
+      //       var manifest = new $.Manifest(manifestid, '');
+      //       manifest.request.done(function(data) {
+      //         windowConfig.manifest = manifest;
+      //         $.viewer.workspace.addWindow(windowConfig);
+      //       });
+      //     } else {
+      //       $.viewer.workspace.addWindow(windowConfig);
+      //     }
+      //   }
+      // });
     },
 
     /**

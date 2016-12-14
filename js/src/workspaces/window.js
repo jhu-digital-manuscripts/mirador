@@ -331,6 +331,12 @@
         _this.setCurrentCanvasID(canvasID);
       }));
 
+      _this.events.push(_this.eventEmitter.subscribe("UPDATE_WINDOW." + this.id, function(event, options) {
+        console.log("[Window] updating. " + options.manifest);
+        _o = options;
+        _this.update(options);
+      }));
+
       _this.events.push(_this.eventEmitter.subscribe('REMOVE_CLASS.' + this.id, function(event, className) {
         _this.element.find('.view-container').removeClass(className);
       }));
@@ -480,7 +486,7 @@
         jQuery.each(viewOptions, function(view, displayed) {
           //instantiate any panels that exist for this view but are still null
           if (view !== '' && _this[panelType] === null) {
-            _this[panelType] = new $[view]({
+            var options = {
               manifest: _this.manifest,
               appendTo: _this.element.find('.'+panelType),
               state:  _this.state,
@@ -493,7 +499,20 @@
               selectedResult: _this.selectedResult,
               pinned: _this.pinned,
               thumbInfo: {thumbsHeight: 80, listingCssCls: 'panel-listing-thumbs', thumbnailCls: 'panel-thumbnail-view'}
-            });
+            };
+
+            if (view.toLowerCase() === "sidepanel") {
+              jQuery.extend(options, {
+                layersTabAvailable: _this.sidePanelOptions.layers,
+                tocTabAvailable: _this.sidePanelOptions.toc,
+                // annotationsTabAvailable = _this.sidePanelOptions.annotations,
+                annotationsTabAvailable: true,
+                searchAvailable: _this.sidePanelOptions.search,
+                hasStructures: _this.sidePanelOptions.hasStructures,
+              });
+            }
+
+            _this[panelType] = new $[view](options);
           }
 
           //refresh displayed in case SidePanel module changed it
@@ -528,11 +547,12 @@
         return;
       }
       var _this = this,
-      tocAvailable = _this.sidePanelOptions.toc,
-      annotationsTabAvailable = _this.sidePanelOptions.annotations,
-      layersTabAvailable = _this.sidePanelOptions.layers,
-      searchAvailable = _this.sidePanelOptions.search,
-      hasStructures = true;
+          tocAvailable = _this.sidePanelOptions.toc,
+          // annotationsTabAvailable = _this.sidePanelOptions.annotations,
+          annotationsTabAvailable = true,
+          layersTabAvailable = _this.sidePanelOptions.layers,
+          searchAvailable = _this.sidePanelOptions.search,
+          hasStructures = true;
 
       var structures = _this.manifest.getStructures();
       if (!structures || structures.length === 0) {
