@@ -53,63 +53,6 @@
       this.pinned = isPinned;
     },
 
-    /**
-     * Go to zero degrees rotation of the image in OpenSeadragon.
-     * The number of degrees to rotate is calculated based on current
-     * rotation.
-     *
-     * @param  integer animationTime animation time in milliseconds (ms)
-     * @return NONE
-     */
-    goHomeRotation: function(animationTime) {
-      var viewport = this.parent.osd.viewport;
-
-      var currentDeg = viewport.getRotation() % 360;
-
-      var clockwise = 360 - currentDeg;
-      var counterClockwise = currentDeg;
-
-      var degrees = Math.min(clockwise, counterClockwise);
-      if (degrees === counterClockwise) {
-        degrees *= -1;
-      }
-
-      this.setImageRotation(degrees, animationTime);
-    },
-
-    /**
-     * Rotate the image in OpenSeadragon by the specified number of
-     * degrees (-360, 360). If zero animation time is specified, there
-     * will be no animation.
-     *
-     * @param  integer degrees       amount to rotate image in degrees
-     * @param  integer animationTime time to complete rotation animation in milliseconds (ms)
-     * @return NONE
-     */
-    setImageRotation: function(degrees, animationTime) {
-      var _this = this;
-      var animationFactor = 30;
-      var viewport = this.parent.osd.viewport;
-
-      if (animationTime !== 0) {
-        animationTime = animationTime / animationFactor;
-        degrees = degrees / animationFactor;
-
-        var iteration = 1;
-        var interval = window.setInterval(function() {
-          if (iteration++ > animationFactor) {
-            window.clearInterval(interval);
-            return;
-          }
-
-          viewport.setRotation(viewport.getRotation() + degrees);
-        },
-        animationTime);
-      } else {
-        viewport.setRotation(viewport.getRotation() + degrees);
-      }
-    },
-
     listenForActions: function() {
       var _this = this;
       this.eventEmitter.subscribe('DISABLE_TOOLTIPS_BY_CLASS.' + this.windowId, function(event, className) {
