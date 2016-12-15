@@ -163,6 +163,78 @@
       //Related to Annotations HUD
     },
 
+    /**
+     * Go to zero degrees rotation of the image in OpenSeadragon.
+     * The number of degrees to rotate is calculated based on current
+     * rotation.
+     *
+     * @param  integer animationTime animation time in milliseconds (ms)
+     * @return NONE
+     */
+    goHomeRotation: function(animationTime) {
+      var viewport = this.osd.viewport;
+      if (!viewport) {
+        return;
+      }
+
+      var currentDeg = viewport.getRotation() % 360;
+
+      var clockwise = 360 - currentDeg;
+      var counterClockwise = currentDeg;
+
+      var degrees = Math.min(clockwise, counterClockwise);
+      if (degrees === counterClockwise) {
+        degrees *= -1;
+      }
+
+      this.setImageRotation(degrees, animationTime);
+    },
+
+    /**
+     * Rotate the image in OpenSeadragon by the specified number of
+     * degrees (-360, 360). If zero animation time is specified, there
+     * will be no animation.
+     *
+     * @param  integer degrees       amount to rotate image in degrees
+     * @param  integer animationTime time to complete rotation animation in milliseconds (ms)
+     * @return NONE
+     */
+    setImageRotation: function(degrees, animationTime) {
+      var _this = this;
+      var animationFactor = 30;
+      var viewport = this.osd.viewport;
+      if (!viewport) {
+        return;
+      }
+
+      if (animationTime !== 0) {
+        animationTime = animationTime / animationFactor;
+        degrees = degrees / animationFactor;
+
+        var iteration = 1;
+        var interval = window.setInterval(function() {
+          if (iteration++ > animationFactor) {
+            window.clearInterval(interval);
+            return;
+          }
+
+          viewport.setRotation(viewport.getRotation() + degrees);
+        },
+        animationTime);
+      } else {
+        viewport.setRotation(viewport.getRotation() + degrees);
+      }
+    },
+
+    // getTargetRotation: function(delta) {
+    //   var viewport = this.osd.viewport;
+    //   if (!viewport) {
+    //     return 0;
+    //   }
+    //
+    //   return (viewport.getRotation() + delta) % 360;
+    // },
+
     bindEvents: function() {
       var _this = this;
 
@@ -201,7 +273,7 @@
       });
 
       this.element.find('.mirador-osd-go-home').on('click', function() {
-        _this.osd.viewport.goHome();
+        _this.goHomeRotation();
       });
 
       this.element.find('.mirador-osd-up').on('click', function() {
@@ -301,7 +373,7 @@
       function resetImageManipulationControls() {
         //reset rotation
         if (_this.osd) {
-          _this.osd.viewport.setRotation(0);
+          _this.goHomeRotation();
         }
 
         //reset brightness
@@ -331,17 +403,11 @@
       }
 
       this.element.find('.mirador-osd-rotate-right').on('click', function() {
-        if (_this.osd) {
-          var currentRotation = _this.osd.viewport.getRotation();
-          _this.osd.viewport.setRotation(currentRotation + 90);
-        }
+        _this.setImageRotation(90);
       });
 
       this.element.find('.mirador-osd-rotate-left').on('click', function() {
-        if (_this.osd) {
-          var currentRotation = _this.osd.viewport.getRotation();
-          _this.osd.viewport.setRotation(currentRotation - 90);
-        }
+        _this.setImageRotation(-90);
       });
 
       this.element.find('.mirador-osd-brightness-slider').slider({

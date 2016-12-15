@@ -235,6 +235,7 @@
       }
 
       if (_this.state.getSlots().length <= 1) {
+        // _this.eventEmitter.publish("HIDE_REMOVE_OBJECT." + _this.windowId);
         _this.element.find('.remove-object-option').hide();
         _this.element.find('.mirador-icon-close').hide();
       }
@@ -306,10 +307,14 @@
 
       _this.events.push(_this.eventEmitter.subscribe('HIDE_REMOVE_OBJECT.' + _this.id, function(event) {
         _this.element.find('.remove-object-option').hide();
+        _this.element.find(".mirador-icon-close").hide();
       }));
 
       _this.events.push(this.eventEmitter.subscribe('SHOW_REMOVE_OBJECT.' + _this.id, function(event) {
-        _this.element.find('.remove-object-option').show();
+        if (!_this.pinned) {
+          _this.element.find('.remove-object-option').show();
+          _this.element.find(".mirador-icon-close").show();
+        }
       }));
 
       _this.events.push(_this.eventEmitter.subscribe('sidePanelStateUpdated.' + this.id, function(event, state) {
@@ -329,6 +334,12 @@
 
       _this.events.push(_this.eventEmitter.subscribe('SET_CURRENT_CANVAS_ID.' + this.id, function(event, canvasID) {
         _this.setCurrentCanvasID(canvasID);
+      }));
+
+      _this.events.push(_this.eventEmitter.subscribe("UPDATE_WINDOW." + this.id, function(event, options) {
+        console.log("[Window] updating. " + options.manifest);
+        _o = options;
+        _this.update(options);
       }));
 
       _this.events.push(_this.eventEmitter.subscribe('REMOVE_CLASS.' + this.id, function(event, className) {
@@ -404,6 +415,18 @@
 
     bindAnnotationEvents: function() {
       var _this = this;
+
+      _this.eventEmitter.subscribe("requestAnnotationLists." + _this.id, function(event, data) {
+        _this.annotationsList.length = 0;
+        // calling #getAnnotations() will publish events: annotationListLoaded.<windowId>
+        if (Array.isArray(data.requests)) {
+          data.requests.forEach(function(req) { _this.getAnnotations(req); });
+        } else if (typeof data.requests === 'string') {
+          _this.getAnnotations(data.requests);
+        }
+        // If data.requests is a non-string/non-array object, do nothing
+      });
+
       _this.eventEmitter.subscribe('annotationCreated.'+_this.id, function(event, oaAnno, eventCallback) {
         var annoID;
         //first function is success callback, second is error callback
@@ -480,7 +503,7 @@
         jQuery.each(viewOptions, function(view, displayed) {
           //instantiate any panels that exist for this view but are still null
           if (view !== '' && _this[panelType] === null) {
-            _this[panelType] = new $[view]({
+            var options = {
               manifest: _this.manifest,
               appendTo: _this.element.find('.'+panelType),
               state:  _this.state,
@@ -493,7 +516,20 @@
               selectedResult: _this.selectedResult,
               pinned: _this.pinned,
               thumbInfo: {thumbsHeight: 80, listingCssCls: 'panel-listing-thumbs', thumbnailCls: 'panel-thumbnail-view'}
-            });
+            };
+
+            if (view.toLowerCase() === "sidepanel") {
+              jQuery.extend(options, {
+                layersTabAvailable: _this.sidePanelOptions.layers,
+                tocTabAvailable: _this.sidePanelOptions.toc,
+                // annotationsTabAvailable = _this.sidePanelOptions.annotations,
+                annotationsTabAvailable: true,
+                searchAvailable: _this.sidePanelOptions.search,
+                hasStructures: _this.sidePanelOptions.hasStructures,
+              });
+            }
+
+            _this[panelType] = new $[view](options);
           }
 
           //refresh displayed in case SidePanel module changed it
@@ -528,11 +564,12 @@
         return;
       }
       var _this = this,
-      tocAvailable = _this.sidePanelOptions.toc,
-      annotationsTabAvailable = _this.sidePanelOptions.annotations,
-      layersTabAvailable = _this.sidePanelOptions.layers,
-      searchAvailable = _this.sidePanelOptions.search,
-      hasStructures = true;
+          tocAvailable = _this.sidePanelOptions.toc,
+          // annotationsTabAvailable = _this.sidePanelOptions.annotations,
+          annotationsTabAvailable = true,
+          layersTabAvailable = _this.sidePanelOptions.layers,
+          searchAvailable = _this.sidePanelOptions.search,
+          hasStructures = true;
 
       var structures = _this.manifest.getStructures();
       if (!structures || structures.length === 0) {
@@ -608,7 +645,7 @@
         viewContainerElement.css('margin-right', 330);
       } else if (!visible && !sidePanelElement.hasClass('minimized')) {
         tocIconElement.removeClass('selected');
-        viewContainerElement.css('margin-left', 0);
+        viewContainerElement.css('margin-right', 0);
         sidePanelElement.addClass('minimized').css('border', 'none').width(0);
       }
       _this.eventEmitter.publish(('windowUpdated'), {
@@ -821,11 +858,11 @@
     getAnnotations: function(canvasId) {
       //first look for manifest annotations
       if (!canvasId || canvasId.length === 0) {
-        canvasId = this.currentCanvasID;
+        canvasId = this.canvasID;
       }
 
       var _this = this,
-      urls = _this.manifest.getAnnotationsListUrls(_this.canvasID);
+          urls = _this.manifest.getAnnotationsListUrls(canvasId);
 
       if (urls.length !== 0) {
         jQuery.each(urls, function(index, url) {
@@ -841,7 +878,12 @@
             });
             // publish event only if one url fetch is successful
             _this.annotationsList = _this.annotationsList.concat(annotations);
-            _this.eventEmitter.publish('ANNOTATIONS_LIST_UPDATED', {windowId: _this.id, annotationsList: _this.annotationsList});
+
+            _this.eventEmitter.publish('ANNOTATIONS_LIST_UPDATED', {
+              windowId: _this.id,
+              canvasLabel: _this.manifest.getCanvasLabel(canvasId),
+              annotationsList: _this.annotationsList
+            });
           });
         });
       }
@@ -960,12 +1002,23 @@
       this.element.find('.add-slot-above').on('click', function() {
         _this.eventEmitter.publish('SPLIT_UP_FROM_WINDOW', _this.id);
       });
+
+      this.element.find('.mirador-icon-home').on('click', function() {
+        if (!_this.pinned)
+          _this.eventEmitter.publish("ADD_ITEM_FROM_WINDOW", _this.id);
+      });
+
+      this.element.find('.mirador-icon-pin-window').on('click', function() {
+        _this.togglePinWindow();
+      });
+
+      this.element.find('.mirador-icon-close').on('click', function() {
+        $.viewer.workspace.removeNode(_this.parent);
+      });
     },
 
     togglePinWindow: function() {
-      var removeOptionEl = this.element.find('.remove-object-option');
       var pinOptionEl = this.element.find('.mirador-icon-pin-window');
-      var closeBtnEl = this.element.find('.mirador-icon-close');
 
       this.pinned = !this.pinned;
       this.element.find('.slot-controls').removeAttr('height');
@@ -973,14 +1026,13 @@
       if (this.pinned) {
         pinOptionEl.addClass('selected');
         pinOptionEl.attr('title', 'Unpin this window');
-        removeOptionEl.hide();
-        closeBtnEl.hide();
+        this.eventEmitter.publish("HIDE_REMOVE_OBJECT." + this.id);
       } else {
         pinOptionEl.removeClass('selected');
         pinOptionEl.attr('title', 'Pin this window');
-        if ($.viewer.workspace.slots.length > 1) {
-          removeOptionEl.show();
-          closeBtnEl.show();
+
+        if (this.state.getSlots().length > 1) {
+          this.eventEmitter.publish("SHOW_REMOVE_OBJECT." + this.id);
         }
       }
 

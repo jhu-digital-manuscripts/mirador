@@ -98,6 +98,10 @@
       _this.eventEmitter.subscribe('RESET_WORKSPACE_LAYOUT', function(event, options) {
         _this.resetLayout(options.layoutDescription);
       });
+
+      // _this.eventEmitter.subscribe("UPDATE_WINDOW", function(event, options) {
+      //   _this.updateWindow(options);
+      // });
     },
 
     bindEvents: function() {
@@ -526,6 +530,19 @@
       return window.id !== windowId;
     });
     _this.eventEmitter.publish('windowRemoved', windowId);
-  }
+  },
+
+  // updateWindow: function(options) {
+  //   var win = _this.windows.filter(function(wind) {
+  //     return wind.id === options.id;
+  //   });
+  //
+  //   if (!win || win.length !== 0) {
+  //     console.log("[Workspace] Failed to update window. Could not find desired ID: " + options.id);
+  //     return;
+  //   }
+  //
+  //
+  // }
 };
 }(Mirador));
