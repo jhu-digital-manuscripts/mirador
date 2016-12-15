@@ -8,11 +8,12 @@
 
 #manifest-select-menu .select-results {
   position: absolute;
-  top: 145px;
+  top: 95px;
   bottom: 0;
   right: 0;
   width: 100%;
   margin-top: 0;
+  height: calc(100% - 95px);
 }
 
 #manifest-select-menu .advanced-search-btn-container button {
