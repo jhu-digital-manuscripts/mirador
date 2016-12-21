@@ -55,9 +55,19 @@
        *          "id": ""          // ID of sender of this event, ex: windowId
        *          "manifest": {object} // manifest object, contains the JSON-LD
        *        }
+       *
+       * @return  {
+       *            "id": "",             // ID of original sender, could be windowId
+       *            "services": [ ... ]   // array of search services found
+       *          }
        */
       this.eventEmitter.subscribe("GET_RELATED_SEARCH_SERVICES", function(event, data) {
-
+        _this.relatedServices(data.manifest.jsonLd).done(function(services) {
+          _this.eventEmitter.publish("RELATED_SEARCH_SERVICES_FOUND", {
+            "id": data.id,
+            "services": services
+          });
+        });
       });
 
       /**
@@ -241,6 +251,9 @@
      * and keep going up the graph until there are no parents, or the maximum
      * number of levels have been traversed.
      *
+     * TODO add caching for collections
+     * real TODO: must separate model logic! use Manifesto library!
+     *
      * @param object a IIIF object
      * @param max_depth {integer} how many levels up in the tree to investigate
      *                            (OPTIONAL) default: 2
@@ -251,7 +264,7 @@
       console.assert(object, "A IIIF object must be provided.");
       var _this = this;
 
-      if (typeof max_depth === "undefined") max_depth = 1;
+      if (typeof max_depth === "undefined") max_depth = 2;
       if (!object) return [];
 
       // 'manifest' object might have its data stored in 'manifest.jsonLd'
@@ -290,21 +303,6 @@
             _this.relatedServices(data, max_depth-1).done(function(s) {
               services.concat(s);
             });
-            // return _this.relatedServices(data, max_depth-1).forEach(function(defer) {
-            //   defer.done(function(services) {
-            //     if (Array.isArray(services)) {
-            //       services.forEach(function(s) {
-            //         s.label = data.label;
-            //         services.push(s);
-            //         _this._addSearchService(s);
-            //       });
-            //     } else if (typeof services === "object") {
-            //       s.label = data.label;
-            //       services.push(s);
-            //       _this._addSearchService(services);
-            //     }
-            //   });
-            // });
           }));
         });
         jQuery.when.apply(defs).done(results.resolve(services));
