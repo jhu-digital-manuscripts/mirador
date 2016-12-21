@@ -168,50 +168,148 @@
      * Test a IIIF service block to see if it represents a search service.
      */
     isSearchServiceBlock: function(service) {
-      return service["@context"] === "http://iiif.io/api/search/0/context.json" ||
-          serviceProperty["@context"] === "http://manuscriptlib.org/jhiff/search/context.json";
+      return service["@context"] === "http://manuscriptlib.org/jhiff/search/context.json";
     },
 
     /**
      * Get the search service from a manifest.
      *
-     * @param manifest
+     * @param object
+     * @return {Array} array of search services. Can return zero or more services.
      */
-    manifestSearchService: function(manifest) {
+    objectSearchServices: function(object) {
       var _this = this;
-      var serviceProperty = manifest.jsonLd.service;
+      var serviceProperty =  object.service || object.jsonLd.service;
 
-      var s = {};
+      var s = [];
       if (Array.isArray(serviceProperty)) {
         serviceProperty
         .filter(function(service) { return _this.isSearchServiceBlock(service); })
         .forEach(function(service) {
-          s.service = service;
-          s.service.label = manifest.jsonLd.label;
+          service.label = object.label || object.jsonLd.label;
+          s.push(service);
         });
       }
       else if (this.isSearchServiceBlock(serviceProperty)) {
         s = _this.jsonLd.service;
         s.label = this.jsonLd.label;
       }
-      else {
-        //no service object with the right context is found
-        s = null;
-      }
       return s;
     },
 
+    // Test impl to illustrate the callback madness
+    blah: function(object, max_depth) {
+      var _this = this;
+      var result = jQuery.Deferred();
+
+      if (object.hasOwnProperty(jsonLd)) {
+        object = object.jsonLd;
+      }
+
+      // Start with a manifest. Get its search service
+      var services = this.objectSearchServices(object);
+      // Investigate its parent collection, if possible
+      // add its search service
+      if (object.hasOwnProperty("within")) {
+        var urls = [];  // IIIF objects can have 0 or more values here
+        if (object.within && Array.isArray(object.within)) {
+          urls.concat(object.within);
+        } else if (object.within) {
+          urls.push(object.within);
+        }
+
+        var requests = [];
+
+        requests.push(urls.forEach(function(url) {
+          if (typeof url === "object") url = url["@id"];
+          jQuery.getJSON(url).done(function(data) {
+            // Now you have the JSON-LD for a parent object
+            services.push(_this.objectSearchServices(data));
+          });
+        }));
+
+        jQuery.when.apply(requests).done(result.resolve(services));
+      }
+
+      return result;
+    },
+
     /**
-     * Find search services related to a manifest, including the search
-     * service for the manifest itself, by investigating the parent collections
-     * of the manifest.
+     * Find search services related to a IIIF object, including the search
+     * service for the object itself, by investigating the parent objects.
+     * This will investigate the 'within' property of a IIIF object, if available
+     * and keep going up the graph until there are no parents, or the maximum
+     * number of levels have been traversed.
      *
-     * @param manifest
+     * @param object a IIIF object
+     * @param max_depth {integer} how many levels up in the tree to investigate
+     *                            (OPTIONAL) default: 2
+     * @return jQuery.Deferred object that resolves with values of related
+     *          search service blocks
      */
-    relatedServices: function(manifest) {
-      console.assert(manifest, "A manifest object must be provided.");
+    relatedServices: function(object, max_depth) {
+      console.assert(object, "A IIIF object must be provided.");
+      var _this = this;
 
+      if (typeof max_depth === "undefined") max_depth = 1;
+      if (!object) return [];
 
+      // 'manifest' object might have its data stored in 'manifest.jsonLd'
+      if (object.jsonLd) object = object.jsonLd;
+
+      // First add lowest level search service
+      // (recursive) If "within" property is present, pointing to a collection
+      //    - Load collection, look for search service
+
+      var result = jQuery.Deferred();
+      var services = this.objectSearchServices(object);
+
+      var parent = object.within;
+
+      // Get all parent IDs (URLs). In IIIF, the 'within' property can take 0 or more values
+      var urls = [];
+      if (parent && (typeof parent === "string" || (typeof parent === "object" && parent["@type"] === "sc:Collection"))) {
+        var url = typeof parent === "string" ? parent : parent["@id"];
+        urls.push(url);
+      } else if (parent && Array.isArray(parent)) {
+        parent.forEach(function(p) {
+          var url = typeof parent === "string" ? parent : parent["@id"];
+          urls.push(url);
+        });
+      }
+
+      if (urls.length > 0 || max_depth === 0) {
+        // Immediately return if there is no parent, or if we've reached max_depth
+        return result.resolve(services);
+      } else {
+        // Else move up the graph to all parent objects
+        var defs = [];
+        urls.forEach(function(url) {
+          // This stage is done when all sub deferred objects are resolved
+          defs.push(jQuery.getJSON(url).done(function(data) {
+            _this.relatedServices(data, max_depth-1).done(function(s) {
+              services.concat(s);
+            });
+            // return _this.relatedServices(data, max_depth-1).forEach(function(defer) {
+            //   defer.done(function(services) {
+            //     if (Array.isArray(services)) {
+            //       services.forEach(function(s) {
+            //         s.label = data.label;
+            //         services.push(s);
+            //         _this._addSearchService(s);
+            //       });
+            //     } else if (typeof services === "object") {
+            //       s.label = data.label;
+            //       services.push(s);
+            //       _this._addSearchService(services);
+            //     }
+            //   });
+            // });
+          }));
+        });
+        jQuery.when.apply(defs).done(results.resolve(services));
+        return results;
+      }
     },
 
     /**
@@ -219,6 +317,10 @@
      * search service JSON block can be added.
      */
     _addSearchService: function(service) {
+      if (service === null) {
+        return;
+      }
+
       if (typeof service === "string") {
         this.searchServices.push({"id": service});
       } else if (typeof service === "object") {
