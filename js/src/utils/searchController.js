@@ -45,9 +45,23 @@
        *          "id": ""          // ID of sender of this event, ex: windowId
        *          "serviceId": ""   // ID of requestd search service
        *        }
+       *
+       * @return  {
+       *            "id": "",             //
+       *            "service": {
+       *              "id": "service-id-same-as-requested",
+       *              "label": "",        // Take from its parent object
+       *              "service": { ... }  // info.json stuff
+       *            }
+       *          }
        */
       this.eventEmitter.subscribe("GET_SEARCH_SERVICE", function(event, data) {
-
+        _this.getSearchService(data.serviceId).done(function(service) {
+          _this.eventEmitter.publish("SEARCH_SERVICE_FOUND", {
+            "id": data.id,
+            "service": service
+          });
+        });
       });
 
       /**
@@ -58,7 +72,7 @@
        *
        * @return  {
        *            "id": "",             // ID of original sender, could be windowId
-       *            "services": [ ... ]   // array of search services found
+       *            "services": [ ... ]   // array of search services found, for structure of each service, see GET_SEARCH_SERVICE docs
        *          }
        */
       this.eventEmitter.subscribe("GET_RELATED_SEARCH_SERVICES", function(event, data) {
@@ -82,7 +96,7 @@
        *
        * @return  {
        *            "id": "",             // ID of original sender
-       *            "results": {object}   // Search results
+       *            "results": {object}   // Search results, see https://github.com/jhu-digital-manuscripts/rosa2/wiki/JHIIIF-Search#search-result
        *          }
        */
       this.eventEmitter.subscribe("SEARCH", function(event, searchReq) {
@@ -106,6 +120,8 @@
      * When writing to cache, it is possible that storate will be full. If this
      * is the case, the write can be forced, which will clear the cache and
      * attempt the write again.
+     *
+     * TODO should use LRU or something
      *
      * @param  (string) id    ID of object in cache
      * @param  (string) value value to put into cache
@@ -139,6 +155,10 @@
     },
 
     /**
+     * Get a search service from its ID. The object provided will include the
+     * services info.json. If this info has not yet been loaded, it will first
+     * be requested and cached before being returned.
+     *
      * @returns jQuery Deferred that resolves when a search service with the
      *          desired ID is found. The service may be cached in memory, or
      *          it may be retrieved by following the ID to get the service info.json
@@ -201,47 +221,10 @@
         });
       }
       else if (this.isSearchServiceBlock(serviceProperty)) {
-        s = _this.jsonLd.service;
-        s.label = this.jsonLd.label;
+        serviceProperty.label = object.label || object.jsonLd.label;
+        s.push(serviceProperty);
       }
       return s;
-    },
-
-    // Test impl to illustrate the callback madness
-    blah: function(object, max_depth) {
-      var _this = this;
-      var result = jQuery.Deferred();
-
-      if (object.hasOwnProperty(jsonLd)) {
-        object = object.jsonLd;
-      }
-
-      // Start with a manifest. Get its search service
-      var services = this.objectSearchServices(object);
-      // Investigate its parent collection, if possible
-      // add its search service
-      if (object.hasOwnProperty("within")) {
-        var urls = [];  // IIIF objects can have 0 or more values here
-        if (object.within && Array.isArray(object.within)) {
-          urls.concat(object.within);
-        } else if (object.within) {
-          urls.push(object.within);
-        }
-
-        var requests = [];
-
-        requests.push(urls.forEach(function(url) {
-          if (typeof url === "object") url = url["@id"];
-          jQuery.getJSON(url).done(function(data) {
-            // Now you have the JSON-LD for a parent object
-            services.push(_this.objectSearchServices(data));
-          });
-        }));
-
-        jQuery.when.apply(requests).done(result.resolve(services));
-      }
-
-      return result;
     },
 
     /**
@@ -276,7 +259,6 @@
 
       var result = jQuery.Deferred();
       var services = this.objectSearchServices(object);
-
       var parent = object.within;
 
       // Get all parent IDs (URLs). In IIIF, the 'within' property can take 0 or more values
