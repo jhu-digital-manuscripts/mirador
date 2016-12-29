@@ -7,8 +7,7 @@
    * Public functions:
    *  #hasQuery() :: has a user input a query into this widget?
    *  #getQuery() :: get the user query from the UI
-   *  #reset() :: reset the advanced search UI
-   *  #switchSearchServices(newService) :: change UI in response to a change in search services
+   *  #destroy() :: unbind all event listeners in preparation for this widget to be removed from the DOM
    */
   $.AdvancedSearchWidget = function(options) {
     jQuery.extend(true, this, {
@@ -16,7 +15,8 @@
       searchService: null,    // Search service with configs
       appendTo: null,
       element: null,
-      hasDescription: true
+      hasDescription: true,
+      eventEmitter: null,
     }, options);
 
     this.init();
@@ -24,7 +24,58 @@
 
   $.AdvancedSearchWidget.prototype = {
     init: function() {
+      var _this = this;
       this.registerPartials();
+
+      this.element = jQuery(Handlebars.compile("{{> advancedSearch}}")({
+        "search": _this.searchService
+      })).appendTo(this.appendTo);
+
+      this.element.tooltip({
+        items: ".search-description-icon",
+        content: Handlebars.compile("{{> searchDescription}}"),
+        position: { my: "left+20 top", at: "right top-50" }
+      });
+    },
+
+    bindEvents: function() {
+      var _this = this;
+
+      this.element.find(".advanced-search-add-btn").on("click", function(e) {
+        e.preventDefault();
+        _this.clearMessages();
+        _this.addAdvancedSearchLine();
+      });
+
+      this.element.find(".advanced-search-reset-btn").on("click", function(e) {
+        e.preventDefault();
+        _this.clearMessages();
+
+        _this.element.find(".advanced-search-line").each(function(index, line) {
+          jQuery(line).remove();
+        });
+        _this.addAdvancedSearchLine();
+      });
+    },
+
+    destroy: function() {
+      // TODO only need to worry about those listeners bound to eventEmitter.
+      // Those DOM event handlers set in #bindEvents should unbind on removal from DOM
+    },
+
+    hasQuery: function() {
+      var result = false;
+
+      this.elemnt.find(".advanced-search-line").each(function(index, line) {
+        result = jQuery(line).find(".advanced-search-inputs").children()
+        .filter(function(index, child) {
+          child = jQuery(child);
+          return child.css("display") != "none" && child.val()&& child.val() !== "";
+        })
+        .length > 0;
+      });
+
+      return result;
     },
 
     getQuery: function() {

@@ -10,9 +10,11 @@
       windowId: null,
       eventEmitter: null,
       manifest: null,
+      searchService: null,    // Current search service displayed in UI
       searchServices: [],     // SearchServices object, used to cache search services
       element: null,            // Base jQuery object for this widget
       appendTo: null,           // jQuery object in base Mirador that this widget lives
+      advancedSearchSet: false,        // has the advanced search UI been created?
     }, options);
 
     this.init();
@@ -20,31 +22,91 @@
 
   $.NewSearchWidget.prototype = {
     init: function() {
+      var _this = this;
+
+      this.bindEvents();
+
       // Request search services for this manifest, and related
       // As those services are discovered, request info.json configs
-      // Populate search dropdowns
-    },
-
-    /**
-     * First check this.searchServices for service config. If it is not
-     * present, request the service from the search controller.
-     *
-     * @param service {string} search service ID
-     * @return Deferred
-     */
-    getSearchService: function(service) {
-
+      // Populate search dropdowns (done in event handler in #bindEvents)
+      this.eventEmitter.publish("GET_RELATED_SEARCH_SERVICES", {
+        "id": _this.windowId,
+        "manifest": _this.manifest
+      });
     },
 
     bindEvents: function() {
       var _this = this;
 
+      // For now, eagerly fetch info.json for search services as they are discovered
       this.eventEmitter.subscribe("RELATED_SEARCH_SERVICES_FOUND", function(event, data) {
         if (data.id === _this.windowId) {
-          searchServices.push(data.service);
+          data.services.forEach(function(service) {
+            _this.eventEmitter.publish("GET_SEARCH_SERVICE", {
+              "id": _this.windowId,
+              "serviceId": service.id || service["@id"]
+            });
+          });
         }
       });
 
+      // As info.json data is recieved for search services, add them to the UI
+      this.eventEmitter.subscribe("SEARCH_SERVICE_FOUND", function(event, data) {
+        _this.addSearchService(data.service);
+      });
+    },
+
+    listenForActions: function() {
+      var _this = this;
+    },
+
+    addSearchService: function(service) {
+      var id = service.id || service["@id"];
+      var label = service.label || id;
+
+      // Search service will likely NOT have an 'id' property, but instead
+      //  have a '@id' property. Change this to 'id' for things to work.
+      service.id = id;
+
+      // First check search services for duplicates. If service already present
+      // with desired ID of this service, update its entry. Otherwise, add it.
+      var found = this.searchServices.filter(function(s) {
+        return s.id === id;
+      });
+
+      if (found.length === 0) {
+        this.searchServices.push(service);
+      } else {
+        found.forEach(function(s) {
+          jQuery.extend(true, s, service);  // This will not overwrite any currently present properties.
+        });
+      }
+
+      this.element.find("#manifest-search-form select")
+        .append(jQuery("<option value=\"" + id + "\">" + label + "</option>"));
+
+      if (!this.advancedSearchSet) {
+        this.switchSearchServices(id);
+        this.advancedSearchSet = true;
+      }
+    },
+
+    /**
+     *
+     *
+     * @param service {string} search service ID
+     * @return the service block with info.json data
+     */
+    getSearchService: function(service) {
+      var res = this.searchServices.filter(function(s) {
+        return s.id === service;
+      });
+
+      if (res.length > 1) {
+        console.log("[SearchWidget] duplicate search services found. " + service);
+      }
+
+      return res.length === 0 ? null : res[0];
     },
 
     /**
@@ -55,13 +117,6 @@
      */
     switchSearchServices: function(newService) {
       var _this = this;
-
-      if (typeof service === 'string') {
-        this.getSearchService(service).always(function(service) {
-          _this.switchSearchServices(service);
-        });
-        return;
-      }
       this.searchService = service;
 
       /*
@@ -79,30 +134,19 @@
         // Widget has not been initialized
         this.element = jQuery(this.template(templateData)).appendTo(this.appendTo);
       } else {
-        var advancedSearchEl = this.element.find(".search-disclose");
-
-        advancedSearchEl.empty();
-        advancedSearchEl.append(
-          Handlebars.compile("{{> browserAdvancedSearch}}")(templateData)
-        );
+        // Switch advanced search UI as needed
+        this.advancedSearch.destroy();
+        this.advancedSearch = new $.AdvancedSearchWidget({
+          "windowId": _this.windowId,
+          "searchService": newService,
+          "appendTo": _this.element.find(".search-disclose"),
+          "eventEmitter": _this.eventEmitter
+        });
       }
-
-      var description_template = Handlebars.compile('{{> searchDescription}}');
-
-      this.element.tooltip({
-        items: '.search-description-icon',
-        content: description_template(service.search.settings.fields),
-        position: { my: "left+20 top", at: "right top-50" },
-      });
 
       // Assuming the UI was created successfully, set the current
       // search service to the one provided to this function
       this.listenForActions();
-      this.addAdvancedSearchLine();
-    },
-
-    registerWidget: function() {
-      $.registerHandlebarsHelpers();
     },
 
     template: Handlebars.compile([
@@ -133,9 +177,7 @@
           '</label>',
         '</div>',
         '<div class="search-disclose-container">',
-          '<div class="search-disclose" style="display: none;">',
-            '{{> advancedSearch }}',
-          '</div>',
+          '<div class="search-disclose" style="display: none;"></div>',
         '</div>',
         '<p class="pre-search-message"></p>',
         '<div class="search-results-list"></div>',
