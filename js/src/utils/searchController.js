@@ -56,6 +56,7 @@
        *          }
        */
       this.eventEmitter.subscribe("GET_SEARCH_SERVICE", function(event, data) {
+        console.log("[SC] getting search service: " + data.serviceId);
         _this.getSearchService(data.serviceId).done(function(service) {
           _this.eventEmitter.publish("SEARCH_SERVICE_FOUND", {
             "id": data.id,
@@ -76,7 +77,9 @@
        *          }
        */
       this.eventEmitter.subscribe("GET_RELATED_SEARCH_SERVICES", function(event, data) {
+        console.log("[SC] getting related search services " + data.manifest.jsonLd["@id"]);
         _this.relatedServices(data.manifest.jsonLd).done(function(services) {
+          console.log("[SC] services found. " + JSON.stringify(services, null, 2));
           _this.eventEmitter.publish("RELATED_SEARCH_SERVICES_FOUND", {
             "id": data.id,
             "services": services
@@ -202,12 +205,12 @@
     },
 
     /**
-     * Get the search service from a manifest.
+     * Get the search service from a IIIF object.
      *
      * @param object
      * @return {Array} array of search services. Can return zero or more services.
      */
-    objectSearchServices: function(object) {
+    searchServicesInObject: function(object) {
       var _this = this;
       var serviceProperty =  object.service || object.jsonLd.service;
 
@@ -233,6 +236,8 @@
      * This will investigate the 'within' property of a IIIF object, if available
      * and keep going up the graph until there are no parents, or the maximum
      * number of levels have been traversed.
+     * Terminating calls should return an array with zero or more service blocks
+     * or URLs.
      *
      * TODO add caching for collections
      * real TODO: must separate model logic! use Manifesto library!
@@ -258,7 +263,7 @@
       //    - Load collection, look for search service
 
       var result = jQuery.Deferred();
-      var services = this.objectSearchServices(object);
+      var services = this.searchServicesInObject(object);
       var parent = object.within;
 
       // Get all parent IDs (URLs). In IIIF, the 'within' property can take 0 or more values
@@ -273,22 +278,35 @@
         });
       }
 
-      if (urls.length > 0 || max_depth === 0) {
+      if (urls.length === 0 || max_depth === 0) {
         // Immediately return if there is no parent, or if we've reached max_depth
+        services.forEach(function(s) { _this._addSearchService(s); });
         return result.resolve(services);
       } else {
         // Else move up the graph to all parent objects
-        var defs = [];
+        var defs = [];      // Defs == definitions that need to be resolved individually
+        var more = [];      // Deferrs for the recersive calls
         urls.forEach(function(url) {
           // This stage is done when all sub deferred objects are resolved
           defs.push(jQuery.getJSON(url).done(function(data) {
-            _this.relatedServices(data, max_depth-1).done(function(s) {
-              services.concat(s);
-            });
+            more.push(_this.relatedServices(data, max_depth-1).done(function(s) {
+              if (Array.isArray(s)) {
+                services = services.concat(s);
+                s.forEach(function(a) { _this._addSearchService(a); });
+              } else {
+                services.push(s);
+                _this._addSearchService(s);
+              }
+            }));
           }));
         });
-        jQuery.when.apply(defs).done(results.resolve(services));
-        return results;
+        // All JSON-LD objects will have returned. Pick out service blocks
+        jQuery.when.apply(jQuery, defs).done(function(_) {
+          jQuery.when.apply(jQuery, more).done(function(_) {
+            result.resolve(services);
+          });
+        });
+        return result;
       }
     },
 

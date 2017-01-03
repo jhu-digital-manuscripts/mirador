@@ -132,44 +132,52 @@
       }
 
       if (_this.searchTabAvailable) {
-        var manifestSearch = this.manifest.getSearchWithinService();
-        if (!manifestSearch.label) {
-          manifestSearch.label = this.manifest.label;
-        }
-
-        var services = [manifestSearch];
-
-        // If the manifest has a 'within' property, fetch that [parent collection]
-        // and add its search service if it exists
-        // Else, just add the search service from the manifest
-        if (this.manifest.within()) {
-          jQuery.getJSON(this.manifest.within())
-            .done(function(collection) {
-              if (!collection) {
-                return;
-              }
-              if (Array.isArray(collection.service)) {
-                collection.service.
-                filter(function(service) {
-                  return service["@context"] === "http://manuscriptlib.org/jhiff/search/context.json";
-                })
-                .forEach(function(service) {
-                  service.label = collection.label;
-                  services.push(service);
-                });
-              } else if (collection.service && collection.service["@context"] === "http://manuscriptlib.org/jhiff/search/context.json") {
-                collection.service.label = collection.label;
-                services.push(collection.service);
-              } else {
-                console.log("[SidePanel] parent collection has no search service.");
-              }
-            })
-            .always(function() {
-              _this.createSearchWidget(services);
-            });
-        } else {
-          _this.createSearchWidget(services);
-        }
+        new $.NewSearchWidget({
+          windowId: this.windowId,
+          appendTo: this.element.find(".tabContentArea"),
+          eventEmitter: this.eventEmitter,
+          tabId: "searchTab",
+          manifest: this.manifest,
+          pinned: this.pinned,
+        });
+        // var manifestSearch = this.manifest.getSearchWithinService();
+        // if (!manifestSearch.label) {
+        //   manifestSearch.label = this.manifest.label;
+        // }
+        //
+        // var services = [manifestSearch];
+        //
+        // // If the manifest has a 'within' property, fetch that [parent collection]
+        // // and add its search service if it exists
+        // // Else, just add the search service from the manifest
+        // if (this.manifest.within()) {
+        //   jQuery.getJSON(this.manifest.within())
+        //     .done(function(collection) {
+        //       if (!collection) {
+        //         return;
+        //       }
+        //       if (Array.isArray(collection.service)) {
+        //         collection.service.
+        //         filter(function(service) {
+        //           return service["@context"] === "http://manuscriptlib.org/jhiff/search/context.json";
+        //         })
+        //         .forEach(function(service) {
+        //           service.label = collection.label;
+        //           services.push(service);
+        //         });
+        //       } else if (collection.service && collection.service["@context"] === "http://manuscriptlib.org/jhiff/search/context.json") {
+        //         collection.service.label = collection.label;
+        //         services.push(collection.service);
+        //       } else {
+        //         console.log("[SidePanel] parent collection has no search service.");
+        //       }
+        //     })
+        //     .always(function() {
+        //       _this.createSearchWidget(services);
+        //     });
+        // } else {
+        //   _this.createSearchWidget(services);
+        // }
       }
     },
 

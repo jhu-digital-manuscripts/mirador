@@ -7,6 +7,7 @@
    */
   $.NewSearchWidget = function(options) {
     jQuery.extend(true, this, {
+      tabId: null,
       windowId: null,
       eventEmitter: null,
       manifest: null,
@@ -14,8 +15,15 @@
       searchServices: [],     // SearchServices object, used to cache search services
       element: null,            // Base jQuery object for this widget
       appendTo: null,           // jQuery object in base Mirador that this widget lives
+      advancedSearch: null,     // Advanced search widget
       advancedSearchSet: false,        // has the advanced search UI been created?
+      pinned: false,            // Is this search widget pinned to the UI? Only matters if widget is part of a window
     }, options);
+
+    this.messages = {
+      "no-term": "<span class=\"error\">No search term was found.</span>",
+      "no-defaults": "<span class=\"error\">No fields defined for basic search.</span>",
+    };
 
     this.init();
   };
@@ -23,7 +31,7 @@
   $.NewSearchWidget.prototype = {
     init: function() {
       var _this = this;
-
+console.log("[SearchWidget] init. Requesting search services related to: " + _this.manifest.jsonLd["@id"]);
       this.bindEvents();
 
       // Request search services for this manifest, and related
@@ -54,10 +62,72 @@
       this.eventEmitter.subscribe("SEARCH_SERVICE_FOUND", function(event, data) {
         _this.addSearchService(data.service);
       });
+
+      this.eventEmitter.subscribe('windowPinned', function(event, data) {
+        if (data.windowId === _this.windowId) {
+          _this.pinned = data.status;
+        }
+      });
+
+      this.eventEmitter.subscribe('tabStateUpdated.' + this.windowId, function(event, data) {
+        if (data.tabs[data.selectedTabIndex].options.id === _this.tabId) {
+          _this.element.show();
+        } else {
+          _this.element.hide();
+        }
+      });
     },
 
     listenForActions: function() {
       var _this = this;
+      this.element.find(".search-within-form").on('submit', function(event){
+        event.preventDefault();
+        var messages = _this.element.find('.pre-search-message');
+        var searchTerm = _this.element.find('.js-query').val();
+
+        messages.empty();
+
+        if (_this.advancedSearch && _this.advancedSearch.hasQuery()) {
+          // Advanced search
+          console.log("[AdvancedSearch] " + _this.advancedSearch.getQuery());
+
+        } else {
+          // Basic search
+          if (_this.searchService.getDefaultFields().length === 0) {
+            jQuery(_this.messages['no-defaults']).appendTo(messages);
+          }
+
+          if (searchTerm && searchTerm.length > 0) {
+            var query = $.generateBasicQuery(
+              searchTerm,
+              _this.searchService.getDefaultFields(),
+              _this.searchService.query.delimiters.or
+            );
+            if (query && query.length > 0) {
+              // TODO do search
+              console.log("[Search] " + query);
+            }
+          } else {
+            jQuery(_this.messages['no-term']).appendTo(messages);
+          }
+        }
+      });
+
+      if (this.searchService.search.settings.fields.length > 0) {
+        this.element.find('.search-disclose-btn-more').on('click', function() {
+          _this.element.find('#search-form').hide('fast');
+          _this.element.find('.search-disclose').show('fast');
+          _this.element.find('.search-disclose-btn-more').hide();
+          _this.element.find('.search-disclose-btn-less').show();
+        });
+
+        this.element.find('.search-disclose-btn-less').on('click', function() {
+          _this.element.find('#search-form').show('fast');
+          _this.element.find('.search-disclose').hide('fast');
+          _this.element.find('.search-disclose-btn-less').hide();
+          _this.element.find('.search-disclose-btn-more').show();
+        });
+      }
     },
 
     addSearchService: function(service) {
@@ -117,7 +187,7 @@
      */
     switchSearchServices: function(newService) {
       var _this = this;
-      this.searchService = service;
+      this.searchService = newService;
 
       /*
         Template data: {
@@ -126,7 +196,7 @@
         }
        */
       var templateData = {
-        "search": service.search,
+        "search": newService.search,
         "otherServices": _this.searchServices
       };
 
@@ -140,13 +210,18 @@
           "windowId": _this.windowId,
           "searchService": newService,
           "appendTo": _this.element.find(".search-disclose"),
-          "eventEmitter": _this.eventEmitter
+          "eventEmitter": _this.eventEmitter,
+          "windowPinned": _this.pinned
         });
       }
 
       // Assuming the UI was created successfully, set the current
       // search service to the one provided to this function
       this.listenForActions();
+    },
+
+    performAdvancedSearch: function() {
+
     },
 
     template: Handlebars.compile([
@@ -162,23 +237,23 @@
             '</select>',
           '</p>',
         '</div>',
-        '<form id="search-form" class="js-perform-query">',
+        '<form id="search-form" class="search-within-form">',
           '<input class="js-query" type="text" placeholder="search"/>',
           '<input type="submit" value="Search"/>',
+          '<div class="search-disclose-btn-more">Advanced Search</div>',
+          '<div class="search-disclose-btn-less" style="display: none;">Basic Search</div>',
+          '<div class="search-results-sorter">',
+            '<label>Sort results by: ',
+              '<select>',
+                '<option value="relevance">Relevance</option>',
+                '<option value="index">Page Order</option>',
+              '</select>',
+            '</label>',
+          '</div>',
+          '<div class="search-disclose-container">',
+            '<div class="search-disclose" style="display: none;"></div>',
+          '</div>',
         '</form>',
-        '<div class="search-disclose-btn-more">Advanced Search</div>',
-        '<div class="search-disclose-btn-less" style="display: none;">Basic Search</div>',
-        '<div class="search-results-sorter">',
-          '<label>Sort results by: ',
-            '<select>',
-              '<option value="relevance">Relevance</option>',
-              '<option value="index">Page Order</option>',
-            '</select>',
-          '</label>',
-        '</div>',
-        '<div class="search-disclose-container">',
-          '<div class="search-disclose" style="display: none;"></div>',
-        '</div>',
         '<p class="pre-search-message"></p>',
         '<div class="search-results-list"></div>',
       '</div>',

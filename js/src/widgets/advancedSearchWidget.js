@@ -17,6 +17,7 @@
       element: null,
       hasDescription: true,
       eventEmitter: null,
+      windowPinned: false,
     }, options);
 
     this.init();
@@ -26,7 +27,7 @@
     init: function() {
       var _this = this;
       this.registerPartials();
-
+console.log("[AdvancedSearchWidget] init.");
       this.element = jQuery(Handlebars.compile("{{> advancedSearch}}")({
         "search": _this.searchService
       })).appendTo(this.appendTo);
@@ -36,9 +37,22 @@
         content: Handlebars.compile("{{> searchDescription}}"),
         position: { my: "left+20 top", at: "right top-50" }
       });
+
+      this.bindEvents();
+      this.listenForActions();
     },
 
     bindEvents: function() {
+      var _this = this;
+
+      this.eventEmitter.subscribe('windowPinned', function(event, data) {
+        if (data.windowId === _this.windowId) {
+          _this.windowPinned = data.status;
+        }
+      });
+    },
+
+    listenForActions: function() {
       var _this = this;
 
       this.element.find(".advanced-search-add-btn").on("click", function(e) {

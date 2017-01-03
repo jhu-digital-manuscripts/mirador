@@ -22,7 +22,8 @@
         'optionsPanelVisible': false,
         'bookmarkPanelVisible': false
       },
-      manifests:             []
+      manifests:             [],
+      searchController:      null,
     }, options);
 
     this.id = this.state.getStateProperty('id');
@@ -35,6 +36,12 @@
 
     if (this.data) {
       this.init();
+    }
+
+    if (!this.searchController) {
+      this.searchController = new $.SearchController({
+        "eventEmitter": this.eventEmitter
+      });
     }
   };
 
