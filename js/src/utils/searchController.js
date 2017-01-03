@@ -20,6 +20,17 @@
  *                                      to "GET_RELATED_SEARCH_SERVICES" event
  *    - SEARCH_COMPLETE : after a search request is complete, in response to
  *                        a "SEARCH" event
+ *
+ * ===========================================================================
+ *
+ * List of known search services:
+ *  [
+ *    {
+ *      "id": "service_id",
+ *      "service": { ... },  // Service block from IIIF object
+ *      "config": { ... }    // info.json data
+ *    }
+ *  ]
  */
 (function($){
   $.SearchController = function(options) {
@@ -56,7 +67,6 @@
        *          }
        */
       this.eventEmitter.subscribe("GET_SEARCH_SERVICE", function(event, data) {
-        console.log("[SC] getting search service: " + data.serviceId);
         _this.getSearchService(data.serviceId).done(function(service) {
           _this.eventEmitter.publish("SEARCH_SERVICE_FOUND", {
             "id": data.id,
@@ -77,9 +87,12 @@
        *          }
        */
       this.eventEmitter.subscribe("GET_RELATED_SEARCH_SERVICES", function(event, data) {
-        console.log("[SC] getting related search services " + data.manifest.jsonLd["@id"]);
         _this.relatedServices(data.manifest.jsonLd).done(function(services) {
-          console.log("[SC] services found. " + JSON.stringify(services, null, 2));
+          if (Array.isArray(services)) {
+            services.forEach(function(service) { _this._addSearchService(service); });
+          } else {
+            _this._addSearchService(services);
+          }
           _this.eventEmitter.publish("RELATED_SEARCH_SERVICES_FOUND", {
             "id": data.id,
             "services": services
@@ -176,21 +189,21 @@
       var service = jQuery.Deferred();
 
       var s = this.searchServices.filter(function(service) {
-        return service.id === id;
+        return service.id === id || service["@id"] === id;
       });
 
       if (s.length === 0) {
         console.log("[ManifestsPanel] No search service found for ID: " + id);
-      } else if (s[0].service) {
-        service.resolve(s[0].service);
+      } else if (s[0].config) {
+        service.resolve(s[0]);
       } else {
         // Only ONE should appear here, as it matches IDs, however, if
         // for some reason, more than one are matched, just pick the first
         var _this = this;
         var jhservice = new $.JhiiifSearchService({ "id": s[0].id });
         jhservice.initializer.done(function() {
-          s[0].service = jhservice;
-          service.resolve(jhservice);
+          s[0].config = jhservice;
+          service.resolve(s[0]);
         });
       }
 
@@ -280,7 +293,6 @@
 
       if (urls.length === 0 || max_depth === 0) {
         // Immediately return if there is no parent, or if we've reached max_depth
-        services.forEach(function(s) { _this._addSearchService(s); });
         return result.resolve(services);
       } else {
         // Else move up the graph to all parent objects
@@ -292,10 +304,8 @@
             more.push(_this.relatedServices(data, max_depth-1).done(function(s) {
               if (Array.isArray(s)) {
                 services = services.concat(s);
-                s.forEach(function(a) { _this._addSearchService(a); });
               } else {
                 services.push(s);
-                _this._addSearchService(s);
               }
             }));
           }));

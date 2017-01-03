@@ -31,7 +31,7 @@
   $.NewSearchWidget.prototype = {
     init: function() {
       var _this = this;
-console.log("[SearchWidget] init. Requesting search services related to: " + _this.manifest.jsonLd["@id"]);
+
       this.bindEvents();
 
       // Request search services for this manifest, and related
@@ -60,7 +60,9 @@ console.log("[SearchWidget] init. Requesting search services related to: " + _th
 
       // As info.json data is recieved for search services, add them to the UI
       this.eventEmitter.subscribe("SEARCH_SERVICE_FOUND", function(event, data) {
-        _this.addSearchService(data.service);
+        if (data.id === _this.windowId) {
+          _this.addSearchService(data.service);
+        }
       });
 
       this.eventEmitter.subscribe('windowPinned', function(event, data) {
@@ -101,7 +103,7 @@ console.log("[SearchWidget] init. Requesting search services related to: " + _th
             var query = $.generateBasicQuery(
               searchTerm,
               _this.searchService.getDefaultFields(),
-              _this.searchService.query.delimiters.or
+              _this.searchService.config.query.delimiters.or
             );
             if (query && query.length > 0) {
               // TODO do search
@@ -113,7 +115,7 @@ console.log("[SearchWidget] init. Requesting search services related to: " + _th
         }
       });
 
-      if (this.searchService.search.settings.fields.length > 0) {
+      if (this.searchService.config.search.settings.fields.length > 0) {
         this.element.find('.search-disclose-btn-more').on('click', function() {
           _this.element.find('#search-form').hide('fast');
           _this.element.find('.search-disclose').show('fast');
@@ -132,8 +134,8 @@ console.log("[SearchWidget] init. Requesting search services related to: " + _th
 
     addSearchService: function(service) {
       var id = service.id || service["@id"];
-      var label = service.label || id;
-
+      var label = service.service.label || id;
+console.log("[SearchWidget] adding service: " + id + " :: " + label);
       // Search service will likely NOT have an 'id' property, but instead
       //  have a '@id' property. Change this to 'id' for things to work.
       service.id = id;
@@ -152,13 +154,13 @@ console.log("[SearchWidget] init. Requesting search services related to: " + _th
         });
       }
 
-      this.element.find("#manifest-search-form select")
-        .append(jQuery("<option value=\"" + id + "\">" + label + "</option>"));
-
       if (!this.advancedSearchSet) {
-        this.switchSearchServices(id);
+        this.switchSearchServices(service);
         this.advancedSearchSet = true;
       }
+
+      this.element.find("#manifest-search-form .search-within-object-select")
+        .append(jQuery("<option value=\"" + id + "\">" + label + "</option>"));
     },
 
     /**
@@ -196,24 +198,25 @@ console.log("[SearchWidget] init. Requesting search services related to: " + _th
         }
        */
       var templateData = {
-        "search": newService.search,
+        "search": newService.config,
         "otherServices": _this.searchServices
       };
 
       if (!this.element) {
         // Widget has not been initialized
         this.element = jQuery(this.template(templateData)).appendTo(this.appendTo);
-      } else {
-        // Switch advanced search UI as needed
-        this.advancedSearch.destroy();
-        this.advancedSearch = new $.AdvancedSearchWidget({
-          "windowId": _this.windowId,
-          "searchService": newService,
-          "appendTo": _this.element.find(".search-disclose"),
-          "eventEmitter": _this.eventEmitter,
-          "windowPinned": _this.pinned
-        });
       }
+      // Switch advanced search UI as needed
+      if (this.advancedSearch) {
+        this.advancedSearch.destroy();
+      }
+      this.advancedSearch = new $.AdvancedSearchWidget({
+        "windowId": _this.windowId,
+        "searchService": newService,
+        "appendTo": _this.element.find(".search-disclose"),
+        "eventEmitter": _this.eventEmitter,
+        "windowPinned": _this.pinned
+      });
 
       // Assuming the UI was created successfully, set the current
       // search service to the one provided to this function
@@ -232,7 +235,7 @@ console.log("[SearchWidget] init. Requesting search services related to: " + _th
             'Search within: ',
             '<select class="search-within-object-select">',
               '{{#each otherServices}}',
-                '<option value="{{id}}">{{label}}</option>',
+                '<option value="{{id}}">{{service.label}}</option>',
               '{{/each}}',
             '</select>',
           '</p>',
