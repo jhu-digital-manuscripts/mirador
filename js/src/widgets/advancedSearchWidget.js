@@ -36,7 +36,7 @@
 
       this.element.tooltip({
         items: ".search-description-icon",
-        content: Handlebars.compile("{{> searchDescription}}"),
+        content: Handlebars.compile("{{> searchDescription}}")(this.searchService.config.search.settings.fields),
         position: { my: "left+20 top", at: "right top-50" }
       });
 
@@ -89,7 +89,7 @@
 
     hasQuery: function() {
       var result = false;
-console.log("[ASW] Checking if there is an advanced search query. ");
+
       this.element.find(".advanced-search-line").each(function(index, line) {
         result = result || jQuery(line).find(".advanced-search-inputs").children()
         .filter(function(index, child) {
