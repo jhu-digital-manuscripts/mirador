@@ -17,6 +17,7 @@
       appendTo: null,           // jQuery object in base Mirador that this widget lives
       advancedSearch: null,     // Advanced search widget
       advancedSearchSet: false,        // has the advanced search UI been created?
+      advancedSearchActive: false,
       pinned: false,            // Is this search widget pinned to the UI? Only matters if widget is part of a window
     }, options);
 
@@ -31,6 +32,9 @@
   $.NewSearchWidget.prototype = {
     init: function() {
       var _this = this;
+
+      // Template takes no data. Data added asyncronously later.
+      this.element = jQuery(this.template()).appendTo(this.appendTo);
 
       this.bindEvents();
 
@@ -89,20 +93,21 @@
 
         messages.empty();
 
-        if (_this.advancedSearch && _this.advancedSearch.hasQuery()) {
+        if (_this.advancedSearchActive) {
           // Advanced search
           console.log("[AdvancedSearch] " + _this.advancedSearch.getQuery());
 
         } else {
+          console.log("[SW] Basic search.");
           // Basic search
-          if (_this.searchService.getDefaultFields().length === 0) {
+          if (_this.searchService.config.getDefaultFields().length === 0) {
             jQuery(_this.messages['no-defaults']).appendTo(messages);
           }
 
           if (searchTerm && searchTerm.length > 0) {
             var query = $.generateBasicQuery(
               searchTerm,
-              _this.searchService.getDefaultFields(),
+              _this.searchService.config.getDefaultFields(),
               _this.searchService.config.query.delimiters.or
             );
             if (query && query.length > 0) {
@@ -115,8 +120,14 @@
         }
       });
 
+      this.element.find(".search-within-object-select").on("change", function() {
+        var selected = jQuery(this).val();
+        _this.switchSearchServices(_this.getSearchService(selected));
+      });
+
       if (this.searchService.config.search.settings.fields.length > 0) {
         this.element.find('.search-disclose-btn-more').on('click', function() {
+          _this.advancedSearchActive = true;
           _this.element.find('#search-form').hide('fast');
           _this.element.find('.search-disclose').show('fast');
           _this.element.find('.search-disclose-btn-more').hide();
@@ -124,6 +135,7 @@
         });
 
         this.element.find('.search-disclose-btn-less').on('click', function() {
+          _this.advancedSearchActive = false;
           _this.element.find('#search-form').show('fast');
           _this.element.find('.search-disclose').hide('fast');
           _this.element.find('.search-disclose-btn-less').hide();
@@ -132,10 +144,14 @@
       }
     },
 
+    clearMessages: function() {
+      this.element.find(".pre-search-message").empty();
+    },
+
     addSearchService: function(service) {
       var id = service.id || service["@id"];
       var label = service.service.label || id;
-console.log("[SearchWidget] adding service: " + id + " :: " + label);
+
       // Search service will likely NOT have an 'id' property, but instead
       //  have a '@id' property. Change this to 'id' for things to work.
       service.id = id;
@@ -159,7 +175,7 @@ console.log("[SearchWidget] adding service: " + id + " :: " + label);
         this.advancedSearchSet = true;
       }
 
-      this.element.find("#manifest-search-form .search-within-object-select")
+      this.element.find(".search-within-object-select")
         .append(jQuery("<option value=\"" + id + "\">" + label + "</option>"));
     },
 
@@ -191,31 +207,18 @@ console.log("[SearchWidget] adding service: " + id + " :: " + label);
       var _this = this;
       this.searchService = newService;
 
-      /*
-        Template data: {
-          "search": jhiiifSearchService.search,
-          "otherServices": _this.searchServices     // Should this be trimmed? (does it matter?)
-        }
-       */
-      var templateData = {
-        "search": newService.config,
-        "otherServices": _this.searchServices
-      };
-
-      if (!this.element) {
-        // Widget has not been initialized
-        this.element = jQuery(this.template(templateData)).appendTo(this.appendTo);
-      }
       // Switch advanced search UI as needed
       if (this.advancedSearch) {
         this.advancedSearch.destroy();
       }
-      this.advancedSearch = new $.AdvancedSearchWidget({
+      _this.advancedSearch = new $.AdvancedSearchWidget({
         "windowId": _this.windowId,
         "searchService": newService,
         "appendTo": _this.element.find(".search-disclose"),
         "eventEmitter": _this.eventEmitter,
-        "windowPinned": _this.pinned
+        "windowPinned": _this.pinned,
+        "performAdvancedSearch": _this.performAdvancedSearch,
+        "clearMessages": _this.clearMessages,
       });
 
       // Assuming the UI was created successfully, set the current
@@ -223,8 +226,21 @@ console.log("[SearchWidget] adding service: " + id + " :: " + label);
       this.listenForActions();
     },
 
-    performAdvancedSearch: function() {
-
+    /**
+     * Potentially called from within an instance of $.AdvancedSearchWidget
+     * "this" will not behave as expected. It will take the scope of the
+     * calling object, not the $.NewSearchWidget object.
+     */
+    performAdvancedSearch: function(advancedSearchObj) {
+      _aso = advancedSearchObj;
+      if (!advancedSearchObj) {
+        console.log("[SW] No advanced search widget has been set.");
+        return;
+      }
+      console.log("[SW] Will perform advanced search here. " + advancedSearchObj + " ::: " + this.searchService);
+      if (!advancedSearchObj.hasQuery()) {
+        console.log("[SW] No advanced search query!");
+      }
     },
 
     template: Handlebars.compile([
@@ -233,30 +249,26 @@ console.log("[SearchWidget] adding service: " + id + " :: " + label);
         '<div class="">',
           '<p>',
             'Search within: ',
-            '<select class="search-within-object-select">',
-              '{{#each otherServices}}',
-                '<option value="{{id}}">{{service.label}}</option>',
-              '{{/each}}',
-            '</select>',
+            '<select class="search-within-object-select"></select>',
           '</p>',
         '</div>',
         '<form id="search-form" class="search-within-form">',
           '<input class="js-query" type="text" placeholder="search"/>',
           '<input type="submit" value="Search"/>',
-          '<div class="search-disclose-btn-more">Advanced Search</div>',
-          '<div class="search-disclose-btn-less" style="display: none;">Basic Search</div>',
-          '<div class="search-results-sorter">',
-            '<label>Sort results by: ',
-              '<select>',
-                '<option value="relevance">Relevance</option>',
-                '<option value="index">Page Order</option>',
-              '</select>',
-            '</label>',
-          '</div>',
-          '<div class="search-disclose-container">',
-            '<div class="search-disclose" style="display: none;"></div>',
-          '</div>',
         '</form>',
+        '<div class="search-disclose-btn-more">Advanced Search</div>',
+        '<div class="search-disclose-btn-less" style="display: none;">Basic Search</div>',
+        '<div class="search-results-sorter">',
+          '<label>Sort results by: ',
+            '<select>',
+              '<option value="relevance">Relevance</option>',
+              '<option value="index">Page Order</option>',
+            '</select>',
+          '</label>',
+        '</div>',
+        '<div class="search-disclose-container">',
+          '<div class="search-disclose" style="display: none;"></div>',
+        '</div>',
         '<p class="pre-search-message"></p>',
         '<div class="search-results-list"></div>',
       '</div>',

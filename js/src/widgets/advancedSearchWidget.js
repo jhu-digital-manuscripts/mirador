@@ -18,6 +18,8 @@
       hasDescription: true,
       eventEmitter: null,
       windowPinned: false,
+      performAdvancedSearch: null,
+      clearMessages: null,
     }, options);
 
     this.init();
@@ -27,7 +29,7 @@
     init: function() {
       var _this = this;
       this.registerPartials();
-console.log("[AdvancedSearchWidget] init.");
+
       this.element = jQuery(Handlebars.compile("{{> advancedSearch}}")({
         "search": _this.searchService
       })).appendTo(this.appendTo);
@@ -40,6 +42,7 @@ console.log("[AdvancedSearchWidget] init.");
 
       this.bindEvents();
       this.listenForActions();
+      this.addAdvancedSearchLine();
     },
 
     bindEvents: function() {
@@ -70,18 +73,25 @@ console.log("[AdvancedSearchWidget] init.");
         });
         _this.addAdvancedSearchLine();
       });
+
+      this.element.find(".perform-advanced-search").on("submit", function(event) {
+        event.preventDefault();
+        _this.performAdvancedSearch(_this);
+      });
     },
 
     destroy: function() {
       // TODO only need to worry about those listeners bound to eventEmitter.
       // Those DOM event handlers set in #bindEvents should unbind on removal from DOM
+      this.appendTo.empty();
+      this.element = null;
     },
 
     hasQuery: function() {
       var result = false;
-
-      this.elemnt.find(".advanced-search-line").each(function(index, line) {
-        result = jQuery(line).find(".advanced-search-inputs").children()
+console.log("[ASW] Checking if there is an advanced search query. ");
+      this.element.find(".advanced-search-line").each(function(index, line) {
+        result = result || jQuery(line).find(".advanced-search-inputs").children()
         .filter(function(index, child) {
           child = jQuery(child);
           return child.css("display") != "none" && child.val()&& child.val() !== "";
@@ -110,14 +120,14 @@ console.log("[AdvancedSearchWidget] init.");
           child = jQuery(child);
 
           parts.push({
-            op: _this.searchService.query.delimiters[operation],
+            op: _this.searchService.config.query.delimiters[operation],
             category: child.data('query'),
             term: child.val()
           });
         });
       });
 
-      return $.generateQuery(parts, this.searchService.query.delimiters.field);
+      return $.generateQuery(parts, this.searchService.config.query.delimiters.field);
     },
 
     /**
@@ -128,8 +138,8 @@ console.log("[AdvancedSearchWidget] init.");
       var template = Handlebars.compile('{{> advancedSearchLine }}');
 
       var templateData = {
-        'search': this.searchService.search,
-        'query': this.searchService.query
+        'search': this.searchService.config.search,
+        'query': this.searchService.config.query
       };
       // templateData.search.categories.choices = this.searchService.query.fields;
 
@@ -147,13 +157,13 @@ console.log("[AdvancedSearchWidget] init.");
 
       // Hide all inputs except for the Default choice
       // Makes sure ENTER key presses activate advanced search
-      this.searchService.search.settings.fields.forEach(function (field) {
+      this.searchService.config.search.settings.fields.forEach(function (field) {
         var element = line.find(_this.classNamesToSelector(field.class));
 
         element.keypress(function(event) {
           if (event.which == 13) {
             event.preventDefault();
-            _this.performAdvancedSearch();
+            _this.performAdvancedSearch(_this);
           }
         });
 
@@ -183,7 +193,7 @@ console.log("[AdvancedSearchWidget] init.");
         // Hide all input/select fields
         user_inputs.children().hide();
         user_inputs
-            .find(_this.classNamesToSelector(_this.searchService.getField(jSelector.val()).class))
+            .find(_this.classNamesToSelector(_this.searchService.config.getField(jSelector.val()).class))
             .show();
       });
 

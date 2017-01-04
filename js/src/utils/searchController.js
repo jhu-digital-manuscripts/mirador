@@ -62,7 +62,7 @@
        *            "service": {
        *              "id": "service-id-same-as-requested",
        *              "label": "",        // Take from its parent object
-       *              "service": { ... }  // info.json stuff
+       *              "service": { ... }  // info.json stuff. An instance of $.jhiiifSearchService
        *            }
        *          }
        */
