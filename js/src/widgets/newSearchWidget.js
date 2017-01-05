@@ -4,6 +4,9 @@
    * anywhere in Mirador. This object is responsible for forming and sending
    * search requests to the appropriate search services and recieving the
    * responses. Responses will then be passed to a SearchResults widget.
+   *
+   * Search results paging is handled in this widget. Changing pages will
+   * result in a new SearchResults widget being spawned and added to the UI.
    */
   $.NewSearchWidget = function(options) {
     jQuery.extend(true, this, {
@@ -89,13 +92,13 @@
         }
       });
 
-      this.eventEmitter.subscribe('windowPinned', function(event, data) {
+      this.eventEmitter.subscribe("windowPinned", function(event, data) {
         if (data.windowId === _this.windowId) {
           _this.pinned = data.status;
         }
       });
 
-      this.eventEmitter.subscribe('tabStateUpdated.' + this.windowId, function(event, data) {
+      this.eventEmitter.subscribe("tabStateUpdated." + this.windowId, function(event, data) {
         if (data.tabs[data.selectedTabIndex].options.id === _this.tabId) {
           _this.element.show();
         } else {
@@ -106,37 +109,29 @@
 
     listenForActions: function() {
       var _this = this;
-      this.element.find(".search-within-form").on('submit', function(event){
+      this.element.find(".search-within-form").on("submit", function(event){
         event.preventDefault();
-        var messages = _this.element.find('.pre-search-message');
-        var searchTerm = _this.element.find('.js-query').val();
+        var messages = _this.element.find(".pre-search-message");
+        var searchTerm = _this.element.find(".js-query").val();
 
         messages.empty();
 
-        if (_this.advancedSearchActive) {
-          // Advanced search
-          console.log("[AdvancedSearch] " + _this.advancedSearch.getQuery());
+        // Basic search
+        if (_this.searchService.config.getDefaultFields().length === 0) {
+          jQuery(_this.messages["no-defaults"]).appendTo(messages);
+        }
 
+        if (searchTerm && searchTerm.length > 0) {
+          var query = $.generateBasicQuery(
+            searchTerm,
+            _this.searchService.config.getDefaultFields(),
+            _this.searchService.config.query.delimiters.or
+          );
+          if (query && query.length > 0) {
+            _this.doSearch(_this.searchService, query, _this.getSortOrder());
+          }
         } else {
-          console.log("[SW] Basic search.");
-          // Basic search
-          if (_this.searchService.config.getDefaultFields().length === 0) {
-            jQuery(_this.messages['no-defaults']).appendTo(messages);
-          }
-
-          if (searchTerm && searchTerm.length > 0) {
-            var query = $.generateBasicQuery(
-              searchTerm,
-              _this.searchService.config.getDefaultFields(),
-              _this.searchService.config.query.delimiters.or
-            );
-            if (query && query.length > 0) {
-              // TODO do search
-              console.log("[Search] " + query);
-            }
-          } else {
-            jQuery(_this.messages['no-term']).appendTo(messages);
-          }
+          jQuery(_this.messages["no-term"]).appendTo(messages);
         }
       });
 
@@ -146,26 +141,22 @@
       });
 
       if (this.searchService.config.search.settings.fields.length > 0) {
-        this.element.find('.search-disclose-btn-more').on('click', function() {
+        this.element.find(".search-disclose-btn-more").on("click", function() {
           _this.advancedSearchActive = true;
-          _this.element.find('#search-form').hide('fast');
-          _this.element.find('.search-disclose').show('fast');
-          _this.element.find('.search-disclose-btn-more').hide();
-          _this.element.find('.search-disclose-btn-less').show();
+          _this.element.find("#search-form").hide("fast");
+          _this.element.find(".search-disclose").show("fast");
+          _this.element.find(".search-disclose-btn-more").hide();
+          _this.element.find(".search-disclose-btn-less").show();
         });
 
-        this.element.find('.search-disclose-btn-less').on('click', function() {
+        this.element.find(".search-disclose-btn-less").on("click", function() {
           _this.advancedSearchActive = false;
-          _this.element.find('#search-form').show('fast');
-          _this.element.find('.search-disclose').hide('fast');
-          _this.element.find('.search-disclose-btn-less').hide();
-          _this.element.find('.search-disclose-btn-more').show();
+          _this.element.find("#search-form").show("fast");
+          _this.element.find(".search-disclose").hide("fast");
+          _this.element.find(".search-disclose-btn-less").hide();
+          _this.element.find(".search-disclose-btn-more").show();
         });
       }
-    },
-
-    clearMessages: function() {
-      this.element.find(".pre-search-message").empty();
     },
 
     addSearchService: function(service) {
@@ -193,6 +184,7 @@
       if (!this.advancedSearchSet) {
         this.switchSearchServices(service);
         this.advancedSearchSet = true;
+        this.listenForActions();
       }
 
       this.element.find(".search-within-object-select")
@@ -243,53 +235,40 @@
             return;
           }
           if (_this.advancedSearch.hasQuery()) {
-            _this.doSearch(_this.searchService, _this.advancedSearch.getQuery());
+            _this.doSearch(_this.searchService, _this.advancedSearch.getQuery(), _this.getSortOrder());
           }
         },
-        "clearMessages": _this.clearMessages,
+        "clearMessages": function() { _this.element.find(".pre-search-message").empty(); },
       });
 
       // Assuming the UI was created successfully, set the current
       // search service to the one provided to this function
-      this.listenForActions();
+      // this.listenForActions();
     },
-
-    /**
-     * Potentially called from within an instance of $.AdvancedSearchWidget
-     * "this" will not behave as expected. It will take the scope of the
-     * calling object, not the $.NewSearchWidget object.
-     */
-    // performAdvancedSearch: function(advancedSearchObj) {
-    //   _aso = advancedSearchObj;
-    //   if (!advancedSearchObj) {
-    //     console.log("[SW] No advanced search widget has been set.");
-    //     return;
-    //   }
-    //   console.log("[SW] Will perform advanced search here. " + advancedSearchObj + " ::: " + this.searchService);
-    //   if (!advancedSearchObj.hasQuery()) {
-    //     console.log("[SW] No advanced search query!");
-    //   }
-    // },
 
     /**
      *
      * @param searchService : search service object
      * @param query : search query
+     * @param sortOrder : (OPTIONAL) string specifying sort order of results
      * @param page : (OPTIONAL) offset within results set
      * @param maxPerPage : (OPTIONAL) results to display per page
      * @param resumeToken : (OPTIONAL) string token possibly used by a search service
-     * @param sortOrder : (OPTIONAL) string specifying sort order of results
      */
-    doSearch: function(searchService, query, offset, maxPerPage, resumeToken, sortOrder) {
-console.log("[SW] doing search. " + query);
+    doSearch: function(searchService, query, sortOrder, offset, maxPerPage, resumeToken) {
       this.eventEmitter.publish("SEARCH", {
         "id": this.windowId,
         "serviceId": searchService.id,
         "query": query,
         "offset": offset,
         "maxPerPage": maxPerPage,
-        "resumeToken": resumeToken
+        "resumeToken": resumeToken,
+        "sortOrder": sortOrder
       });
+    },
+
+    getSortOrder: function() {
+      return this.element.find(".search-results-sorter select").val();
     },
 
     template: Handlebars.compile([

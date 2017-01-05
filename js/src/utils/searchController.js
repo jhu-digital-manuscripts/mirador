@@ -9,7 +9,7 @@
  *    - GET_SEARCH_SERVICE  : Get a search service by ID
  *    - GET_RELATED_SEARCH_SERVICES : Get all search services associated with
  *                                    a manifest and parent collections
- *        TODO: should this return full info.json descriptions, or just IDs
+ *              this returns only URL IDs or IIIF service blocks. Not the full info.json configs.
  *    - SEARCH  : Perform a search according to a search request object
  *                (See docs for SearchController#doSearch)
  * Emits:
@@ -24,7 +24,7 @@
  * ===========================================================================
  *
  * List of known search services:
- *  [
+ *  searchServices: [
  *    {
  *      "id": "service_id",
  *      "service": { ... },  // Service block from IIIF object
@@ -102,12 +102,13 @@
 
       /**
        * data:  {
-       *          id: "",         // ID of sender of event, ex: windowId
+       *          "id": ""        // ID of original event source
        *          serviceId: "",  // some service ID string
        *          query: "",      // some query string, already formatted
-       *          offset: 0,      // (optional) integer, requested results offset, used for paging
-       *          maxPerPage: 0   // (optional) integer, maximum results to show per page,
-       *          resumeToken: "" // (optional) string, token used by a search service to resume a search. Sometimes used with paging
+       *          offset: -1,     // (optional) integer, requested results offset, used for paging
+       *          maxPerPage: -1  // (optional) integer, maximum results to show per page,
+       *          resumeToken: "",// (optional) string, token used by a search service to resume a search. Sometimes used with paging
+       *          sortOrder: "",  // (optional) string, sort order of results (index|_relevance))
        *        }
        *
        * @return  {
