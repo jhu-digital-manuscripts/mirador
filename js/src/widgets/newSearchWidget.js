@@ -19,6 +19,19 @@
       advancedSearchSet: false,        // has the advanced search UI been created?
       advancedSearchActive: false,
       pinned: false,            // Is this search widget pinned to the UI? Only matters if widget is part of a window
+      /*
+        {
+          "searchService": { ... },   // Search service object that includes info.json configs
+          "search": {
+            "query": "",              // String query
+            "offset": "",             // Results offset for paging
+            "maxPerPage": "",         // Number of results per page
+            "resumeToken": "",        // String token for resuming a search
+            "selected": -1,           // Index of the search result that is selected
+          }
+        }
+       */
+      currentSearch: null,
     }, options);
 
     this.messages = {
@@ -59,6 +72,13 @@
               "serviceId": service.id || service["@id"]
             });
           });
+        }
+      });
+
+      this.eventEmitter.subscribe("SEARCH_COMPLETE", function(event, data) {
+        if (data.id === _this.windowId) {
+          // TODO Do stuff to display search results
+          console.log("[SW] Found search results! " + JSON.stringify(data));
         }
       });
 
@@ -217,7 +237,15 @@
         "appendTo": _this.element.find(".search-disclose"),
         "eventEmitter": _this.eventEmitter,
         "windowPinned": _this.pinned,
-        "performAdvancedSearch": _this.performAdvancedSearch,
+        "performAdvancedSearch": function() {
+          if (!_this.advancedSearch) {
+            console.log("%c No advanced search widget found. Cannot do advanced search.", "color: red;");
+            return;
+          }
+          if (_this.advancedSearch.hasQuery()) {
+            _this.doSearch(_this.searchService, _this.advancedSearch.getQuery());
+          }
+        },
         "clearMessages": _this.clearMessages,
       });
 
@@ -231,16 +259,37 @@
      * "this" will not behave as expected. It will take the scope of the
      * calling object, not the $.NewSearchWidget object.
      */
-    performAdvancedSearch: function(advancedSearchObj) {
-      _aso = advancedSearchObj;
-      if (!advancedSearchObj) {
-        console.log("[SW] No advanced search widget has been set.");
-        return;
-      }
-      console.log("[SW] Will perform advanced search here. " + advancedSearchObj + " ::: " + this.searchService);
-      if (!advancedSearchObj.hasQuery()) {
-        console.log("[SW] No advanced search query!");
-      }
+    // performAdvancedSearch: function(advancedSearchObj) {
+    //   _aso = advancedSearchObj;
+    //   if (!advancedSearchObj) {
+    //     console.log("[SW] No advanced search widget has been set.");
+    //     return;
+    //   }
+    //   console.log("[SW] Will perform advanced search here. " + advancedSearchObj + " ::: " + this.searchService);
+    //   if (!advancedSearchObj.hasQuery()) {
+    //     console.log("[SW] No advanced search query!");
+    //   }
+    // },
+
+    /**
+     *
+     * @param searchService : search service object
+     * @param query : search query
+     * @param page : (OPTIONAL) offset within results set
+     * @param maxPerPage : (OPTIONAL) results to display per page
+     * @param resumeToken : (OPTIONAL) string token possibly used by a search service
+     * @param sortOrder : (OPTIONAL) string specifying sort order of results
+     */
+    doSearch: function(searchService, query, offset, maxPerPage, resumeToken, sortOrder) {
+console.log("[SW] doing search. " + query);
+      this.eventEmitter.publish("SEARCH", {
+        "id": this.windowId,
+        "serviceId": searchService.id,
+        "query": query,
+        "offset": offset,
+        "maxPerPage": maxPerPage,
+        "resumeToken": resumeToken
+      });
     },
 
     template: Handlebars.compile([

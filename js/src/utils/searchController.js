@@ -353,28 +353,29 @@
      *      query: "",      // some query string, already formatted
      *      offset: -1,     // (optional) integer, requested results offset, used for paging
      *      maxPerPage: -1  // (optional) integer, maximum results to show per page,
-     *      resumeToken: "" // (optional) string, token used by a search service to resume a search. Sometimes used with paging
+     *      resumeToken: "",// (optional) string, token used by a search service to resume a search. Sometimes used with paging
+     *      sortOrder: "",  // (optional) string, sort order of results (index|_relevance))
      *    }
      * @return {object} jQuery Deferred that resolves when the search is completed
      */
     doSearch: function(searchReq) {
       var _this = this;
-      var queryUrl = searchService.id + "?q=" + encodeURIComponent(query);
-
-      if (offset && typeof offset === 'number') {
-        queryUrl += "&o=" + offset;
-      }
-      if (numExpected && typeof numExpected === 'number') {
-        queryUrl += "&m=" + numExpected;
-      }
-      if (sortOrder) {
-        queryUrl += "&so=" + (sortOrder === "index" ? sortOrder : "relevance");
-      }
-
       var request = jQuery.Deferred();
 
+      var queryUrl = searchReq.serviceId + "?q=" + encodeURIComponent(searchReq.query);
+
+      if (searchReq.offset && typeof searchReq.offset === 'number') {
+        queryUrl += "&o=" + searchReq.offset;
+      }
+      if (searchReq.maxPerPage && typeof searchReq.maxPerPage === 'number') {
+        queryUrl += "&m=" + searchReq.maxPerPage;
+      }
+      if (searchReq.sortOrder) {
+        queryUrl += "&so=" + (searchReq.sortOrder === "index" ? searchReq.sortOrder : "relevance");
+      }
+
       // Can cache search results here
-      var cached = this.cache(queryUrl);
+      var cached = _this.cache(queryUrl);
       if (cached) {
         request.resolve(JSON.parse(cached));
       } else {
