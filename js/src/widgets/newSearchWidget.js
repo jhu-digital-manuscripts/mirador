@@ -35,6 +35,7 @@
         }
        */
       currentSearch: null,
+      searchResults: null,            // UI holding search results
     }, options);
 
     this.messages = {
@@ -80,8 +81,10 @@
 
       this.eventEmitter.subscribe("SEARCH_COMPLETE", function(event, data) {
         if (data.id === _this.windowId) {
-          // TODO Do stuff to display search results
-          console.log("[SW] Found search results! " + JSON.stringify(data));
+          _this.searchResults = new $.SearchResults({
+            "appendTo": _this.element.find(".search-results-list"),
+            "searchResults": data.results,
+          });
         }
       });
 

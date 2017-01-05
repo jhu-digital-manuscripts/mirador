@@ -31,13 +31,10 @@
         jQuery(this.noResultsMessage()).appendTo(this.appendTo);
       }
 
-      // this.searchResults = this.selectResults(searchResults, this.searchContext.selectedResult);
       this.searchResults = this.massageForHandlebars(this.searchResults);
-
       this.element = jQuery(this.template(this.searchResults)).appendTo(this.appendTo);
 
       this.bindEvents();
-      // this.setupContextMenu();
     },
 
     /**
@@ -54,9 +51,9 @@
       searchResults.matches.forEach(function(match, index) {
         match.offset = index + searchResults.offset;
 
-        match.object.id = match.object['@id'].split('#')[0];
+        match.object.id = match.object["@id"].split("#")[0];
         if (match.manifest) {
-          match.manifest.id = match.manifest['@id'].split('#')[0];
+          match.manifest.id = match.manifest["@id"].split("#")[0];
         }
 
         match.object.type = match.object["@type"];
@@ -76,7 +73,6 @@
       var _this = this;
 
       this.appendTo.find("#results-to-top").on("click", function(event) {
-        // _this.appendTo.scrollTop(0);
         _this.appendTo.animate({scrollTop:0}, 150);
       });
 
@@ -93,7 +89,7 @@
 
         // Open search result in currently selected window
         var windowConfig = {
-          manifest: _this.findManifest(manifestId)
+          manifest: _this.findManifest(manifestId)      // TODO need to fix this in order to navigate to results
         };
 
         if (type === "sc:Manifest") {
