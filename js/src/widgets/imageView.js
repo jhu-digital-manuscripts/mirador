@@ -217,7 +217,7 @@
             window.clearInterval(interval);
             return;
           }
-
+// TODO bug here when switching pages from search results
           viewport.setRotation(viewport.getRotation() + degrees);
         },
         animationTime);

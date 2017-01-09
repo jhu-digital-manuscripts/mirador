@@ -10,13 +10,26 @@
 
   $.SearchResults = function(options) {
     jQuery.extend(true, this, {
+      parentId: null,
       viewer: null,
       hideParent: null,
       appendTo: null,
       element: null,
       searchResults: null,
       manifestListItems: null,
+      eventEmitter: null,
+      /**
+       * Holds data necessary for handling interactions with search results
+       * queuedAction: {
+       *   "manifestId": "manifestId",  // ID of result manifest
+       *   "canvasId": "canvasId",      // ID of result canvas, if applicable
+       *   "type": "type",              // Result type, sc:Canvas or sc:Manifest
+       *   "windowConfig": {windowConfig} // Config for updating or creating a window
+       * }
+       */
+      queuedAction: {}
     }, options);
+    this.id = $.genUUID();
 
     this.init();
   };
@@ -87,36 +100,55 @@
         var manifestId = clickedEl.data("manifestid");
         var type = clickedEl.data("objecttype");
 
+        // Same manifest, change pages and exit
+        if (_this.parentId && _this.currentObject && manifestId === _this.currentObject) {
+          _this.eventEmitter.publish("SET_CURRENT_CANVAS_ID." + _this.parentId, canvasId);
+          return;
+        }
+
         // Open search result in currently selected window
-        var windowConfig = {
-          manifest: _this.findManifest(manifestId)      // TODO need to fix this in order to navigate to results
-        };
+        var windowConfig = {};
 
         if (type === "sc:Manifest") {
           windowConfig.currentFocus = "ThumbnailsView";
         } else if (type === "sc:Canvas") {
-          windowConfig.currentCanvasID = canvasId;
+          windowConfig.canvasID = canvasId;
           windowConfig.currentFocus = "ImageView";
         }
 
-        $.viewer.workspace.addWindow(windowConfig);
-      });
-    },
+        _this.queuedAction = {
+          "manifestId": manifestId,
+          "canvasId": canvasId,
+          "type": type,
+          "windowConfig": windowConfig,
+          "targetId": _this.parentId        // Target window to put results, if applicable
+        };
 
-// TODO This won't work obviously
-    findManifest: function(manifestId) {
-      // var relevant = this.manifestListItems.filter(function(listItem) {
-      //   return listItem.manifest.getId() === manifestId;
-      // });
-      //
-      // if (relevant && relevant.length > 0) {
-      //   return relevant[0].manifest;
-      // } else {
-      //   // TODO Will there be cases where results are from manifests not already included in 'manifestListItems' ?
-      //   console.error("[SearchResults] No manifest was found. " + manifestId);
-      //   return null;
-      // }
-      return null;
+        _this.eventEmitter.publish("MANIFEST_REQUESTED", {
+          "origin": _this.id,
+          "manifestId": manifestId
+        });
+      });
+
+      this.eventEmitter.subscribe("MANIFEST_FOUND", function(event, data) {
+        if (data.origin !== _this.id || !_this.queuedAction) {
+          return;
+        }
+
+        if (_this.parentId === _this.queuedAction.targetId) {
+          // Replace current window with new manifest
+          var windowConfig = _this.queuedAction.windowConfig;
+          windowConfig.manifest = data.manifest;
+          _this.eventEmitter.publish("REMOVE_WINDOW", _this.parentId);
+          _this.eventEmitter.publish("ADD_WINDOW", windowConfig);
+        }
+
+        // Handle result in THIS window
+        //  - Different manifest : publish UPDATE_WINDOW event
+        // Handle result in different window
+
+        // How do you get desired window address/slot?
+      });
     },
 
     queryMessage: Handlebars.compile('<p class="query">Query: {{this}}</p>'),

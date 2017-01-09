@@ -59,7 +59,7 @@
       // As those services are discovered, request info.json configs
       // Populate search dropdowns (done in event handler in #bindEvents)
       this.eventEmitter.publish("GET_RELATED_SEARCH_SERVICES", {
-        "id": _this.windowId,
+        "origin": _this.windowId,
         "manifest": _this.manifest
       });
     },
@@ -69,10 +69,10 @@
 
       // For now, eagerly fetch info.json for search services as they are discovered
       this.eventEmitter.subscribe("RELATED_SEARCH_SERVICES_FOUND", function(event, data) {
-        if (data.id === _this.windowId) {
+        if (data.origin === _this.windowId) {
           data.services.forEach(function(service) {
             _this.eventEmitter.publish("GET_SEARCH_SERVICE", {
-              "id": _this.windowId,
+              "origin": _this.windowId,
               "serviceId": service.id || service["@id"]
             });
           });
@@ -80,17 +80,20 @@
       });
 
       this.eventEmitter.subscribe("SEARCH_COMPLETE", function(event, data) {
-        if (data.id === _this.windowId) {
+        if (data.origin === _this.windowId) {
           _this.searchResults = new $.SearchResults({
+            "parentId": _this.windowId,
+            "currentObject": _this.manifest.getId(),
             "appendTo": _this.element.find(".search-results-list"),
             "searchResults": data.results,
+            "eventEmitter": _this.eventEmitter
           });
         }
       });
 
       // As info.json data is recieved for search services, add them to the UI
       this.eventEmitter.subscribe("SEARCH_SERVICE_FOUND", function(event, data) {
-        if (data.id === _this.windowId) {
+        if (data.origin === _this.windowId) {
           _this.addSearchService(data.service);
         }
       });
@@ -260,7 +263,7 @@
      */
     doSearch: function(searchService, query, sortOrder, offset, maxPerPage, resumeToken) {
       this.eventEmitter.publish("SEARCH", {
-        "id": this.windowId,
+        "origin": this.windowId,
         "serviceId": searchService.id,
         "query": query,
         "offset": offset,

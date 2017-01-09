@@ -145,8 +145,44 @@
     listenForActions: function() {
       var _this = this;
 
+      /**
+       * data:{
+       *        "origin": "ID string of event origin",
+       *        "manifestId": "ID of requetsed manifest"
+       *      }
+       *
+       * response:  {
+       *              "origin": "ID string of MANIFEST_REQUETSED event origin",
+       *              "manifest": {}    // Manifest object
+       *            }
+       */
+      _this.eventEmitter.subscribe("MANIFEST_REQUESTED", function(event, data) {
+        var fromHere = _this.manifests.filter(function(man) {
+          return man.getId() === data.manifestId;
+        });
+
+        if (fromHere.length > 0) {
+          _this.eventEmitter.publish("MANIFEST_FOUND", {
+            "origin": data.origin,
+            "manifest": fromHere[0]
+          });
+        } else {
+          var manifest = new $.Manifest(data.manifestId);
+          manifest.request.done(function() {
+            _this.manifests.push(manifest);
+            _this.eventEmitter.publish("MANIFEST_FOUND", {
+              "origin": data.origin,
+              "manifest": manifest
+            });
+          });
+        }
+      });
+
       // check that windows are loading first to set state of slot?
       _this.eventEmitter.subscribe('manifestReceived', function(event, newManifest) {
+        if (_this.manifests.filter(function(m) { return m.getId() === newManifest.getId(); }).length === 0) {
+          _this.manifests.push(newManifest);
+        }
         if (_this.state.getStateProperty('windowObjects')) {
           var check = jQuery.grep(_this.state.getStateProperty('windowObjects'), function(object, index) {
             return object.loadedManifest === newManifest.uri;

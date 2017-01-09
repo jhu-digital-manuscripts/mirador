@@ -53,12 +53,12 @@
 
       /**
        * data:  {
-       *          "id": ""          // ID of sender of this event, ex: windowId
+       *          "origin": ""          // ID of sender of this event, ex: windowId
        *          "serviceId": ""   // ID of requestd search service
        *        }
        *
        * @return  {
-       *            "id": "",             //
+       *            "origin": "",             //
        *            "service": {
        *              "id": "service-id-same-as-requested",
        *              "label": "",        // Take from its parent object
@@ -69,7 +69,7 @@
       this.eventEmitter.subscribe("GET_SEARCH_SERVICE", function(event, data) {
         _this.getSearchService(data.serviceId).done(function(service) {
           _this.eventEmitter.publish("SEARCH_SERVICE_FOUND", {
-            "id": data.id,
+            "origin": data.origin,
             "service": service
           });
         });
@@ -77,12 +77,12 @@
 
       /**
        * data:  {
-       *          "id": ""          // ID of sender of this event, ex: windowId
+       *          "origin": ""          // ID of sender of this event, ex: windowId
        *          "manifest": {object} // manifest object, contains the JSON-LD
        *        }
        *
        * @return  {
-       *            "id": "",             // ID of original sender, could be windowId
+       *            "origin": "",             // ID of original sender, could be windowId
        *            "services": [ ... ]   // array of search services found, for structure of each service, see GET_SEARCH_SERVICE docs
        *          }
        */
@@ -94,7 +94,7 @@
             _this._addSearchService(services);
           }
           _this.eventEmitter.publish("RELATED_SEARCH_SERVICES_FOUND", {
-            "id": data.id,
+            "origin": data.origin,
             "services": services
           });
         });
@@ -102,7 +102,7 @@
 
       /**
        * data:  {
-       *          "id": ""        // ID of original event source
+       *          "origin": ""        // ID of original event source
        *          serviceId: "",  // some service ID string
        *          query: "",      // some query string, already formatted
        *          offset: -1,     // (optional) integer, requested results offset, used for paging
@@ -112,7 +112,7 @@
        *        }
        *
        * @return  {
-       *            "id": "",             // ID of original sender
+       *            "origin": "",             // ID of original sender
        *            "results": {object}   // Search results, see https://github.com/jhu-digital-manuscripts/rosa2/wiki/JHIIIF-Search#search-result
        *          }
        */
@@ -120,7 +120,7 @@
         // Do async search, when complete, publish SEARCH_COMPLETE event
         _this.doSearch(searchReq).done(function(data) {
           _this.eventEmitter.publish("SEARCH_COMPLETE", {
-            "id": searchReq.id,
+            "origin": searchReq.origin,
             "results" : data
           });
         });
