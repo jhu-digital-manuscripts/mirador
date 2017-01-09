@@ -515,6 +515,7 @@
               searchContext: _this.searchContext,
               selectedResult: _this.selectedResult,
               pinned: _this.pinned,
+              slotAddress: _this.slotAddress,
               thumbInfo: {thumbsHeight: 80, listingCssCls: 'panel-listing-thumbs', thumbnailCls: 'panel-thumbnail-view'}
             };
 

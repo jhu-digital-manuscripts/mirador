@@ -12,6 +12,7 @@
     jQuery.extend(true, this, {
       tabId: null,
       windowId: null,
+      slotAddress: null,
       eventEmitter: null,
       manifest: null,
       searchService: null,    // Current search service displayed in UI
@@ -83,6 +84,7 @@
         if (data.origin === _this.windowId) {
           _this.searchResults = new $.SearchResults({
             "parentId": _this.windowId,
+            "slotAddress": _this.slotAddress,
             "currentObject": _this.manifest.getId(),
             "appendTo": _this.element.find(".search-results-list"),
             "searchResults": data.results,
@@ -231,6 +233,7 @@
       }
       _this.advancedSearch = new $.AdvancedSearchWidget({
         "windowId": _this.windowId,
+        "slotAddress": _this.slotAddress,
         "searchService": newService,
         "appendTo": _this.element.find(".search-disclose"),
         "eventEmitter": _this.eventEmitter,

@@ -11,6 +11,7 @@
   $.SearchResults = function(options) {
     jQuery.extend(true, this, {
       parentId: null,
+      slotAddress: null,
       viewer: null,
       hideParent: null,
       appendTo: null,
@@ -107,7 +108,9 @@
         }
 
         // Open search result in currently selected window
-        var windowConfig = {};
+        var windowConfig = {
+          "slotAddress": _this.slotAddress
+        };
 
         if (type === "sc:Manifest") {
           windowConfig.currentFocus = "ThumbnailsView";
@@ -139,7 +142,6 @@
           // Replace current window with new manifest
           var windowConfig = _this.queuedAction.windowConfig;
           windowConfig.manifest = data.manifest;
-          // _this.eventEmitter.publish("REMOVE_WINDOW", _this.parentId);
           _this.eventEmitter.publish("ADD_WINDOW", windowConfig);
         }
 
