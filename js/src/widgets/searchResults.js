@@ -139,7 +139,7 @@
           // Replace current window with new manifest
           var windowConfig = _this.queuedAction.windowConfig;
           windowConfig.manifest = data.manifest;
-          _this.eventEmitter.publish("REMOVE_WINDOW", _this.parentId);
+          // _this.eventEmitter.publish("REMOVE_WINDOW", _this.parentId);
           _this.eventEmitter.publish("ADD_WINDOW", windowConfig);
         }
 
