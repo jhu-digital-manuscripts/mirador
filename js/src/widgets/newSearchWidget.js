@@ -35,7 +35,7 @@
           }
         }
        */
-      currentSearch: null,
+      currentSearch: {},
       searchResults: null,            // UI holding search results
     }, options);
 
@@ -82,14 +82,7 @@
 
       this.eventEmitter.subscribe("SEARCH_COMPLETE", function(event, data) {
         if (data.origin === _this.windowId) {
-          _this.searchResults = new $.SearchResults({
-            "parentId": _this.windowId,
-            "slotAddress": _this.slotAddress,
-            "currentObject": _this.manifest.getId(),
-            "appendTo": _this.element.find(".search-results-list"),
-            "searchResults": data.results,
-            "eventEmitter": _this.eventEmitter
-          });
+          _this.handleSearchResults(data.results);
         }
       });
 
@@ -265,6 +258,20 @@
      * @param resumeToken : (OPTIONAL) string token possibly used by a search service
      */
     doSearch: function(searchService, query, sortOrder, offset, maxPerPage, resumeToken) {
+      this.currentSearch = {
+        "searchService": searchService,
+        "search": {
+          "query": query,
+          "sortOrder": sortOrder,
+          "offset": offset,
+          "maxPerPage": maxPerPage,
+          "resumeToken": resumeToken
+        }
+      };
+
+      this.element.find(".search-results-list").empty();
+      // TODO show loading icon
+
       this.eventEmitter.publish("SEARCH", {
         "origin": this.windowId,
         "serviceId": searchService.id,
@@ -276,9 +283,131 @@
       });
     },
 
+    handleSearchResults: function(searchResults) {
+      var _this = this;
+
+      if (!this.perPageCount) {
+        this.perPageCount = searchResults.max_matches || searchResults.matches.length;
+      }
+
+      this.currentSearch.results = searchResults;
+
+      this.searchResults = new $.SearchResults({
+        "parentId": _this.windowId,
+        "slotAddress": _this.slotAddress,
+        "currentObject": _this.manifest.getId(),
+        "appendTo": _this.element.find(".search-results-list"),
+        "searchResults": searchResults,
+        "eventEmitter": _this.eventEmitter
+      });
+
+      if (this.needsPager(searchResults)) {
+        var pagerText = this.element.find(".results-pager-text");
+        pagerText.empty();
+        pagerText.append(this.resultsPagerText({
+          "offset": (searchResults.offset + 1),
+          "total": searchResults.total,
+          "last": (parseInt(searchResults.offset) + this.perPageCount)
+        }));
+
+        this.setPager(searchResults);
+        this.showPager();
+      } else {
+        this.hidePager();
+      }
+    },
+
+    showPager: function() {
+      this.pagerVisible = true;
+      this.element.find(".results-pager").show();
+      this.element.find(".results-pager-text").show();
+      this.element.find(".results-items").css("top", this.getResultsTop() + "px");
+    },
+
+    hidePager: function() {
+      this.pagerVisible = false;
+      this.element.find(".results-pager").hide();
+      this.element.find(".results-pager-text").hide();
+      this.element.find(".results-items").css("top", this.getResultsTop() + "px");
+    },
+
+    getResultsTop: function() {
+      var h = this.element.find(".controls").outerHeight(true);
+
+      if (this.pagerVisible) {
+        h += this.element.find(".results-pager").outerHeight(true) +
+            this.element.find(".results-pager-text").outerHeight(true);
+      }
+
+      return h;
+    },
+
     getSortOrder: function() {
       return this.element.find(".search-results-sorter select").val();
     },
+
+    /**
+     * Look for necessary properties that point to the need for paging.
+     *
+     * @param  results IIIF Search results
+     * @return TRUE if paging is needed
+     */
+    needsPager: function(results) {
+      return results.offset > 0 ||
+          results.offset + (results.max_matches || results.matches.length) < results.total;
+    },
+
+    /**
+     * Initialize search results pager. It is assumed that it has already
+     * been determined whether or not the pager needs to be created.
+     * If a pager is created, it will be inserted into the DOM.
+     *
+     * @param  results - IIIF Search results
+     */
+    setPager: function(results) {
+      var _this = this;
+      var onPageCount = this.perPageCount;
+
+      this.element.find(".results-pager").pagination({
+        items: results.total,
+        itemsOnPage: onPageCount,
+        currentPage: this.float2int(1 + results.offset / onPageCount),
+        displayedPages: 2,
+        edges: 1,
+        cssStyle: "compact-theme",
+        ellipsePageSet: true,
+        prevText: '<i class="fa fa-lg fa-angle-left"></i>',
+        nextText: '<i class="fa fa-lg fa-angle-right"></i>',
+        onPageClick: function(pageNumber, event) {
+          event.preventDefault();
+
+          var newOffset = (pageNumber - 1) * onPageCount;
+          _this.doSearch(
+            _this.currentSearch.searchService,
+            _this.currentSearch.search.query,
+            _this.currentSearch.search.sortOrder,
+            newOffset,
+            _this.currentSearch.search.numExpected
+          );
+        }
+      });
+    },
+
+    /**
+     * Do a Bitwise OR to truncate decimal
+     *
+     * @param  num original number, could be integer or decimal
+     * @return integer with any decimal part of input truncated (no rounding)
+     */
+    float2int: function(num) {
+      return num | 0;
+    },
+
+    resultsPagerText: Handlebars.compile([
+      '{{#if last}}',
+        'Showing {{offset}} - {{last}} {{#if total}}out of {{total}}{{/if}}',
+      '{{/if}}',
+    ].join('')),
 
     template: Handlebars.compile([
       '<div class="searchResults" style="display: none;">',
@@ -307,6 +436,8 @@
           '<div class="search-disclose" style="display: none;"></div>',
         '</div>',
         '<p class="pre-search-message"></p>',
+        '<div class="results-pager"></div>',
+        '<p class="results-pager-text"></p>',
         '<div class="search-results-list"></div>',
       '</div>',
     ].join(''))
