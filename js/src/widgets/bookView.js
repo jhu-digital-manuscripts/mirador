@@ -181,15 +181,15 @@
       });
 
       this.element.find('.mirador-osd-rotate-right').on('click', function() {
-        _this.setImageRotation(90);
+        _this.setImageRotation(90, 0);
       });
 
       this.element.find('.mirador-osd-rotate-left').on('click', function() {
-        _this.setImageRotation(-90);
+        _this.setImageRotation(-90, 0);
       });
 
       this.element.find('.mirador-osd-go-home').on('click', function() {
-        _this.goHomeRotation();
+        _this.goHomeRotation(0);
       });
     },
 

@@ -273,7 +273,7 @@
       });
 
       this.element.find('.mirador-osd-go-home').on('click', function() {
-        _this.goHomeRotation();
+        _this.goHomeRotation(0);
       });
 
       this.element.find('.mirador-osd-up').on('click', function() {
@@ -373,7 +373,7 @@
       function resetImageManipulationControls() {
         //reset rotation
         if (_this.osd) {
-          _this.goHomeRotation();
+          _this.goHomeRotation(0);
         }
 
         //reset brightness
@@ -403,11 +403,11 @@
       }
 
       this.element.find('.mirador-osd-rotate-right').on('click', function() {
-        _this.setImageRotation(90);
+        _this.setImageRotation(90, 0);
       });
 
       this.element.find('.mirador-osd-rotate-left').on('click', function() {
-        _this.setImageRotation(-90);
+        _this.setImageRotation(-90, 0);
       });
 
       this.element.find('.mirador-osd-brightness-slider').slider({
