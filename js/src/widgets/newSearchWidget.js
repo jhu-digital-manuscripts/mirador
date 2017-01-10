@@ -175,7 +175,11 @@
       });
 
       if (found.length === 0) {
+        // If this is a new service, add it to the UI and push it to
+        // the list of known services.
         this.searchServices.push(service);
+        this.element.find(".search-within-object-select")
+          .append(jQuery("<option value=\"" + id + "\">" + label + "</option>"));
       } else {
         found.forEach(function(s) {
           jQuery.extend(true, s, service);  // This will not overwrite any currently present properties.
@@ -187,9 +191,6 @@
         this.advancedSearchSet = true;
         this.listenForActions();
       }
-
-      this.element.find(".search-within-object-select")
-        .append(jQuery("<option value=\"" + id + "\">" + label + "</option>"));
     },
 
     /**
