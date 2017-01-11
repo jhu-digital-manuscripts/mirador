@@ -989,19 +989,19 @@
       });
 
       this.element.find('.add-slot-right').on('click', function() {
-        _this.eventEmitter.publish('SPLIT_RIGHT_FROM_WINDOW', _this.id);
+        _this.eventEmitter.publish('SPLIT_RIGHT_FROM_WINDOW', { "id": _this.id });
       });
 
       this.element.find('.add-slot-left').on('click', function() {
-        _this.eventEmitter.publish('SPLIT_LEFT_FROM_WINDOW', _this.id);
+        _this.eventEmitter.publish('SPLIT_LEFT_FROM_WINDOW', { "id": _this.id });
       });
 
       this.element.find('.add-slot-below').on('click', function() {
-        _this.eventEmitter.publish('SPLIT_DOWN_FROM_WINDOW', _this.id);
+        _this.eventEmitter.publish('SPLIT_DOWN_FROM_WINDOW', { "id": _this.id });
       });
 
       this.element.find('.add-slot-above').on('click', function() {
-        _this.eventEmitter.publish('SPLIT_UP_FROM_WINDOW', _this.id);
+        _this.eventEmitter.publish('SPLIT_UP_FROM_WINDOW', { "id": _this.id });
       });
 
       this.element.find('.mirador-icon-home').on('click', function() {

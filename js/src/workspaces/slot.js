@@ -78,27 +78,27 @@
           }
         }),
 
-        _this.eventEmitter.subscribe('SPLIT_RIGHT_FROM_WINDOW', function (event, id) {
-          if (_this.window && _this.window.id === id) {
-            _this.eventEmitter.publish('SPLIT_RIGHT', _this);
+        _this.eventEmitter.subscribe('SPLIT_RIGHT_FROM_WINDOW', function (event, options) {
+          if (_this.window && _this.window.id === options.id) {
+            _this.eventEmitter.publish('SPLIT_RIGHT', { "slot": _this, "windowConfig": options.windowConfig });
           }
         }),
 
-        _this.eventEmitter.subscribe('SPLIT_LEFT_FROM_WINDOW', function (event, id) {
-          if (_this.window && _this.window.id === id) {
-            _this.eventEmitter.publish('SPLIT_LEFT', _this);
+        _this.eventEmitter.subscribe('SPLIT_LEFT_FROM_WINDOW', function (event, options) {
+          if (_this.window && _this.window.id === options.id) {
+            _this.eventEmitter.publish('SPLIT_LEFT', { "slot": _this, "windowConfig": options.windowConfig });
           }
         }),
 
-        _this.eventEmitter.subscribe('SPLIT_DOWN_FROM_WINDOW', function (event, id) {
-          if (_this.window && _this.window.id === id) {
-            _this.eventEmitter.publish('SPLIT_DOWN', _this);
+        _this.eventEmitter.subscribe('SPLIT_DOWN_FROM_WINDOW', function (event, options) {
+          if (_this.window && _this.window.id === options.id) {
+            _this.eventEmitter.publish('SPLIT_DOWN', { "slot": _this, "windowConfig": options.windowConfig });
           }
         }),
 
-        _this.eventEmitter.subscribe('SPLIT_UP_FROM_WINDOW', function (event, id) {
-          if (_this.window && _this.window.id === id) {
-            _this.eventEmitter.publish('SPLIT_UP', _this);
+        _this.eventEmitter.subscribe('SPLIT_UP_FROM_WINDOW', function (event, options) {
+          if (_this.window && _this.window.id === options.id) {
+            _this.eventEmitter.publish('SPLIT_UP', { "slot": _this, "windowConfig": options.windowConfig });
           }
         })];
     },
@@ -171,13 +171,13 @@
 
           _this.eventEmitter.publish('ADD_WINDOW', windowConfig);
 
-        } 
-        
+        }
+
         else if (typeof imageInfoUrl !== 'undefined') {
           if (!_this.state.getStateProperty('manifests')[imageInfoUrl]) {
             _this.eventEmitter.publish('ADD_MANIFEST_FROM_URL', imageInfoUrl, "(Added from URL)");
           }
-        } 
+        }
         else if (typeof collectionUrl !== 'undefined'){
           jQuery.getJSON(collectionUrl).done(function (data, status, jqXHR) {
             if (data.hasOwnProperty('manifests')){
@@ -189,11 +189,11 @@
             }
           });
 
-          //TODO: 
+          //TODO:
           //this works;
           //but you might want to check if some "publish" action would be better
           _this.addItem();
-          
+
         }
         else {
           if (!_this.state.getStateProperty('manifests')[imageInfoUrl]) {

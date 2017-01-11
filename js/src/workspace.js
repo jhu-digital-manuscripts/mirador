@@ -79,20 +79,20 @@
         _this.addWindow(windowConfig);
       });
 
-      _this.eventEmitter.subscribe('SPLIT_RIGHT', function(event, slot) {
-        _this.splitRight(slot);
+      _this.eventEmitter.subscribe('SPLIT_RIGHT', function(event, options) {
+        _this.splitRight(options.slot, options.windowConfig);
       });
 
-      _this.eventEmitter.subscribe('SPLIT_LEFT', function(event, slot) {
-        _this.splitLeft(slot);
+      _this.eventEmitter.subscribe('SPLIT_LEFT', function(event, options) {
+        _this.splitLeft(options.slot, options.windowConfig);
       });
 
-      _this.eventEmitter.subscribe('SPLIT_DOWN', function(event, slot) {
-        _this.splitDown(slot);
+      _this.eventEmitter.subscribe('SPLIT_DOWN', function(event, options) {
+        _this.splitDown(options.slot, options.windowConfig);
       });
 
-      _this.eventEmitter.subscribe('SPLIT_UP', function(event, slot) {
-        _this.splitUp(slot);
+      _this.eventEmitter.subscribe('SPLIT_UP', function(event, options) {
+        _this.splitUp(options.slot, options.windowConfig);
       });
 
       _this.eventEmitter.subscribe('RESET_WORKSPACE_LAYOUT', function(event, options) {
@@ -316,24 +316,44 @@
 
     },
 
-    splitRight: function(targetSlot) {
+    splitRight: function(targetSlot, windowConfig) {
       var _this = this;
       _this.split(targetSlot, 'r');
+
+      if (windowConfig) {
+        windowConfig.slotAddress = this.getAvailableSlot().layoutAddress;
+        this.eventEmitter.publish("ADD_WINDOW", windowConfig);
+      }
     },
 
-    splitLeft: function(targetSlot) {
+    splitLeft: function(targetSlot, windowConfig) {
       var _this = this;
       _this.split(targetSlot, 'l');
+
+      if (windowConfig) {
+        windowConfig.slotAddress = this.getAvailableSlot().layoutAddress;
+        this.eventEmitter.publish("ADD_WINDOW", windowConfig);
+      }
     },
 
-    splitUp: function(targetSlot) {
+    splitUp: function(targetSlot, windowConfig) {
       var _this = this;
       _this.split(targetSlot, 'u');
+
+      if (windowConfig) {
+        windowConfig.slotAddress = this.getAvailableSlot().layoutAddress;
+        this.eventEmitter.publish("ADD_WINDOW", windowConfig);
+      }
     },
 
-    splitDown: function(targetSlot) {
+    splitDown: function(targetSlot, windowConfig) {
       var _this = this;
       _this.split(targetSlot, 'd');
+
+      if (windowConfig) {
+        windowConfig.slotAddress = this.getAvailableSlot().layoutAddress;
+        this.eventEmitter.publish("ADD_WINDOW", windowConfig);
+      }
     },
 
     removeNode: function(targetSlot) {

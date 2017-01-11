@@ -49,6 +49,7 @@
       this.element = jQuery(this.template(this.searchResults)).appendTo(this.appendTo);
 
       this.bindEvents();
+      this.setupContextMenu();
     },
 
     /**
@@ -124,7 +125,8 @@
           "canvasId": canvasId,
           "type": type,
           "windowConfig": windowConfig,
-          "targetId": _this.parentId        // Target window to put results, if applicable
+          "target": "here",
+          // "targetId": _this.parentId        // Target window to put results, if applicable
         };
 
         _this.eventEmitter.publish("MANIFEST_REQUESTED", {
@@ -138,18 +140,88 @@
           return;
         }
 
-        if (_this.parentId === _this.queuedAction.targetId) {
-          // Replace current window with new manifest
-          var windowConfig = _this.queuedAction.windowConfig;
-          windowConfig.manifest = data.manifest;
-          _this.eventEmitter.publish("ADD_WINDOW", windowConfig);
+        var windowConfig = _this.queuedAction.windowConfig;
+        windowConfig.manifest = data.manifest;
+
+        switch (_this.queuedAction.target) {
+          case "above":
+            _this.eventEmitter.publish(
+              "SPLIT_UP_FROM_WINDOW",
+              { "id": _this.parentId, "windowConfig": windowConfig }
+            );
+            break;
+          case "below":
+            _this.eventEmitter.publish(
+              "SPLIT_DOWN_FROM_WINDOW",
+              { "id": _this.parentId, "windowConfig": windowConfig }
+            );
+            break;
+          case "left":
+            _this.eventEmitter.publish(
+              "SPLIT_LEFT_FROM_WINDOW",
+              { "id": _this.parentId, "windowConfig": windowConfig }
+            );
+            break;
+          case "right":
+            _this.eventEmitter.publish(
+              "SPLIT_RIGHT_FROM_WINDOW",
+              { "id": _this.parentId, "windowConfig": windowConfig }
+            );
+            break;
+          case "here":
+            _this.eventEmitter.publish("ADD_WINDOW", windowConfig);
+            break;
+          default:  // Do nothing
+            return;
         }
+      });
+    },
 
-        // Handle result in THIS window
-        //  - Different manifest : publish UPDATE_WINDOW event
-        // Handle result in different window
+    setupContextMenu: function() {
+      var _this = this;
 
-        // How do you get desired window address/slot?
+      this.appendTo.contextMenu({
+        selector: ".result-wrapper",
+        items: {
+          "here": {name: "Open in this slot"},
+          "sep1": "---------",
+          "above": {name: "Open in slot above"},
+          "below": {name: "Open in slot below"},
+          "left": {name: "Open in slot left"},
+          "right": {name: "Open in slot right"},
+        },
+        callback: function(key, options) {
+          var canvasId = jQuery(this).data("objectid");
+          var manifestId = jQuery(this).data("manifestid");
+          var type = jQuery(this).data("objecttype");
+
+
+
+          var windowConfig = {
+            canvasId: canvasId
+            // Any way to get the exact slot address of the newly created window?
+          };
+
+          if (type === "sc:Manifest") {
+            windowConfig.currentFocus = "ThumbnailsView";
+          } else if (type === "sc:Canvas") {
+            windowConfig.canvasID = canvasId;
+            windowConfig.currentFocus = "ImageView";
+          }
+
+          _this.queuedAction = {
+            "manifestId": manifestId,
+            "canvasId": canvasId,
+            "type": type,
+            "windowConfig": windowConfig,
+            "target": key
+          };
+
+          _this.eventEmitter.publish("MANIFEST_REQUESTED", {
+            "origin": _this.id,
+            "manifestId": manifestId
+          });
+        }
       });
     },
 
