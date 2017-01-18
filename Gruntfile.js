@@ -36,12 +36,13 @@ module.exports = function(grunt) {
     'js/lib/URI.min.js',
     'js/lib/mousetrap.min.js',
     'js/lib/isfahan.js',
-    'js/lib/paper-full.min.js',
+    'js/lib/paper-core.min.js',
     'js/lib/spectrum.js',
     'js/lib/i18next.min.js',
     'js/lib/modernizr.custom.js',
     'bower_components/simplePagination.js/jquery.simplePagination.js',
-    'bower_components/jQuery-contextMenu/dist/*.js'
+    'bower_components/jQuery-contextMenu/dist/*.js',
+    'js/lib/sanitize-html.min.js'
   ],
 
   // source files
