@@ -146,7 +146,7 @@
      * @return cached object if reading from cache
      */
     cache: function(id, value, force) {
-      console.assert(id, '[SearchResults] cache ID must be provided');
+      console.assert(id, '[SearchController] cache ID must be provided');
       var _this = this;
 
       if (!value) {
@@ -165,7 +165,7 @@
             this.cachedKeys = [];
             _this.cache(id, value, false);
           } else {
-            console.log('[SearchResults] Unexpected error encountered while writing search result to cache. ' + e);
+            console.log('[SearchController] Unexpected error encountered while writing search result to cache. ' + e);
           }
         }
       }
@@ -183,7 +183,7 @@
      */
     getSearchService: function(id) {
       if (!id) {
-        console.log("[ManifestsPanel] Failed to get search service, no ID provided.");
+        console.log("[SearchController] Failed to get search service, no ID provided.");
         return;
       }
 
@@ -194,7 +194,8 @@
       });
 
       if (s.length === 0) {
-        console.log("[ManifestsPanel] No search service found for ID: " + id);
+        console.log("[SearchController] No search service found for ID: " + id);
+        service.resolve(undefined);
       } else if (s[0].config) {
         service.resolve(s[0]);
       } else {
@@ -202,7 +203,7 @@
         // for some reason, more than one are matched, just pick the first
         var _this = this;
         var jhservice = new $.JhiiifSearchService({ "id": s[0].id });
-        jhservice.initializer.done(function() {
+        jhservice.initializer.always(function() {
           s[0].config = jhservice;
           service.resolve(s[0]);
         });
@@ -391,7 +392,8 @@
           request.resolve(searchResults);   // Resolves the enclosing Promise
         })
         .fail(function(jqXHR, textStatus, errorThrown) {
-          console.log("[ManifestBrowser] search query failed (" + queryUrl + ") \n" + errorThrown);
+          console.log("[SearchController] search query failed (" + queryUrl + ") \n" + errorThrown);
+          request.resolve();
         });
       }
 

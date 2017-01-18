@@ -145,12 +145,8 @@ $.JhiiifSearchService.prototype = {
   },
 
   getInfoUrl: function() {
-    return this.id + (this.id.endsWith("/") ? "" : "/") + "info.json";
+    return this.id + (this.id.charAt(this.id.length - 1) === "/" ? "" : "/") + "info.json";
   }
-
-  // getServiceUrl: function() {
-  //   return this.manifest.getSearchWithinService();
-  // },
 };
 
 }(Mirador));
