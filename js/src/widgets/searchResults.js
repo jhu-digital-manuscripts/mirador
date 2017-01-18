@@ -16,6 +16,7 @@
       hideParent: null,
       appendTo: null,
       element: null,
+      currentObject: null,  // Current IIIF object that defines the scope of the results.
       searchResults: null,
       manifestListItems: null,
       eventEmitter: null,

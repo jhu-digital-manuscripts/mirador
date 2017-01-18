@@ -11,12 +11,13 @@
             manifestLoadStatusIndicator: null,
             resultsWidth:               0,
             state:                      null,
-            eventEmitter:               null
+            eventEmitter:               null,
+            searcher:                   null,
         }, options);
 
         var _this = this;
         _this.init();
-        
+
     };
 
     $.ManifestsPanel.prototype = {
@@ -26,7 +27,7 @@
                 showURLBox : this.state.getStateProperty('showAddFromURLBox')
             })).appendTo(this.appendTo);
             this.manifestListElement = this.element.find('ul');
-            
+
             //this code gives us the max width of the results area, used to determine how many preview images to show
             //cloning the element and adjusting the display and visibility means it won't break the normal flow
             var clone = this.element.clone().css("visibility","hidden").css("display", "block").appendTo(this.appendTo);
@@ -35,7 +36,13 @@
             this.paddingListElement = this.controlsHeight;
             this.manifestListElement.css("padding-bottom", this.paddingListElement);
             clone.remove();
-            
+
+            this.searcher = new $.NewSearchWidget({
+              "appendTo": this.element.find(".browser-search"),
+              "windowId": $.genUUID(),
+              "eventEmitter": this.eventEmitter,
+            });
+
             // this.manifestLoadStatusIndicator = new $.ManifestLoadStatusIndicator({
             //   manifests: this.parent.manifests,
             //   appendTo: this.element.find('.select-results')
@@ -83,7 +90,7 @@
               _this.resizePanel();
             }, 50, true));
         },
-        
+
         hide: function() {
             var _this = this;
             jQuery(this.element).hide({effect: "fade", duration: 160, easing: "easeOutCubic"});
@@ -93,17 +100,17 @@
             var _this = this;
             jQuery(this.element).show({effect: "fade", duration: 160, easing: "easeInCubic"});
         },
-        
+
         addManifestUrl: function(url) {
           var _this = this;
           _this.eventEmitter.publish('ADD_MANIFEST_FROM_URL', [url, "(Added from URL)"]);
         },
-        
+
         togglePanel: function(event) {
           var _this = this;
           _this.eventEmitter.publish('TOGGLE_LOAD_WINDOW');
         },
-        
+
         filterManifests: function(value) {
           var _this = this;
           if (value.length > 0) {
@@ -122,7 +129,7 @@
           clone.remove();
           _this.eventEmitter.publish("manifestPanelWidthChanged", _this.resultsWidth);
         },
-        
+
         onPanelVisible: function(_, stateValue) {
           var _this = this;
           if (stateValue) { _this.show(); return; }
@@ -131,13 +138,17 @@
 
         onManifestReceived: function(event, newManifest) {
           var _this = this;
-          _this.manifestListItems.push(new $.ManifestListItem({ 
-            manifest: newManifest, 
-            resultsWidth: _this.resultsWidth, 
+          _this.manifestListItems.push(new $.ManifestListItem({
+            manifest: newManifest,
+            resultsWidth: _this.resultsWidth,
             state: _this.state,
             eventEmitter: _this.eventEmitter,
             appendTo: _this.manifestListElement }));
           _this.element.find('#manifest-search').keyup();
+
+          if (this.searcher) {
+            this.searcher.addIIIFObject(newManifest.jsonLd);
+          }
         },
 
         template: Handlebars.compile([
@@ -153,10 +164,7 @@
                     '<input type="submit" value="{{t "load"}}">',
                   '</form>',
                 '{{/if}}',
-                '<form action="" id="manifest-search-form">',
-                  '<label for="manifest-search">{{t "filterObjects"}}:</label>',
-                  '<input id="manifest-search" type="text" name="manifest-filter">',
-                '</form>',
+                '<div class="browser-search"></div>',
               '</div>',
             '</div>',
               '<div class="select-results">',
@@ -169,4 +177,3 @@
     };
 
 }(Mirador));
-

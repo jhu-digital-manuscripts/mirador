@@ -138,7 +138,7 @@
           appendTo: this.element.find(".tabContentArea"),
           eventEmitter: this.eventEmitter,
           tabId: "searchTab",
-          manifest: this.manifest,
+          baseObject: this.manifest.jsonLd,
           pinned: this.pinned,
           slotAddress: this.slotAddress,
         });

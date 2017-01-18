@@ -14,7 +14,7 @@
       windowId: null,
       slotAddress: null,
       eventEmitter: null,
-      manifest: null,
+      baseObject: null,
       searchService: null,    // Current search service displayed in UI
       searchServices: [],     // SearchServices object, used to cache search services
       element: null,            // Base jQuery object for this widget
@@ -26,6 +26,7 @@
       /*
         {
           "searchService": { ... },   // Search service object that includes info.json configs
+          "object": "",               // ID of object being searched
           "search": {
             "query": "",              // String query
             "offset": "",             // Results offset for paging
@@ -59,10 +60,12 @@
       // Request search services for this manifest, and related
       // As those services are discovered, request info.json configs
       // Populate search dropdowns (done in event handler in #bindEvents)
-      this.eventEmitter.publish("GET_RELATED_SEARCH_SERVICES", {
-        "origin": _this.windowId,
-        "manifest": _this.manifest
-      });
+      if (this.baseObject) {
+        this.eventEmitter.publish("GET_RELATED_SEARCH_SERVICES", {
+          "origin": _this.windowId,
+          "baseObject": _this.baseObject
+        });
+      }
     },
 
     bindEvents: function() {
@@ -160,6 +163,23 @@
       }
     },
 
+    /**
+     * Add an object to this widget that you potentially want to search.
+     * Thist object must be a JSON object of a IIIF object.
+     *
+     * @param object : IIIF object as JSON
+     */
+    addIIIFObject: function(object) {
+      if (!object || typeof object !== "object") {
+        return;
+      }
+
+      this.eventEmitter.publish("GET_RELATED_SEARCH_SERVICES", {
+        "origin": this.windowId,
+        "baseObject": object
+      });
+    },
+
     addSearchService: function(service) {
       var id = service.id || service["@id"];
       var label = service.service.label || id;
@@ -222,7 +242,7 @@
       this.searchService = newService;
 
       // Switch advanced search UI as needed
-      if (this.advancedSearch) {
+      if (this.advancedSearch) {getId(),
         this.advancedSearch.destroy();
       }
       _this.advancedSearch = new $.AdvancedSearchWidget({
@@ -243,10 +263,6 @@
         },
         "clearMessages": function() { _this.element.find(".pre-search-message").empty(); },
       });
-
-      // Assuming the UI was created successfully, set the current
-      // search service to the one provided to this function
-      // this.listenForActions();
     },
 
     /**
@@ -261,6 +277,7 @@
     doSearch: function(searchService, query, sortOrder, offset, maxPerPage, resumeToken) {
       this.currentSearch = {
         "searchService": searchService,
+        "object": this.element.find(".search-within-object-select").val(),
         "search": {
           "query": query,
           "sortOrder": sortOrder,
@@ -296,7 +313,7 @@
       this.searchResults = new $.SearchResults({
         "parentId": _this.windowId,
         "slotAddress": _this.slotAddress,
-        "currentObject": _this.manifest.getId(),
+        "currentObject": _this.currentSearch.object,
         "appendTo": _this.element.find(".search-results-list"),
         "searchResults": searchResults,
         "eventEmitter": _this.eventEmitter

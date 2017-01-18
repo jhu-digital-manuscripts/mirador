@@ -77,8 +77,8 @@
 
       /**
        * data:  {
-       *          "origin": ""          // ID of sender of this event, ex: windowId
-       *          "manifest": {object} // manifest object, contains the JSON-LD
+       *          "origin": ""           // ID of sender of this event, ex: windowId
+       *          "baseObject": {object} // A IIIF object JSON object
        *        }
        *
        * @return  {
@@ -87,7 +87,7 @@
        *          }
        */
       this.eventEmitter.subscribe("GET_RELATED_SEARCH_SERVICES", function(event, data) {
-        _this.relatedServices(data.manifest.jsonLd).done(function(services) {
+        _this.relatedServices(data.baseObject).done(function(services) {
           if (Array.isArray(services)) {
             services.forEach(function(service) { _this._addSearchService(service); });
           } else {
