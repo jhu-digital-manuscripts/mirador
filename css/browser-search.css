@@ -1,0 +1,55 @@
+#load-controls input {
+  background: white;
+  padding: 1px 12px;
+}
+
+.browser-search-container {
+  float: left;
+}
+
+.browser-search .searchResults {
+  position: relative;
+  background-color: white;
+  width: inherit;
+  height: inherit;
+}
+
+.browser-search .search-within-object-select {
+  width: auto;
+}
+
+.browser-search-container .close {
+  position: absolute;
+  top: 0;
+  left: 10px;
+  z-index: 3;
+}
+
+.browser-search select {
+  background: white;
+  padding: 3px 6px;
+  height: 29px;
+  border: 1px solid #d3d3d3;
+  border-radius: 2px;
+}
+
+.browser-search-container button {
+  background: white;
+  border: 1px solid #d3d3d3;
+  height: 29px;
+  padding: 0 9px;
+}
+
+.browser-search-container button:hover {
+  border: 1px solid black;
+}
+
+.browser-search-container button:active {
+  background: #f7f7f7;
+}
+
+/* Remove box shadow for pager */
+.browser-search-container .compact-theme a,
+.browser-search-container .compact-theme span {
+  box-shadow: none;
+}

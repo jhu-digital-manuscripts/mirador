@@ -86,6 +86,10 @@
               event.preventDefault();
             });
 
+            this.element.find(".browser-search-container .close").on("click", function(event) {
+              _this.element.find(".browser-search-container").hide();
+            });
+
             jQuery(window).resize($.throttle(function() {
               _this.resizePanel();
             }, 50, true));
@@ -164,7 +168,10 @@
                     '<input type="submit" value="{{t "load"}}">',
                   '</form>',
                 '{{/if}}',
-                '<div class="browser-search"></div>',
+                '<div class="browser-search-container">',
+                  '<a class="mirador-btn close"><i class="fa fa-lg fa-caret-up"></i></a>',
+                  '<div class="browser-search"></div>',
+                '</div>',
               '</div>',
             '</div>',
               '<div class="select-results">',

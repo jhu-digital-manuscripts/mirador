@@ -10,6 +10,7 @@
    */
   $.NewSearchWidget = function(options) {
     jQuery.extend(true, this, {
+      startHidden: false,
       tabId: null,
       windowId: null,
       slotAddress: null,
@@ -53,7 +54,9 @@
       var _this = this;
 
       // Template takes no data. Data added asyncronously later.
-      this.element = jQuery(this.template()).appendTo(this.appendTo);
+      this.element = jQuery(this.template({
+        "hidden": this.startHidden
+      })).appendTo(this.appendTo);
 
       this.bindEvents();
 
@@ -242,7 +245,7 @@
       this.searchService = newService;
 
       // Switch advanced search UI as needed
-      if (this.advancedSearch) {getId(),
+      if (this.advancedSearch) {
         this.advancedSearch.destroy();
       }
       _this.advancedSearch = new $.AdvancedSearchWidget({
@@ -428,7 +431,7 @@
     ].join('')),
 
     template: Handlebars.compile([
-      '<div class="searchResults" style="display: none;">',
+      '<div class="searchResults" {{#if hidden}}style="display: none;"{{/if}}>',
         // SearchWithin selector
         '<div class="">',
           '<p>',

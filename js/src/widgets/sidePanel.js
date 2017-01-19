@@ -134,6 +134,7 @@
 
       if (_this.searchTabAvailable) {
         new $.NewSearchWidget({
+          startHidden: true,
           windowId: this.windowId,
           appendTo: this.element.find(".tabContentArea"),
           eventEmitter: this.eventEmitter,
