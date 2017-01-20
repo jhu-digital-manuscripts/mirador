@@ -63,6 +63,10 @@
           _this.eventEmitter.subscribe('manifestReceived', function(event, newManifest) {
             _this.onManifestReceived(event, newManifest);
           });
+
+          _this.eventEmitter.subscribe("SEARCH_SIZE_UPDATED." + this.searcher.windowId, function() {
+            _this.setContainerPositions();
+          });
         },
 
         bindEvents: function() {
@@ -154,6 +158,11 @@
           if (this.searcher) {
             this.searcher.addIIIFObject(newManifest.jsonLd);
           }
+        },
+
+        setContainerPositions: function() {
+          var h = this.element.find(".manifest-panel-controls").outerHeight(true) + 16;
+          this.element.find(".select-results").css("top", h+"px");
         },
 
         template: Handlebars.compile([

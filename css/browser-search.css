@@ -3,6 +3,14 @@
   padding: 1px 12px;
 }
 
+.select-results {
+  height: auto;
+  position: absolute;
+  top: 175px;
+  bottom: 0;
+  width: calc(100% - 15px);
+}
+
 .browser-search-container {
   float: left;
 }
