@@ -54,16 +54,22 @@ describe("Search Controller", function() {
       "@id": "http://example.org/iiif-pres/collection/top/jhsearch",
       "profile": "http://iiif.io/api/search/0/search"
     };
-    var result;
-
-    beforeEach(function() {
-      result = searchController.searchServicesInObject(JSON.parse(collectionData));
-    });
 
     it("Sample should have ONE search service that is equivalent to the expected service block.", function() {
+      var result = searchController.searchServicesInObject(JSON.parse(collectionData));
       expect(Array.isArray(result)).toBeTruthy();
       expect(result.length).toBe(1);
       expect(result[0]["@id"]).toBe(expected["@id"]);
+    });
+
+    it("Object with no service should return empty array.", function() {
+      var col = JSON.parse(collectionData);
+      col.service = undefined;
+
+      var result = searchController.searchServicesInObject(col);
+      expect(result).toBeDefined();
+      expect(Array.isArray(result)).toBeTruthy();
+      expect(result.length).toBe(0);
     });
   });
 

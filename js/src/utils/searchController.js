@@ -216,7 +216,7 @@
      * Test a IIIF service block to see if it represents a search service.
      */
     isSearchServiceBlock: function(service) {
-      return service["@context"] === "http://manuscriptlib.org/jhiff/search/context.json";
+      return service && service["@context"] === "http://manuscriptlib.org/jhiff/search/context.json";
     },
 
     /**
@@ -227,19 +227,20 @@
      */
     searchServicesInObject: function(object) {
       var _this = this;
-      var serviceProperty =  object.service || object.jsonLd.service;
+      var serviceProperty =  object.service || (object.jsonLd ? object.jsonLd.service : undefined);
+      var serviceLabel = object.label || (object.jsonLd ? object.jsonLd.label : "");
 
       var s = [];
       if (Array.isArray(serviceProperty)) {
         serviceProperty
         .filter(function(service) { return _this.isSearchServiceBlock(service); })
         .forEach(function(service) {
-          service.label = object.label || object.jsonLd.label;
+          service.label = serviceLabel;
           s.push(service);
         });
       }
       else if (this.isSearchServiceBlock(serviceProperty)) {
-        serviceProperty.label = object.label || object.jsonLd.label;
+        serviceProperty.label = serviceLabel;
         s.push(serviceProperty);
       }
       return s;
