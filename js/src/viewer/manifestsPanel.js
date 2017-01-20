@@ -41,6 +41,7 @@
               "appendTo": this.element.find(".browser-search"),
               "windowId": $.genUUID(),
               "eventEmitter": this.eventEmitter,
+              "showHideAnimation": {duration: 160, easing: "easeOutCubic", queue: false}
             });
 
             // this.manifestLoadStatusIndicator = new $.ManifestLoadStatusIndicator({
@@ -169,7 +170,6 @@
                   '</form>',
                 '{{/if}}',
                 '<div class="browser-search-container">',
-                  '<a class="mirador-btn close"><i class="fa fa-lg fa-caret-up"></i></a>',
                   '<div class="browser-search"></div>',
                 '</div>',
               '</div>',

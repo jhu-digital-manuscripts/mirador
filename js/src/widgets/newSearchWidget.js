@@ -39,6 +39,7 @@
        */
       currentSearch: {},
       searchResults: null,            // UI holding search results
+      showHideAnimation: null,
     }, options);
 
     this.messages = {
@@ -52,6 +53,10 @@
   $.NewSearchWidget.prototype = {
     init: function() {
       var _this = this;
+
+      if (!this.showHideAnimation) {
+        this.showHideAnimation = "fast";
+      }
 
       // Template takes no data. Data added asyncronously later.
       this.element = jQuery(this.template({
@@ -150,18 +155,18 @@
       if (this.searchService.config.search.settings.fields.length > 0) {
         this.element.find(".search-disclose-btn-more").on("click", function() {
           _this.advancedSearchActive = true;
-          _this.element.find("#search-form").hide("fast");
-          _this.element.find(".search-disclose").show("fast");
-          _this.element.find(".search-disclose-btn-more").hide();
-          _this.element.find(".search-disclose-btn-less").show();
+          _this.element.find(".search-disclose-btn-more").hide(0);
+          _this.element.find(".search-disclose-btn-less").show(0);
+          _this.element.find("#search-form").hide(_this.showHideAnimation);
+          _this.element.find(".search-disclose").show(_this.showHideAnimation);
         });
 
         this.element.find(".search-disclose-btn-less").on("click", function() {
           _this.advancedSearchActive = false;
-          _this.element.find("#search-form").show("fast");
-          _this.element.find(".search-disclose").hide("fast");
-          _this.element.find(".search-disclose-btn-less").hide();
-          _this.element.find(".search-disclose-btn-more").show();
+          _this.element.find(".search-disclose-btn-less").hide(0);
+          _this.element.find(".search-disclose-btn-more").show(0);
+          _this.element.find("#search-form").show(_this.showHideAnimation);
+          _this.element.find(".search-disclose").hide(_this.showHideAnimation);
         });
       }
     },
@@ -433,11 +438,9 @@
     template: Handlebars.compile([
       '<div class="searchResults" {{#if hidden}}style="display: none;"{{/if}}>',
         // SearchWithin selector
-        '<div class="">',
-          '<p>',
-            'Search within: ',
-            '<select class="search-within-object-select"></select>',
-          '</p>',
+        '<div>',
+          'Search within: ',
+          '<select class="search-within-object-select"></select>',
         '</div>',
         '<form id="search-form" class="search-within-form">',
           '<input class="js-query" type="text" placeholder="search"/>',
