@@ -62,6 +62,7 @@
         e.preventDefault();
         _this.clearMessages();
         _this.addAdvancedSearchLine();
+        _this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + _this.windowId);
       });
 
       this.element.find(".advanced-search-reset-btn").on("click", function(e) {
@@ -72,6 +73,7 @@
           jQuery(line).remove();
         });
         _this.addAdvancedSearchLine();
+        _this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + _this.windowId);
       });
 
       this.element.find(".perform-advanced-search").on("submit", function(event) {

@@ -16,10 +16,10 @@
 }
 
 .browser-search .searchResults {
-  position: relative;
   background-color: white;
   width: inherit;
   height: inherit;
+  padding-top: 0;
 }
 
 .browser-search .search-within-object-select {
@@ -60,4 +60,20 @@
 .browser-search-container .compact-theme a,
 .browser-search-container .compact-theme span {
   box-shadow: none;
+}
+
+/* Handle search results */
+.browser-search-container .search-results-display {
+  position: absolute;
+  top: 170px;
+  bottom: 0;
+  margin-top: 10px;
+  width: calc(100% - 10px);
+  background-color: white;
+  overflow-y: auto;
+  z-index: 3;
+}
+
+.browser-search-container .search-results-display .search-results-close {
+  display: block;
 }

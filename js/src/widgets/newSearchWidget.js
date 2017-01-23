@@ -159,6 +159,10 @@
         _this.switchSearchServices(_this.getSearchService(selected));
       });
 
+      this.element.find(".search-results-close").on("click", function() {
+        _this.appendTo.find(".search-results-display").fadeOut(160);
+      });
+
       if (this.searchService.config.search.settings.fields.length > 0) {
         this.element.find(".search-disclose-btn-more").on("click", function() {
           _this.advancedSearchActive = true;
@@ -352,6 +356,8 @@
       } else {
         this.hidePager();
       }
+
+      this.appendTo.find(".search-results-display").fadeIn(160);
     },
 
     showPager: function() {
@@ -470,11 +476,13 @@
         '<div class="search-disclose-container">',
           '<div class="search-disclose" style="display: none;"></div>',
         '</div>',
-        '<p class="pre-search-message"></p>',
+      '</div>',
+      '<div class="search-results-display" style="display:none;">',
+        '<div class="search-results-close"><i class="fa fa-2x fa-caret-up" title="Close results"></i></div>',
         '<div class="results-pager"></div>',
         '<p class="results-pager-text"></p>',
         '<div class="search-results-list"></div>',
-      '</div>',
+      '</div>'
     ].join(''))
   };
 

@@ -161,8 +161,11 @@
         },
 
         setContainerPositions: function() {
-          var h = this.element.find(".manifest-panel-controls").outerHeight(true) + 16;
+          var h = this.element.find(".remove-object-option").outerHeight(true) +
+              this.element.find("#load-controls").outerHeight(true) -
+              10;
           this.element.find(".select-results").css("top", h+"px");
+          this.element.find(".search-results-display").css("top", h+"px");
         },
 
         template: Handlebars.compile([

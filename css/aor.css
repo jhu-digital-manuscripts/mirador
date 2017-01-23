@@ -206,11 +206,8 @@
 }
 .searchResults  {
   overflow: auto;
-  position: absolute;
-  top: 0;
-  height: 100%;
   width: 310px;
-  padding: 0 10px;
+  padding: 10px;
 }
 .search-results-list .query {
   font-style: italic;
@@ -362,4 +359,9 @@
 
 .ui-tooltip-content {
   margin: 0 5px;
+}
+
+.search-results-close {
+  display: none;
+  cursor: pointer;
 }
