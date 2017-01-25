@@ -1,6 +1,7 @@
 #load-controls input {
   background: white;
   padding: 1px 12px;
+  color: black;
 }
 
 .select-results {
@@ -75,5 +76,8 @@
 }
 
 .browser-search-container .search-results-display .search-results-close {
+  display: block;
+}
+.browser-search-container .results-to-top {
   display: block;
 }

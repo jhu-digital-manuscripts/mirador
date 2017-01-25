@@ -88,8 +88,8 @@
     bindEvents: function() {
       var _this = this;
 
-      this.appendTo.find("#results-to-top").on("click", function(event) {
-        _this.appendTo.animate({scrollTop:0}, 150);
+      this.appendTo.find(".results-to-top").on("click", function(event) {
+        _this.appendTo.parent().animate({scrollTop:0}, 150);
       });
 
       this.appendTo.find(".js-show-canvas").on("click", function(event) {
@@ -248,7 +248,7 @@
           '</div>',
         '</div>',
       '{{/each}}',
-      '<p><a id="results-to-top">Back to top</a></p>'
+      '<p><a class="results-to-top">Back to top</a></p>'
     ].join(''))
 
   };

@@ -365,3 +365,9 @@
   display: none;
   cursor: pointer;
 }
+
+.results-to-top {
+  cursor: pointer;
+  color: blue;
+  display: none;
+}

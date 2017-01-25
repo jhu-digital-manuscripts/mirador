@@ -202,6 +202,7 @@
     },
 
     addSearchService: function(service) {
+      var _this = this;
       var id = service.id || service["@id"];
       var label = service.service.label || id;
 
@@ -216,11 +217,50 @@
       });
 
       if (found.length === 0) {
+        var selectEl = this.element.find(".search-within-object-select");
         // If this is a new service, add it to the UI and push it to
         // the list of known services.
         this.searchServices.push(service);
-        this.element.find(".search-within-object-select")
-          .append(jQuery("<option value=\"" + id + "\">" + label + "</option>"));
+        selectEl.append(jQuery("<option value=\"" + id + "\">" + label + "</option>"));
+
+        var my_options = this.element.find(".search-within-object-select option");
+        var selected = selectEl.val();
+
+        /*
+         * Hacky way of sorting by type and name. This tries to extract object
+         * 'name' and IIIF type from its ID. The drop down is then sorted
+         * first by type, then each type will be sorted by name. IIIF
+         * Collections are placed at the top.
+         *
+         * For the JHU IIIF service, this works out because each book name
+         * contains information about its containing collection:
+         *    JHU Name: <collectionName>.<bookName>
+         *
+         * NOTE: this can not be used generally. The IIIF spec RECOMMENDS the URL
+         *       structure that this relies on, but does not make it required.
+         *       Other IIIF services could potentially use different URL schemes.
+         */
+        my_options.sort(function(a,b) {
+          var objA = _this.getObjectType(a.value);
+          var objB = _this.getObjectType(b.value);
+
+          if (objA.type === objB.type && objA.name && objB.name) {
+            return objA.name.toLowerCase().localeCompare(objB.name.toLowerCase());
+          } else if (objA.type === "collection") {
+            return -1;
+          } else if (objB.type === "collection") {
+            return 1;
+          }
+
+          return 0;
+        });
+        // my_options.sort(function(a, b) {
+        //   return a.value.localeCompare(b.value);
+        // });
+
+        selectEl.empty().append( my_options );
+        selectEl.val(selected);
+
       } else {
         found.forEach(function(s) {
           jQuery.extend(true, s, service);  // This will not overwrite any currently present properties.
@@ -232,6 +272,31 @@
         this.advancedSearchSet = true;
         this.listenForActions();
       }
+    },
+
+    /**
+     * @param id {string} IIIF object ID
+     * @return {object} { type: "object type", name: "object name"}
+     */
+    getObjectType: function(id) {
+      var parts = id.split("/");
+      var type;
+      var name;
+
+      parts.forEach(function(p, i, arr) {
+        if (p === "collection") {
+          type = "collection";
+          name = arr[i+1];
+        } else if (p === "manifest") {
+          type = "manifest";
+          name = arr[i-1];
+        }
+      });
+
+      return {
+        "type": type,
+        "name": name
+      };
     },
 
     /**
