@@ -199,6 +199,8 @@
         user_inputs
             .find(_this.classNamesToSelector(_this.searchService.config.getField(jSelector.val()).class))
             .show();
+
+        _this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + _this.windowId);
       });
 
     },

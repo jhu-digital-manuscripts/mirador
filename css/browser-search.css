@@ -81,3 +81,26 @@
 .browser-search-container .results-to-top {
   display: block;
 }
+
+/* Search UI inputs tweaks */
+.browser-search-container .search-within-form input[type="text"] {
+    width: 250px;
+}
+.browser-search-container .advanced-search-inputs input {
+  width: calc(100% - 26px);
+}
+.browser-search-container .advanced-search-inputs select {
+  width: 100%;
+}
+.browser-search-container .advanced-search-inputs {
+    width: 200px;
+}
+.browser-search-container .advanced-search-selector {
+    width: 200px;
+}
+.browser-search-container .advanced-search-selector .advanced-search-operators {
+  width: 40px;
+}
+.browser-search-container .advanced-search-selector .advanced-search-categories {
+  width: calc(100% - 40px);
+}

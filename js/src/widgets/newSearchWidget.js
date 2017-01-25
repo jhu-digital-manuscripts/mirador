@@ -162,6 +162,7 @@
       this.element.find(".search-within-object-select").on("change", function() {
         var selected = jQuery(this).val();
         _this.switchSearchServices(_this.getSearchService(selected));
+        _this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + _this.windowId);
       });
 
       this.element.find(".search-results-close").on("click", function() {
@@ -232,9 +233,8 @@
         var selected = selectEl.val();
 
         /*
-         * Hacky way of sorting by type and name. This tries to extract object
-         * 'name' and IIIF type from its ID. The drop down is then sorted
-         * first by type, then each type will be sorted by name. IIIF
+         * Hacky way of sorting by type and name. The drop down is then sorted
+         * first by type, then each type will be sorted by its search ID. IIIF
          * Collections are placed at the top.
          *
          * For the JHU IIIF service, this works out because each book name
@@ -249,8 +249,8 @@
           var objA = _this.getObjectType(a.value);
           var objB = _this.getObjectType(b.value);
 
-          if (objA.type === objB.type && objA.name && objB.name) {
-            return objA.name.toLowerCase().localeCompare(objB.name.toLowerCase());
+          if (objA.type === objB.type) {
+            return a.value.toLowerCase().localeCompare(b.value.toLowerCase());
           } else if (objA.type === "collection") {
             return -1;
           } else if (objB.type === "collection") {
@@ -259,9 +259,6 @@
 
           return 0;
         });
-        // my_options.sort(function(a, b) {
-        //   return a.value.localeCompare(b.value);
-        // });
 
         selectEl.empty().append( my_options );
         selectEl.val(selected);
