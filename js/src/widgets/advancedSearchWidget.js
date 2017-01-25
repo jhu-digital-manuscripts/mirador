@@ -17,9 +17,11 @@
       element: null,
       hasDescription: true,
       eventEmitter: null,
-      windowPinned: false,
       performAdvancedSearch: null,
       clearMessages: null,
+      config: {
+        pinned: false,
+      }
     }, options);
 
     this.init();
@@ -50,7 +52,7 @@
 
       this.eventEmitter.subscribe('windowPinned', function(event, data) {
         if (data.windowId === _this.windowId) {
-          _this.windowPinned = data.status;
+          _this.config.pinned = data.status;
         }
       });
     },

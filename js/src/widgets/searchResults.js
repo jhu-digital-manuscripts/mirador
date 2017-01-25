@@ -29,7 +29,10 @@
        *   "windowConfig": {windowConfig} // Config for updating or creating a window
        * }
        */
-      queuedAction: {}
+      queuedAction: {},
+      config: {
+        hasContextMenu: true
+      }
     }, options);
     this.id = $.genUUID();
 
@@ -50,7 +53,9 @@
       this.element = jQuery(this.template(this.searchResults)).appendTo(this.appendTo);
 
       this.bindEvents();
-      this.setupContextMenu();
+      if (this.config.hasContextMenu) {
+        this.setupContextMenu();
+      }
     },
 
     /**

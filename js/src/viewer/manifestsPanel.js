@@ -41,7 +41,10 @@
               "appendTo": this.element.find(".browser-search"),
               "windowId": $.genUUID(),
               "eventEmitter": this.eventEmitter,
-              "showHideAnimation": {duration: 160, easing: "easeOutCubic", queue: false}
+              "showHideAnimation": {duration: 160, easing: "easeOutCubic", queue: false},
+              "config": {
+                "hasContextMenu": false
+              }
             });
 
             // this.manifestLoadStatusIndicator = new $.ManifestLoadStatusIndicator({

@@ -23,7 +23,6 @@
       advancedSearch: null,     // Advanced search widget
       advancedSearchSet: false,        // has the advanced search UI been created?
       advancedSearchActive: false,
-      pinned: false,            // Is this search widget pinned to the UI? Only matters if widget is part of a window
       /*
         {
           "searchService": { ... },   // Search service object that includes info.json configs
@@ -39,7 +38,13 @@
        */
       currentSearch: {},
       searchResults: null,            // UI holding search results
-      showHideAnimation: null,
+      showHideAnimation: null,        // The actual animation object for jQuery
+      config: {                       // Will hold config information for the search UI
+        pinned: false,
+        advancedSearchActive: false,
+        animated: false,
+        hasContextMenu: true
+      }
     }, options);
 
     this.messages = {
@@ -106,7 +111,7 @@
 
       this.eventEmitter.subscribe("windowPinned", function(event, data) {
         if (data.windowId === _this.windowId) {
-          _this.pinned = data.status;
+          _this.config.pinned = data.status;
         }
       });
 
@@ -337,7 +342,9 @@
         "searchService": newService,
         "appendTo": _this.element.find(".search-disclose"),
         "eventEmitter": _this.eventEmitter,
-        "windowPinned": _this.pinned,
+        "config": {
+          "pinned": _this.config.pinned
+        },
         "performAdvancedSearch": function() {
           if (!_this.advancedSearch) {
             console.log("%c No advanced search widget found. Cannot do advanced search.", "color: red;");
@@ -404,7 +411,10 @@
         "currentObject": _this.currentSearch.object,
         "appendTo": _this.element.find(".search-results-list"),
         "searchResults": searchResults,
-        "eventEmitter": _this.eventEmitter
+        "eventEmitter": _this.eventEmitter,
+        "config": {
+          "hasContextMenu": _this.config.hasContextMenu
+        }
       });
 
       if (this.needsPager(searchResults)) {
