@@ -1,0 +1,24 @@
+{
+  "@context": "http://iiif.io/api/presentation/2/context.json",
+  "@id": "http://example.org/iiif-pres/collection/aorcollection",
+  "@type": "sc:Collection",
+  "label": "Archaeology of Reading",
+  "within": "http://example.org/iiif-pres/collection/top",
+  "manifests": [
+    {
+      "@id": "http://example.org/iiif-pres/aorcollection.PrincetonPA6452/manifest",
+      "@type": "sc:Manifest",
+      "label": "PrincetonPA6452"
+    },
+    {
+      "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/manifest",
+      "@type": "sc:Manifest",
+      "label": "FolgersHa2"
+    },
+    {
+      "@id": "http://example.org/iiif-pres/aorcollection.HoughtonSTC11402/manifest",
+      "@type": "sc:Manifest",
+      "label": "HoughtonSTC11402"
+    }
+  ]
+}

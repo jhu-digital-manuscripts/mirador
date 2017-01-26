@@ -1,4 +1,7 @@
+
+
 describe("Search Controller", function() {
+
   var sampleService = {
     "@context": "http://manuscriptlib.org/jhiff/search/context.json",
     "id": "http://example.org/iiif-pres/collection/top/jhsearch",
@@ -9,6 +12,41 @@ describe("Search Controller", function() {
   var eventEmitter;
 
   beforeEach(function() {
+    // Using Fixtures in Jasmine:::
+    jasmine.getJSONFixtures().fixturesPath = 'spec/fixtures';
+    this.collectionNoService = getJSONFixture("collectionNoService.json");
+    this.collectionTop = getJSONFixture("collectionTop.json");
+    this.collection = getJSONFixture("collection.json");
+    this.search = getJSONFixture("sampleSearch.json");
+    this.info = getJSONFixture("searchInfo.json");
+
+    // Asynchronous jQuery.ajax mock
+    function ajax(url) {
+      var ajaxMock = $.Deferred();
+      if (typeof url === "object") url = url.url;
+
+      if (url.indexOf("q=") > -1) {
+        ajaxMock.resolve(getJSONFixture("sampleSearch.json"));       // Search request
+      } else if (url.indexOf("info.json") > -1) {
+        ajaxMock.resolve(getJSONFixture("searchInfo.json"));         // Sample search info.json
+      } else if (url.indexOf("collection/aorcollection") > -1) {
+        ajaxMock.resolve(getJSONFixture("collection.json"));   // Collection request
+      } else if (url.indexOf("collection/top") > -1) {
+        ajaxMock.resolve(getJSONFixture("collectionTop.json"));// Top level collection
+      } else {
+        ajaxMock.reject();
+      }
+
+      return ajaxMock.promise();
+    }
+
+    spyOn(jQuery, 'ajax').and.callFake(function(url) {
+      return ajax(url);
+    });
+    spyOn(jQuery, 'getJSON').and.callFake(function(url) {
+      return ajax(url);
+    });
+
     eventEmitter = new Mirador.EventEmitter();
     spyOn(eventEmitter, "publish").and.callThrough();
     searchController = new Mirador.SearchController({
@@ -47,8 +85,6 @@ describe("Search Controller", function() {
   });
 
   describe("Test #searchServicesInObject", function() {
-    var collectionData =
-      '{"@context":"http://iiif.io/api/presentation/2/context.json","@id":"http://example.org/iiif-pres/collection/top","@type":"sc:Collection","label":"All JHU collections","description":"Top level collection bringing together all other collections in this archive.","service":{"@context":"http://manuscriptlib.org/jhiff/search/context.json","@id":"http://example.org/iiif-pres/collection/top/jhsearch","profile":"http://iiif.io/api/search/0/search"},"collections":[{"@id":"http://localhost:8080/iiif-pres/collection/aorcollection","@type":"sc:Collection","label":"Archaeology of Reading"},{"@id":"http://localhost:8080/iiif-pres/collection/rosecollection","@type":"sc:Collection","label":"Roman de la Rose Digital Library"},{"@id":"http://localhost:8080/iiif-pres/collection/pizancollection","@type":"sc:Collection","label":"Christine de Pizan Digital Scriptorium"}]}';
     var expected = {
       "@context": "http://manuscriptlib.org/jhiff/search/context.json",
       "@id": "http://example.org/iiif-pres/collection/top/jhsearch",
@@ -56,46 +92,20 @@ describe("Search Controller", function() {
     };
 
     it("Sample should have ONE search service that is equivalent to the expected service block.", function() {
-      var result = searchController.searchServicesInObject(JSON.parse(collectionData));
+      var result = searchController.searchServicesInObject(this.collectionTop);
       expect(Array.isArray(result)).toBeTruthy();
       expect(result.length).toBe(1);
       expect(result[0]["@id"]).toBe(expected["@id"]);
     });
 
     it("Object with no service should return empty array.", function() {
-      var col = JSON.parse(collectionData);
-      col.service = undefined;
-
-      var result = searchController.searchServicesInObject(col);
+      var result = searchController.searchServicesInObject(this.collectionNoService);
       expect(result).toBeDefined();
       expect(Array.isArray(result)).toBeTruthy();
       expect(result.length).toBe(0);
     });
   });
 
-  describe("Test #getSearchService", function() {
-    var id = "http://example.org/iiif-pres/collection/top/jhsearch";
-    var result;
-
-    beforeEach(function(done) {
-      // First cache the sample service so it is known to the controller
-      searchController.searchServices.push(sampleService);
-      searchController.getSearchService(id).done(function(service) {
-        result = service;
-      }).always(function(){
-        done();
-      });
-    }, 2000);
-
-    it("Search service should be found, investigate for info.json data", function() {
-      expect(result).toBeDefined();
-      expect(result.config).toBeDefined();
-      expect(result.config.query).toBeDefined();
-      expect(result.config.search).toBeDefined();
-    });
-  });
-
-  // TODO don't know how to access local data. Do not want to rely on a server being up.
   xdescribe("Test #relatedServices.", function() {
     var manifest = null;    // This needs to be a JSON object or a Mirador.Manifest object
     var result;
@@ -111,6 +121,32 @@ describe("Search Controller", function() {
     xit("Should return 3 related services.", function() {
       expect(Array.isArray(result)).toBeTruthy();
       expect(result.length).toBe(3);
+    });
+  });
+
+  describe("Testing $getSearchService again, make sure the info request goes through.", function() {
+    var searcher;
+
+    beforeEach(function(done) {
+      searchController.searchServices.push({"id": "http://example.org/iiif-pres/collection/top/jhsearch"});
+      searchController.getSearchService("http://example.org/iiif-pres/collection/top/jhsearch")
+      .done(function(data) { searcher = data.config.search; })
+      .always(function() { done(); });
+    }, 2000);
+
+    it("Search settings should have 6 fields and default-fields", function() {
+      expect(searcher).toBeDefined();
+      expect(searcher.settings).toBeDefined();
+      expect(searcher.settings.fields).toBeDefined();
+      expect(Array.isArray(searcher.settings.fields)).toBeTruthy();
+      expect(searcher.settings.fields.length).toBe(6);
+      expect(searcher.settings["default-fields"].length).toBe(6);
+    });
+
+    it("Should have six search categories.", function() {
+      expect(searcher).toBeDefined();
+      expect(searcher.categories).toBeDefined();
+      expect(searcher.categories.choices.length).toBe(6);
     });
   });
 

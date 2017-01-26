@@ -1,0 +1,29 @@
+{
+    "@context": "http://iiif.io/api/presentation/2/context.json",
+    "@id": "http://example.org/iiif-pres/collection/top",
+    "@type": "sc:Collection",
+    "label": "All JHU collections",
+    "description": "Top level collection bringing together all other collections in this archive.",
+    "service": {
+        "@context": "http://manuscriptlib.org/jhiff/search/context.json",
+        "@id": "http://example.org/iiif-pres/collection/top/jhsearch",
+        "profile": "http://iiif.io/api/search/0/search"
+    },
+    "collections": [
+        {
+            "@id": "http://example.org/iiif-pres/collection/aorcollection",
+            "@type": "sc:Collection",
+            "label": "Archaeology of Reading"
+        },
+        {
+            "@id": "http://example.org/iiif-pres/collection/rosecollection",
+            "@type": "sc:Collection",
+            "label": "Roman de la Rose Digital Library"
+        },
+        {
+            "@id": "http://example.org/iiif-pres/collection/pizancollection",
+            "@type": "sc:Collection",
+            "label": "Christine de Pizan Digital Scriptorium"
+        }
+    ]
+}

@@ -1,0 +1,42 @@
+{
+    "fields": [
+        {
+            "name": "description",
+            "label": "Description",
+            "description": "Search text of non-structured description of items."
+        },
+        {
+            "name": "title",
+            "label": "Title",
+            "description": "Search titles of items."
+        },
+        {
+            "name": "people",
+            "label": "People",
+            "description": "Names of people."
+        },
+        {
+            "name": "place",
+            "label": "Place",
+            "description": "Names of places or locations."
+        },
+        {
+            "name": "repo",
+            "label": "Repository",
+            "description": "Search names of repositories"
+        },
+        {
+            "name": "text",
+            "label": "Text",
+            "description": "Search the text of an item. This can include transcriptions and translations."
+        }
+    ],
+    "default-fields": [
+        "description",
+        "title",
+        "people",
+        "place",
+        "repo",
+        "text"
+    ]
+}
