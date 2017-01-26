@@ -1,5 +1,3 @@
-
-
 describe("Search Controller", function() {
 
   var sampleService = {
@@ -17,6 +15,7 @@ describe("Search Controller", function() {
     this.collectionNoService = getJSONFixture("collectionNoService.json");
     this.collectionTop = getJSONFixture("collectionTop.json");
     this.collection = getJSONFixture("collection.json");
+    this.manifest = getJSONFixture("manifestFolgers.json");
     this.search = getJSONFixture("sampleSearch.json");
     this.info = getJSONFixture("searchInfo.json");
 
@@ -57,6 +56,51 @@ describe("Search Controller", function() {
   it("Search controller should exist.", function() {
     expect(eventEmitter).toBeDefined();
     expect(searchController).toBeDefined();
+  });
+
+  describe("Test event handling through the eventEmitter.", function() {
+    beforeEach(function() {
+      var searchServiceResult = new jQuery.Deferred();
+      var doSearchResult = new jQuery.Deferred();
+      searchServiceResult.resolve(this.info);
+      doSearchResult.resolve(this.search);
+
+      spyOn(searchController, "getSearchService").and.returnValues(searchServiceResult);
+      spyOn(searchController, "doSearch").and.returnValues(doSearchResult);
+      spyOn(searchController, "relatedServices").and.callThrough();
+    });
+
+    describe("Test handling of GET_RELATED_SERVICE. ", function() {
+      beforeEach(function() {
+        eventEmitter.publish("GET_SEARCH_SERVICE", {
+          "origin": "Moo test",
+          "serviceId": "serviceId"
+        });
+      });
+
+      it("Should call '#getSearchService' function and publish a SEARCH_SERVICE_FOUND event.", function() {
+        expect(searchController.getSearchService).toHaveBeenCalled();
+        expect(eventEmitter.publish.calls.mostRecent().args)
+          .toEqual(["SEARCH_SERVICE_FOUND", {origin: "Moo test", service: this.info}]);
+      });
+    });
+
+    xdescribe("Test handling of GET_RELATED_SERVICE. ", function() {
+      beforeEach(function() {
+        eventEmitter.publish("GET_RELATED_SERVICE", {
+          "origin": "Moo test",
+          "baseObject": this.manifest
+        });
+      });
+
+      xit("Should call #relatedServices and publish RELATED_SEARCH_SERVICES_FOUND event.", function() {
+        expect(searchController.relatedServices).toHaveBeenCalled();
+        expect(eventEmitter.publish.calls.mostRecent().args.length).toBe(2);
+        expect(eventEmitter.publish.calls.mostRecent().args[0]).toBe("RELATED_SEARCH_SERVICES_FOUND");
+        expect(Array.isArray(eventEmitter.publish.calls.mostRecent().args[1])).toBeTruthy();
+        expect(eventEmitter.publish.calls.mostRecent().args[1].length).toBe(3);
+      });
+    });
   });
 
   describe("#isSearchServiceBlock test with two known service blocks.", function() {
@@ -106,25 +150,73 @@ describe("Search Controller", function() {
     });
   });
 
-  xdescribe("Test #relatedServices.", function() {
-    var manifest = null;    // This needs to be a JSON object or a Mirador.Manifest object
+  describe("Test #relatedServices by finding services related to test Folgers manifest.", function() {
     var result;
 
     beforeEach(function(done) {
-      searchController.relatedServices(manifest).done(function(services) {
-        result = services;
-      }).always(function(){
-        done();
-      });
+      searchController.relatedServices(this.manifest)
+      .done(function(services) { result = services; })
+      .always(function(){ done(); });
     }, 2000);
 
-    xit("Should return 3 related services.", function() {
+    it("Should return 3 related services.", function() {
       expect(Array.isArray(result)).toBeTruthy();
       expect(result.length).toBe(3);
     });
+
+    it("Should contain top collection service.", function() {
+      expect(result.filter(function(s) {
+        return s["@id"] === "http://example.org/iiif-pres/collection/top/jhsearch";
+      }).length).toBe(1);
+    });
+
+    it("Should contain aorcollection service.", function() {
+      expect(result.filter(function(s) {
+        return s["@id"] === "http://example.org/iiif-pres/collection/aorcollection/jhsearch";
+      }).length).toBe(1);
+    });
+
+    it("Should contain Folgers manifest service.", function() {
+      expect(result.filter(function(s) {
+        return s["@id"] === "http://example.org/iiif-pres/aorcollection.FolgersHa2/manifest/jhsearch";
+      }).length).toBe(1);
+    });
   });
 
-  describe("Testing $getSearchService again, make sure the info request goes through.", function() {
+  describe("Test #relatedServices find services related to Folgers manifest, but only up 1 level.", function() {
+    var result;
+
+    beforeEach(function(done) {
+      searchController.relatedServices(this.manifest, 1)
+      .done(function(s) { result = s; })
+      .always(function() { done(); });
+    });
+
+    it("Should have 2 results.", function() {
+      expect(Array.isArray(result)).toBeTruthy();
+      expect(result.length).toBe(2);
+    });
+
+    it("Should not contain top collection service.", function() {
+      expect(result.filter(function(s) {
+        return s["@id"] === "http://example.org/iiif-pres/collection/top/jhsearch";
+      }).length).toBe(0);
+    });
+
+    it("Should contain aorcollection service.", function() {
+      expect(result.filter(function(s) {
+        return s["@id"] === "http://example.org/iiif-pres/collection/aorcollection/jhsearch";
+      }).length).toBe(1);
+    });
+
+    it("Should contain Folgers manifest service.", function() {
+      expect(result.filter(function(s) {
+        return s["@id"] === "http://example.org/iiif-pres/aorcollection.FolgersHa2/manifest/jhsearch";
+      }).length).toBe(1);
+    });
+  });
+
+  describe("Test #getSearchService, make sure the info request goes through.", function() {
     var searcher;
 
     beforeEach(function(done) {
@@ -147,6 +239,34 @@ describe("Search Controller", function() {
       expect(searcher).toBeDefined();
       expect(searcher.categories).toBeDefined();
       expect(searcher.categories.choices.length).toBe(6);
+    });
+  });
+
+  describe("Test #doSearch", function() {
+    var searchUrl = "http://example.org/iiif-pres/collection/aorcollection/jhsearch?q=marginalia%3A%27moo%27&m=30&so=relevance&o=0";
+    var searchReq = {
+      query: "marginalia:'moo'",
+      offset: 0,
+      maxPerPage: 30,
+      sortOrder: "relevance"
+    };
+    var results;
+
+    beforeEach(function(done) {
+      searchController.doSearch(searchReq)
+      .done(function(data) { results = data; })
+      .always(function() { done(); });
+    });
+
+    it("There should be 1 ajax request.", function() {
+      expect(results).toBeDefined();
+      expect(jQuery.ajax).toHaveBeenCalledTimes(1);
+    });
+
+    it("Results should have 9 matches.", function() {
+      expect(results).toBeDefined();
+      expect(results.total).toBe(9);
+      expect(results.matches.length).toBe(9);
     });
   });
 

@@ -1,129 +1,129 @@
 {
-    "@context": "http://manuscriptlib.org/jhiff/search/context.json",
-    "@id": "http://example.org/iiif-pres/collection/aorcollection/jhsearch?q=marginalia%3A%27moo%27&m=30&so=relevance&o=0",
-    "@type": "jhiff:SearchResult",
-    "query": "marginalia:'moo'",
-    "debug": "+(marginalia.ENGLISH:moo marginalia.FRENCH:moo marginalia.ITALIAN:moo marginalia.GREEK:moo marginalia.SPANISH:moo (marginalia.LATIN:mo marginalia.LATIN:moo)) +collection_id.STRING:http://example.org/iiif-pres/collection/aorcollection",
-    "sort_order": "relevance",
-    "offset": 0,
-    "total": 9,
-    "matches": [
-        {
-            "context": "<b>Marginalia:</b>  ignauiam: <B>Momus</B> omnes Deos carpebat propter\n                        aliquam imperfectionem.<br><b>Marginalia:</b>  Diogenes: Solus Sibi deus, <B>Momus</B>.<br>",
-            "object": {
-                "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/canvas/2v",
-                "@type": "sc:Canvas",
-                "label": "2v"
-            },
-            "manifest": {
-                "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/manifest",
-                "@type": "sc:Manifest",
-                "label": "L. Domenichi, Facetie (1571) & L. Guicciardini, Detti et Fatti (1571)"
-            }
-        },
-        {
-            "context": "<b>Marginalia:</b> Omnes illudebat Socrates: ridebat Democritus: spernebat\n\t\t\t\t\t\tDiogenes: carpebat <B>Momus</B>. Nulli illis<br>",
-            "object": {
-                "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/canvas/65v",
-                "@type": "sc:Canvas",
-                "label": "65v"
-            },
-            "manifest": {
-                "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/manifest",
-                "@type": "sc:Manifest",
-                "label": "L. Domenichi, Facetie (1571) & L. Guicciardini, Detti et Fatti (1571)"
-            }
-        },
-        {
-            "context": "<b>Marginalia:</b>  mowth: With this <B>mot</B>, His ducibus.<br><b>Marginalia:</b> the Foxes <B>mot</B>: Simul astu, et dentibus vtor.<br>",
-            "object": {
-                "@id": "http://example.org/iiif-pres/aorcollection.HoughtonSTC11402/canvas/28v",
-                "@type": "sc:Canvas",
-                "label": "28v"
-            },
-            "manifest": {
-                "@id": "http://example.org/iiif-pres/aorcollection.HoughtonSTC11402/manifest",
-                "@type": "sc:Manifest",
-                "label": "S. Frontinus, Strategemes of warre (1539)"
-            }
-        },
-        {
-            "context": "<b>Marginalia:</b> , qui <B>mori</B> tutum putat?\n                        Aut ille, quicunque dixit: Alienae vitae est dominus<br>",
-            "object": {
-                "@id": "http://example.org/iiif-pres/aorcollection.PrincetonPA6452/canvas/271r",
-                "@type": "sc:Canvas",
-                "label": "271r"
-            },
-            "manifest": {
-                "@id": "http://example.org/iiif-pres/aorcollection.PrincetonPA6452/manifest",
-                "@type": "sc:Manifest",
-                "label": "T. Livius, Romanae historiae principis (1555)"
-            }
-        },
-        {
-            "context": "<b>Marginalia:</b> Epigrammata Graecorum; Martialis, <B>Mori</B>;\n\t\t\t\t\t\tHeiuodi. Homeri Batrachomyomachia. Galeomyomachia<br>",
-            "object": {
-                "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/canvas/47r",
-                "@type": "sc:Canvas",
-                "label": "47r"
-            },
-            "manifest": {
-                "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/manifest",
-                "@type": "sc:Manifest",
-                "label": "L. Domenichi, Facetie (1571) & L. Guicciardini, Detti et Fatti (1571)"
-            }
-        },
-        {
-            "context": "<b>Marginalia:</b> . Dedecet frustra sapere: et turpe est <B>mori</B> Victum.<br>",
-            "object": {
-                "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/canvas/208r",
-                "@type": "sc:Canvas",
-                "label": "208r"
-            },
-            "manifest": {
-                "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/manifest",
-                "@type": "sc:Manifest",
-                "label": "L. Domenichi, Facetie (1571) & L. Guicciardini, Detti et Fatti (1571)"
-            }
-        },
-        {
-            "context": "<b>Marginalia:</b> Placent etiam epigrammata Martialias,\n\t\t\t\t\t\tet Politiani; <B>Mori</B>, et Heuodi; propter argutias.<br>",
-            "object": {
-                "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/canvas/80v",
-                "@type": "sc:Canvas",
-                "label": "80v"
-            },
-            "manifest": {
-                "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/manifest",
-                "@type": "sc:Manifest",
-                "label": "L. Domenichi, Facetie (1571) & L. Guicciardini, Detti et Fatti (1571)"
-            }
-        },
-        {
-            "context": "<b>Marginalia:</b>  fontes: praeter Hebraeorum nonnulla; et Aesopi vitam. Epigrammata <B>Mori</B>, Martialis, Heiuodi, Politiani<br>",
-            "object": {
-                "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/canvas/120v",
-                "@type": "sc:Canvas",
-                "label": "120v"
-            },
-            "manifest": {
-                "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/manifest",
-                "@type": "sc:Manifest",
-                "label": "L. Domenichi, Facetie (1571) & L. Guicciardini, Detti et Fatti (1571)"
-            }
-        },
-        {
-            "context": "<b>Marginalia:</b> , quantum exstat; Contareni etiam, <B>Mori</B>, Patritij, \n                        Bodini, postremò<br>",
-            "object": {
-                "@id": "http://example.org/iiif-pres/aorcollection.PrincetonPA6452/canvas/430v",
-                "@type": "sc:Canvas",
-                "label": "430v"
-            },
-            "manifest": {
-                "@id": "http://example.org/iiif-pres/aorcollection.PrincetonPA6452/manifest",
-                "@type": "sc:Manifest",
-                "label": "T. Livius, Romanae historiae principis (1555)"
-            }
-        }
-    ]
+  "@context": "http://manuscriptlib.org/jhiff/search/context.json",
+  "@id": "http://example.org/iiif-pres/collection/aorcollection/jhsearch?q=marginalia%3A%27moo%27&m=30&so=relevance&o=0",
+  "@type": "jhiff:SearchResult",
+  "query": "marginalia:'moo'",
+  "debug": "+(marginalia.ENGLISH:moo marginalia.FRENCH:moo marginalia.ITALIAN:moo marginalia.GREEK:moo marginalia.SPANISH:moo (marginalia.LATIN:mo marginalia.LATIN:moo)) +collection_id.STRING:http://example.org/iiif-pres/collection/aorcollection",
+  "sort_order": "relevance",
+  "offset": 0,
+  "total": 9,
+  "matches": [
+    {
+      "context": "<b>Marginalia:</b>  ignauiam: <B>Momus</B> omnes Deos carpebat propter\n                        aliquam imperfectionem.<br><b>Marginalia:</b>  Diogenes: Solus Sibi deus, <B>Momus</B>.<br>",
+      "object": {
+        "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/canvas/2v",
+        "@type": "sc:Canvas",
+        "label": "2v"
+      },
+      "manifest": {
+        "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/manifest",
+        "@type": "sc:Manifest",
+        "label": "L. Domenichi, Facetie (1571) & L. Guicciardini, Detti et Fatti (1571)"
+      }
+    },
+    {
+      "context": "<b>Marginalia:</b> Omnes illudebat Socrates: ridebat Democritus: spernebat\n\t\t\t\t\t\tDiogenes: carpebat <B>Momus</B>. Nulli illis<br>",
+      "object": {
+        "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/canvas/65v",
+        "@type": "sc:Canvas",
+        "label": "65v"
+      },
+      "manifest": {
+        "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/manifest",
+        "@type": "sc:Manifest",
+        "label": "L. Domenichi, Facetie (1571) & L. Guicciardini, Detti et Fatti (1571)"
+      }
+    },
+    {
+      "context": "<b>Marginalia:</b>  mowth: With this <B>mot</B>, His ducibus.<br><b>Marginalia:</b> the Foxes <B>mot</B>: Simul astu, et dentibus vtor.<br>",
+      "object": {
+        "@id": "http://example.org/iiif-pres/aorcollection.HoughtonSTC11402/canvas/28v",
+        "@type": "sc:Canvas",
+        "label": "28v"
+      },
+      "manifest": {
+        "@id": "http://example.org/iiif-pres/aorcollection.HoughtonSTC11402/manifest",
+        "@type": "sc:Manifest",
+        "label": "S. Frontinus, Strategemes of warre (1539)"
+      }
+    },
+    {
+      "context": "<b>Marginalia:</b> , qui <B>mori</B> tutum putat?\n                        Aut ille, quicunque dixit: Alienae vitae est dominus<br>",
+      "object": {
+        "@id": "http://example.org/iiif-pres/aorcollection.PrincetonPA6452/canvas/271r",
+        "@type": "sc:Canvas",
+        "label": "271r"
+      },
+      "manifest": {
+        "@id": "http://example.org/iiif-pres/aorcollection.PrincetonPA6452/manifest",
+        "@type": "sc:Manifest",
+        "label": "T. Livius, Romanae historiae principis (1555)"
+      }
+    },
+    {
+      "context": "<b>Marginalia:</b> Epigrammata Graecorum; Martialis, <B>Mori</B>;\n\t\t\t\t\t\tHeiuodi. Homeri Batrachomyomachia. Galeomyomachia<br>",
+      "object": {
+        "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/canvas/47r",
+        "@type": "sc:Canvas",
+        "label": "47r"
+      },
+      "manifest": {
+        "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/manifest",
+        "@type": "sc:Manifest",
+        "label": "L. Domenichi, Facetie (1571) & L. Guicciardini, Detti et Fatti (1571)"
+      }
+    },
+    {
+      "context": "<b>Marginalia:</b> . Dedecet frustra sapere: et turpe est <B>mori</B> Victum.<br>",
+      "object": {
+        "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/canvas/208r",
+        "@type": "sc:Canvas",
+        "label": "208r"
+      },
+      "manifest": {
+        "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/manifest",
+        "@type": "sc:Manifest",
+        "label": "L. Domenichi, Facetie (1571) & L. Guicciardini, Detti et Fatti (1571)"
+      }
+    },
+    {
+      "context": "<b>Marginalia:</b> Placent etiam epigrammata Martialias,\n\t\t\t\t\t\tet Politiani; <B>Mori</B>, et Heuodi; propter argutias.<br>",
+      "object": {
+        "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/canvas/80v",
+        "@type": "sc:Canvas",
+        "label": "80v"
+      },
+      "manifest": {
+        "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/manifest",
+        "@type": "sc:Manifest",
+        "label": "L. Domenichi, Facetie (1571) & L. Guicciardini, Detti et Fatti (1571)"
+      }
+    },
+    {
+      "context": "<b>Marginalia:</b>  fontes: praeter Hebraeorum nonnulla; et Aesopi vitam. Epigrammata <B>Mori</B>, Martialis, Heiuodi, Politiani<br>",
+      "object": {
+        "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/canvas/120v",
+        "@type": "sc:Canvas",
+        "label": "120v"
+      },
+      "manifest": {
+        "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/manifest",
+        "@type": "sc:Manifest",
+        "label": "L. Domenichi, Facetie (1571) & L. Guicciardini, Detti et Fatti (1571)"
+      }
+    },
+    {
+      "context": "<b>Marginalia:</b> , quantum exstat; Contareni etiam, <B>Mori</B>, Patritij, \n                        Bodini, postremò<br>",
+      "object": {
+        "@id": "http://example.org/iiif-pres/aorcollection.PrincetonPA6452/canvas/430v",
+        "@type": "sc:Canvas",
+        "label": "430v"
+      },
+      "manifest": {
+        "@id": "http://example.org/iiif-pres/aorcollection.PrincetonPA6452/manifest",
+        "@type": "sc:Manifest",
+        "label": "T. Livius, Romanae historiae principis (1555)"
+      }
+    }
+  ]
 }

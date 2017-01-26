@@ -1,0 +1,84 @@
+{
+  "@context": "http://iiif.io/api/presentation/2/context.json",
+  "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/manifest",
+  "@type": "sc:Manifest",
+  "label": "L. Domenichi, Facetie (1571) & L. Guicciardini, Detti et Fatti (1571)",
+  "description": "Folger Shakespeare Library, H.a.2 (ms. content)",
+  "viewingHint": "paged",
+  "metadata": [
+    {
+      "label": "commonName",
+      "value": "L. Domenichi, Facetie (1571) & L. Guicciardini, Detti et Fatti (1571)"
+    },
+    {
+      "label": "repository",
+      "value": "Folger Shakespeare Library"
+    }
+  ],
+  "license": "http://creativecommons.org/licenses/by/4.0/",
+  "attribution": "By permission of the Folger Shakespeare Library.",
+  "within": "http://example.org/iiif-pres/collection/aorcollection",
+  "viewingDirection": "left-to-right",
+  "service": {
+    "@context": "http://manuscriptlib.org/jhiff/search/context.json",
+    "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/manifest/jhsearch",
+    "profile": "http://iiif.io/api/search/0/search"
+  },
+  "sequences": [
+    {
+      "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/sequence/reading-order",
+      "@type": "sc:Sequence",
+      "label": "reading-order",
+      "thumbnail": {
+        "@id": "http://image.library.jhu.edu/iiif/aor%2fFolgersHa2%2fFolgersHa2.001r.tif",
+        "service": {
+          "@context": "http://iiif.io/api/image/2/context.json",
+          "@id": "http://image.library.jhu.edu/iiif/aor%2fFolgersHa2%2fFolgersHa2.001r.tif",
+          "profile": "http://iiif.io/api/image/2/profiles/level2.json"
+        }
+      },
+      "viewingDirection": "left-to-right",
+      "startCanvas": "http://example.org/iiif-pres/aorcollection.FolgersHa2/canvas/1r",
+      "canvases": [
+        {
+          "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/canvas/binding%20front%20cover",
+          "@type": "sc:Canvas",
+          "label": "binding front cover",
+          "viewingHint": "non-paged",
+          "thumbnail": {
+            "@id": "http://image.library.jhu.edu/iiif/aor%2fFolgersHa2%2fFolgersHa2.binding.frontcover.tif",
+            "service": {
+              "@context": "http://iiif.io/api/image/2/context.json",
+              "@id": "http://image.library.jhu.edu/iiif/aor%2fFolgersHa2%2fFolgersHa2.binding.frontcover.tif",
+              "profile": "http://iiif.io/api/image/2/profiles/level2.json"
+            }
+          },
+          "height": 6411,
+          "width": 4471,
+          "images": [
+            {
+              "@id": "http://example.org/iiif-pres/aorcollection.FolgersHa2/annotation/binding%20front%20cover",
+              "@type": "oa:Annotation",
+              "label": "binding front cover",
+              "resource": {
+                "@id": "http://image.library.jhu.edu/iiif/aor%2fFolgersHa2%2fFolgersHa2.binding.frontcover.tif",
+                "@type": "dctypes:Image",
+                "format": "image/tiff",
+                "width": 4471,
+                "height": 6411,
+                "service": {
+                  "@context": "http://iiif.io/api/image/2/context.json",
+                  "@id": "http://image.library.jhu.edu/iiif/aor%2fFolgersHa2%2fFolgersHa2.binding.frontcover.tif",
+                  "profile": "http://iiif.io/api/image/2/profiles/level2.json"
+                },
+                "label": "binding front cover"
+              },
+              "motivation": "sc:painting",
+              "on": "http://example.org/iiif-pres/aorcollection.FolgersHa2/canvas/binding%20front%20cover"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
