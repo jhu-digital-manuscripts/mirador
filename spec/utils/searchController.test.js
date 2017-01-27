@@ -60,18 +60,17 @@ describe("Search Controller", function() {
 
   describe("Test event handling through the eventEmitter.", function() {
     beforeEach(function() {
-      var searchServiceResult = new jQuery.Deferred();
       var doSearchResult = new jQuery.Deferred();
-      searchServiceResult.resolve(this.info);
       doSearchResult.resolve(this.search);
-
-      spyOn(searchController, "getSearchService").and.returnValues(searchServiceResult);
       spyOn(searchController, "doSearch").and.returnValues(doSearchResult);
-      spyOn(searchController, "relatedServices").and.callThrough();
     });
 
-    describe("Test handling of GET_RELATED_SERVICE. ", function() {
+    describe("Test handling of GET_SEARCH_SERVICE. ", function() {
       beforeEach(function() {
+        var searchServiceResult = new jQuery.Deferred();
+        searchServiceResult.resolve(this.info);
+        spyOn(searchController, "getSearchService").and.returnValues(searchServiceResult);
+
         eventEmitter.publish("GET_SEARCH_SERVICE", {
           "origin": "Moo test",
           "serviceId": "serviceId"
@@ -80,25 +79,57 @@ describe("Search Controller", function() {
 
       it("Should call '#getSearchService' function and publish a SEARCH_SERVICE_FOUND event.", function() {
         expect(searchController.getSearchService).toHaveBeenCalled();
-        expect(eventEmitter.publish.calls.mostRecent().args)
-          .toEqual(["SEARCH_SERVICE_FOUND", {origin: "Moo test", service: this.info}]);
+
+        var args = eventEmitter.publish.calls.mostRecent().args;
+        expect(args.length).toBe(2);
+        expect(args[0]).toBe("SEARCH_SERVICE_FOUND");
+        expect(typeof args[1]).toBe("object");
       });
     });
 
-    xdescribe("Test handling of GET_RELATED_SERVICE. ", function() {
+    describe("Test handling of GET_RELATED_SERVICE. ", function() {
       beforeEach(function() {
-        eventEmitter.publish("GET_RELATED_SERVICE", {
+        spyOn(searchController, "relatedServices").and.callThrough();
+
+        eventEmitter.publish("GET_RELATED_SEARCH_SERVICES", {
           "origin": "Moo test",
           "baseObject": this.manifest
         });
       });
 
-      xit("Should call #relatedServices and publish RELATED_SEARCH_SERVICES_FOUND event.", function() {
+      it("Should call #relatedServices and publish RELATED_SEARCH_SERVICES_FOUND event.", function() {
         expect(searchController.relatedServices).toHaveBeenCalled();
-        expect(eventEmitter.publish.calls.mostRecent().args.length).toBe(2);
-        expect(eventEmitter.publish.calls.mostRecent().args[0]).toBe("RELATED_SEARCH_SERVICES_FOUND");
-        expect(Array.isArray(eventEmitter.publish.calls.mostRecent().args[1])).toBeTruthy();
-        expect(eventEmitter.publish.calls.mostRecent().args[1].length).toBe(3);
+
+        var args = eventEmitter.publish.calls.mostRecent().args;
+        expect(args.length).toBe(2);
+        expect(args[0]).toBe("RELATED_SEARCH_SERVICES_FOUND");
+        expect(typeof args[1]).toBe("object");
+      });
+    });
+
+    describe("Test handling of SEARCH. ", function() {
+      beforeEach(function() {
+        spyOn(searchController, "relatedServices").and.callThrough();
+
+        eventEmitter.publish("SEARCH", {
+          "origin": "Moo test",
+          "baseObject": {
+            "serviceId": "http://example.org/iiif-pres/collection/aorcollection/jhsearch",
+            "query": "marginalia:'moo'",
+            "offset": 0,
+            "maxPerPage": 30,
+            "sortOrder": "relevance"
+          }
+        });
+      });
+
+      it("Should call #doSearch and publish SEARCH_COMPLETE event.", function() {
+        expect(searchController.doSearch).toHaveBeenCalled();
+
+        var args = eventEmitter.publish.calls.mostRecent().args;
+        expect(args.length).toBe(2);
+        expect(args[0]).toBe("SEARCH_COMPLETE");
+        expect(typeof args[1]).toBe("object");
       });
     });
   });
