@@ -23,27 +23,33 @@
       advancedSearchSet: false,        // has the advanced search UI been created?
       advancedSearchActive: false,
       pinned: false,            // Is this search widget pinned to the UI? Only matters if widget is part of a window
-      /*
-        {
-          "searchService": { ... },   // Search service object that includes info.json configs
-          "search": {
-            "query": "",              // String query
-            "offset": "",             // Results offset for paging
-            "maxPerPage": "",         // Number of results per page
-            "resumeToken": "",        // String token for resuming a search
-            "selected": -1,           // Index of the search result that is selected
-          }
-        }
-       */
-      currentSearch: {},
       searchResults: null,            // UI holding search results
+      context: {
+        /*
+          {
+            "searchService": { ... },   // Search service object that includes info.json configs
+            "search": {
+              "query": "",              // String query
+              "offset": "",             // Results offset for paging
+              "maxPerPage": "",         // Number of results per page
+              "resumeToken": "",        // String token for resuming a search
+              "sortOrder": "",          // Sort order value
+              "selected": -1,           // Index of the search result that is selected
+            }
+          }
+         */
+        currentSearch: {},
+        ui: {}
+      }
     }, options);
 
     this.messages = {
       "no-term": "<span class=\"error\">No search term was found.</span>",
       "no-defaults": "<span class=\"error\">No fields defined for basic search.</span>",
     };
-
+if (this.searchContext) {
+  console.log("Existing search context found. " + JSON.stringify(this.searchContext, null, 2));
+}
     this.init();
   };
 
@@ -299,7 +305,8 @@
         "currentObject": _this.manifest.getId(),
         "appendTo": _this.element.find(".search-results-list"),
         "searchResults": searchResults,
-        "eventEmitter": _this.eventEmitter
+        "eventEmitter": _this.eventEmitter,
+        "context": _this.context
       });
 
       if (this.needsPager(searchResults)) {
@@ -402,6 +409,46 @@
      */
     float2int: function(num) {
       return num | 0;
+    },
+
+    /*
+      {
+        "searchService": { ... },   // Search service object that includes info.json configs
+        "search": {
+          "query": "",              // String query
+          "offset": "",             // Results offset for paging
+          "maxPerPage": "",         // Number of results per page
+          "resumeToken": "",        // String token for resuming a search
+          "sortOrder": "",          // Sort order value
+          "selected": -1,           // Index of the search result that is selected
+        }
+      }
+
+      What information is needed to preserve search UI state?
+        * Stuff in UI fields
+          - Text in basic search input
+          - Selected search service
+          - Advanced search:
+            > # rows
+            > selected boolean op
+            > selected category
+            > input text/dropdown values
+        * Search results
+          - Plus selected search result (index in result list?)
+        * Search services? (so we don't have to go through the crawl/request crap again)
+     */
+    state: function() {
+      return {
+        "search": {
+          "searchService": this.element.find(".searech-within-object-select").val(),
+          "sortOrder": this.element.find(".search-results-sorter select").val(),
+          "selectedIndex": this.searchResults.searchResults ? this.searchResults.element.find(".selected").index() : undefined
+        },
+        "ui": {
+          "basic": this.element.find(".js-query").val(),
+          "advanced": this.advancedSearch.state()
+        }
+      };
     },
 
     resultsPagerText: Handlebars.compile([

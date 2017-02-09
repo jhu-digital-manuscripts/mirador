@@ -28,7 +28,8 @@
        *   "windowConfig": {windowConfig} // Config for updating or creating a window
        * }
        */
-      queuedAction: {}
+      queuedAction: {},
+      context: null,
     }, options);
     this.id = $.genUUID();
 
@@ -142,6 +143,7 @@
 
         var windowConfig = _this.queuedAction.windowConfig;
         windowConfig.manifest = data.manifest;
+        windowConfig.searchContext = _this.context;
 
         switch (_this.queuedAction.target) {
           case "above":
@@ -198,7 +200,8 @@
 
 
           var windowConfig = {
-            canvasId: canvasId
+            canvasId: canvasId,
+            searchContext: _this.searchContext
             // Any way to get the exact slot address of the newly created window?
           };
 

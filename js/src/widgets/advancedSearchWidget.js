@@ -7,6 +7,7 @@
    * Public functions:
    *  #hasQuery() :: has a user input a query into this widget?
    *  #getQuery() :: get the user query from the UI
+   *  #state()  ::  get the state of the advanced search widget
    *  #destroy() :: unbind all event listeners in preparation for this widget to be removed from the DOM
    */
   $.AdvancedSearchWidget = function(options) {
@@ -128,6 +129,32 @@
       });
 
       return $.generateQuery(parts, this.searchService.config.query.delimiters.field);
+    },
+
+    state: function() {
+      var adv = [];
+      this.element.find(".advanced-search-line").each(function(index, line) {
+        line = jQuery(line);
+
+        line.find(".advanced-search-inputs").children()
+        .filter(function(index, child) {
+          child = jQuery(child);
+          return child.css("display") != "none" && child.val() && child.val() !== "";
+        })
+        .each(function(index, child) {
+          child = jQuery(child);
+          adv.push({
+            category: line.find(".advanced-search-categories").val(),
+            operation: line.find(".advanced-search-operators").val(),
+            term: child.val()
+          });
+        });
+      });
+
+
+      return {
+        rows: adv
+      };
     },
 
     /**

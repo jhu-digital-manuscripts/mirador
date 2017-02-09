@@ -15,7 +15,8 @@
       toolsTabAvailable: false,
       hasStructures:     false,
       state:             null,
-      eventEmitter:      null
+      eventEmitter:      null,
+      searchContext:     null,
     }, options);
     this.canvasID = options.canvasID;
     this.searchTabAvailable = true;
@@ -141,6 +142,7 @@
           manifest: this.manifest,
           pinned: this.pinned,
           slotAddress: this.slotAddress,
+          context: this.searchContext,
         });
       }
     },
@@ -153,25 +155,6 @@
         service.id = service["@id"];
       }
       return service;
-    },
-
-    createSearchWidget: function(services) {
-      var _this = this;
-
-      services.forEach(function(service) {
-        service = _this.massageServiceBlock(service);
-      });
-      new $.SearchWidget({
-        manifest: _this.manifest,
-        windowId: _this.windowId,
-        tabId: 'searchTab',
-        appendTo: _this.element.find('.tabContentArea'),
-        width: 0,
-        searchContext: _this.searchContext ? _this.searchContext : {},
-        pinned: _this.pinned,
-        searchServices: services,
-        eventEmitter: _this.eventEmitter
-      });
     },
 
     update: function(name, availability) {
