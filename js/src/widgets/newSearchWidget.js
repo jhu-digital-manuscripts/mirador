@@ -38,27 +38,32 @@
             }
           }
          */
-        currentSearch: {},
+        search: {},
         ui: {}
       }
     }, options);
+    if (!this.context) {
+      this.context = { search: {}, ui: {}};
+    }
 
     this.messages = {
       "no-term": "<span class=\"error\">No search term was found.</span>",
       "no-defaults": "<span class=\"error\">No fields defined for basic search.</span>",
     };
-if (this.searchContext) {
-  console.log("Existing search context found. " + JSON.stringify(this.searchContext, null, 2));
-}
     this.init();
   };
 
   $.NewSearchWidget.prototype = {
     init: function() {
       var _this = this;
-
+console.log("[SW] search context? " + JSON.stringify(this.context.ui, null, 2));
       // Template takes no data. Data added asyncronously later.
       this.element = jQuery(this.template()).appendTo(this.appendTo);
+
+      if (this.context) {
+        // Handle any context info passed into widget
+        this.initFromContext();
+      }
 
       this.bindEvents();
 
@@ -149,19 +154,11 @@ if (this.searchContext) {
 
       if (this.searchService.config.search.settings.fields.length > 0) {
         this.element.find(".search-disclose-btn-more").on("click", function() {
-          _this.advancedSearchActive = true;
-          _this.element.find("#search-form").hide("fast");
-          _this.element.find(".search-disclose").show("fast");
-          _this.element.find(".search-disclose-btn-more").hide();
-          _this.element.find(".search-disclose-btn-less").show();
+          _this.showAdvancedSearch();
         });
 
         this.element.find(".search-disclose-btn-less").on("click", function() {
-          _this.advancedSearchActive = false;
-          _this.element.find("#search-form").show("fast");
-          _this.element.find(".search-disclose").hide("fast");
-          _this.element.find(".search-disclose-btn-less").hide();
-          _this.element.find(".search-disclose-btn-more").show();
+          _this.hideAdvancedSearch();
         });
       }
     },
@@ -191,11 +188,14 @@ if (this.searchContext) {
           jQuery.extend(true, s, service);  // This will not overwrite any currently present properties.
         });
       }
-
       if (!this.advancedSearchSet) {
         this.switchSearchServices(service);
         this.advancedSearchSet = true;
         this.listenForActions();
+      } else if (this.context.searchService === id) {
+        // When adding a search service, if the ID of the service matches
+        // the ID of the initialization value, switch to it.
+        this.switchSearchServices(service);
       }
     },
 
@@ -248,11 +248,8 @@ if (this.searchContext) {
           }
         },
         "clearMessages": function() { _this.element.find(".pre-search-message").empty(); },
+        "context": _this.context,
       });
-
-      // Assuming the UI was created successfully, set the current
-      // search service to the one provided to this function
-      // this.listenForActions();
     },
 
     /**
@@ -265,7 +262,8 @@ if (this.searchContext) {
      * @param resumeToken : (OPTIONAL) string token possibly used by a search service
      */
     doSearch: function(searchService, query, sortOrder, offset, maxPerPage, resumeToken) {
-      this.currentSearch = {
+      this.context = this.state();
+      jQuery.extend(this.context, {
         "searchService": searchService,
         "search": {
           "query": query,
@@ -274,7 +272,7 @@ if (this.searchContext) {
           "maxPerPage": maxPerPage,
           "resumeToken": resumeToken
         }
-      };
+      }, true);
 
       this.element.find(".search-results-list").empty();
       // TODO show loading icon
@@ -297,7 +295,7 @@ if (this.searchContext) {
         this.perPageCount = searchResults.max_matches || searchResults.matches.length;
       }
 
-      this.currentSearch.results = searchResults;
+      this.context.search.results = searchResults;
 
       this.searchResults = new $.SearchResults({
         "parentId": _this.windowId,
@@ -323,6 +321,22 @@ if (this.searchContext) {
       } else {
         this.hidePager();
       }
+    },
+
+    showAdvancedSearch: function() {
+      this.advancedSearchActive = true;
+      this.element.find("#search-form").hide("fast");
+      this.element.find(".search-disclose").show("fast");
+      this.element.find(".search-disclose-btn-more").hide();
+      this.element.find(".search-disclose-btn-less").show();
+    },
+
+    hideAdvancedSearch: function() {
+      this.advancedSearchActive = false;
+      this.element.find("#search-form").show("fast");
+      this.element.find(".search-disclose").hide("fast");
+      this.element.find(".search-disclose-btn-less").hide();
+      this.element.find(".search-disclose-btn-more").show();
     },
 
     showPager: function() {
@@ -391,11 +405,11 @@ if (this.searchContext) {
 
           var newOffset = (pageNumber - 1) * onPageCount;
           _this.doSearch(
-            _this.currentSearch.searchService,
-            _this.currentSearch.search.query,
-            _this.currentSearch.search.sortOrder,
+            _this.context.searchService,
+            _this.context.search.query,
+            _this.context.search.sortOrder,
             newOffset,
-            _this.currentSearch.search.numExpected
+            _this.context.search.numExpected
           );
         }
       });
@@ -412,18 +426,6 @@ if (this.searchContext) {
     },
 
     /*
-      {
-        "searchService": { ... },   // Search service object that includes info.json configs
-        "search": {
-          "query": "",              // String query
-          "offset": "",             // Results offset for paging
-          "maxPerPage": "",         // Number of results per page
-          "resumeToken": "",        // String token for resuming a search
-          "sortOrder": "",          // Sort order value
-          "selected": -1,           // Index of the search result that is selected
-        }
-      }
-
       What information is needed to preserve search UI state?
         * Stuff in UI fields
           - Text in basic search input
@@ -435,20 +437,35 @@ if (this.searchContext) {
             > input text/dropdown values
         * Search results
           - Plus selected search result (index in result list?)
-        * Search services? (so we don't have to go through the crawl/request crap again)
      */
     state: function() {
+      var showAdvanced = this.element.find(".search-disclose-btn-more").css("display") == "none";
+      console.log("[SW] Show advanced search? " + showAdvanced);
       return {
+        "searchService": this.element.find(".search-within-object-select").val(),
         "search": {
-          "searchService": this.element.find(".searech-within-object-select").val(),
-          "sortOrder": this.element.find(".search-results-sorter select").val(),
-          "selectedIndex": this.searchResults.searchResults ? this.searchResults.element.find(".selected").index() : undefined
+          "sortOrder": this.getSortOrder(),
+          "showAdvanced": showAdvanced,
+          "selectedIndex": this.searchResults ? this.searchResults.element.find(".selected").index() : undefined
         },
         "ui": {
           "basic": this.element.find(".js-query").val(),
-          "advanced": this.advancedSearch.state()
+          "advanced": showAdvanced ? this.advancedSearch.state() : undefined
         }
       };
+    },
+
+    initFromContext: function() {
+      console.log("   show advanced? " + this.context.ui.advanced);
+      // this.element.find(".search-within-object-select").val(this.context.search.searchService);
+      if (this.context.search.sortOrder) {
+        this.element.find(".search-results-sorter select").val(this.context.search.sortOrder);
+      }
+      if (this.context.ui.advanced) {
+        this.showAdvancedSearch();
+      } else {
+        this.element.find(".js-query").val(this.context.ui.basic);
+      }
     },
 
     resultsPagerText: Handlebars.compile([

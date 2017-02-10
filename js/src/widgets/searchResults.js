@@ -111,7 +111,8 @@
 
         // Open search result in currently selected window
         var windowConfig = {
-          "slotAddress": _this.slotAddress
+          "slotAddress": _this.slotAddress,
+          "context": _this.context
         };
 
         if (type === "sc:Manifest") {
@@ -196,8 +197,6 @@
           var canvasId = jQuery(this).data("objectid");
           var manifestId = jQuery(this).data("manifestid");
           var type = jQuery(this).data("objecttype");
-
-
 
           var windowConfig = {
             canvasId: canvasId,

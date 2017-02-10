@@ -21,6 +21,7 @@
       windowPinned: false,
       performAdvancedSearch: null,
       clearMessages: null,
+      context: null,
     }, options);
 
     this.init();
@@ -40,6 +41,10 @@
         content: Handlebars.compile("{{> searchDescription}}")(this.searchService.config.search.settings.fields),
         position: { my: "left+20 top", at: "right top-50" }
       });
+
+      if (this.context && this.context.ui && this.context.ui.advanced) {
+        this.initFromContext();
+      }
 
       this.bindEvents();
       this.listenForActions();
@@ -133,7 +138,7 @@
 
     state: function() {
       var adv = [];
-      this.element.find(".advanced-search-line").each(function(index, line) {
+      this.element.find(".advanced-search-line").each(function(row, line) {
         line = jQuery(line);
 
         line.find(".advanced-search-inputs").children()
@@ -144,17 +149,47 @@
         .each(function(index, child) {
           child = jQuery(child);
           adv.push({
+            row: row,
             category: line.find(".advanced-search-categories").val(),
             operation: line.find(".advanced-search-operators").val(),
-            term: child.val()
+            term: child.val(),
+            type: child.is("select") ? "select" : "input"
           });
         });
       });
 
-
       return {
         rows: adv
       };
+    },
+
+    initFromContext: function() {
+      var _this = this;
+      var ui = this.context.ui.advanced;
+
+      var rowNums = [];
+      this.context.ui.advanced.rows.forEach(function(input, index, arr) {
+        if (rowNums.indexOf(input.row) < 0) {   // Add new line if needed
+          _this.addAdvancedSearchLine();
+          rowNums.push(input.row);
+        }
+
+        var theRow = _this.element.find(".advanced-search-line").last();
+        var user_inputs = theRow.find('.advanced-search-inputs');
+        var inputClass = ".advanced-search-" + input.category;
+
+        theRow.find(".advanced-search-operators").val(input.operation);
+        theRow.find(".advanced-search-categories").val(input.category);
+        theRow.find(input.type + inputClass).val(input.term);
+
+
+
+        // Hide all input/select fields
+        user_inputs.children().hide();
+        user_inputs
+            .find(_this.classNamesToSelector(_this.searchService.config.getField(input.category).class))
+            .show();
+      });
     },
 
     /**
