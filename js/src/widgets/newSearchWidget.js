@@ -56,7 +56,7 @@
   $.NewSearchWidget.prototype = {
     init: function() {
       var _this = this;
-console.log("[SW] search context? " + JSON.stringify(this.context.ui, null, 2));
+
       // Template takes no data. Data added asyncronously later.
       this.element = jQuery(this.template()).appendTo(this.appendTo);
 
@@ -279,7 +279,7 @@ console.log("[SW] search context? " + JSON.stringify(this.context.ui, null, 2));
 
       this.eventEmitter.publish("SEARCH", {
         "origin": this.windowId,
-        "serviceId": searchService.id,
+        "service": typeof searchService === "object" ? searchService : searchService.id,
         "query": query,
         "offset": offset,
         "maxPerPage": maxPerPage,
@@ -456,8 +456,8 @@ console.log("[SW] search context? " + JSON.stringify(this.context.ui, null, 2));
     },
 
     initFromContext: function() {
-      console.log("   show advanced? " + this.context.ui.advanced);
       // this.element.find(".search-within-object-select").val(this.context.search.searchService);
+
       if (this.context.search.sortOrder) {
         this.element.find(".search-results-sorter select").val(this.context.search.sortOrder);
       }
@@ -465,6 +465,17 @@ console.log("[SW] search context? " + JSON.stringify(this.context.ui, null, 2));
         this.showAdvancedSearch();
       } else {
         this.element.find(".js-query").val(this.context.ui.basic);
+      }
+
+      if (this.context.searchService && this.context.search.query) {
+        this.addSearchService(this.context.searchService);
+        this.doSearch(
+          this.context.search.query,
+          this.context.search.sortOrder,
+          this.context.search.offset,
+          this.context.search.maxPerPage,
+          this.context.search.resumeToken
+        );
       }
     },
 

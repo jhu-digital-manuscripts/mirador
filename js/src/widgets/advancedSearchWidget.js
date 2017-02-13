@@ -182,8 +182,6 @@
         theRow.find(".advanced-search-categories").val(input.category);
         theRow.find(input.type + inputClass).val(input.term);
 
-
-
         // Hide all input/select fields
         user_inputs.children().hide();
         user_inputs

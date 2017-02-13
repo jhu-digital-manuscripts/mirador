@@ -103,7 +103,7 @@
       /**
        * data:  {
        *          "origin": ""        // ID of original event source
-       *          serviceId: "",  // some service ID string
+       *          service: "",    // some service config object or search service ID string
        *          query: "",      // some query string, already formatted
        *          offset: -1,     // (optional) integer, requested results offset, used for paging
        *          maxPerPage: -1  // (optional) integer, maximum results to show per page,
@@ -351,7 +351,7 @@
      *
      * @param searchReq
      *    {
-     *      serviceId: "",  // some service ID string
+     *      service: "",  // some service ID string
      *      query: "",      // some query string, already formatted
      *      offset: -1,     // (optional) integer, requested results offset, used for paging
      *      maxPerPage: -1  // (optional) integer, maximum results to show per page,
@@ -363,8 +363,17 @@
     doSearch: function(searchReq) {
       var _this = this;
       var request = jQuery.Deferred();
+      var serviceUrl;
 
-      var queryUrl = searchReq.serviceId + "?q=" + encodeURIComponent(searchReq.query);
+      if (typeof searchReq.service === "object") {
+        serviceUrl = searchReq.service.id || searchReq.service["@id"];
+        // Add the specified service if necessary
+        this._addSearchService(searchReq.service);
+      } else {
+        serviceUrl = searchReq.service;
+      }
+
+      var queryUrl = serviceUrl + "?q=" + encodeURIComponent(searchReq.query);
 
       if (searchReq.offset && typeof searchReq.offset === 'number') {
         queryUrl += "&o=" + searchReq.offset;
