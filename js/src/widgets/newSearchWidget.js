@@ -263,16 +263,15 @@
      */
     doSearch: function(searchService, query, sortOrder, offset, maxPerPage, resumeToken) {
       this.context = this.state();
-      jQuery.extend(this.context, {
-        "searchService": searchService,
-        "search": {
-          "query": query,
-          "sortOrder": sortOrder,
-          "offset": offset,
-          "maxPerPage": maxPerPage,
-          "resumeToken": resumeToken
-        }
-      }, true);
+
+      this.context.searchService = searchService;
+      this.context.search = {
+        "query": query,
+        "sortOrder": sortOrder,
+        "offset": offset,
+        "maxPerPage": maxPerPage,
+        "resumeToken": resumeToken
+      };
 
       this.element.find(".search-results-list").empty();
       // TODO show loading icon
@@ -290,6 +289,7 @@
 
     handleSearchResults: function(searchResults) {
       var _this = this;
+      this.element.find(".search-results-list").empty();
 
       if (!this.perPageCount) {
         this.perPageCount = searchResults.max_matches || searchResults.matches.length;
@@ -302,10 +302,14 @@
         "slotAddress": _this.slotAddress,
         "currentObject": _this.manifest.getId(),
         "appendTo": _this.element.find(".search-results-list"),
-        "searchResults": searchResults,
         "eventEmitter": _this.eventEmitter,
         "context": _this.context
       });
+
+      var last = parseInt(searchResults.offset) + this.perPageCount;
+      if (last > searchResults.total) {
+        last = searchResults.total;
+      }
 
       if (this.needsPager(searchResults)) {
         var pagerText = this.element.find(".results-pager-text");
@@ -313,7 +317,7 @@
         pagerText.append(this.resultsPagerText({
           "offset": (searchResults.offset + 1),
           "total": searchResults.total,
-          "last": (parseInt(searchResults.offset) + this.perPageCount)
+          "last": last
         }));
 
         this.setPager(searchResults);
@@ -440,7 +444,6 @@
      */
     state: function() {
       var showAdvanced = this.element.find(".search-disclose-btn-more").css("display") == "none";
-      console.log("[SW] Show advanced search? " + showAdvanced);
       return {
         "searchService": this.element.find(".search-within-object-select").val(),
         "search": {
@@ -469,13 +472,9 @@
 
       if (this.context.searchService && this.context.search.query) {
         this.addSearchService(this.context.searchService);
-        this.doSearch(
-          this.context.search.query,
-          this.context.search.sortOrder,
-          this.context.search.offset,
-          this.context.search.maxPerPage,
-          this.context.search.resumeToken
-        );
+        if (this.context.search.results) {
+          this.handleSearchResults(this.context.search.results);
+        }
       }
     },
 
