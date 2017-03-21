@@ -16,8 +16,6 @@
       hideParent: null,
       appendTo: null,
       element: null,
-      currentObject: null,  // Current IIIF object that defines the scope of the results.
-      searchResults: null,
       manifestListItems: null,
       eventEmitter: null,
       /**
@@ -30,9 +28,7 @@
        * }
        */
       queuedAction: {},
-      config: {
-        hasContextMenu: true
-      }
+      context: null,
     }, options);
     this.id = $.genUUID();
 
@@ -42,15 +38,14 @@
   $.SearchResults.prototype = {
     init: function() {
       jQuery(this.appendTo).empty();
-      this.searchResults = this.massageForHandlebars(this.searchResults);
 
       // Check for bad or no results.
-      if (!this.searchResults || !this.searchResults.matches || this.searchResults.matches.length === 0) {
+      if (!this.context.search.results || !this.context.search.results.matches || this.context.search.results.matches.length === 0) {
         jQuery(this.noResultsMessage()).appendTo(this.appendTo);
       }
 
-      this.searchResults = this.massageForHandlebars(this.searchResults);
-      this.element = jQuery(this.template(this.searchResults)).appendTo(this.appendTo);
+      this.context.search.results = this.massageForHandlebars(this.context.search.results);
+      this.element = jQuery(this.template(this.context.search.results)).appendTo(this.appendTo);
 
       this.bindEvents();
       if (this.config.hasContextMenu) {
@@ -70,7 +65,10 @@
      */
     massageForHandlebars: function(searchResults) {
       searchResults.matches.forEach(function(match, index) {
-        match.offset = index + searchResults.offset;
+        if (searchResults.selected && index === searchResults.index) {
+          match.selected = true;
+        }
+        match.offset = index + searchResults.offset + 1;
 
         match.object.id = match.object["@id"].split("#")[0];
         if (match.manifest) {
@@ -79,13 +77,6 @@
 
         match.object.type = match.object["@type"];
       });
-
-      // Need to specify index of last result in total results
-      var length = searchResults.max_matches || searchResults.matches.length;
-      if (searchResults.offset >= 0 && length > 0) {
-        searchResults.last = parseInt(searchResults.offset) + parseInt(length);
-      }
-      searchResults.offset += 1;
 
       return searchResults;
     },
@@ -103,6 +94,7 @@
         // First unselect any previously selected items, then select this item
         _this.appendTo.find(".selected").removeClass("selected");
         clickedEl.addClass("selected");
+        _this.context.search.results.selected = clickedEl.index();
 
         var canvasId = clickedEl.data("objectid");
         var manifestId = clickedEl.data("manifestid");
@@ -116,7 +108,8 @@
 
         // Open search result in currently selected window
         var windowConfig = {
-          "slotAddress": _this.slotAddress
+          "slotAddress": _this.slotAddress,
+          "context": _this.context
         };
 
         if (type === "sc:Manifest") {
@@ -148,6 +141,7 @@
 
         var windowConfig = _this.queuedAction.windowConfig;
         windowConfig.manifest = data.manifest;
+        windowConfig.searchContext = _this.context;
 
         switch (_this.queuedAction.target) {
           case "above":
@@ -201,10 +195,11 @@
           var manifestId = jQuery(this).data("manifestid");
           var type = jQuery(this).data("objecttype");
 
-
+          _this.context.search.results.selected = jQuery(this).index();
 
           var windowConfig = {
-            canvasId: canvasId
+            canvasId: canvasId,
+            searchContext: _this.context
             // Any way to get the exact slot address of the newly created window?
           };
 

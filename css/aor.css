@@ -283,7 +283,7 @@
   padding: 0px 5px;
   color: black;
 }
-.search-results-container .selected {
+.search-results-list .selected {
   background-color: #D8D8D8;
 }
 .advanced-search-line table {

@@ -512,8 +512,6 @@
               panel: true,
               canvasID: _this.canvasID,
               imagesList: _this.imagesList,
-              searchContext: _this.searchContext,
-              selectedResult: _this.selectedResult,
               pinned: _this.pinned,
               slotAddress: _this.slotAddress,
               thumbInfo: {thumbsHeight: 80, listingCssCls: 'panel-listing-thumbs', thumbnailCls: 'panel-thumbnail-view'}
@@ -527,6 +525,7 @@
                 annotationsTabAvailable: true,
                 searchAvailable: _this.sidePanelOptions.search,
                 hasStructures: _this.sidePanelOptions.hasStructures,
+                searchContext: _this.searchContext,
               });
             }
 

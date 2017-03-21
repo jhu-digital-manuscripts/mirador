@@ -23,35 +23,34 @@
       advancedSearch: null,     // Advanced search widget
       advancedSearchSet: false,        // has the advanced search UI been created?
       advancedSearchActive: false,
-      /*
-        {
-          "searchService": { ... },   // Search service object that includes info.json configs
-          "object": "",               // ID of object being searched
-          "search": {
-            "query": "",              // String query
-            "offset": "",             // Results offset for paging
-            "maxPerPage": "",         // Number of results per page
-            "resumeToken": "",        // String token for resuming a search
-            "selected": -1,           // Index of the search result that is selected
-          }
-        }
-       */
-      currentSearch: {},
+      pinned: false,            // Is this search widget pinned to the UI? Only matters if widget is part of a window
       searchResults: null,            // UI holding search results
-      showHideAnimation: null,        // The actual animation object for jQuery
-      config: {                       // Will hold config information for the search UI
-        pinned: false,
-        advancedSearchActive: false,
-        animated: false,
-        hasContextMenu: true
+      context: {
+        /*
+          {
+            "searchService": { ... },   // Search service object that includes info.json configs
+            "search": {
+              "query": "",              // String query
+              "offset": "",             // Results offset for paging
+              "maxPerPage": "",         // Number of results per page
+              "resumeToken": "",        // String token for resuming a search
+              "sortOrder": "",          // Sort order value
+              "selected": -1,           // Index of the search result that is selected
+            }
+          }
+         */
+        search: {},
+        ui: {}
       }
     }, options);
+    if (!this.context) {
+      this.context = { search: {}, ui: {}};
+    }
 
     this.messages = {
       "no-term": "<span class=\"error\">No search term was found.</span>",
       "no-defaults": "<span class=\"error\">No fields defined for basic search.</span>",
     };
-
     this.init();
   };
 
@@ -67,6 +66,11 @@
       this.element = jQuery(this.template({
         "hidden": this.startHidden
       })).appendTo(this.appendTo);
+
+      if (this.context) {
+        // Handle any context info passed into widget
+        this.initFromContext();
+      }
 
       this.bindEvents();
 
@@ -268,11 +272,14 @@
           jQuery.extend(true, s, service);  // This will not overwrite any currently present properties.
         });
       }
-
       if (!this.advancedSearchSet) {
         this.switchSearchServices(service);
         this.advancedSearchSet = true;
         this.listenForActions();
+      } else if (this.context.searchService === id) {
+        // When adding a search service, if the ID of the service matches
+        // the ID of the initialization value, switch to it.
+        this.switchSearchServices(service);
       }
     },
 
@@ -352,6 +359,7 @@
           }
         },
         "clearMessages": function() { _this.element.find(".pre-search-message").empty(); },
+        "context": _this.context,
       });
     },
 
@@ -365,16 +373,15 @@
      * @param resumeToken : (OPTIONAL) string token possibly used by a search service
      */
     doSearch: function(searchService, query, sortOrder, offset, maxPerPage, resumeToken) {
-      this.currentSearch = {
-        "searchService": searchService,
-        "object": this.element.find(".search-within-object-select").val(),
-        "search": {
-          "query": query,
-          "sortOrder": sortOrder,
-          "offset": offset,
-          "maxPerPage": maxPerPage,
-          "resumeToken": resumeToken
-        }
+      this.context = this.state();
+
+      this.context.searchService = searchService;
+      this.context.search = {
+        "query": query,
+        "sortOrder": sortOrder,
+        "offset": offset,
+        "maxPerPage": maxPerPage,
+        "resumeToken": resumeToken
       };
 
       this.element.find(".search-results-list").empty();
@@ -382,7 +389,7 @@
 
       this.eventEmitter.publish("SEARCH", {
         "origin": this.windowId,
-        "serviceId": searchService.id,
+        "service": typeof searchService === "object" ? searchService : searchService.id,
         "query": query,
         "offset": offset,
         "maxPerPage": maxPerPage,
@@ -395,24 +402,27 @@
 
     handleSearchResults: function(searchResults) {
       var _this = this;
+      this.element.find(".search-results-list").empty();
 
       if (!this.perPageCount) {
         this.perPageCount = searchResults.max_matches || searchResults.matches.length;
       }
 
-      this.currentSearch.results = searchResults;
+      this.context.search.results = searchResults;
 
       this.searchResults = new $.SearchResults({
         "parentId": _this.windowId,
         "slotAddress": _this.slotAddress,
         "currentObject": _this.currentSearch.object,
         "appendTo": _this.element.find(".search-results-list"),
-        "searchResults": searchResults,
         "eventEmitter": _this.eventEmitter,
-        "config": {
-          "hasContextMenu": _this.config.hasContextMenu
-        }
+        "context": _this.context
       });
+
+      var last = parseInt(searchResults.offset) + this.perPageCount;
+      if (last > searchResults.total) {
+        last = searchResults.total;
+      }
 
       if (this.needsPager(searchResults)) {
         var pagerText = this.element.find(".results-pager-text");
@@ -420,7 +430,7 @@
         pagerText.append(this.resultsPagerText({
           "offset": (searchResults.offset + 1),
           "total": searchResults.total,
-          "last": (parseInt(searchResults.offset) + this.perPageCount)
+          "last": last
         }));
 
         this.setPager(searchResults);
@@ -430,6 +440,22 @@
       }
 
       this.appendTo.find(".search-results-display").fadeIn(160);
+    },
+
+    showAdvancedSearch: function() {
+      this.advancedSearchActive = true;
+      this.element.find("#search-form").hide("fast");
+      this.element.find(".search-disclose").show("fast");
+      this.element.find(".search-disclose-btn-more").hide();
+      this.element.find(".search-disclose-btn-less").show();
+    },
+
+    hideAdvancedSearch: function() {
+      this.advancedSearchActive = false;
+      this.element.find("#search-form").show("fast");
+      this.element.find(".search-disclose").hide("fast");
+      this.element.find(".search-disclose-btn-less").hide();
+      this.element.find(".search-disclose-btn-more").show();
     },
 
     showPager: function() {
@@ -498,11 +524,11 @@
 
           var newOffset = (pageNumber - 1) * onPageCount;
           _this.doSearch(
-            _this.currentSearch.searchService,
-            _this.currentSearch.search.query,
-            _this.currentSearch.search.sortOrder,
+            _this.context.searchService,
+            _this.context.search.query,
+            _this.context.search.sortOrder,
             newOffset,
-            _this.currentSearch.search.numExpected
+            _this.context.search.numExpected
           );
         }
       });
@@ -516,6 +542,55 @@
      */
     float2int: function(num) {
       return num | 0;
+    },
+
+    /*
+      What information is needed to preserve search UI state?
+        * Stuff in UI fields
+          - Text in basic search input
+          - Selected search service
+          - Advanced search:
+            > # rows
+            > selected boolean op
+            > selected category
+            > input text/dropdown values
+        * Search results
+          - Plus selected search result (index in result list?)
+     */
+    state: function() {
+      var showAdvanced = this.element.find(".search-disclose-btn-more").css("display") == "none";
+      return {
+        "searchService": this.element.find(".search-within-object-select").val(),
+        "search": {
+          "sortOrder": this.getSortOrder(),
+          "showAdvanced": showAdvanced,
+          "selectedIndex": this.searchResults ? this.searchResults.element.find(".selected").index() : undefined
+        },
+        "ui": {
+          "basic": this.element.find(".js-query").val(),
+          "advanced": showAdvanced ? this.advancedSearch.state() : undefined
+        }
+      };
+    },
+
+    initFromContext: function() {
+      // this.element.find(".search-within-object-select").val(this.context.search.searchService);
+
+      if (this.context.search.sortOrder) {
+        this.element.find(".search-results-sorter select").val(this.context.search.sortOrder);
+      }
+      if (this.context.ui.advanced) {
+        this.showAdvancedSearch();
+      } else {
+        this.element.find(".js-query").val(this.context.ui.basic);
+      }
+
+      if (this.context.searchService && this.context.search.query) {
+        this.addSearchService(this.context.searchService);
+        if (this.context.search.results) {
+          this.handleSearchResults(this.context.search.results);
+        }
+      }
     },
 
     resultsPagerText: Handlebars.compile([

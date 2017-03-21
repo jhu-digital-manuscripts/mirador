@@ -7,6 +7,7 @@
    * Public functions:
    *  #hasQuery() :: has a user input a query into this widget?
    *  #getQuery() :: get the user query from the UI
+   *  #state()  ::  get the state of the advanced search widget
    *  #destroy() :: unbind all event listeners in preparation for this widget to be removed from the DOM
    */
   $.AdvancedSearchWidget = function(options) {
@@ -19,9 +20,7 @@
       eventEmitter: null,
       performAdvancedSearch: null,
       clearMessages: null,
-      config: {
-        pinned: false,
-      }
+      context: null,
     }, options);
 
     this.init();
@@ -41,6 +40,10 @@
         content: Handlebars.compile("{{> searchDescription}}")(this.searchService.config.search.settings.fields),
         position: { my: "left+20 top", at: "right top-50" }
       });
+
+      if (this.context && this.context.ui && this.context.ui.advanced) {
+        this.initFromContext();
+      }
 
       this.bindEvents();
       this.listenForActions();
@@ -132,6 +135,60 @@
       });
 
       return $.generateQuery(parts, this.searchService.config.query.delimiters.field);
+    },
+
+    state: function() {
+      var adv = [];
+      this.element.find(".advanced-search-line").each(function(row, line) {
+        line = jQuery(line);
+
+        line.find(".advanced-search-inputs").children()
+        .filter(function(index, child) {
+          child = jQuery(child);
+          return child.css("display") != "none" && child.val() && child.val() !== "";
+        })
+        .each(function(index, child) {
+          child = jQuery(child);
+          adv.push({
+            row: row,
+            category: line.find(".advanced-search-categories").val(),
+            operation: line.find(".advanced-search-operators").val(),
+            term: child.val(),
+            type: child.is("select") ? "select" : "input"
+          });
+        });
+      });
+
+      return {
+        rows: adv
+      };
+    },
+
+    initFromContext: function() {
+      var _this = this;
+      var ui = this.context.ui.advanced;
+
+      var rowNums = [];
+      this.context.ui.advanced.rows.forEach(function(input, index, arr) {
+        if (rowNums.indexOf(input.row) < 0) {   // Add new line if needed
+          _this.addAdvancedSearchLine();
+          rowNums.push(input.row);
+        }
+
+        var theRow = _this.element.find(".advanced-search-line").last();
+        var user_inputs = theRow.find('.advanced-search-inputs');
+        var inputClass = ".advanced-search-" + input.category;
+
+        theRow.find(".advanced-search-operators").val(input.operation);
+        theRow.find(".advanced-search-categories").val(input.category);
+        theRow.find(input.type + inputClass).val(input.term);
+
+        // Hide all input/select fields
+        user_inputs.children().hide();
+        user_inputs
+            .find(_this.classNamesToSelector(_this.searchService.config.getField(input.category).class))
+            .show();
+      });
     },
 
     /**
