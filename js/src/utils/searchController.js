@@ -368,13 +368,16 @@
       var queryUrl = searchReq.serviceId + "?q=" + encodeURIComponent(searchReq.query);
 
       if (searchReq.offset && typeof searchReq.offset === 'number') {
-        queryUrl += "&o=" + searchReq.offset;
+        queryUrl += (this._needsAmp("offset", searchReq) ? "&" : "") + "o=" + searchReq.offset;
       }
       if (searchReq.maxPerPage && typeof searchReq.maxPerPage === 'number') {
-        queryUrl += "&m=" + searchReq.maxPerPage;
+        queryUrl += (this._needsAmp("maxPerPage", searchReq) ? "&" : "") + "m=" + searchReq.maxPerPage;
       }
       if (searchReq.sortOrder) {
-        queryUrl += "&so=" + (searchReq.sortOrder === "index" ? searchReq.sortOrder : "relevance");
+        queryUrl += (this._needsAmp("sortOrder", searchReq) ? "&" : "") + "so=" + (searchReq.sortOrder === "index" ? searchReq.sortOrder : "relevance");
+      }
+      if (searchReq.facets) {
+        queryUrl += (this._needsAmp("facets", searchReq) ? "&" : "") + "f=" + this.encodeFacets(searchReq.facets);
       }
 
       // Can cache search results here
@@ -400,6 +403,57 @@
 
       return request;
     },
+
+    _needsAmp: function(param, searchReq) {
+      function exists(obj) {
+        if (!obj) return false;
+        else if (Array.isArray(obj)) return obj.filter(function(o) { return exists(o); }) > 0;
+        else if (typeof obj === "string") return obj.length > 0;
+        else if (typeof obj === "number") return obj !== -1;
+        else return typeof obj !== "undefined";
+      }
+
+      if (!searchReq[param]) {
+        return false;
+      }
+
+      switch (param) {
+        case "offset":
+        case "maxPerPage":
+        case "resumeToken":
+        case "sortOrder":
+          return true;
+        case "facets":
+          return exists([
+            searchReq.query, searchReq.offset, searchReq.maxPerPage,
+            searchReq.resumeToken, searchReq.sortOrder
+          ]);
+        default:
+          return false;
+      }
+    },
+
+    encodeFacets: function(facets) {
+      if (!Array.isArray(facets)) {
+        return "";
+      }
+
+      var str = "";
+      facets.forEach(function(facet, index) {
+        if (index > 0) {
+          str += ";";
+        }
+
+        str += facet.dim;
+        if (Array.isArray(facet.path)) {
+          facet.path.forEach(function(p) {
+            str += ":" + p;
+          });
+        }
+      });
+
+      return str;
+    }
 
   };
 
