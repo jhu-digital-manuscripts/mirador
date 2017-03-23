@@ -35,9 +35,11 @@
       },
       element: null,
       appendTo: null,
-      selector: ".facet-container"
+      selector: ".facet-container",
+      showCounts: true
     }, options);
     this.id = $.genUUID();
+    this.init();
 
   };
 
@@ -62,19 +64,19 @@
        * }
        */
       tree.on("select_node.jstree", function(event, data) {
-        // Do stuff here when a user selects a node
-        var facets = [];
-
         if (Array.isArray(data.node.children) && data.node.children.length > 0) {
-          // Only react to leaf nodes
-          return;
+          return;   // Only react to leaf nodes
+        } else if (!_this.onSelect || typeof _this.onSelect !== "function") {
+          return;   // Do nothing if 'onSelect' does not exist or is not a function
         }
 
-        var path = node.parents.slice(1);
-        path.push(node.original.facet_id);
+        // Build array of facet objects
+        var facets = [];
+        var path = data.node.parents.slice(1);
+        path.push(data.node.original.facet_id);
 
         facets.push({
-          "dim": node.parents[0],
+          "dim": data.node.parents[0],
           "path": path
         });
 
@@ -98,6 +100,8 @@
       if (Array.isArray(facets)) {
         this.model.core.data = [];
         facets.forEach(function(facet) { _this.addFacet(facet); });
+_ = this.model;
+        this.element.jstree(this.model);
       }
     },
 
@@ -119,7 +123,7 @@
         return el.facet_id === facet.dim;
       });
       if (node && node.length > 0) {
-        add(node[0], facet.path, facet.count);
+        this.add(node[0], facet.path, facet.count);
       }
     },
 
@@ -136,16 +140,16 @@
         return c.facet_id === path[index];
       });
       if (child && child.length !== 0) {
-        add(child, path, count, index+1);
+        this.add(child, path, count, index+1);
       } else {
-        addPath(node, path, count, index);
+        this.addPath(node, path, count, index);
       }
     },
 
     addPath: function(node, path, count, index) {
       var toAdd = {
         "facet_id": path[index],
-        "text": path[index] + (count > 1 ? " (" + count + ")" : ""),
+        "text": path[index] + (this.showCounts && count > 1 ? " (" + count + ")" : ""),
         "icon": false
       };
 
@@ -162,7 +166,7 @@
       if (index === path.length-1) {
         return;   // At target node
       } else {
-        addPath(node.children[0], path, count, index+1);
+        this.addPath(node.children[0], path, count, index+1);
       }
     },
 

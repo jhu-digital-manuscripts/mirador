@@ -22,8 +22,6 @@
       appendTo: null,           // jQuery object in base Mirador that this widget lives
       advancedSearch: null,     // Advanced search widget
       advancedSearchSet: false,        // has the advanced search UI been created?
-      advancedSearchActive: false,
-      pinned: false,            // Is this search widget pinned to the UI? Only matters if widget is part of a window
       searchResults: null,            // UI holding search results
       context: {
         /*
@@ -41,7 +39,16 @@
          */
         search: {},
         ui: {}
-      }
+      },
+      config: {                       // Will hold config information for the search UI
+        pinned: false,  // Is this search widget pinned to the UI? Only matters if widget is part of a window
+        advancedSearchActive: false,
+        animated: false,
+        hasContextMenu: true,
+        allowFacets: true
+      },
+      allowFacets: true,
+      facetPanel: null
     }, options);
     if (!this.context) {
       this.context = { search: {}, ui: {}};
@@ -72,6 +79,7 @@
         this.initFromContext();
       }
 
+      this.initFacets();
       this.bindEvents();
 
       // Request search services for this manifest, and related
@@ -140,7 +148,6 @@
       this.element.find(".search-within-form").on("submit", function(event){
         event.preventDefault();
         var messages = _this.element.find(".pre-search-message");
-        var searchTerm = _this.element.find(".js-query").val();
 
         messages.empty();
 
@@ -149,15 +156,9 @@
           jQuery(_this.messages["no-defaults"]).appendTo(messages);
         }
 
-        if (searchTerm && searchTerm.length > 0) {
-          var query = $.generateBasicQuery(
-            searchTerm,
-            _this.searchService.config.getDefaultFields(),
-            _this.searchService.config.query.delimiters.or
-          );
-          if (query && query.length > 0) {
-            _this.doSearch(_this.searchService, query, _this.getSortOrder());
-          }
+        var query = _this.getSearchQuery();
+        if (query && query.length > 0) {
+          _this.doSearch(_this.searchService, query, _this.getSortOrder());
         } else {
           jQuery(_this.messages["no-term"]).appendTo(messages);
         }
@@ -175,7 +176,7 @@
 
       if (this.searchService.config.search.settings.fields.length > 0) {
         this.element.find(".search-disclose-btn-more").on("click", function() {
-          _this.advancedSearchActive = true;
+          _this.config.advancedSearchActive = true;
           _this.element.find(".search-disclose-btn-more").hide(0);
           _this.element.find(".search-disclose-btn-less").show(0);
           _this.element.find("#search-form").hide(_this.showHideAnimation);
@@ -184,13 +185,31 @@
         });
 
         this.element.find(".search-disclose-btn-less").on("click", function() {
-          _this.advancedSearchActive = false;
+          _this.config.advancedSearchActive = false;
           _this.element.find(".search-disclose-btn-less").hide(0);
           _this.element.find(".search-disclose-btn-more").show(0);
           _this.element.find("#search-form").show(_this.showHideAnimation);
           _this.element.find(".search-disclose").hide(_this.showHideAnimation);
           _this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + _this.windowId);
         });
+      }
+    },
+
+    /**
+     * Get the current search query string from the UI. Try to detect
+     * where the query will come from, either basic or advanced
+     * search widgets.
+     */
+    getSearchQuery: function() {
+      if (this.element.find(".search-disclosure-btn-less").css("display") != "none") {
+        // Basic search is active
+        return $.generateBasicQuery(
+          this.element.find(".js-query").val(),
+          this.searchService.config.getDefaultFields(),
+          this.searchService.config.query.delimiters.or
+        );
+      } else {
+        return this.advancedSearch.getQuery();    // Advanced search is active
       }
     },
 
@@ -371,8 +390,10 @@
      * @param page : (OPTIONAL) offset within results set
      * @param maxPerPage : (OPTIONAL) results to display per page
      * @param resumeToken : (OPTIONAL) string token possibly used by a search service
+     * @param facets : (OPTIONAL) array of facet objects
      */
-    doSearch: function(searchService, query, sortOrder, offset, maxPerPage, resumeToken) {
+    doSearch: function(searchService, query, sortOrder, offset, maxPerPage, resumeToken, facets) {
+      facets = facets || [{"dim": "facet_author"}];
       this.context = this.state();
 
       this.context.searchService = searchService;
@@ -381,7 +402,8 @@
         "sortOrder": sortOrder,
         "offset": offset,
         "maxPerPage": maxPerPage,
-        "resumeToken": resumeToken
+        "resumeToken": resumeToken,
+        "facets": facets
       };
 
       this.element.find(".search-results-list").empty();
@@ -394,7 +416,8 @@
         "offset": offset,
         "maxPerPage": maxPerPage,
         "resumeToken": resumeToken,
-        "sortOrder": sortOrder
+        "sortOrder": sortOrder,
+        "facets": facets
       });
 
       this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
@@ -413,7 +436,8 @@
       this.searchResults = new $.SearchResults({
         "parentId": _this.windowId,
         "slotAddress": _this.slotAddress,
-        "currentObject": _this.currentSearch.object,
+        // "currentObject": _this.context.search.object,
+        "currentObject": _this.baseObject,
         "appendTo": _this.element.find(".search-results-list"),
         "eventEmitter": _this.eventEmitter,
         "context": _this.context
@@ -440,6 +464,11 @@
       }
 
       this.appendTo.find(".search-results-display").fadeIn(160);
+
+      // If applicable, hand off facets to facetpanel
+      if (Array.isArray(searchResults.facets) && this.facetPanel) {
+        this.facetPanel.setFacets(searchResults.facets);
+      }
     },
 
     showAdvancedSearch: function() {
@@ -590,6 +619,29 @@
         if (this.context.search.results) {
           this.handleSearchResults(this.context.search.results);
         }
+      }
+    },
+
+    initFacets: function() {
+      var _this = this;
+
+      if (_this.config.allowFacets) {
+        this.facetPanel = new $.FacetPanel({
+          eventEmitter: this.eventEmitter,
+          // appendTo: this.element.find(".searchResults"),
+          appendTo: this.appendTo,
+          onSelect: function(selected) {
+            _this.doSearch(
+              _this.context.searchService,
+              _this.getSearchQuery(),
+              _this.getSortOrder(),
+              0,
+              _this.context.search.maxPerPage || 30,
+              undefined,
+              selected
+            );
+          }
+        });
       }
     },
 

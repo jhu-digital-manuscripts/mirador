@@ -29,6 +29,9 @@
        */
       queuedAction: {},
       context: null,
+      config: {
+        hasContextMenu: true
+      }
     }, options);
     this.id = $.genUUID();
 

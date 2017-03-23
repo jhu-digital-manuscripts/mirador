@@ -42,6 +42,7 @@ module.exports = function(grunt) {
     'js/lib/modernizr.custom.js',
     'bower_components/simplePagination.js/jquery.simplePagination.js',
     'bower_components/jQuery-contextMenu/dist/*.js',
+    'bower_components/jstree/dist/jstree.min.js',
     'js/lib/sanitize-html.min.js'
   ],
 
@@ -93,8 +94,9 @@ module.exports = function(grunt) {
           'css/material-icons.css',
           'bower_components/simplePagination.js/simplePagination.css',
           'bower_components/jQuery-contextMenu/dist/*.css',
+          'bower_components/jstree/dist/themes/default/style.min.css',
           'css/aor.css',
-          // 'css/manifest-search.css'
+          'css/manifest-search.css',
           'css/browser-search.css'
         ],
         dest: 'build/mirador/css/mirador-combined.css'

@@ -386,7 +386,11 @@
         queryUrl += (this._needsAmp("sortOrder", searchReq) ? "&" : "") + "so=" + (searchReq.sortOrder === "index" ? searchReq.sortOrder : "relevance");
       }
       if (searchReq.facets) {
-        queryUrl += (this._needsAmp("facets", searchReq) ? "&" : "") + "f=" + this.encodeFacets(searchReq.facets);
+        if (Array.isArray(searchReq.facets)) {
+          queryUrl += (this._needsAmp("facets", searchReq) ? "&" : "") + "f=" + this.encodeFacets(searchReq.facets);
+        } else {
+          queryUrl += (this._needsAmp("facets", searchReq) ? "&" : "") + "f=facet_author";
+        }
       }
 
       // Can cache search results here
@@ -414,11 +418,15 @@
     },
 
     _needsAmp: function(param, searchReq) {
+      /**
+       * True if an object "exists." An array exists if it contains one
+       * or more elements that "exist."
+       */
       function exists(obj) {
         if (!obj) return false;
-        else if (Array.isArray(obj)) return obj.filter(function(o) { return exists(o); }) > 0;
         else if (typeof obj === "string") return obj.length > 0;
         else if (typeof obj === "number") return obj !== -1;
+        else if (Array.isArray(obj)) return obj.filter(function(o) { return exists(o); }).length > 0;
         else return typeof obj !== "undefined";
       }
 

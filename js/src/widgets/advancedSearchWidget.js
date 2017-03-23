@@ -20,7 +20,7 @@
       eventEmitter: null,
       performAdvancedSearch: null,
       clearMessages: null,
-      context: null,
+      context: null, 
     }, options);
 
     this.init();
