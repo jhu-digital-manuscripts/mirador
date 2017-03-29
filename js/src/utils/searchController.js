@@ -374,8 +374,10 @@
         serviceUrl = searchReq.service;
       }
 
-      var queryUrl = serviceUrl + "?q=" + encodeURIComponent(searchReq.query);
-
+      var queryUrl = serviceUrl + "?";
+      if (searchReq.query) {
+        queryUrl += "q=" + encodeURIComponent(searchReq.query);
+      }
       if (searchReq.offset && typeof searchReq.offset === 'number') {
         queryUrl += (this._needsAmp("offset", searchReq) ? "&" : "") + "o=" + searchReq.offset;
       }

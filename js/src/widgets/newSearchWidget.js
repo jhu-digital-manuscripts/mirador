@@ -393,7 +393,6 @@
      * @param facets : (OPTIONAL) array of facet objects
      */
     doSearch: function(searchService, query, sortOrder, offset, maxPerPage, resumeToken, facets) {
-      facets = facets || [{"dim": "facet_author"}];
       this.context = this.state();
 
       this.context.searchService = searchService;
