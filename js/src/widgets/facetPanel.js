@@ -64,7 +64,7 @@
        * }
        */
       tree.on("select_node.jstree", function(event, data) {
-        if (Array.isArray(data.node.children) && data.node.children.length > 0) {
+        if (!_this.isLeafNode(data.node)) {
           return;   // Only react to leaf nodes
         } else if (!_this.onSelect || typeof _this.onSelect !== "function") {
           return;   // Do nothing if 'onSelect' does not exist or is not a function
@@ -86,6 +86,10 @@
       });
     },
 
+    isLeafNode: function(node) {
+      return !Array.isArray(node.children) || node.children.length === 0;
+    },
+
     /**
      * Render this widget with a new set of facets. This function will
      * overwrite any facets that are currently displayed
@@ -100,7 +104,6 @@
       if (Array.isArray(facets)) {
         this.model.core.data = [];
         facets.forEach(function(facet) { _this.addFacet(facet); });
-_ = this.model;
         this.element.jstree(this.model);
       }
     },

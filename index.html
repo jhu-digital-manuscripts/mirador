@@ -22,38 +22,65 @@
     <script src="build/mirador/mirador.js"></script>
     <script type="text/javascript">
 
-     $(function() {
-       // Called without "let" or "var"
-       // so we can play with it in the browser
-       myMiradorInstance = Mirador({
-         "id": "viewer",
-         "layout": "1x1",
-         "data": [
-           {"collectionUri": "http://localhost:8080/iiif-pres/collection/aorcollection", "location": "aor"},
-           {"collectionUri": "http://localhost:8080/iiif-pres/collection/rosecollection", "location": "rose"},
-           {"collectionUri": "http://localhost:8080/iiif-pres/collection/pizancollection", "location": "pizan"}
-         ],
-         "windowObjects": [],
-         "openManifestsPage": true,
-         "preserveManifestOrder": true,
-         "windowSettings": {
-          //  "sidePanelOptions": {
-          //    "toc": false
-          //  },
-           "canvasControls": {
-             "imageManipulation": {
-               "controls": {
-                 "rotate": false
-               }
-             }
-           },
-           "layoutOptions": {
-             "newObject": false,
-             "close": false
-           }
-         }
-       });
-     });
+      $(function() {
+        function getParameterByName(name, url) {
+          if (!url) {
+            url = window.location.href;
+          }
+          name = name.replace(/[\[\]]/g, "\\$&");
+          var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+              results = regex.exec(url);
+          if (!results) return null;
+          if (!results[2]) return '';
+          return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+
+        // Called without "let" or "var"
+        // so we can play with it in the browser
+        let init = {
+          "id": "viewer",
+          "layout": "1x1",
+          "data": [
+            {"collectionUri": "http://localhost:8080/iiif-pres/collection/aorcollection", "location": "aor"},
+            {"collectionUri": "http://localhost:8080/iiif-pres/collection/rosecollection", "location": "rose"},
+            {"collectionUri": "http://localhost:8080/iiif-pres/collection/pizancollection", "location": "pizan"}
+          ],
+          "windowObjects": [],
+          "openManifestsPage": true,
+          "preserveManifestOrder": true,
+          "windowSettings": {
+             "sidePanelOptions": {
+               "toc": false,
+               "annotation": true,
+               "search": true
+             },
+            "canvasControls": {
+              "annotations" : {
+                "annotationLayer" : false,
+                "annotationCreation" : false
+              },
+              "imageManipulation": {
+                "controls": {
+                  "rotate": false
+                }
+              }
+            },
+            "layoutOptions": {
+              "newObject": false,
+              "close": false
+            }
+          }
+        };
+
+        let openBook = getParameterByName("book");
+        if (openBook && openBook.length > 0) {
+          init.windowObjects = {
+            "loadedManifest": openBook
+          };
+        }
+
+        myMiradorInstance = Mirador(init);
+      });
     </script>
     // This enables live reloading of assets for improved developer experience.
     // Remove if copying this page as a basis for another project.
