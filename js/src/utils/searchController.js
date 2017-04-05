@@ -12,6 +12,7 @@
  *              this returns only URL IDs or IIIF service blocks. Not the full info.json configs.
  *    - SEARCH  : Perform a search according to a search request object
  *                (See docs for SearchController#doSearch)
+ *    - GET_FACETS
  * Emits:
  *    - SEARCH_SERVICE_FOUND  : once a search service is retrieved in
  *                              response to a "GET_SEARCH_SERVICE" event
@@ -20,6 +21,7 @@
  *                                      to "GET_RELATED_SEARCH_SERVICES" event
  *    - SEARCH_COMPLETE : after a search request is complete, in response to
  *                        a "SEARCH" event
+ *    - FACETS_COMPLETE
  *
  * ===========================================================================
  *
@@ -122,6 +124,15 @@
           _this.eventEmitter.publish("SEARCH_COMPLETE", {
             "origin": searchReq.origin,
             "results" : data
+          });
+        });
+      });
+
+      this.eventEmitter.subscribe("GET_FACETS", function(event, searchReq) {
+        _this.doSearch(searchReq).done(function(data) {
+          _this.eventEmitter.publish("FACETS_COMPLETE", {
+            "origin": searchReq.origin,
+            "results": data
           });
         });
       });
@@ -394,7 +405,7 @@
           queryUrl += (this._needsAmp("facets", searchReq) ? "&" : "") + "f=facet_author";
         }
       }
-
+console.log("[SC] search : " + queryUrl);
       // Can cache search results here
       var cached = _this.cache(queryUrl);
       if (cached) {

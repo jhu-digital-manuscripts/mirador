@@ -41,6 +41,7 @@
               "appendTo": this.element.find(".browser-search"),
               "windowId": $.genUUID(),
               "eventEmitter": this.eventEmitter,
+              "state": this.state,
               "showHideAnimation": {duration: 160, easing: "easeOutCubic", queue: false},
               "config": {
                 "hasContextMenu": false
@@ -164,11 +165,17 @@
         },
 
         setContainerPositions: function() {
-          var h = this.element.find(".remove-object-option").outerHeight(true) +
-              this.element.find("#load-controls").outerHeight(true) -
-              10;
-          this.element.find(".select-results").css("top", h+"px");
-          this.element.find(".search-results-display").css("top", h+"px");
+          var vals = {
+            "top": this.element.find("#load-controls").position().top +
+                this.element.find("#load-controls").outerHeight(true) -
+                10 + "px",
+            "width": jQuery("#" + this.state.currentConfig.id).outerWidth(true) -
+                this.element.find(".facet-container-scrollable").outerWidth(true) - 25 + "px",
+            "left": this.element.find(".facet-container-scrollable").outerWidth(true) + 15 + "px"
+          };
+
+          this.element.find(".select-results").css(vals);
+          this.element.find(".search-results-display").css(vals);
         },
 
         template: Handlebars.compile([

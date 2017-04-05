@@ -14,6 +14,7 @@
 (function($){
   $.FacetPanel = function(options) {
     jQuery.extend(true, this, {
+      parentId: null,
       facetSelected: null,
       eventEmitter: null,
       facets: null,
@@ -36,7 +37,8 @@
       element: null,
       appendTo: null,
       selector: ".facet-container",
-      showCounts: true
+      showCounts: true,
+      container: "<div class=\"facet-container-scrollable\"><div class=\"facet-container\"></div></div>"
     }, options);
     this.id = $.genUUID();
     this.init();
@@ -45,12 +47,23 @@
 
   $.FacetPanel.prototype = {
     init: function() {
-      this.element = jQuery("<div class=\"facet-container\"></div>");
+      this.element = jQuery(this.container);
       this.appendTo.append(this.element);
 
       this.setFacets(this.facets);
       this.listenForActions();
+      this.bindEvents();
+    },
 
+    bindEvents: function() {
+      var _this = this;
+
+      this.eventEmitter.subscribe("SEARCH_SIZE_UPDATED." + this.parentId, function() {
+        var parent = _this.appendTo.parent();
+        _this.element.css({
+          "top": parent.position().top + parent.outerHeight(true) - 10 + "px"
+        });
+      });
     },
 
     listenForActions: function() {
@@ -72,11 +85,11 @@
 
         // Build array of facet objects
         var facets = [];
-        var path = data.node.parents.slice(1);
+        var path = data.node.parents.slice(2);
         path.push(data.node.original.facet_id);
 
         facets.push({
-          "dim": data.node.parents[0],
+          "dim": data.instance.get_node(data.node.parents[0]).original.facet_id,
           "path": path
         });
 
@@ -88,6 +101,10 @@
 
     isLeafNode: function(node) {
       return !Array.isArray(node.children) || node.children.length === 0;
+    },
+
+    destroy: function() {
+      this.appendTo.find(".facet-container-scrollable").remove();
     },
 
     /**
@@ -104,8 +121,15 @@
       if (Array.isArray(facets)) {
         this.model.core.data = [];
         facets.forEach(function(facet) { _this.addFacet(facet); });
-        this.element.jstree(this.model);
+        this.trimFacets();
+        this.element.find(".facet-container").jstree(this.model);
       }
+    },
+
+    trimFacets: function() {
+      this.model.core.data = this.model.core.data.filter(function(f) {
+        return Array.isArray(f.children) && f.children.length > 0;
+      });
     },
 
     addFacet: function(facet) {
@@ -134,7 +158,7 @@
       if (!index) {
         index = 0;
       }
-      // console.log("Add " + path[index] + " to " + JSON.stringify(node));
+
       if (!node.children) {
         node.children = [];
       }

@@ -1,4 +1,11 @@
-.facet-container {
+.facet-container-scrollable {
+  position: absolute;
+  top: 176px;
+  bottom: 0;
+  height: auto;
   width: 300px;
-  height: 500px;
+  padding: 18px 0;
+  margin-top: 10px;
+  border-top: 1px solid gray;
+  overflow-x: hidden;
 }

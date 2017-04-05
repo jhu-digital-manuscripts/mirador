@@ -13,6 +13,7 @@
       startHidden: false,
       tabId: null,
       windowId: null,
+      state: null,
       slotAddress: null,
       eventEmitter: null,
       baseObject: null,
@@ -121,6 +122,12 @@
         }
       });
 
+      this.eventEmitter.subscribe("FACETS_COMPLETE", function(event, data) {
+        if (data.origin === _this.windowId) {
+          _this.handleFacets(data.results);
+        }
+      });
+
       this.eventEmitter.subscribe("windowPinned", function(event, data) {
         if (data.windowId === _this.windowId) {
           _this.config.pinned = data.status;
@@ -167,6 +174,7 @@
       this.element.find(".search-within-object-select").on("change", function() {
         var selected = jQuery(this).val();
         _this.switchSearchServices(_this.getSearchService(selected));
+        _this.getFacets([{"dim": "facet_location"}]);
         _this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + _this.windowId);
       });
 
@@ -295,6 +303,7 @@
         this.switchSearchServices(service);
         this.advancedSearchSet = true;
         this.listenForActions();
+        this.getFacets([{"dim": "facet_location"}]);
       } else if (this.context.searchService === id) {
         // When adding a search service, if the ID of the service matches
         // the ID of the initialization value, switch to it.
@@ -463,11 +472,6 @@
       }
 
       this.appendTo.find(".search-results-display").fadeIn(160);
-
-      // If applicable, hand off facets to facetpanel
-      if (Array.isArray(searchResults.facets) && this.facetPanel) {
-        this.facetPanel.setFacets(searchResults.facets);
-      }
     },
 
     showAdvancedSearch: function() {
@@ -627,20 +631,44 @@
       if (_this.config.allowFacets) {
         this.facetPanel = new $.FacetPanel({
           eventEmitter: this.eventEmitter,
-          // appendTo: this.element.find(".searchResults"),
+          parentId: this.windowId,
           appendTo: this.appendTo,
+          state: this.state,
           onSelect: function(selected) {
-            _this.doSearch(
-              _this.context.searchService,
-              _this.getSearchQuery(),
-              _this.getSortOrder(),
-              0,
-              _this.context.search.maxPerPage || 30,
-              undefined,
-              selected
-            );
+            // _this.getFacets(selected);
+            _this.facetSelected(selected);
           }
         });
+      }
+    },
+
+    facetSelected: function(selected) {
+      console.log("[SW] facet selected: " + JSON.stringify(selected));
+    },
+
+    getFacets: function(facets) {
+      this.eventEmitter.publish("GET_FACETS", {
+        "origin": this.windowId,
+        "service": this.searchService,
+        "facets": facets
+      });
+    },
+
+    handleFacets: function(searchResults) {
+      if (!searchResults.facets || searchResults.facets.length === 0) {
+        return;   // Do nothing if there are no facets
+      }
+
+      if (!this.facetPanel) {
+        this.initFacets();
+      } else {
+        this.facetPanel.destroy();
+        this.initFacets();
+      }
+
+      if (this.config.allowFacets && this.facetPanel) {
+        this.facetPanel.setFacets(searchResults.facets);
+        this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
       }
     },
 

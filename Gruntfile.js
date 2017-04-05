@@ -96,7 +96,8 @@ module.exports = function(grunt) {
           'bower_components/jQuery-contextMenu/dist/*.css',
           'bower_components/jstree/dist/themes/default/style.min.css',
           'css/aor.css',
-          'css/browser-search.css'
+          'css/browser-search.css',
+          'css/search-facets.css'
         ],
         dest: 'build/mirador/css/mirador-combined.css'
       }
