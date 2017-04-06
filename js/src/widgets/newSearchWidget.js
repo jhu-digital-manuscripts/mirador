@@ -49,7 +49,8 @@
         allowFacets: true
       },
       allowFacets: true,
-      facetPanel: null
+      facetPanel: null,
+      selectedFacets: []
     }, options);
     if (!this.context) {
       this.context = { search: {}, ui: {}};
@@ -402,7 +403,7 @@
      * @param facets : (OPTIONAL) array of facet objects
      */
     doSearch: function(searchService, query, sortOrder, offset, maxPerPage, resumeToken, facets) {
-      this.context = this.state();
+      this.context = this.searchState();
 
       this.context.searchService = searchService;
       this.context.search = {
@@ -589,7 +590,7 @@
         * Search results
           - Plus selected search result (index in result list?)
      */
-    state: function() {
+    searchState: function() {
       var showAdvanced = this.element.find(".search-disclose-btn-more").css("display") == "none";
       return {
         "searchService": this.element.find(".search-within-object-select").val(),
@@ -600,7 +601,7 @@
         },
         "ui": {
           "basic": this.element.find(".js-query").val(),
-          "advanced": showAdvanced ? this.advancedSearch.state() : undefined
+          "advanced": showAdvanced ? this.advancedSearch.searchState() : undefined
         }
       };
     },
@@ -642,8 +643,25 @@
       }
     },
 
+    /**
+     * Function to handle the selection and deselection of a facet.
+     *
+     * @param selected most recently selected facet
+     */
     facetSelected: function(selected) {
       console.log("[SW] facet selected: " + JSON.stringify(selected));
+
+      var filtered = this.selectedFacets.filter(function(s) {
+        return s === selected;
+      });
+
+      if (filtered.length === 0) {
+        this.selectedFacets.push(selected);
+      } else {
+        this.selectedFacets = this.selectedFacets.filter(function(s) {
+          return s !== selected;
+        });
+      }
     },
 
     getFacets: function(facets) {

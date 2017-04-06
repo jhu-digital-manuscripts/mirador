@@ -20,7 +20,7 @@
       eventEmitter: null,
       performAdvancedSearch: null,
       clearMessages: null,
-      context: null, 
+      context: null,
     }, options);
 
     this.init();
@@ -137,7 +137,7 @@
       return $.generateQuery(parts, this.searchService.config.query.delimiters.field);
     },
 
-    state: function() {
+    searchState: function() {
       var adv = [];
       this.element.find(".advanced-search-line").each(function(row, line) {
         line = jQuery(line);

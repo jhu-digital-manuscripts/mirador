@@ -28,10 +28,16 @@
         "core": {
           "data": []
         },
+        "checkbox" : {
+          "visible": false,
+          "keep_selected_style" : true,
+          "three_state": false,
+        },
         "plugins": [
           "sort",
-          "state",        // Need to check API for configuration
-          "wholerow"
+          // "state",        // Need to check API for configuration
+          "wholerow",
+          "checkbox"
         ]
       },
       element: null,
@@ -90,7 +96,8 @@
 
         facets.push({
           "dim": data.instance.get_node(data.node.parents[0]).original.facet_id,
-          "path": path
+          "path": path,
+          "id": data.node.id
         });
 
         if (_this.onSelect) {
@@ -140,7 +147,7 @@
       if (!hasDim) {
         this.model.core.data.push({
           "facet_id": facet.dim,
-          "text": facet.dim,
+          "text": facet.label || facet.dim,
           "icon": false,
           "children": []
         });

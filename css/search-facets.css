@@ -1,3 +1,6 @@
+.select-results {
+  margin-top: -1px;
+}
 .facet-container-scrollable {
   position: absolute;
   top: 176px;
@@ -5,7 +8,32 @@
   height: auto;
   width: 300px;
   padding: 18px 0;
-  margin-top: 10px;
+  margin-top: -1px;
   border-top: 1px solid gray;
   overflow-x: hidden;
+}
+.jstree-container-ul > .jstree-node > div.jstree-wholerow.jstree-wholerow-clicked {
+  background: initial;
+}
+.jstree-container-ul > .jstree-node > div.jstree-wholerow.jstree-wholerow-hovered,
+.jstree-default .jstree-wholerow-hovered {
+  background: #f7f7f7;
+}
+.jstree-default .jstree-wholerow-clicked {
+  background: #dbdbdb;
+  background: -webkit-linear-gradient(top,#dbdbdb 0,#eaeaea 100%);
+  background: linear-gradient(to bottom,#dbdbdb 0,#eaeaea 100%);
+}
+/*
+TODO investigate how to disable selection of top level nodes.
+By default, when a top level node, all child nodes are also selected/highlighted.
+*/
+
+.jstree-node {
+  font-size: 125%;
+  margin-top: 5px;
+}
+.jstree-leaf {
+  font-size: 70%;
+  margin-top: 0;
 }
