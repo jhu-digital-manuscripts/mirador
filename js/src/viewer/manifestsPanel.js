@@ -23,6 +23,7 @@
     $.ManifestsPanel.prototype = {
 
         init: function() {
+            var _this = this;
             this.element = jQuery(this.template({
                 showURLBox : this.state.getStateProperty('showAddFromURLBox')
             })).appendTo(this.appendTo);
@@ -45,6 +46,20 @@
               "showHideAnimation": {duration: 160, easing: "easeOutCubic", queue: false},
               "config": {
                 "hasContextMenu": false
+              },
+              "onFacetSelect": function(selected) {
+                // selected is an array of strings, manifest IDs
+                if (!selected) {
+                  _this.manifestListItems.forEach(function(item) { item.element.show(); });
+                } else {
+                  _this.manifestListItems.forEach(function(item) {
+                    if (selected.indexOf(item.manifest.getId()) !== -1) {
+                      item.element.show();    // This manifest is 'selected'
+                    } else {
+                      item.element.hide();
+                    }
+                  });
+                }
               }
             });
 

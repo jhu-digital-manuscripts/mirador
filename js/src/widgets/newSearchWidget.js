@@ -50,6 +50,19 @@
       },
       allowFacets: true,
       facetPanel: null,
+      /**
+       * Callback function to be executed when a facet is selected that
+       * allows the parent object to interact with facets.
+       *
+       * @param selected - array of facet objects
+       *        {
+       *          "dim": "facet category id",
+       *          "path": ["facet", "values"],
+       *          "ui_id": "string ID of the facet UI element"
+       *        }
+       * Function (searchService, selected)
+       */
+      onFacetSelect: null,
       selectedFacets: []
     }, options);
     if (!this.context) {
@@ -125,7 +138,7 @@
 
       this.eventEmitter.subscribe("FACETS_COMPLETE", function(event, data) {
         if (data.origin === _this.windowId) {
-          _this.handleFacets(data.results);
+          _this.handleFacets(data.results, data.setui);
         }
       });
 
@@ -175,7 +188,6 @@
       this.element.find(".search-within-object-select").on("change", function() {
         var selected = jQuery(this).val();
         _this.switchSearchServices(_this.getSearchService(selected));
-        _this.getFacets([{"dim": "facet_location"}]);
         _this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + _this.windowId);
       });
 
@@ -304,7 +316,6 @@
         this.switchSearchServices(service);
         this.advancedSearchSet = true;
         this.listenForActions();
-        this.getFacets([{"dim": "facet_location"}]);
       } else if (this.context.searchService === id) {
         // When adding a search service, if the ID of the service matches
         // the ID of the initialization value, switch to it.
@@ -390,6 +401,9 @@
         "clearMessages": function() { _this.element.find(".pre-search-message").empty(); },
         "context": _this.context,
       });
+
+      this.clearSelectedFacets();
+      this.getFacets([{"dim": "facet_location"}], true);
     },
 
     /**
@@ -636,7 +650,6 @@
           appendTo: this.appendTo,
           state: this.state,
           onSelect: function(selected) {
-            // _this.getFacets(selected);
             _this.facetSelected(selected);
           }
         });
@@ -644,50 +657,82 @@
     },
 
     /**
-     * Function to handle the selection and deselection of a facet.
+     * Function to handle the selection and deselection of facets.
      *
-     * @param selected most recently selected facet
+     * @param selected [array] most recently selected facets
      */
     facetSelected: function(selected) {
-      console.log("[SW] facet selected: " + JSON.stringify(selected));
+      var _this = this;
 
-      var filtered = this.selectedFacets.filter(function(s) {
-        return s === selected;
+      selected.forEach(function(sel) {
+        var filtered = _this.selectedFacets.filter(function(s) {
+          return s.ui_id === sel.ui_id;
+        });
+
+        if (filtered.length === 0) {
+          _this.selectedFacets.push(sel);
+        } else {
+          _this.selectedFacets = _this.selectedFacets.filter(function(s) {
+            return s.ui_id !== sel.ui_id;
+          });
+        }
       });
 
-      if (filtered.length === 0) {
-        this.selectedFacets.push(selected);
+      if (Array.isArray(this.selectedFacets) && this.selectedFacets.length > 0) {
+        this.getFacets(this.selectedFacets);
       } else {
-        this.selectedFacets = this.selectedFacets.filter(function(s) {
-          return s !== selected;
-        });
+        this.onFacetSelect();
       }
     },
 
-    getFacets: function(facets) {
+    getFacets: function(facets, setui) {
       this.eventEmitter.publish("GET_FACETS", {
         "origin": this.windowId,
         "service": this.searchService,
-        "facets": facets
+        "facets": facets,
+        "setui": setui
       });
     },
 
-    handleFacets: function(searchResults) {
+    handleFacets: function(searchResults, setui) {
       if (!searchResults.facets || searchResults.facets.length === 0) {
         return;   // Do nothing if there are no facets
       }
 
-      if (!this.facetPanel) {
-        this.initFacets();
-      } else {
-        this.facetPanel.destroy();
-        this.initFacets();
+      if (setui) {
+        if (!this.facetPanel) {
+          this.initFacets();
+        } else {
+          this.facetPanel.destroy();
+          this.initFacets();
+        }
+
+        if (this.config.allowFacets && this.facetPanel) {
+          this.facetPanel.setFacets(searchResults.facets);
+          this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
+        }
       }
 
-      if (this.config.allowFacets && this.facetPanel) {
-        this.facetPanel.setFacets(searchResults.facets);
-        this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
+      // Create a list of manifests to pass back to to parent, if applicable
+      /*
+       * --- IMPL note ---
+       * SearchResults contains a list of objects that match some set of
+       * facets. Filter the list for only manifests, then reduce the
+       * list to a list of manifest IDs for simplicity.
+       */
+      if (this.onFacetSelect && typeof this.onFacetSelect === "function") {
+        this.onFacetSelect(
+          searchResults.matches.filter(function(m) {
+            return m.object["@type"] === "sc:Manifest";
+          }).map(function(m) {
+            return m.object["@id"];
+          })
+        );
       }
+    },
+
+    clearSelectedFacets: function() {
+      this.selectedFacets = [];
     },
 
     resultsPagerText: Handlebars.compile([

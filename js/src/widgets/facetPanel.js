@@ -82,7 +82,8 @@
        *   selected: []   // Array of strings (node IDs)
        * }
        */
-      tree.on("select_node.jstree", function(event, data) {
+      // tree.on("select_node.jstree", function(event, data) {
+      tree.on("activate_node.jstree", function(event, data) {
         if (!_this.isLeafNode(data.node)) {
           return;   // Only react to leaf nodes
         } else if (!_this.onSelect || typeof _this.onSelect !== "function") {
@@ -97,7 +98,7 @@
         facets.push({
           "dim": data.instance.get_node(data.node.parents[0]).original.facet_id,
           "path": path,
-          "id": data.node.id
+          "ui_id": data.node.id
         });
 
         if (_this.onSelect) {
@@ -124,12 +125,13 @@
       var _this = this;
       this.facets = facets;
 
-      // Destroy and recreate tree?
+      // Destroy and recreate tree
       if (Array.isArray(facets)) {
         this.model.core.data = [];
         facets.forEach(function(facet) { _this.addFacet(facet); });
         this.trimFacets();
         this.element.find(".facet-container").jstree(this.model);
+        this.element.show();
       }
     },
 

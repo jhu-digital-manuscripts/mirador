@@ -132,7 +132,8 @@
         _this.doSearch(searchReq).done(function(data) {
           _this.eventEmitter.publish("FACETS_COMPLETE", {
             "origin": searchReq.origin,
-            "results": data
+            "results": data,
+            "setui": searchReq.setui
           });
         });
       });
@@ -405,7 +406,6 @@
           queryUrl += (this._needsAmp("facets", searchReq) ? "&" : "") + "f=facet_author";
         }
       }
-console.log("[SC] search : " + queryUrl);
       // Can cache search results here
       var cached = _this.cache(queryUrl);
       if (cached) {
@@ -477,7 +477,7 @@ console.log("[SC] search : " + queryUrl);
         str += facet.dim;
         if (Array.isArray(facet.path)) {
           facet.path.forEach(function(p) {
-            str += ":" + p;
+            str += ":" + encodeURIComponent(p);
           });
         }
       });
