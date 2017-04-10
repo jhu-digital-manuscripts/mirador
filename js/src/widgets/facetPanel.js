@@ -44,7 +44,12 @@
       appendTo: null,
       selector: ".facet-container",
       showCounts: true,
-      container: "<div class=\"facet-container-scrollable\"><div class=\"facet-container\"></div></div>"
+      container: [
+        "<div class=\"facet-container-scrollable\">",
+          "<h2>Browse:</h2>",
+          "<div class=\"facet-container\"></div>",
+        "</div>"
+      ].join("")
     }, options);
     this.id = $.genUUID();
     this.init();

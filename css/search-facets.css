@@ -13,6 +13,10 @@
   display: none;
   overflow-x: hidden;
 }
+.facet-container-scrollable h2 {
+  margin-left: 10px;
+}
+
 .jstree-container-ul > .jstree-node > div.jstree-wholerow.jstree-wholerow-clicked {
   background: initial;
 }

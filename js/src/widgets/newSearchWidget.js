@@ -433,7 +433,6 @@
         query += (multi ? ")" : "") + ")";
       } else if (Array.isArray(this.selectedFacets) && this.selectedFacets.length > 0) {
         // There are no matching books for the selected facets
-        // this.handleSearchResults();
       }
 
       this.context.searchService = searchService;
@@ -699,7 +698,9 @@ console.log("[SW] selected facets: " + JSON.stringify(this.selectedFacets));
         this.getFacets(this.selectedFacets);
       } else {
         this.clearSelectedFacets();
-        this.onFacetSelect();
+        if (this.onFacetSelect && typeof this.onFacetSelect === "function") {
+          this.onFacetSelect();
+        }
       }
     },
 
@@ -713,9 +714,16 @@ console.log("[SW] selected facets: " + JSON.stringify(this.selectedFacets));
     },
 
     handleFacets: function(searchResults, setui) {
-      // if (!searchResults.facets || searchResults.facets.length === 0) {
-      //   return;   // Do nothing if there are no facets
-      // }
+      this.updateBookList(searchResults);
+      /*
+       * --- IMPL note ---
+       * SearchResults contains a list of objects that match some set of
+       * facets. Filter the list for only manifests, then reduce the
+       * list to a list of manifest IDs for simplicity.
+       */
+      if (this.onFacetSelect && typeof this.onFacetSelect === "function") {
+        this.onFacetSelect(this.bookList);
+      }
 
       if (setui) {
         if (!this.facetPanel) {
@@ -729,17 +737,6 @@ console.log("[SW] selected facets: " + JSON.stringify(this.selectedFacets));
           this.facetPanel.setFacets(searchResults.facets);
           this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
         }
-      }
-
-      this.updateBookList(searchResults);
-      /*
-       * --- IMPL note ---
-       * SearchResults contains a list of objects that match some set of
-       * facets. Filter the list for only manifests, then reduce the
-       * list to a list of manifest IDs for simplicity.
-       */
-      if (this.onFacetSelect && typeof this.onFacetSelect === "function") {
-        this.onFacetSelect(this.bookList);
       }
     },
 
