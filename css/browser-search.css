@@ -68,11 +68,17 @@
   position: absolute;
   top: 170px;
   bottom: 0;
-  margin-top: 10px;
   width: calc(100% - 10px);
   background-color: white;
   overflow-y: auto;
   z-index: 3;
+}
+.search-results-close {
+  margin: 6px 0;
+  width: 150px;
+}
+.search-results-close i {
+  margin-right: 12px;
 }
 
 .browser-search-container .search-results-display .search-results-close {

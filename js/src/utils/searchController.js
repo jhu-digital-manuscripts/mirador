@@ -400,12 +400,11 @@
         queryUrl += (this._needsAmp("sortOrder", searchReq) ? "&" : "") + "so=" + (searchReq.sortOrder === "index" ? searchReq.sortOrder : "relevance");
       }
       if (searchReq.facets) {
-        if (Array.isArray(searchReq.facets)) {
+        if (Array.isArray(searchReq.facets) && searchReq.facets.length > 0) {
           queryUrl += (this._needsAmp("facets", searchReq) ? "&" : "") + "f=" + this.encodeFacets(searchReq.facets);
-        } else {
-          queryUrl += (this._needsAmp("facets", searchReq) ? "&" : "") + "f=facet_author";
         }
       }
+console.log("[SC] " + queryUrl);
       // Can cache search results here
       var cached = _this.cache(queryUrl);
       if (cached) {

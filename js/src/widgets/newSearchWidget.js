@@ -38,7 +38,10 @@
             }
           }
          */
-        search: {},
+        search: {
+          "offset": 0,
+          "maxPerPage": 30
+        },
         ui: {}
       },
       config: {                       // Will hold config information for the search UI
@@ -66,7 +69,7 @@
       selectedFacets: []
     }, options);
     if (!this.context) {
-      this.context = { search: {}, ui: {}};
+      this.context = { search: {"offset": 0, "maxPerPage": 30}, ui: {}};
     }
 
     this.messages = {
@@ -419,6 +422,20 @@
     doSearch: function(searchService, query, sortOrder, offset, maxPerPage, resumeToken, facets) {
       this.context = this.searchState();
 
+      // Modify query to account for current facets by adding a restriction
+      // to only books that match the facets
+      if (Array.isArray(this.bookList) && this.bookList.length > 0) {
+        var multi = this.bookList.length > 1;
+        query = "(" + query + "&" + (multi ? "(" : "");
+        this.bookList.forEach(function(b, index) {
+          query += (index > 0 ? "|" : "") + "manifest_id:'" + b + "'";
+        });
+        query += (multi ? ")" : "") + ")";
+      } else if (Array.isArray(this.selectedFacets) && this.selectedFacets.length > 0) {
+        // There are no matching books for the selected facets
+        // this.handleSearchResults();
+      }
+
       this.context.searchService = searchService;
       this.context.search = {
         "query": query,
@@ -677,10 +694,11 @@
           });
         }
       });
-
+console.log("[SW] selected facets: " + JSON.stringify(this.selectedFacets));
       if (Array.isArray(this.selectedFacets) && this.selectedFacets.length > 0) {
         this.getFacets(this.selectedFacets);
       } else {
+        this.clearSelectedFacets();
         this.onFacetSelect();
       }
     },
@@ -695,9 +713,9 @@
     },
 
     handleFacets: function(searchResults, setui) {
-      if (!searchResults.facets || searchResults.facets.length === 0) {
-        return;   // Do nothing if there are no facets
-      }
+      // if (!searchResults.facets || searchResults.facets.length === 0) {
+      //   return;   // Do nothing if there are no facets
+      // }
 
       if (setui) {
         if (!this.facetPanel) {
@@ -713,7 +731,7 @@
         }
       }
 
-      // Create a list of manifests to pass back to to parent, if applicable
+      this.updateBookList(searchResults);
       /*
        * --- IMPL note ---
        * SearchResults contains a list of objects that match some set of
@@ -721,18 +739,24 @@
        * list to a list of manifest IDs for simplicity.
        */
       if (this.onFacetSelect && typeof this.onFacetSelect === "function") {
-        this.onFacetSelect(
-          searchResults.matches.filter(function(m) {
-            return m.object["@type"] === "sc:Manifest";
-          }).map(function(m) {
-            return m.object["@id"];
-          })
-        );
+        this.onFacetSelect(this.bookList);
       }
     },
 
+    updateBookList: function(searchResults) {
+      // Create a list of manifests to pass back to to parent, if applicable
+      this.bookList = searchResults.matches.filter(function(m) {
+        return m.object["@type"] === "sc:Manifest";
+      }).map(function(m) {
+        return m.object["@id"];
+      });
+console.log("[SW] bookList: " + JSON.stringify(this.bookList));
+    },
+
     clearSelectedFacets: function() {
+console.log("[SW] Clearing selected facets and book list.");
       this.selectedFacets = [];
+      this.bookList = [];
     },
 
     resultsPagerText: Handlebars.compile([
@@ -767,7 +791,7 @@
         '</div>',
       '</div>',
       '<div class="search-results-display" style="display:none;">',
-        '<div class="search-results-close"><i class="fa fa-2x fa-caret-up" title="Close results"></i></div>',
+        '<div class="search-results-close"><i class="fa fa-2x fa-caret-up" title="Close results"></i>Close results</div>',
         '<div class="results-pager"></div>',
         '<p class="results-pager-text"></p>',
         '<div class="search-results-list"></div>',
