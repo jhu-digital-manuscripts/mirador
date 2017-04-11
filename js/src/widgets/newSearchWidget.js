@@ -693,7 +693,7 @@
           });
         }
       });
-console.log("[SW] selected facets: " + JSON.stringify(this.selectedFacets));
+// console.log("[SW] selected facets: " + JSON.stringify(this.selectedFacets));
       if (Array.isArray(this.selectedFacets) && this.selectedFacets.length > 0) {
         this.getFacets(this.selectedFacets);
       } else {
@@ -747,11 +747,11 @@ console.log("[SW] selected facets: " + JSON.stringify(this.selectedFacets));
       }).map(function(m) {
         return m.object["@id"];
       });
-console.log("[SW] bookList: " + JSON.stringify(this.bookList));
+// console.log("[SW] bookList: " + JSON.stringify(this.bookList));
     },
 
     clearSelectedFacets: function() {
-console.log("[SW] Clearing selected facets and book list.");
+// console.log("[SW] Clearing selected facets and book list.");
       this.selectedFacets = [];
       this.bookList = [];
     },

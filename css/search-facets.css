@@ -13,6 +13,12 @@
   display: none;
   overflow-x: hidden;
 }
+.facet-container-scrollable > h2 > i {
+  float: right;
+  margin: 0 10px;
+  cursor: pointer;
+  padding: 2px 5px;
+}
 .facet-container-scrollable h2 {
   margin-left: 10px;
 }

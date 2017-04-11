@@ -46,7 +46,7 @@
       showCounts: true,
       container: [
         "<div class=\"facet-container-scrollable\">",
-          "<h2>Browse:</h2>",
+          "<h2>Browse:<i class=\"fa fa-lg fa-times-circle clear\" title=\"Clear all\"></i></h2>",
           "<div class=\"facet-container\"></div>",
         "</div>"
       ].join("")
@@ -95,21 +95,36 @@
           return;   // Do nothing if 'onSelect' does not exist or is not a function
         }
 
-        // Build array of facet objects
-        var facets = [];
-        var path = data.node.parents.slice(2);
-        path.push(data.node.original.facet_id);
-
-        facets.push({
-          "dim": data.instance.get_node(data.node.parents[0]).original.facet_id,
-          "path": path,
-          "ui_id": data.node.id
-        });
-
         if (_this.onSelect) {
-          _this.onSelect(facets);
+          _this.onSelect(_this.nodeToFacet(data.node));
         }
       });
+
+      this.element.find("i.clear").on("click", function(event) {
+        var facets = [];
+        tree.jstree("get_selected", true).forEach(function(node) {
+          if (node)
+            facets.push(_this.nodeToFacet(node));
+        });
+console.log("[FP] " + JSON.stringify(facets, null, 2));
+        _this.onSelect(facets);
+        tree.jstree("deselect_all");
+      });
+    },
+
+    nodeToFacet: function(node) {
+      // Build array of facet objects
+      var facets = [];
+      var path = node.parents.slice(2);
+      path.push(node.original.facet_id);
+
+      facets.push({
+        "dim": jQuery(this.selector).jstree("get_node", node.parents[0]).original.facet_id,
+        "path": path,
+        "ui_id": node.id
+      });
+
+      return facets;
     },
 
     isLeafNode: function(node) {
