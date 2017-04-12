@@ -96,35 +96,34 @@
         }
 
         if (_this.onSelect) {
-          _this.onSelect(_this.nodeToFacet(data.node));
+          _this.onSelect([_this.nodeToFacet(data.node)]);
         }
       });
 
       this.element.find("i.clear").on("click", function(event) {
         var facets = [];
         tree.jstree("get_selected", true).forEach(function(node) {
-          if (node)
+          if (node) {
             facets.push(_this.nodeToFacet(node));
+          }
         });
-console.log("[FP] " + JSON.stringify(facets, null, 2));
-        _this.onSelect(facets);
+
+        if (_this.onSelect && typeof _this.onSelect === "function") {
+          _this.onSelect(facets);
+        }
         tree.jstree("deselect_all");
       });
     },
 
     nodeToFacet: function(node) {
-      // Build array of facet objects
-      var facets = [];
       var path = node.parents.slice(2);
       path.push(node.original.facet_id);
 
-      facets.push({
+      return {
         "dim": jQuery(this.selector).jstree("get_node", node.parents[0]).original.facet_id,
         "path": path,
         "ui_id": node.id
-      });
-
-      return facets;
+      };
     },
 
     isLeafNode: function(node) {

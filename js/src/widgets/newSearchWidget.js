@@ -685,9 +685,9 @@
           return s.ui_id === sel.ui_id;
         });
 
-        if (filtered.length === 0) {
+        if (filtered.length === 0) {  // If facet not found, add it to the list
           _this.selectedFacets.push(sel);
-        } else {
+        } else {  // If facet found, remove from list
           _this.selectedFacets = _this.selectedFacets.filter(function(s) {
             return s.ui_id !== sel.ui_id;
           });
