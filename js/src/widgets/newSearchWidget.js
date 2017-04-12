@@ -223,23 +223,45 @@
      * Get the current search query string from the UI. Try to detect
      * where the query will come from, either basic or advanced
      * search widgets.
+     *
+     * Modify the query to account for any selected facets that would
+     * narrow the search results.
      */
     getSearchQuery: function() {
+      var query;
+
+      var delimiters = this.searchService.config.query.delimiters;
+
       if (this.element.find(".search-disclosure-btn-less").css("display") != "none") {
         // Basic search is active
-        return $.generateBasicQuery(
+        query = $.generateBasicQuery(
           this.element.find(".js-query").val(),
           this.searchService.config.getDefaultFields(),
-          this.searchService.config.query.delimiters.or
+          delimiters.or
         );
       } else {
-        return this.advancedSearch.getQuery();    // Advanced search is active
+        query = this.advancedSearch.getQuery();    // Advanced search is active
       }
+
+      // Modify query to account for current facets by adding a restriction
+      // to only books that match the facets
+      if (Array.isArray(this.bookList) && this.bookList.length > 0) {
+        var multi = this.bookList.length > 1;
+        query = "(" + query + delimiters.and + (multi ? "(" : "");
+        this.bookList.forEach(function(b, index) {
+          query += (index > 0 ? delimiters.or : "") + "manifest_id:'" + b + "'";
+        });
+        query += (multi ? ")" : "") + ")";
+      } else if (Array.isArray(this.selectedFacets) && this.selectedFacets.length > 0) {
+        // TODO There are no matching books for the selected facets
+      }
+
+      return query;
     },
 
     /**
      * Add an object to this widget that you potentially want to search.
-     * Thist object must be a JSON object of a IIIF object.
+     * This object must be a JSON object of a IIIF object.
      *
      * @param object : IIIF object as JSON
      */
@@ -410,7 +432,6 @@
       });
 
       this.clearSelectedFacets();
-      this.getFacets([{"dim": "facet_location"}], true);
     },
 
     /**
@@ -425,19 +446,6 @@
      */
     doSearch: function(searchService, query, sortOrder, offset, maxPerPage, resumeToken, facets) {
       this.context = this.searchState();
-
-      // Modify query to account for current facets by adding a restriction
-      // to only books that match the facets TODO move into function getSearchQuery()
-      if (Array.isArray(this.bookList) && this.bookList.length > 0) {
-        var multi = this.bookList.length > 1;
-        query = "(" + query + "&" + (multi ? "(" : "");
-        this.bookList.forEach(function(b, index) {
-          query += (index > 0 ? "|" : "") + "manifest_id:'" + b + "'";
-        });
-        query += (multi ? ")" : "") + ")";
-      } else if (Array.isArray(this.selectedFacets) && this.selectedFacets.length > 0) {
-        // There are no matching books for the selected facets
-      }
 
       this.context.searchService = searchService;
       this.context.search = {
@@ -698,14 +706,11 @@
           });
         }
       });
-// console.log("[SW] selected facets: " + JSON.stringify(this.selectedFacets));
+
       if (Array.isArray(this.selectedFacets) && this.selectedFacets.length > 0) {
         this.getFacets(this.selectedFacets);
       } else {
         this.clearSelectedFacets();
-        if (this.onFacetSelect && typeof this.onFacetSelect === "function") {
-          this.onFacetSelect();
-        }
       }
     },
 
@@ -745,6 +750,12 @@
       }
     },
 
+    /**
+     * Update the list of valid books from search results. This is
+     * designed to be used with search results from facet requests.
+     *
+     * @param searchResults {object} search results object
+     */
     updateBookList: function(searchResults) {
       // Create a list of manifests to pass back to to parent, if applicable
       this.bookList = searchResults.matches.filter(function(m) {
@@ -752,13 +763,16 @@
       }).map(function(m) {
         return m.object["@id"];
       });
-// console.log("[SW] bookList: " + JSON.stringify(this.bookList));
+
     },
 
+    /**
+     * Clear all selected facets. This will also get all default facets
+     * and retrieve and update the book list.
+     */
     clearSelectedFacets: function() {
-// console.log("[SW] Clearing selected facets and book list.");
       this.selectedFacets = [];
-      this.bookList = [];
+      this.getFacets([{"dim": "facet_location"}], true);
     },
 
     resultsPagerText: Handlebars.compile([
