@@ -63,7 +63,7 @@
        *          "path": ["facet", "values"],
        *          "ui_id": "string ID of the facet UI element"
        *        }
-       * Function (searchService, selected)
+       * Function (selected)
        */
       onFacetSelect: null,
       selectedFacets: []
@@ -296,7 +296,11 @@
           var objA = _this.getObjectType(a.value);
           var objB = _this.getObjectType(b.value);
 
-          if (objA.type === objB.type) {
+          if (objA.name === "top") {
+            return -1;
+          } else if (objB.name === "top") {
+            return 1;
+          } else if (objA.type === objB.type) {
             return a.value.toLowerCase().localeCompare(b.value.toLowerCase());
           } else if (objA.type === "collection") {
             return -1;
@@ -331,7 +335,7 @@
      * @return {object} { type: "object type", name: "object name"}
      */
     getObjectType: function(id) {
-      var parts = id.split("/");
+      var parts = URI(id).segmentCoded();
       var type;
       var name;
 
@@ -423,7 +427,7 @@
       this.context = this.searchState();
 
       // Modify query to account for current facets by adding a restriction
-      // to only books that match the facets
+      // to only books that match the facets TODO move into function getSearchQuery()
       if (Array.isArray(this.bookList) && this.bookList.length > 0) {
         var multi = this.bookList.length > 1;
         query = "(" + query + "&" + (multi ? "(" : "");
@@ -479,7 +483,8 @@
         "currentObject": _this.baseObject,
         "appendTo": _this.element.find(".search-results-list"),
         "eventEmitter": _this.eventEmitter,
-        "context": _this.context
+        "context": _this.context,
+        "config": _this.config
       });
 
       var last = parseInt(searchResults.offset) + this.perPageCount;

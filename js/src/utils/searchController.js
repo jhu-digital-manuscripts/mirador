@@ -386,24 +386,24 @@
         serviceUrl = searchReq.service;
       }
 
-      var queryUrl = serviceUrl + "?";
+      var data = {};
       if (searchReq.query) {
-        queryUrl += "q=" + encodeURIComponent(searchReq.query);
+        data.q = searchReq.query;
       }
-      if (searchReq.offset && typeof searchReq.offset === 'number') {
-        queryUrl += (this._needsAmp("offset", searchReq) ? "&" : "") + "o=" + searchReq.offset;
+      if (searchReq.offset && typeof searchReq.offset === "number") {
+        data.o = searchReq.offset;
       }
-      if (searchReq.maxPerPage && typeof searchReq.maxPerPage === 'number') {
-        queryUrl += (this._needsAmp("maxPerPage", searchReq) ? "&" : "") + "m=" + searchReq.maxPerPage;
+      if (searchReq.maxPerPage && typeof searchReq.maxPerPage === "number") {
+        data.m = searchReq.maxPerPage;
       }
       if (searchReq.sortOrder) {
-        queryUrl += (this._needsAmp("sortOrder", searchReq) ? "&" : "") + "so=" + (searchReq.sortOrder === "index" ? searchReq.sortOrder : "relevance");
+        data.so = searchReq.sortOrder === "index" ? searchReq.sortOrder : "relevance";
       }
-      if (searchReq.facets) {
-        if (Array.isArray(searchReq.facets) && searchReq.facets.length > 0) {
-          queryUrl += (this._needsAmp("facets", searchReq) ? "&" : "") + "f=" + this.encodeFacets(searchReq.facets);
-        }
+      if (Array.isArray(searchReq.facets) && searchReq.facets.length > 0) {
+        data.f = this.encodeFacets(searchReq.facets);
       }
+
+      var queryUrl = URI(serviceUrl).query(data);   // .query() function automatically encodes stuff
 console.log("[SC] " + queryUrl);
       // Can cache search results here
       var cached = _this.cache(queryUrl);
@@ -429,39 +429,6 @@ console.log("[SC] " + queryUrl);
       return request;
     },
 
-    _needsAmp: function(param, searchReq) {
-      /**
-       * True if an object "exists." An array exists if it contains one
-       * or more elements that "exist."
-       */
-      function exists(obj) {
-        if (!obj) return false;
-        else if (typeof obj === "string") return obj.length > 0;
-        else if (typeof obj === "number") return obj !== -1;
-        else if (Array.isArray(obj)) return obj.filter(function(o) { return exists(o); }).length > 0;
-        else return typeof obj !== "undefined";
-      }
-
-      if (!searchReq[param]) {
-        return false;
-      }
-
-      switch (param) {
-        case "offset":
-        case "maxPerPage":
-        case "resumeToken":
-        case "sortOrder":
-          return true;
-        case "facets":
-          return exists([
-            searchReq.query, searchReq.offset, searchReq.maxPerPage,
-            searchReq.resumeToken, searchReq.sortOrder
-          ]);
-        default:
-          return false;
-      }
-    },
-
     encodeFacets: function(facets) {
       if (!Array.isArray(facets)) {
         return "";
@@ -476,7 +443,7 @@ console.log("[SC] " + queryUrl);
         str += facet.dim;
         if (Array.isArray(facet.path)) {
           facet.path.forEach(function(p) {
-            str += ":" + encodeURIComponent(p);
+            str += ":" + p;
           });
         }
       });
