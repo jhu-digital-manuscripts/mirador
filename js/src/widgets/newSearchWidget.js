@@ -254,6 +254,7 @@
         query += (multi ? ")" : "") + ")";
       } else if (Array.isArray(this.selectedFacets) && this.selectedFacets.length > 0) {
         // TODO There are no matching books for the selected facets
+        query = "(" + query + delimiters.and + "manifest_id:'')";
       }
 
       return query;

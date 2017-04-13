@@ -78,7 +78,7 @@
     queryParts.forEach(function(part, index, array) {
       // Compare this operation to next operation
       if (index > 0) {
-        query += ' ' + part.op + ' ';
+        query += part.op;
       }
 
       if (index < array.length - 1) {

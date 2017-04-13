@@ -20,11 +20,11 @@
   padding: 2px 5px;
   color: darkgray;
 }
-.facet-container-scrollable > h2 > i:active {
-  color: black;
-}
 .facet-container-scrollable > h2 > i:hover {
   color: gray;
+}
+.facet-container-scrollable > h2 > i:active {
+  color: black;
 }
 .facet-container-scrollable h2 {
   margin-left: 10px;

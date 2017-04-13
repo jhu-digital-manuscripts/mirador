@@ -129,6 +129,8 @@
       });
 
       this.eventEmitter.subscribe("GET_FACETS", function(event, searchReq) {
+        searchReq.maxPerPage = 500;   // TODO look into weird behavior: either not setting this or setting too high will not retrieve all search results
+        searchReq.offset = 0;
         _this.doSearch(searchReq).done(function(data) {
           _this.eventEmitter.publish("FACETS_COMPLETE", {
             "origin": searchReq.origin,
