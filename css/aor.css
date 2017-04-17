@@ -1,4 +1,43 @@
 /* Modifying base Mirador junk */
+
+/* Change Manifest List properties */
+.items-listing {
+  overflow-x: hidden;
+}
+.items-listing li {
+  display: inline-grid;
+  grid-template-rows: [row] 80px;
+  grid-template-columns: [thumb] 100px [metadata] 40% [sequence] auto [end] 10px;
+  grid-column-gap: 10px;
+  width: 100%;
+}
+.repo-image {
+  grid-column: thumb;
+}
+.select-metadata {
+  grid-column: metadata;
+  width: 100%;
+  max-width: initial;
+}
+.preview-thumb {
+  grid-column: sequence;
+  justify-self: end;
+  position: initial;
+  overflow: hidden;
+}
+.manifest-title h2, .manifeset-title h3 {
+  font-weight: normal;
+  white-space: nowrap;
+  overflow-x: hidden;
+}
+.item-info {
+  display: block;
+}
+.canvas-count {
+  text-align: inherit;
+}
+/* ------------------------------------------------------------------------- */
+
 .view-container {
   margin-left: 0;
 }

@@ -224,6 +224,10 @@
       'showTools' : false,
       'position' : 'right',
       'showOverlay' : false
+    },
+
+    'manifestList': {
+      'maxSequenceThumbs': 20
     }
 
   };

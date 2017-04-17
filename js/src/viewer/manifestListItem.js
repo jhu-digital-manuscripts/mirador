@@ -115,10 +115,17 @@
         });
       }
 
+      var maxThumbs;
+      if (this.state.currentConfig.manifestList) {
+        maxThumbs = this.state.currentConfig.manifestList.maxSequenceThumbs;
+      }
       jQuery.each(_this.allImages, function(index, value) {
         var width = value.width;
 
         _this.imagesTotalWidth += (width + _this.margin);
+        if (maxThumbs && index >= maxThumbs) {
+          return false;
+        }
         if (_this.imagesTotalWidth >= _this.maxPreviewImagesWidth) {
           // outsized image will inherited
           if (value.width > _this.maxPreviewImagesWidth) {
@@ -257,7 +264,7 @@
       '</div>',
       '<div class="select-metadata">',
         '<div class="manifest-title">',
-          '<h3 title="{{{label}}}">{{{label}}}</h3>',
+          '<h2 title="{{{label}}}">{{{label}}}</h2>',
         '</div>',
         '<div class="item-info">',
           '<div class="item-info-row">',
