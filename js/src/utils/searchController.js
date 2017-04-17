@@ -89,17 +89,12 @@
        *          }
        */
       this.eventEmitter.subscribe("GET_RELATED_SEARCH_SERVICES", function(event, data) {
-        _this.relatedServices(data.baseObject).done(function(services) {
-          if (Array.isArray(services)) {
-            services.forEach(function(service) { _this._addSearchService(service); });
-          } else {
-            _this._addSearchService(services);
-          }
-          _this.eventEmitter.publish("RELATED_SEARCH_SERVICES_FOUND", {
-            "origin": data.origin,
-            "services": services
-          });
+        _this.eventEmitter.publish("RELATED_SEARCH_SERVICES_FOUND", {
+          "origin": data.origin,
+          "services": _this.searchServicesInObject(data.baseObject)
         });
+        // TODO Perhaps compare services blocks to 'within' refs, make sure all
+        // parents are accounted for in returned services?
       });
 
       /**
@@ -207,10 +202,11 @@
         return service.id === id || service["@id"] === id;
       });
 
-      if (s.length === 0) {
-        console.log("[SearchController] No search service found for ID: " + id);
-        service.resolve(undefined);
-      } else if (s[0].config) {
+      // if (s.length === 0) {
+      //   console.log("[SearchController] No search service found for ID: " + id);
+      //   service.resolve(undefined);
+      // } else
+      if (s.length > 0 && s[0].config) {
         service.resolve(s[0]);
       } else {
         // Only ONE should appear here, as it matches IDs, however, if
@@ -249,13 +245,14 @@
         serviceProperty
         .filter(function(service) { return _this.isSearchServiceBlock(service); })
         .forEach(function(service) {
-          service.label = serviceLabel;
+          if (!service.label) service.label = serviceLabel;
           s.push(service);
+          _this._addSearchService(service);
         });
-      }
-      else if (this.isSearchServiceBlock(serviceProperty)) {
-        serviceProperty.label = serviceLabel;
+      } else if (this.isSearchServiceBlock(serviceProperty)) {
+        if (!serviceProperty.label) serviceProperty.label = serviceLabel;
         s.push(serviceProperty);
+        _this._addSearchService(serviceProperty);
       }
       return s;
     },
@@ -268,6 +265,26 @@
      * number of levels have been traversed.
      * Terminating calls should return an array with zero or more service blocks
      * or URLs.
+     *
+     *
+     * Investigate use of nested 'within' properties:
+     *  "@id" : "their-canvas",
+        "@type: "sc:Canvas",
+        ...
+        "within" : [
+            { "@id": "my-manifest", "@type": "sc:Manifest" },
+            { "@id": "your-manifest", "@type": "sc:Manifest" },
+            {
+               "@id": "their-manifest",
+               "@type": "sc:Manifest",
+               "within": [
+                    { "@id": "their-collection-1", "@type": "sc:Collection" },
+                    { "@id": "their-collection-2", "@type": "sc:Collection" }
+               ]
+            }
+        ]
+     * This would require modification of our IIIF Presentation endpoint,
+     * but would greatly simplify the retrieval of related services.
      *
      * TODO add caching for collections
      * real TODO: must separate model logic! use Manifesto library!
