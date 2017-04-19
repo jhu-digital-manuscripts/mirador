@@ -23,6 +23,12 @@
  *                        a "SEARCH" event
  *    - FACETS_COMPLETE
  *
+ * Each response has a suffix identifying the event origin. This is done so
+ * that individual widgets can register and destory event handlers for these
+ * responses at will.
+ *    <EVENT_NAME>.<some-id-string>
+ * For example:
+ *    SEARCH_SERVICE_FOUND.window-1-ID
  * ===========================================================================
  *
  * List of known search services:
@@ -64,13 +70,14 @@
        *            "service": {
        *              "id": "service-id-same-as-requested",
        *              "label": "",        // Take from its parent object
-       *              "service": { ... }  // info.json stuff. An instance of $.jhiiifSearchService
+       *              "service": { ... }  // Original JSON service definition
+       *              "config": { ... }   // info.json stuff. An instance of $.jhiiifSearchService
        *            }
        *          }
        */
       this.eventEmitter.subscribe("GET_SEARCH_SERVICE", function(event, data) {
         _this.getSearchService(data.serviceId).done(function(service) {
-          _this.eventEmitter.publish("SEARCH_SERVICE_FOUND", {
+          _this.eventEmitter.publish("SEARCH_SERVICE_FOUND." + data.origin, {
             "origin": data.origin,
             "service": service
           });
@@ -89,7 +96,7 @@
        *          }
        */
       this.eventEmitter.subscribe("GET_RELATED_SEARCH_SERVICES", function(event, data) {
-        _this.eventEmitter.publish("RELATED_SEARCH_SERVICES_FOUND", {
+        _this.eventEmitter.publish("RELATED_SEARCH_SERVICES_FOUND." + data.origin, {
           "origin": data.origin,
           "services": _this.searchServicesInObject(data.baseObject)
         });
@@ -116,7 +123,7 @@
       this.eventEmitter.subscribe("SEARCH", function(event, searchReq) {
         // Do async search, when complete, publish SEARCH_COMPLETE event
         _this.doSearch(searchReq).done(function(data) {
-          _this.eventEmitter.publish("SEARCH_COMPLETE", {
+          _this.eventEmitter.publish("SEARCH_COMPLETE." + searchReq.origin, {
             "origin": searchReq.origin,
             "results" : data
           });
@@ -127,7 +134,7 @@
         searchReq.maxPerPage = 500;   // TODO look into weird behavior: either not setting this or setting too high will not retrieve all search results
         searchReq.offset = 0;
         _this.doSearch(searchReq).done(function(data) {
-          _this.eventEmitter.publish("FACETS_COMPLETE", {
+          _this.eventEmitter.publish("FACETS_COMPLETE." + searchReq.origin, {
             "origin": searchReq.origin,
             "results": data,
             "setui": searchReq.setui
@@ -195,23 +202,28 @@
         console.log("[SearchController] Failed to get search service, no ID provided.");
         return;
       }
-
+      var _this = this;
       var service = jQuery.Deferred();
 
       var s = this.searchServices.filter(function(service) {
         return service.id === id || service["@id"] === id;
       });
 
-      // if (s.length === 0) {
-      //   console.log("[SearchController] No search service found for ID: " + id);
-      //   service.resolve(undefined);
-      // } else
-      if (s.length > 0 && s[0].config) {
+      if (s.length === 0) {
+        // console.log("[SearchController] No search service found for ID: " + id);
+        // service.resolve(undefined);
+        var newService = { "id": id };
+        var config = new $JhiiifSearchService(newService);
+        config.initializer.always(function() {
+          newService.config = config;
+          _this._addSearchService(id, config);
+          service.resolve(newService);
+        });
+      } else if (s.length > 0 && s[0].config) {
         service.resolve(s[0]);
       } else {
         // Only ONE should appear here, as it matches IDs, however, if
         // for some reason, more than one are matched, just pick the first
-        var _this = this;
         var jhservice = new $.JhiiifSearchService({ "id": s[0].id });
         jhservice.initializer.always(function() {
           s[0].config = jhservice;
@@ -356,23 +368,33 @@
 
     /**
      * Add a search service to the list of known services. An ID string or a
-     * search service JSON block can be added.
+     * search service JSON block can be added. If a search service with the
+     * same ID is found, its service definition and configuration information
+     * will be updated.
      */
-    _addSearchService: function(service) {
+    _addSearchService: function(service, config) {
       if (service === null) {
         return;
       }
 
+      var match;
       if (typeof service === "string") {
-        this.searchServices.push({"id": service});
-      } else if (typeof service === "object") {
-        var toAdd = {"service": service};
-        var match = this.searchServices.filter(function(s) { return s.id === service["@id"]; });
+        match = this.searchServices.filter(function(s) { return s.id === service; });
 
         if (match.length === 0) {
-          this.searchServices.push({ "id": service["@id"], "service": service });
+          this.searchServices.push({"id": service, "config": config});
+        } else if (config) {
+          match[0].config = config;
+        }
+      } else if (typeof service === "object") {
+        var toAdd = {"service": service};
+        match = this.searchServices.filter(function(s) { return s.id === service["@id"]; });
+
+        if (match.length === 0) {
+          this.searchServices.push({ "id": service["@id"], "service": service, "config": config });
         } else {
-          match[0] = service;
+          match[0].service = service;
+          match[0].config = config;
         }
       }
     },

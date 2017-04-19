@@ -66,7 +66,8 @@
        * Function (selected)
        */
       onFacetSelect: null,
-      selectedFacets: []
+      selectedFacets: [],
+      showHideAnimation: "fast"
     }, options);
     if (!this.context) {
       this.context = { search: {"offset": 0, "maxPerPage": 30}, ui: {}};
@@ -82,10 +83,6 @@
   $.NewSearchWidget.prototype = {
     init: function() {
       var _this = this;
-
-      if (!this.showHideAnimation) {
-        this.showHideAnimation = "fast";
-      }
 
       // Template takes no data. Data added asyncronously later.
       this.element = jQuery(this.template({
@@ -114,35 +111,23 @@
     bindEvents: function() {
       var _this = this;
 
-      // For now, eagerly fetch info.json for search services as they are discovered
-      this.eventEmitter.subscribe("RELATED_SEARCH_SERVICES_FOUND", function(event, data) {
-        if (data.origin === _this.windowId) {
-          data.services.forEach(function(service) {
-            _this.eventEmitter.publish("GET_SEARCH_SERVICE", {
-              "origin": _this.windowId,
-              "serviceId": service.id || service["@id"]
-            });
-          });
-        }
+      // For now, eagerly fetch info.json for search services as they are discovered :::: This is the cause of the bad performance of the search widget!
+      this.eventEmitter.subscribe("RELATED_SEARCH_SERVICES_FOUND." + this.windowId, function(event, data) {
+        /*
+         * Add search service ID to list.
+         * Fetch info.json only when that service is selected for the first time.
+         */
+        data.services.forEach(function(service) {
+          _this.addSearchService(service);
+        });
       });
 
-      this.eventEmitter.subscribe("SEARCH_COMPLETE", function(event, data) {
-        if (data.origin === _this.windowId) {
-          _this.handleSearchResults(data.results);
-        }
+      this.eventEmitter.subscribe("SEARCH_COMPLETE." + this.windowId, function(event, data) {
+        _this.handleSearchResults(data.results);
       });
 
-      // As info.json data is recieved for search services, add them to the UI
-      this.eventEmitter.subscribe("SEARCH_SERVICE_FOUND", function(event, data) {
-        if (data.origin === _this.windowId) {
-          _this.addSearchService(data.service);
-        }
-      });
-
-      this.eventEmitter.subscribe("FACETS_COMPLETE", function(event, data) {
-        if (data.origin === _this.windowId) {
-          _this.handleFacets(data.results, data.setui);
-        }
+      this.eventEmitter.subscribe("FACETS_COMPLETE." + this.windowId, function(event, data) {
+        _this.handleFacets(data.results, data.setui);
       });
 
       this.eventEmitter.subscribe("windowPinned", function(event, data) {
@@ -190,8 +175,10 @@
 
       this.element.find(".search-within-object-select").on("change", function() {
         var selected = jQuery(this).val();
-        _this.switchSearchServices(_this.getSearchService(selected));
-        _this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + _this.windowId);
+        _this.getSearchService(selected).done(function(s) {
+          _this.switchSearchServices(s);
+          _this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + _this.windowId);
+        });
       });
 
       this.element.find(".search-results-close").on("click", function() {
@@ -280,7 +267,7 @@
     addSearchService: function(service) {
       var _this = this;
       var id = service.id || service["@id"];
-      var label = service.service.label || id;
+      var label = service.label || (service.service ? service.service.label : id);
 
       // Search service will likely NOT have an 'id' property, but instead
       //  have a '@id' property. Change this to 'id' for things to work.
@@ -343,13 +330,17 @@
         });
       }
       if (!this.advancedSearchSet) {
-        this.switchSearchServices(service);
-        this.advancedSearchSet = true;
-        this.listenForActions();
+        this.getSearchService(id).done(function(s) {
+          _this.switchSearchServices(s);
+          _this.listenForActions();
+        });
+        _this.advancedSearchSet = true;
       } else if (this.context.searchService === id) {
         // When adding a search service, if the ID of the service matches
         // the ID of the initialization value, switch to it.
-        this.switchSearchServices(service);
+        this.getSearchService(id).done(function(s) {
+          _this.switchSearchServices(s);
+        });
       }
     },
 
@@ -379,26 +370,32 @@
     },
 
     /**
-     *
+     * TODO should not maintain list of search services here, as it duplicates items
+     *      already present in the SearchController
      *
      * @param service {string} search service ID
-     * @return the service block with info.json data
+     * @return Deferred that resolves to the service block with info.json data
      */
     getSearchService: function(service) {
-      var res = this.searchServices.filter(function(s) {
-        return s.id === service;
+      var _this = this;
+      var result = jQuery.Deferred();
+console.log("[SW] Getting search service: " + service);
+      this.eventEmitter.subscribe("SEARCH_SERVICE_FOUND." + this.windowId, function(event, data) {
+        _this.eventEmitter.unsubscribe("SEARCH_SERVICE_FOUND." + this.windowId);
+        result.resolve(data.service);
       });
 
-      if (res.length > 1) {
-        console.log("[SearchWidget] duplicate search services found. " + service);
-      }
-
-      return res.length === 0 ? null : res[0];
+      this.eventEmitter.publish("GET_SEARCH_SERVICE", {
+        "origin": this.windowId,
+        "serviceId": service
+      });
+      return result;
     },
 
     /**
      * Change the UI in response to the user selecting a different search
-     * service.
+     * service. Expect that the search service has already been
+     * initialized with its info.json configuration information.
      *
      * @param newService {string} ID of the new search service
      */
