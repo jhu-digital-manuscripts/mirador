@@ -69,6 +69,7 @@
   $.FacetPanel.prototype = {
     init: function() {
       this.element = jQuery(this.container);
+
       this.appendTo.append(this.element);
 
       this.setFacets(this.facets);
@@ -89,9 +90,16 @@
 
     listenForActions: function() {
       var _this = this;
-      var tree = jQuery(this.selector);
+      var tree = this.element.find(this.selector);
 
       /**
+       * This event is broadcast to ALL jsTree instances, so if a facet
+       * panel is created in a Mirador slot AND the manifest browser,
+       * both instances will recieve this event when a user interacts
+       * with either instance.
+       *
+       * The specific instance is known in the event data.
+       *
        * data: {
        *   node: {},      // The node object of selected node
        *   selected: []   // Array of strings (node IDs)
@@ -106,7 +114,7 @@
         }
 
         if (_this.onSelect) {
-          _this.onSelect([_this.nodeToFacet(data.node)]);
+          _this.onSelect([_this.nodeToFacet(data.node, data.instance)]);
         }
       });
 
@@ -125,12 +133,25 @@
       });
     },
 
-    nodeToFacet: function(node) {
+    nodeToFacet: function(node, instance) {
+      var _this = this;
+
       var path = node.parents.slice(2);
       path.push(node.original.facet_id);
 
+      var dim;
+      if (!instance) {
+        jQuery(this.selector).each(function(index, el) {
+          if (this.id === _this.id) {
+            dim = jQuery(this).jstree("get_node", node.parents[0]).original.facet_id;
+          }
+        });
+      } else {
+        dim = instance.get_node(node.parents[0]).original.facet_id;
+      }
+
       return {
-        "dim": jQuery(this.selector).jstree("get_node", node.parents[0]).original.facet_id,
+        "dim": dim,
         "path": path,
         "ui_id": node.id
       };
@@ -160,6 +181,7 @@
         facets.forEach(function(facet) { _this.addFacet(facet); });
         this.trimFacets();
         this.element.find(".facet-container").jstree(this.model);
+        this.element.find(".facet-container").prop("id", _this.id);
         this.element.show();
       }
     },

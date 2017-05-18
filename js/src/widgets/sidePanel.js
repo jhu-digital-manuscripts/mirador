@@ -144,6 +144,9 @@
           pinned: this.pinned,
           slotAddress: this.slotAddress,
           context: this.searchContext,
+          config: {
+            allowFacets: false
+          }
         });
       }
     },
