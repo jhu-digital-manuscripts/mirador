@@ -28,7 +28,8 @@
       onSelect: null,
       model: {
         "core": {
-          "data": []
+          "data": [],
+          "dblclick_toggle": false
         },
         "checkbox" : {
           "visible": false,
@@ -108,7 +109,8 @@
       // tree.on("select_node.jstree", function(event, data) {
       tree.on("activate_node.jstree", function(event, data) {
         if (!_this.isLeafNode(data.node)) {
-          return;   // Only react to leaf nodes
+          data.instance.toggle_node(data.node);
+          return;   // Toggle category on single click
         } else if (!_this.onSelect || typeof _this.onSelect !== "function") {
           return;   // Do nothing if 'onSelect' does not exist or is not a function
         }
@@ -121,7 +123,7 @@
       this.element.find("i.clear").on("click", function(event) {
         var facets = [];
         tree.jstree("get_selected", true).forEach(function(node) {
-          if (node) {
+          if (node && _this.isLeafNode(node)) {
             facets.push(_this.nodeToFacet(node));
           }
         });
