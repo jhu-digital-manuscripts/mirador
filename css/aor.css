@@ -1,5 +1,20 @@
 /* Modifying base Mirador junk */
 
+.mirador-icon-close {
+  float: left;
+  background: none;
+  color: rgb( 146, 145, 145 );
+  box-sizing: border-box;
+  margin-left: 5px;
+  padding-bottom: 30px;
+}
+.mirador-icon-close:hover {
+  color: black;
+}
+.mirador-icon-close:active {
+  color: black;
+}
+
 /* Change Manifest List properties */
 .items-listing {
   overflow-x: hidden;

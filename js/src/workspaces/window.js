@@ -1013,7 +1013,7 @@
       });
 
       this.element.find('.mirador-icon-close').on('click', function() {
-        $.viewer.workspace.removeNode(_this.parent);
+          _this.eventEmitter.publish('REMOVE_SLOT_FROM_WINDOW', _this.id);
       });
     },
 
@@ -1076,6 +1076,9 @@
                                  '{{#if layoutOptions.close}}',
                                  '<a href="javascript:;" class="mirador-btn mirador-close-window remove-object-option mirador-tooltip" title="{{t "closeTooltip"}}" aria-label="{{t "closeTooltip"}}"><i class="fa fa-times fa-lg fa-fw"></i></a>',
                                  '{{/if}}',
+                                 '<a href="javascript:;" class="mirador-btn mirador-icon-close" title="Close window">',
+                                 '<i class="fa fa-fw fa-2x fa-times"></i>',
+                                 '</a>',
                                  '{{#if displayLayout}}',
                                  '<a href="javascript:;" class="mirador-btn mirador-icon-window-menu" title="{{t "changeLayoutTooltip"}}" aria-label="{{t "changeLayoutTooltip"}}"><i class="fa fa-th-large fa-lg fa-fw"></i><i class="fa fa-caret-down"></i>',
                                  '<ul class="dropdown slot-controls">',
