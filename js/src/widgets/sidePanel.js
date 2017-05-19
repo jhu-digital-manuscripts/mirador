@@ -145,7 +145,8 @@
           slotAddress: this.slotAddress,
           context: this.searchContext,
           config: {
-            allowFacets: false
+            allowFacets: false,
+            searchBooks: true
           }
         });
       }

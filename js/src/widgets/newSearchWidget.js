@@ -49,7 +49,8 @@
         advancedSearchActive: false,
         animated: false,
         hasContextMenu: true,
-        allowFacets: true
+        allowFacets: true,
+        searchBooks: false     // Will individual books be searchable? Or search only through collections
       },
       allowFacets: true,
       facetPanel: null,
@@ -265,6 +266,10 @@
     },
 
     addSearchService: function(service) {
+      if (!this.config.searchBooks && service["@id"].indexOf("manifest") >= 0) {
+        return; // End early if encountering a book when they should not be included.
+      }
+
       var _this = this;
       var id = service.id || service["@id"];
       var label = service.label || (service.service ? service.service.label : id);

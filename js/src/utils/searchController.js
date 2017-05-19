@@ -100,8 +100,6 @@
           "origin": data.origin,
           "services": _this.searchServicesInObject(data.baseObject)
         });
-        // TODO Perhaps compare services blocks to 'within' refs, make sure all
-        // parents are accounted for in returned services?
       });
 
       /**
@@ -242,7 +240,10 @@
     },
 
     /**
-     * Get the search service from a IIIF object.
+     * Get the search service from a IIIF object. It is possible for an
+     * object to contain multiple search services. For example, a
+     * manifest might have a search service for itself and also a search
+     * service for its parent collection.
      *
      * @param object
      * @return {Array} array of search services. Can return zero or more services.
@@ -278,6 +279,10 @@
      * Terminating calls should return an array with zero or more service blocks
      * or URLs.
      *
+     * ####
+     * Currently not needed because all parent search services are now included
+     * in the 'services' property of a manifest.
+     * ####
      *
      * Investigate use of nested 'within' properties:
      *  "@id" : "their-canvas",
