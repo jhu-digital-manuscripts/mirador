@@ -106,10 +106,10 @@
         } else if (canvas.thumbnail.hasOwnProperty('service')) {
             service = canvas.thumbnail.service;
             if(service.hasOwnProperty('profile')) {
-               compliance = $.Iiif.getComplianceLevelFromProfile(service.profile);    
+               compliance = $.Iiif.getComplianceLevelFromProfile(service.profile);
             }
             if(compliance === 0){
-                // don't change existing behaviour unless compliance is explicitly 0            
+                // don't change existing behaviour unless compliance is explicitly 0
                 thumbnailUrl = canvas.thumbnail['@id'];
             } else {
                 // Get the IIIF Image API via the @context
@@ -307,6 +307,26 @@
     },
     within: function() {
       return this.jsonLd.within;
+    },
+    isWithin: function(someId, within) {
+      var _this = this;
+      if (!within) { within = this.within; }
+      if (!within || !someId) { return false; }  // Quit early if 'within' still not defined, there is nothing to check.
+
+      var result = false;
+      if (Array.isArray(within)) {
+        within.forEach(function(w) {
+          result = result || _this.isWithin(someId, w);
+        });
+      } else if (typeof within === "object") {
+        result = someId === within["@id"];
+      } else if (typeof within === "string") {
+        result = someId === within;
+      } else {
+        result = false;
+      }
+
+      return result;
     }
 
   };

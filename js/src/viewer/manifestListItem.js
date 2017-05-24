@@ -70,6 +70,10 @@
 
       this.bindEvents();
       this.listenForActions();
+
+      if (!this.visible) {
+        this.element.hide();
+      }
     },
 
     fetchTplData: function() {

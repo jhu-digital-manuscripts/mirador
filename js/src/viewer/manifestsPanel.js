@@ -13,6 +13,7 @@
             state:                      null,
             eventEmitter:               null,
             searcher:                   null,
+            selectedObjects:            []    // Array of IDs that have been selected to display. Can be manifests or collections
         }, options);
 
         var _this = this;
@@ -38,6 +39,10 @@
             this.manifestListElement.css("padding-bottom", this.paddingListElement);
             clone.remove();
 
+            if (this.state.getStateProperty("initialCollection")) {
+              this.selectedObjects.push(this.state.getStateProperty("initialCollection"));
+            }
+
             this.searcher = new $.NewSearchWidget({
               "appendTo": this.element.find(".browser-search"),
               "windowId": $.genUUID(),
@@ -48,18 +53,7 @@
                 "hasContextMenu": false
               },
               "onFacetSelect": function(selected) {
-                // selected is an array of strings, manifest IDs
-                if (!selected) {
-                  _this.manifestListItems.forEach(function(item) { item.element.show(); });
-                } else {
-                  _this.manifestListItems.forEach(function(item) {
-                    if (selected.indexOf(item.manifest.getId()) !== -1) {
-                      item.element.show();    // This manifest is 'selected'
-                    } else {
-                      item.element.hide();
-                    }
-                  });
-                }
+                _this.filterManifestList(selected);
               }
             });
 
@@ -119,6 +113,39 @@
             }, 50, true));
         },
 
+        /**
+         * Filter the manifest list UI to display only the selected
+         * items.
+         *
+         * An object is "selected" >> visible if its ID is in the
+         * 'selected' list OR if one of the 'selected' IDs is in
+         * the object's 'within' property.
+         *
+         * @param selected array of strings, IDs for selected items
+         */
+        filterManifestList: function(selected) {
+          var _this = this;
+          this.selectedObjects = selected || [];
+
+          // selected is an array of strings, manifest IDs
+          if (!selected) {
+            this.manifestListItems.forEach(function(item) { item.element.show(); });
+          } else {
+            this.manifestListItems.forEach(function(item) {
+              if (_this.manifestVisible(item.manifest)) {
+                item.element.show();    // This manifest is 'selected'
+              } else {
+                item.element.hide();
+              }
+            });
+          }
+        },
+
+        manifestVisible: function(manifest) {
+          return this.selectedObjects.indexOf(manifest.getId()) !== -1 ||
+            this.selectedObjects.filter(function(s) { return manifest.isWithin(s); }).length > 0;
+        },
+
         hide: function() {
             var _this = this;
             jQuery(this.element).hide({effect: "fade", duration: 160, easing: "easeOutCubic"});
@@ -171,7 +198,9 @@
             resultsWidth: _this.resultsWidth,
             state: _this.state,
             eventEmitter: _this.eventEmitter,
-            appendTo: _this.manifestListElement }));
+            appendTo: _this.manifestListElement,
+            visible: _this.manifestVisible(newManifest)
+          }));
           _this.element.find('#manifest-search').keyup();
 
           if (this.searcher) {

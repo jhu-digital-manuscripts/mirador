@@ -76,6 +76,11 @@
           }
         };
 
+        let loadedCol = getParameterByName("col");
+        if (loadedCol && loadedCol.length > 0) {
+          init.initialCollection = loadedCol;
+        }
+
         let openBook = getParameterByName("book");
         if (openBook && openBook.length > 0) {
           init.windowObjects = {

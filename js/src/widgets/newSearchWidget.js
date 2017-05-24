@@ -334,15 +334,22 @@
           jQuery.extend(true, s, service);  // This will not overwrite any currently present properties.
         });
       }
+      // Initialize advanced search with first encountered search service.
+      // For subsequent services, if the service is supposed to be selected
+      // according to a previous context, switch to it.
       if (!this.advancedSearchSet) {
         this.getSearchService(id).done(function(s) {
           _this.switchSearchServices(s);
           _this.listenForActions();
         });
         _this.advancedSearchSet = true;
+      } else if (this.state.getStateProperty("initialCollection") && id.indexOf(this.state.getStateProperty("initialCollection")) >= 0) {
+        // If there is an initialCollection to view, switch to it
+        this.getSearchService(id).done(function(s) {
+          _this.switchSearchServices(s);
+        });
       } else if (this.context.searchService === id) {
-        // When adding a search service, if the ID of the service matches
-        // the ID of the initialization value, switch to it.
+        // When adding a search service, if the ID of the service matches the ID of the initialization value, switch to it.
         this.getSearchService(id).done(function(s) {
           _this.switchSearchServices(s);
         });
@@ -384,7 +391,7 @@
     getSearchService: function(service) {
       var _this = this;
       var result = jQuery.Deferred();
-console.log("[SW] Getting search service: " + service);
+
       this.eventEmitter.subscribe("SEARCH_SERVICE_FOUND." + this.windowId, function(event, data) {
         _this.eventEmitter.unsubscribe("SEARCH_SERVICE_FOUND." + this.windowId);
         result.resolve(data.service);
@@ -407,6 +414,9 @@ console.log("[SW] Getting search service: " + service);
     switchSearchServices: function(newService) {
       var _this = this;
       this.searchService = newService;
+
+      // Ensure the correct value appears in the 'search-within' dropdown.
+      this.element.find(".search-within-object-select").val(newService.id);
 
       // Switch advanced search UI as needed
       if (this.advancedSearch) {
