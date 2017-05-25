@@ -337,22 +337,26 @@
       // Initialize advanced search with first encountered search service.
       // For subsequent services, if the service is supposed to be selected
       // according to a previous context, switch to it.
-      if (!this.advancedSearchSet) {
-        this.getSearchService(id).done(function(s) {
-          _this.switchSearchServices(s);
-          _this.listenForActions();
-        });
-        _this.advancedSearchSet = true;
-      } else if (this.state.getStateProperty("initialCollection") && id.indexOf(this.state.getStateProperty("initialCollection")) >= 0) {
+      if (this.state.getStateProperty("initialCollection") && id.indexOf(this.state.getStateProperty("initialCollection")) >= 0) {
         // If there is an initialCollection to view, switch to it
         this.getSearchService(id).done(function(s) {
           _this.switchSearchServices(s);
+          if (!_this.advancedSearchSet) { _this.listenForActions(); }
+          _this.advancedSearchSet = true;
         });
       } else if (this.context.searchService === id) {
         // When adding a search service, if the ID of the service matches the ID of the initialization value, switch to it.
         this.getSearchService(id).done(function(s) {
           _this.switchSearchServices(s);
+          if (!_this.advancedSearchSet) { _this.listenForActions(); }
+          _this.advancedSearchSet = true;
         });
+      } else if (!this.advancedSearchSet) {
+        this.getSearchService(id).done(function(s) {
+          _this.switchSearchServices(s);
+          _this.listenForActions();
+        });
+        _this.advancedSearchSet = true;
       }
     },
 
@@ -392,9 +396,28 @@
       var _this = this;
       var result = jQuery.Deferred();
 
+/*
+ * TODO This will result in a race condition!
+ * Assume the widget is configured to have Service 1 selected on init.
+ * Service 2 happens to appear first in the data list.
+ *
+ * Currently, Service 2 will be encountered first. Since the widget has not
+ * yet been initialized, Service 2 will be requested.
+ * While waiting for Service 2, Service 1 is encountered by the search
+ * widget initialization code. It notices that we want Service 1 to appear.
+ * Service 1 will now be requested.
+ * Now we have 2 in-flight requests for search service configs.
+ *
+ * How should this behavior work with 2 simultaneous requests?
+ * - Cancel (or ignore) initial request in favor of newest request.
+ * - Wait for initial request, then submit next request.
+ * - Don't do anything special, let the two resolve themselves.
+ */
       this.eventEmitter.subscribe("SEARCH_SERVICE_FOUND." + this.windowId, function(event, data) {
         _this.eventEmitter.unsubscribe("SEARCH_SERVICE_FOUND." + this.windowId);
-        result.resolve(data.service);
+        if (data.service.id === service) {
+          result.resolve(data.service);
+        }
       });
 
       this.eventEmitter.publish("GET_SEARCH_SERVICE", {
