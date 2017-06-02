@@ -274,6 +274,7 @@
 
       this.element.find('.mirador-osd-go-home').on('click', function() {
         _this.goHomeRotation(0);
+        _this.osd.viewport.goHome();
       });
 
       this.element.find('.mirador-osd-up').on('click', function() {
@@ -521,6 +522,14 @@
         resetImageManipulationControls();
       });
       //Image manipulation controls
+
+      this.element.find(".mirador-osd-zoom-slider").slider({
+        "orientation": "vertical",
+        "min": 0,
+        "max": 100,
+        "value": 0,
+        "step": 10
+      });
     },
 
     getPanByValue: function() {

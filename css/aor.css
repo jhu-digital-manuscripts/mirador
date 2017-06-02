@@ -145,13 +145,18 @@
   left: 44px;
   font-size: 33%;
 }
-
 .mirador-osd-rotate-right {
   position: absolute;
   top: 44px;
   left: 85px;
   font-size: 33%;
 }
+.mirador-osd-up {}
+.mirador-osd-down {}
+.mirador-osd-right {}
+.mirador-osd-left {}
+.mirador-osd-go-home {}
+
 
 /*
  * Stylesheet for AoR specific customizations

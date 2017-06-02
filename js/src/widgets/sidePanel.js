@@ -144,6 +144,7 @@
           pinned: this.pinned,
           slotAddress: this.slotAddress,
           context: this.searchContext,
+          state: this.state,
           config: {
             allowFacets: false,
             searchBooks: true
