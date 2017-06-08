@@ -267,7 +267,7 @@
 
     addSearchService: function(service) {
       if (!this.config.searchBooks && service["@id"].indexOf("manifest") >= 0) {
-        return; // End early if encountering a book when they should not be included.
+        return; // End early if encountering a service for a book when they should not be included.
       }
 
       var _this = this;
@@ -396,23 +396,6 @@
       var _this = this;
       var result = jQuery.Deferred();
 
-/*
- * TODO This will result in a race condition!
- * Assume the widget is configured to have Service 1 selected on init.
- * Service 2 happens to appear first in the data list.
- *
- * Currently, Service 2 will be encountered first. Since the widget has not
- * yet been initialized, Service 2 will be requested.
- * While waiting for Service 2, Service 1 is encountered by the search
- * widget initialization code. It notices that we want Service 1 to appear.
- * Service 1 will now be requested.
- * Now we have 2 in-flight requests for search service configs.
- *
- * How should this behavior work with 2 simultaneous requests?
- * - Cancel (or ignore) initial request in favor of newest request.
- * - Wait for initial request, then submit next request.
- * - Don't do anything special, let the two resolve themselves.
- */
       this.eventEmitter.subscribe("SEARCH_SERVICE_FOUND." + this.windowId, function(event, data) {
         _this.eventEmitter.unsubscribe("SEARCH_SERVICE_FOUND." + this.windowId);
         if (data.service.id === service) {
@@ -744,7 +727,7 @@
       });
 
       if (Array.isArray(this.selectedFacets) && this.selectedFacets.length > 0) {
-        this.getFacets(this.selectedFacets);
+        this.getFacets(this.selectedFacets, true);
       } else {
         this.clearSelectedFacets();
       }
@@ -780,10 +763,75 @@
         }
 
         if (this.config.allowFacets && this.facetPanel) {
-          this.facetPanel.setFacets(searchResults.facets);
+          searchResults = this.resultsCategoriesToFacets(searchResults);
+          this.facetPanel.setFacets(searchResults.categories);
           this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
         }
       }
+    },
+
+    /**
+      searchResults: {
+        "@id": "...",
+        ...
+        "matches": [ // Contain list of matching books // ],
+        "categories": [
+          {
+            "name": "facet_id",     // Facet 'dimension'
+            "label": "A Label for this" // Human readable label for the category, to be added
+            "values": [
+              "label": "a label",   // Facet 'path' or 'value'
+              "count": 1            // Facet count
+            ]
+          }
+        ]
+      }
+     */
+    resultsCategoriesToFacets: function(searchResults) {
+      if (!searchResults || !Array.isArray(searchResults.categories)) {
+        return searchResults;
+      }
+      var _this = this;
+      var categoryConfig = this.searchService.config.search.settings.categories;
+
+      searchResults.categories.forEach(function(cat) {
+        jQuery.extend(cat, { "label": _this.getCategoryLabel(cat.name) });
+      });
+console.log("[SW] _"); _ = searchResults;
+      return searchResults;
+    },
+
+    /**
+     * Get the label corresponding to the category ID.
+     *
+     * @param catId {string} category ID
+     */
+    getCategoryLabel: function(catId) {
+      var catConfig = this.searchService.config.search.settings.categories;
+      if (!catId || catConfig.filter(function(c) { return c.name === catId; }).length === 0) {
+        return;   // Do nothing if there is no matching category
+      }
+
+      return catConfig.filter(function(c) {
+        return c.name === catId;
+      })[0].label;
+    },
+
+    /**
+     * Get the category ID for a given label. If more than one match
+     * is found, return the first possibility.
+     *
+     * @param catLabel {string} label for a category
+     */
+    getCategoryId: function(catLabel) {
+      var catConfig = this.searchService.config.search.settings.categories;
+      if (!catLabel || catConfig.filter(function(c) { return c.label === catLabel; }).length === 0) {
+        return;   // Do nothing if there is no matching category
+      }
+
+      return catConfig.filter(function(c) {
+        return c.label === catLabel;
+      })[0].name;
     },
 
     /**
@@ -808,7 +856,11 @@
      */
     clearSelectedFacets: function() {
       this.selectedFacets = [];
-      this.getFacets([{"dim": "facet_location"}], true);
+      // this.getFacets([{"dim": "facet_location"}], true);
+      if (this.searchService) {
+        this.facetPanel.setFacets(this.searchService.config.search.settings.categories);
+        this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
+      }
     },
 
     resultsPagerText: Handlebars.compile([

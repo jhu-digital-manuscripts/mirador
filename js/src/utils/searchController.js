@@ -129,6 +129,7 @@
       });
 
       this.eventEmitter.subscribe("GET_FACETS", function(event, searchReq) {
+        searchReq.query = "object_type:'sc:Manifest'";      // TODO: relies on magic string
         searchReq.maxPerPage = 500;   // TODO look into weird behavior: either not setting this or setting too high will not retrieve all search results
         searchReq.offset = 0;
         _this.doSearch(searchReq).done(function(data) {
@@ -446,7 +447,7 @@
         data.so = searchReq.sortOrder === "index" ? searchReq.sortOrder : "relevance";
       }
       if (Array.isArray(searchReq.facets) && searchReq.facets.length > 0) {
-        data.f = this.encodeFacets(searchReq.facets);
+        data.c = this.encodeFacets(searchReq.facets);
       }
 
       var queryUrl = URI(serviceUrl).query(data);   // .query() function automatically encodes stuff
@@ -489,7 +490,7 @@ console.log("[SC] " + queryUrl);
         str += facet.dim;
         if (Array.isArray(facet.path)) {
           facet.path.forEach(function(p) {
-            str += ":" + p;
+            str += ":'" + p + "'";
           });
         }
       });
