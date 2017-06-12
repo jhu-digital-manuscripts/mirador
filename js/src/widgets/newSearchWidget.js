@@ -218,7 +218,8 @@
     getSearchQuery: function() {
       var query;
 
-      var delimiters = this.searchService.config.query.delimiters;
+      var config = this.searchService.config;
+      var delimiters = config.query.delimiters;
 
       if (this.element.find(".search-disclosure-btn-less").css("display") != "none") {
         // Basic search is active
@@ -234,15 +235,27 @@
       // Modify query to account for current facets by adding a restriction
       // to only books that match the facets
       if (Array.isArray(this.bookList) && this.bookList.length > 0) {
-        var multi = this.bookList.length > 1;
-        query = "(" + query + delimiters.and + (multi ? "(" : "");
+        var parts = [];
         this.bookList.forEach(function(b, index) {
-          query += (index > 0 ? delimiters.or : "") + "manifest_id:'" + b + "'";
+          parts.push({
+            "op": delimiters.or,
+            "category": "manifest_id",
+            "term": b
+          });
         });
-        query += (multi ? ")" : "") + ")";
-      } else if (Array.isArray(this.selectedFacets) && this.selectedFacets.length > 0) {
-        // TODO There are no matching books for the selected facets
-        query = "(" + query + delimiters.and + "manifest_id:'')";
+
+        var bookQuery = $.generateQuery(parts, delimiters.field);
+        query = "(" + query + delimiters.and + bookQuery + ")";
+
+      //   var multi = this.bookList.length > 1;
+      //   query = "(" + query + delimiters.and + (multi ? "(" : "");
+      //   this.bookList.forEach(function(b, index) {
+      //     query += (index > 0 ? delimiters.or : "") + "manifest_id:'" + b + "'";
+      //   });
+      //   query += (multi ? ")" : "") + ")";
+      // } else if (Array.isArray(this.selectedFacets) && this.selectedFacets.length > 0) {
+      //   // TODO There are no matching books for the selected facets
+      //   query = "(" + query + delimiters.and + "manifest_id:'')";
       }
 
       return query;
@@ -734,10 +747,19 @@
     },
 
     getFacets: function(facets, setui) {
+      var delimiters = this.searchService.config.query.delimiters;
+      var facetParts = [];
+      facets.forEach(function(f) {
+        facetParts.push({
+          "op": delimiters.or,
+          "category": f.dim,
+          "term": f.path
+        });
+      });
       this.eventEmitter.publish("GET_FACETS", {
         "origin": this.windowId,
         "service": this.searchService,
-        "facets": facets,
+        "facets": $.generateQuery(facetParts, delimiters.field),
         "setui": setui
       });
     },
@@ -797,7 +819,7 @@
       searchResults.categories.forEach(function(cat) {
         jQuery.extend(cat, { "label": _this.getCategoryLabel(cat.name) });
       });
-console.log("[SW] _"); _ = searchResults;
+
       return searchResults;
     },
 
@@ -847,7 +869,7 @@ console.log("[SW] _"); _ = searchResults;
       }).map(function(m) {
         return m.object["@id"];
       });
-
+console.log("[SW] bookList: " + JSON.stringify(this.bookList));
     },
 
     /**

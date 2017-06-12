@@ -116,7 +116,7 @@
           return;   // Do nothing if 'onSelect' does not exist or is not a function
         }
 
-        if (_this.onSelect) {console.log("[FP] Selecting node");
+        if (_this.onSelect) {console.log("[FP] Selecting node " + JSON.stringify(data.node));
           _this.onSelect([_this.nodeToFacet(data.node, data.instance)]);
         }
       });
@@ -148,7 +148,8 @@
         path = [""];
       } else {
         path = node.parents.slice(2);
-        path.push(node.original.facet_id);
+        // path.push(node.original.facet_id);
+        path.push(node.original.text);
 
         if (!instance) {
           jQuery(this.selector).each(function(index, el) {
@@ -192,21 +193,21 @@
             ...
           ]
      */
-    setCategories: function(categories) {console.log("[FP] Setting categories: " + JSON.stringify(categories));
-      var _this = this;
-      this.model.core.data = [];
-      categories.forEach(function(cat) {
-        _this.model.core.data.push({
-          "facet_id": cat.name,
-          "text": cat.label,
-          "icon": false,
-          // "children": []
-        });
-      });
-      this.element.find(".facet-container").jstree(this.model);
-      this.element.find(".facet-container").prop("id", _this.id);
-      this.element.show();
-    },
+    // setCategories: function(categories) {console.log("[FP] Setting categories: " + JSON.stringify(categories));
+    //   var _this = this;
+    //   this.model.core.data = [];
+    //   categories.forEach(function(cat) {
+    //     _this.model.core.data.push({
+    //       "facet_id": cat.name,
+    //       "text": cat.label,
+    //       "icon": false,
+    //       // "children": []
+    //     });
+    //   });
+    //   this.element.find(".facet-container").jstree(this.model);
+    //   this.element.find(".facet-container").prop("id", _this.id);
+    //   this.element.show();
+    // },
 
 
 
@@ -233,7 +234,7 @@
      *          }
      *        ]
      */
-    setFacets: function(facets) {console.log("[FP] Setting facets: " + facets);
+    setFacets: function(facets) {console.log("[FP] Setting facets: " + JSON.stringify(facets));
       var _this = this;
       this.facets = facets;
 
@@ -259,7 +260,6 @@
             facet.values = undefined;
           }
         });
-        console.log("[FP] Model: " + JSON.stringify(this.model, null, 2));
         // this.model.core.data = [];
         // facets.forEach(function(facet) { _this.addFacet(facet); });
         // this.trimFacets();

@@ -416,7 +416,8 @@
      *      offset: -1,     // (optional) integer, requested results offset, used for paging
      *      maxPerPage: -1  // (optional) integer, maximum results to show per page,
      *      resumeToken: "",// (optional) string, token used by a search service to resume a search. Sometimes used with paging
-     *      sortOrder: "",  // (optional) string, sort order of results (index|_relevance))
+     *      sortOrder: "",  // (optional) string, sort order of results (index|_relevance)),
+     *      facets: ""      // (optional) string, all selected facets, formatted as a query
      *    }
      * @return {object} jQuery Deferred that resolves when the search is completed
      */
@@ -446,8 +447,8 @@
       if (searchReq.sortOrder) {
         data.so = searchReq.sortOrder === "index" ? searchReq.sortOrder : "relevance";
       }
-      if (Array.isArray(searchReq.facets) && searchReq.facets.length > 0) {
-        data.c = this.encodeFacets(searchReq.facets);
+      if (searchReq.facets) {
+        data.c = searchReq.facets;
       }
 
       var queryUrl = URI(serviceUrl).query(data);   // .query() function automatically encodes stuff
