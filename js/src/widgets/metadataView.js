@@ -6,7 +6,10 @@
       manifest:             null,
       element:              null,
       metadataTypes:        null,
-      metadataListingCls:   'metadata-listing'
+      metadataListingCls:   'metadata-listing',
+      eventEmitter:         null,
+      windowId:             null,
+      canvasID:             null,
     }, options);
 
     this.init();
@@ -20,6 +23,7 @@
           tplData = {
             metadataListingCls: this.metadataListingCls
           };
+      this.registerPartials();
 
       _this.manifest = _this.manifest.jsonLd;
       this.metadataTypes = {};
@@ -57,6 +61,7 @@
       }
 
       this.element = jQuery(this.template(tplData)).appendTo(this.appendTo);
+      this.handlePageChange(this.canvasID);
       this.bindEvents();
     },
 
@@ -174,6 +179,11 @@
   },
 
     bindEvents: function() {
+      var _this = this;
+
+      this.eventEmitter.subscribe("SET_CURRENT_CANVAS_ID." + this.windowId, function(event, canvasId) {
+        _this.handlePageChange(canvasId);
+      });
     },
 
     toggle: function(stateValue) {
@@ -224,6 +234,61 @@
       }
 
       return textWithLinks;
+    },
+
+    handlePageChange: function(canvasId) {
+      var _this = this;
+      this.canvasID = canvasId;
+
+      var canvas = this.manifest.sequences[0].canvases.filter(function(c) {
+        return c["@id"] === canvasId;
+      });
+
+      if (canvas.length) {
+        canvas = canvas[0];
+
+        var prependTo = this.element.find(".canvas-metadata");
+        if (prependTo.length) {
+          prependTo.remove();
+        }
+        prependTo = this.appendTo.find(".sub-title").first();
+
+        var tplData = {
+          "categoryName": "canvas-metadata",
+          "title": canvas.label,
+          "metadataListingCls": this.metadataListingCls,
+          "details": []
+        };
+
+        canvas.metadata.forEach(function(item) {
+          tplData.details.push({
+            "label": item.label,
+            "value": _this.stringifyObject(item.value)
+          });
+        });
+
+        if (tplData.details.length > 0) {
+          // Add this metadata section only if there is metadata to add
+          var toAdd = Handlebars.compile("{{> metadataList}}")(tplData);
+          jQuery(toAdd).prependTo(prependTo.parent());
+        }
+      }
+    },
+
+    registerPartials: function() {
+      Handlebars.registerPartial("metadataList", [
+        '<div class="metadata-category {{categoryName}}">',
+          '<div class="sub-title">{{title}}:</div>',
+          '<div class="{{metadataListingCls}}">',
+            '{{#each details}}',
+              '<div class="metadata-item">',
+                '<div class="metadata-label">{{label}}:</div>',
+                '<div class="metadata-value">{{{value}}}</div>',
+              '</div>',
+            '{{/each}}',
+          '</div>',
+        '</div>'
+      ].join(""));
     },
 
     template: Handlebars.compile([
