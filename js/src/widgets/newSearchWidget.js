@@ -265,7 +265,7 @@
       });
     },
 
-    addSearchService: function(service) {
+    addSearchService: function(service) {console.log(service["@id"]);
       if (!this.config.searchBooks && service["@id"].indexOf("manifest") >= 0) {
         return; // End early if encountering a book when they should not be included.
       }

@@ -23,7 +23,7 @@
 
       var showAnno = typeof this.showAnno !== 'undefined' ? this.showAnno : this.canvasControls.annotations.annotationLayer,
       showImageControls = typeof this.showImageControls !== 'undefined' ? this.showImageControls : this.canvasControls.imageManipulation.manipulationLayer;
-      var zoomSlider = this.state.getStateProperty("windowSettings").imageManipulation.controls.zoomSlider;
+      // var zoomSlider = this.state.getStateProperty("windowSettings").imageManipulation.controls.zoomSlider;
 
       this.element = jQuery(this.template({
         showNextPrev : this.showNextPrev,
@@ -31,7 +31,7 @@
         showAnno : showAnno,
         showImageControls : showImageControls,
         showFullScreen : this.fullScreenAvailable,
-        zoomSlider: zoomSlider
+        // zoomSlider: zoomSlider
       })).appendTo(this.appendTo);
 
       if (showAnno || showImageControls) {
@@ -264,17 +264,17 @@
                                  '<a class="mirador-osd-left hud-control" role="button" aria-label="Move image left">',
                                  '<i class="fa fa-chevron-circle-left"></i>',
                                  '</a>',
-                                 '{{#if zoomSlider}}',
-                                 '<div class=""></div>',  // Zoom slider
-                                 '{{else}}',
+                                //  '{{#if zoomSlider}}',
+                                //  '<div class=""></div>',  // Zoom slider
+                                //  '{{else}}',
                                  '<a class="mirador-osd-zoom-in hud-control" role="button" aria-label="Zoom in">',
                                  '<i class="fa fa-plus-circle"></i>',
                                  '</a>',
                                  '<a class="mirador-osd-zoom-out hud-control" role="button" aria-label="Zoom out">',
                                  '<i class="fa fa-minus-circle"></i>',
                                  '</a>',
-                                 '{{/if}}',
-                                 '<div class="mirador-osd-zoom-slider hud-control"></div>',  // Zoom slider
+                                //  '{{/if}}',
+                                //  '<div class="mirador-osd-zoom-slider hud-control"></div>',  // Zoom slider
                                  '<a class="mirador-osd-go-home hud-control" role="button" aria-label="Reset image bounds">',
                                  '<i class="fa fa-refresh"></i>',
                                  '<a class="mirador-osd-rotate-left hud-control ">',
