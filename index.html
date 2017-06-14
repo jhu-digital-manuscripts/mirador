@@ -28,6 +28,18 @@
         myMiradorInstance = Mirador({
           "id": "viewer",
           "layout": "1x1",
+          "mainMenuSettings": {
+            "userLogo": {
+              "label": "Humanities for All: A Collaborative Approach",
+              // "attributes": { "id": "logo-BookWheel", "href": "http://archaeologyofreading.org/" }
+            },
+            "buttons": {
+              "bookmark": false,
+              "layout": false,
+              "options": true,
+              "fullScreenViewer": true
+            }
+          },
           "data": [
             { "manifestUri": "http://localhost:8080/iiif-pres-ham/hamletcollection.Hamlet/manifest", "location": "Johns Hopkins University"},
             { "manifestUri": "http://localhost:8080/iiif-pres-ham/aorcollection.FolgersHa2/manifest", "location": "Johns Hopkins University"}

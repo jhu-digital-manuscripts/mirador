@@ -247,7 +247,7 @@
       if (canvas.length) {
         canvas = canvas[0];
 
-        var prependTo = this.element.find(".canvas-metadata");
+        var prependTo = this.appendTo.find(".canvas-metadata");
         if (prependTo.length) {
           prependTo.remove();
         }
