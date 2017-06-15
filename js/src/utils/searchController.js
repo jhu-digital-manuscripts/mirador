@@ -12,7 +12,8 @@
  *              this returns only URL IDs or IIIF service blocks. Not the full info.json configs.
  *    - SEARCH  : Perform a search according to a search request object
  *                (See docs for SearchController#doSearch)
- *    - GET_FACETS
+ *    - GET_FACETS :  perform a search against the search service to get results that include
+ *                    facets. No facets have to be specified.
  * Emits:
  *    - SEARCH_SERVICE_FOUND  : once a search service is retrieved in
  *                              response to a "GET_SEARCH_SERVICE" event
@@ -111,6 +112,7 @@
        *          maxPerPage: -1  // (optional) integer, maximum results to show per page,
        *          resumeToken: "",// (optional) string, token used by a search service to resume a search. Sometimes used with paging
        *          sortOrder: "",  // (optional) string, sort order of results (index|_relevance))
+       *          facets: ""      // (optional) string, facet query. If blank, this parameter can still be forced into URL by using 'searchRequest.forceFacets'
        *        }
        *
        * @return  {
@@ -128,15 +130,23 @@
         });
       });
 
+      /**
+       * data:  {
+       *          // See above
+       *          "append": (true|false)    // Should the results of this search be appended to current display (true)
+       *                                    // Or should they overwrite the current display (false)
+       *        }
+       */
       this.eventEmitter.subscribe("GET_FACETS", function(event, searchReq) {
         searchReq.query = "object_type:'sc:Manifest'";      // TODO: relies on magic string
         searchReq.maxPerPage = 500;   // TODO look into weird behavior: either not setting this or setting too high will not retrieve all search results
         searchReq.offset = 0;
+        searchReq.forceFacets = true;
         _this.doSearch(searchReq).done(function(data) {
           _this.eventEmitter.publish("FACETS_COMPLETE." + searchReq.origin, {
             "origin": searchReq.origin,
             "results": data,
-            "setui": searchReq.setui
+            "append": searchReq.append
           });
         });
       });
@@ -447,8 +457,8 @@
       if (searchReq.sortOrder) {
         data.so = searchReq.sortOrder === "index" ? searchReq.sortOrder : "relevance";
       }
-      if (searchReq.facets) {
-        data.c = searchReq.facets;
+      if (searchReq.facets || searchReq.forceFacets) {
+        data.c = searchReq.facets || "";
       }
 
       var queryUrl = URI(serviceUrl).query(data);   // .query() function automatically encodes stuff

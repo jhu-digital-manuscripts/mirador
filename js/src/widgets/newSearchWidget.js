@@ -67,7 +67,7 @@
        * Function (selected)
        */
       onFacetSelect: null,
-      selectedFacets: [],
+      selectedFacets: {},
       showHideAnimation: "fast"
     }, options);
     if (!this.context) {
@@ -128,7 +128,7 @@
       });
 
       this.eventEmitter.subscribe("FACETS_COMPLETE." + this.windowId, function(event, data) {
-        _this.handleFacets(data.results, data.setui);
+        _this.handleFacets(data.results, data.append);
       });
 
       this.eventEmitter.subscribe("windowPinned", function(event, data) {
@@ -244,8 +244,8 @@
           });
         });
 
-        var bookQuery = $.generateQuery(parts, delimiters.field);
-        query = "(" + query + delimiters.and + bookQuery + ")";
+        // var bookQuery = $.generateQuery(parts, delimiters.field);
+        // query = "(" + query + delimiters.and + bookQuery + ")";
 
       //   var multi = this.bookList.length > 1;
       //   query = "(" + query + delimiters.and + (multi ? "(" : "");
@@ -463,7 +463,7 @@
         "context": _this.context,
       });
 
-      this.clearSelectedFacets();
+      this.setFacetCategories(newService);
     },
 
     /**
@@ -701,126 +701,43 @@
       }
     },
 
+    /**
+     * Initialize the facet widget to enable facet search.
+     */
     initFacets: function() {
       var _this = this;
 
-      if (_this.config.allowFacets) {
-        this.facetPanel = new $.FacetPanel({
-          eventEmitter: this.eventEmitter,
-          parentId: this.windowId,
-          appendTo: this.appendTo,
-          state: this.state,
-          onSelect: function(selected) {
-            _this.facetSelected(selected);
-          }
-        });
-      }
-    },
-
-    /**
-     * Function to handle the selection and deselection of facets.
-     *
-     * @param selected [array] most recently selected facets
-     */
-    facetSelected: function(selected) {
-      var _this = this;
-
-      selected.forEach(function(sel) {
-        var filtered = _this.selectedFacets.filter(function(s) {
-          return s.ui_id === sel.ui_id;
-        });
-
-        if (filtered.length === 0) {  // If facet not found, add it to the list
-          _this.selectedFacets.push(sel);
-        } else {  // If facet found, remove from list
-          _this.selectedFacets = _this.selectedFacets.filter(function(s) {
-            return s.ui_id !== sel.ui_id;
-          });
-        }
-      });
-
-      if (Array.isArray(this.selectedFacets) && this.selectedFacets.length > 0) {
-        this.getFacets(this.selectedFacets, true);
-      } else {
-        this.clearSelectedFacets();
-      }
-    },
-
-    getFacets: function(facets, setui) {
-      var delimiters = this.searchService.config.query.delimiters;
-      var facetParts = [];
-      facets.forEach(function(f) {
-        facetParts.push({
-          "op": delimiters.or,
-          "category": f.dim,
-          "term": f.path
-        });
-      });
-      this.eventEmitter.publish("GET_FACETS", {
-        "origin": this.windowId,
-        "service": this.searchService,
-        "facets": $.generateQuery(facetParts, delimiters.field),
-        "setui": setui
-      });
-    },
-
-    handleFacets: function(searchResults, setui) {
-      this.updateBookList(searchResults);
-      /*
-       * --- IMPL note ---
-       * SearchResults contains a list of objects that match some set of
-       * facets. Filter the list for only manifests, then reduce the
-       * list to a list of manifest IDs for simplicity.
-       */
-      if (this.onFacetSelect && typeof this.onFacetSelect === "function") {
-        this.onFacetSelect(this.bookList);
-      }
-
-      if (setui) {
-        if (!this.facetPanel) {
-          this.initFacets();
-        } else {
+      if (this.config.allowFacets) {
+        if (this.facetPanel) {
           this.facetPanel.destroy();
-          this.initFacets();
         }
 
-        if (this.config.allowFacets && this.facetPanel) {
-          searchResults = this.resultsCategoriesToFacets(searchResults);
-          this.facetPanel.setFacets(searchResults.categories);
-          this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
-        }
+        this.facetPanel = new $.FacetPanel({
+          "eventEmitter": this.eventEmitter,
+          "parentId": this.windowId,
+          "appendTo": this.appendTo,
+          "state": this.state,
+          "onSelect": function(selected) { _this.facetSelected(selected); }
+        });
       }
     },
 
     /**
-      searchResults: {
-        "@id": "...",
-        ...
-        "matches": [ // Contain list of matching books // ],
-        "categories": [
-          {
-            "name": "facet_id",     // Facet 'dimension'
-            "label": "A Label for this" // Human readable label for the category, to be added
-            "values": [
-              "label": "a label",   // Facet 'path' or 'value'
-              "count": 1            // Facet count
-            ]
-          }
-        ]
-      }
+     * Set the initial categories for the facet panel.
+     *
+     * After switching to a search service, the service's configuration
+     * information is retreived or read. This information contains
+     * a listing of all facet categories for the service. No values
+     * under the categories are included.
      */
-    resultsCategoriesToFacets: function(searchResults) {
-      if (!searchResults || !Array.isArray(searchResults.categories)) {
-        return searchResults;
+    setFacetCategories: function(searchService) {
+      if (!searchService) {
+        searchService = this.searchService;
       }
-      var _this = this;
-      var categoryConfig = this.searchService.config.search.settings.categories;
-
-      searchResults.categories.forEach(function(cat) {
-        jQuery.extend(cat, { "label": _this.getCategoryLabel(cat.name) });
-      });
-
-      return searchResults;
+      if (searchService.config) {
+        this.facetPanel.setFacets(searchService.config.search.settings.categories);
+        this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
+      }
     },
 
     /**
@@ -857,33 +774,168 @@
     },
 
     /**
-     * Update the list of valid books from search results. This is
-     * designed to be used with search results from facet requests.
+     * When a facet is selected in the facet panel, do a facet search
+     * against the current search service. Repopulate the facet UI
+     * with the returned facets. The facet search will also return
+     * a list of matching books that should be displayed in the
+     * manifests panel.
      *
-     * @param searchResults {object} search results object
+     * @param selected {array}
+     *  {
+     *    "category": "...",    // selected category ID
+     *    "value": "...",       // selected value, undefined should be treated as empty string
+     *    "ui_id": "...",       //
+     *    "children": [],       // Any child nodes (only applicable for root nodes)
+     *    "isRoot": true|false  // Category that was selected?
+     *  }
      */
-    updateBookList: function(searchResults) {
-      // Create a list of manifests to pass back to to parent, if applicable
-      this.bookList = searchResults.matches.filter(function(m) {
-        return m.object["@type"] === "sc:Manifest";
-      }).map(function(m) {
-        return m.object["@id"];
-      });
-console.log("[SW] bookList: " + JSON.stringify(this.bookList));
+    facetSelected: function(selected) {
+      var _this = this;
+
+      this.getFacets(this.facetPanel.getSelectedNodes());
     },
 
-    /**
-     * Clear all selected facets. This will also get all default facets
-     * and retrieve and update the book list.
-     */
-    clearSelectedFacets: function() {
-      this.selectedFacets = [];
-      // this.getFacets([{"dim": "facet_location"}], true);
-      if (this.searchService) {
-        this.facetPanel.setFacets(this.searchService.config.search.settings.categories);
+    getFacets: function(facets) {
+      if (!this.searchService.config) {
+        console.log("[SW] No search service config info found ... ");
+        return;
+      }
+
+      var query;
+
+      if (facets && facets.length > 0) {
+        var delimiters = this.searchService.config.query.delimiters;
+        var facetParts = [];
+        facets.forEach(function(f) {
+          facetParts.push({
+            "op": delimiters.or,
+            "category": f.category,
+            "term": f.value
+          });
+        });
+        query = $.toTermList(facetParts);
+      }
+
+      this.eventEmitter.publish("GET_FACETS", {
+        "origin": this.windowId,
+        "service": this.searchService,
+        "facets": query
+      });
+    },
+
+    handleFacets: function(searchResults, append) {
+      var _this = this;
+
+      if (!searchResults.categories) {
+        console.log("[SW] No categories found in search results. " + searchResults["@id"]);
+        return;
+      }
+
+      if (this.config.allowFacets && this.facetPanel) {
+        searchResults = this.resultsCategoriesToFacets(searchResults);
+        if (append) {
+          searchResults.categories.forEach(function(cat) {
+            _this.facetPanel.addValues(cat.name, cat.values);
+          });
+        } else {
+          this.facetPanel.setFacets(searchResults.categories);
+        }
+
         this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
       }
     },
+
+    resultsCategoriesToFacets: function(searchResults) {
+      if (!searchResults || !Array.isArray(searchResults.categories)) {
+        return searchResults;
+      }
+      var _this = this;
+      var categoryConfig = this.searchService.config.search.settings.categories;
+
+      searchResults.categories.forEach(function(cat) {
+        jQuery.extend(cat, {
+          "label": _this.getCategoryLabel(cat.name)
+        });
+      });
+
+      return searchResults;
+    },
+//
+//     handleFacets: function(searchResults, setui) {
+//       this.updateBookList(searchResults);
+//       /*
+//        * --- IMPL note ---
+//        * SearchResults contains a list of objects that match some set of
+//        * facets. Filter the list for only manifests, then reduce the
+//        * list to a list of manifest IDs for simplicity.
+//        */
+//       if (this.onFacetSelect && typeof this.onFacetSelect === "function") {
+//         this.onFacetSelect(this.bookList);
+//       }
+//
+//       if (setui) {
+//         if (!this.facetPanel) {
+//           this.initFacets();
+//         } else {
+//           this.facetPanel.destroy();
+//           this.initFacets();
+//         }
+//
+//         if (this.config.allowFacets && this.facetPanel) {
+//           searchResults = this.resultsCategoriesToFacets(searchResults);
+//           this.facetPanel.setFacets(searchResults.categories);
+//           this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
+//         }
+//       }
+//     },
+//
+//     /**
+//       searchResults: {
+//         "@id": "...",
+//         ...
+//         "matches": [ // Contain list of matching books // ],
+//         "categories": [
+//           {
+//             "name": "facet_id",     // Facet 'dimension'
+//             "label": "A Label for this" // Human readable label for the category, to be added
+//             "values": [
+//               "label": "a label",   // Facet 'path' or 'value'
+//               "count": 1            // Facet count
+//             ]
+//           }
+//         ]
+//       }
+//      */
+//
+//
+//     /**
+//      * Update the list of valid books from search results. This is
+//      * designed to be used with search results from facet requests.
+//      *
+//      * @param searchResults {object} search results object
+//      */
+//     updateBookList: function(searchResults) {
+//       // Create a list of manifests to pass back to to parent, if applicable
+//       this.bookList = searchResults.matches.filter(function(m) {
+//         return m.object["@type"] === "sc:Manifest";
+//       }).map(function(m) {
+//         return m.object["@id"];
+//       });
+// console.log("[SW] bookList: " + JSON.stringify(this.bookList));
+//     },
+//
+//     /**
+//      * Clear all selected facets. This will also get all default facets
+//      * and retrieve and update the book list.
+//      */
+//     clearSelectedFacets: function() {
+//       this.selectedFacets = [];
+//       // this.getFacets([{"dim": "facet_location"}], true);
+//       if (this.searchService) {
+//         this.facetPanel.setFacets(this.searchService.config.search.settings.categories);
+//         this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
+//       }
+//     },
 
     resultsPagerText: Handlebars.compile([
       '{{#if last}}',

@@ -9,7 +9,13 @@
  * a specific search service.
  *
  * Public functions:
- *  - setFacets(facets) : render the widget with a new set of facets
+ *  - setFacets(facets) : render the widget with a new set of facets. This
+ *                        will overwrite any existing facets.
+ *  - addValues(category, values) : add values under a category. Add the
+ *                                  category if necessary
+ *  - getSelectedNodes(): get JSON representation of all currently selected nodes
+ *  - getNodes(nodes) : get JSON representations of all nodes specified by ID.
+ *                      If no IDs are specified, get all nodes in the tree
  */
 (function($){
   $.FacetPanel = function(options) {
@@ -108,7 +114,7 @@
        */
       // tree.on("select_node.jstree", function(event, data) {
       tree.on("activate_node.jstree", function(event, data) {
-        if (!_this.isLeafNode(data.node)) {console.log("[FP] Toggling category.");
+        if (!_this.isLeafNode(data.node)) {
           data.instance.toggle_node(data.node);
           return;   // Toggle category on single click
         } else
@@ -116,8 +122,8 @@
           return;   // Do nothing if 'onSelect' does not exist or is not a function
         }
 
-        if (_this.onSelect) {console.log("[FP] Selecting node " + JSON.stringify(data.node));
-          _this.onSelect([_this.nodeToFacet(data.node, data.instance)]);
+        if (_this.onSelect) {
+          _this.onSelect(data.selected);
         }
       });
 
@@ -138,6 +144,7 @@
 
     nodeToFacet: function(node, instance) {
       var _this = this;
+      instance = this.element.find(this.selector).jstree(true);
 
       var path;
       var dim;
@@ -148,24 +155,16 @@
         path = [""];
       } else {
         path = node.parents.slice(2);
-        // path.push(node.original.facet_id);
         path.push(node.original.text);
-
-        if (!instance) {
-          jQuery(this.selector).each(function(index, el) {
-            if (this.id === _this.id) {
-              dim = jQuery(this).jstree("get_node", node.parents[0]).original.facet_id;
-            }
-          });
-        } else {
-          dim = instance.get_node(node.parents[0]).original.facet_id;
-        }
+        dim = instance.get_node(node.parents[0]).original.facet_id;
       }
 
       return {
-        "dim": dim,
-        "path": path,
-        "ui_id": node.id
+        "category": dim,
+        "value": path,
+        "ui_id": node.id,
+        "children": node.children,
+        "isRoot": node.parent === "#"
       };
     },
 
@@ -182,34 +181,6 @@
     destroy: function() {
       this.appendTo.find(".facet-container-scrollable").remove();
     },
-
-    /**
-     * @param categories (array)
-     *    [
-            {
-              "label": "...",
-              "name": "an-id"
-            },
-            ...
-          ]
-     */
-    // setCategories: function(categories) {console.log("[FP] Setting categories: " + JSON.stringify(categories));
-    //   var _this = this;
-    //   this.model.core.data = [];
-    //   categories.forEach(function(cat) {
-    //     _this.model.core.data.push({
-    //       "facet_id": cat.name,
-    //       "text": cat.label,
-    //       "icon": false,
-    //       // "children": []
-    //     });
-    //   });
-    //   this.element.find(".facet-container").jstree(this.model);
-    //   this.element.find(".facet-container").prop("id", _this.id);
-    //   this.element.show();
-    // },
-
-
 
     /**
      * Render this widget with a new set of facets. This function will
@@ -234,11 +205,11 @@
      *          }
      *        ]
      */
-    setFacets: function(facets) {console.log("[FP] Setting facets: " + JSON.stringify(facets));
+    setFacets: function(facets) {
       var _this = this;
-      this.facets = facets;
+      var needsInit = this.model.core.data.length === 0;
 
-      // Destroy and recreate tree
+      this.facets = facets;
       if (Array.isArray(facets)) {
         this.model.core.data = facets;
         this.model.core.data.forEach(function(facet) {
@@ -260,13 +231,77 @@
             facet.values = undefined;
           }
         });
-        // this.model.core.data = [];
-        // facets.forEach(function(facet) { _this.addFacet(facet); });
-        // this.trimFacets();
-        this.element.find(".facet-container").jstree(this.model);
-        this.element.find(".facet-container").prop("id", _this.id);
+
+        var widget = this.element.find(this.selector);
+        if (needsInit) {    // Create JSTree instance if necessary
+          widget.jstree(this.model);
+          widget.prop("id", _this.id);
+        } else {            // Otherwise, replace data and redraw
+          widget.jstree(true).settings.core.data = this.model.core.data;
+          widget.jstree("refresh");
+        }
         this.element.show();
       }
+    },
+
+    /**
+     * Add values to a category in the tree. If the category is not yet
+     * defined, add it to the tree first.
+     *
+     * IMPL notes
+     *  jstree.create_node([par, node, pos, callback, is_loaded])
+     *    par: parent node ("#" to add a root node)
+     *    node: node to add
+     *
+     * @param category {obj} {[text, facet_id]}
+     * @param values {array} array of values to add
+     */
+    addValues: function(category, values) {
+      var instance = this.element.find(this.selector).jstree(true);
+
+      // Find node matching the category
+      var treeCats = instance.get_json().filter(function(node) {
+        return node.original.facet_id === category.facet_id;
+      });
+
+      if (treeCats.length) {
+        // If no match is found, create the category and get the node
+        var newNode = instance.create_node("#", category);
+        treeCats = [instance.get_node(newNode)];
+      }
+
+      // Add values to appropriate category
+      values.forEach(function(val) {
+        var toAdd = {
+          "facet_id": category,
+          "text": val.label + (val.count > 1 ? " (" + val.count + ")" : "")
+        };
+        instance.create_node(treeCats[0], toAdd);
+      });
+    },
+
+    /**
+     * @returns JSON representations of all selected nodes.
+     */
+    getSelectedNodes: function() {
+      var _this = this;
+      return this.element.find(this.selector).jstree(true).get_selected(true)
+              .map(function(node) { return _this.nodeToFacet(node); });
+    },
+
+    /**
+     * @returns Full JSON representations of nodes by ID. If no IDs are
+     * specified, return all nodes.
+     */
+    getNodes: function(nodeIds) {
+      var _this = this;
+      var instance = this.element.find(this.selector).jstree(true);
+      return instance.get_json(nodeIds, {
+        "no_state": true,
+        "no_li_attr": true,
+        "no_a_attr": true,
+        "flat": true
+      }).map(function(node) { return _this.nodeToFacet(node); });
     },
 
     trimFacets: function() {
