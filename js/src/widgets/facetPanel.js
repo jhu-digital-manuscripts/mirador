@@ -61,6 +61,7 @@
       appendTo: null,
       selector: ".facet-container",
       showCounts: true,
+      selected: {},
       container: [
         "<div class=\"facet-container-scrollable\">",
           "<h2>Browse:<i class=\"fa fa-lg fa-times-circle clear\" title=\"Clear all\"></i></h2>",
@@ -155,7 +156,7 @@
         path = [""];
       } else {
         path = node.parents.slice(2);
-        path.push(node.original.text);
+        path.push(node.original.label);
         dim = instance.get_node(node.parents[0]).original.facet_id;
       }
 
@@ -281,12 +282,14 @@
     },
 
     /**
+     * We don't want to return category nodes (no value selected)
      * @returns JSON representations of all selected nodes.
      */
     getSelectedNodes: function() {
       var _this = this;
       return this.element.find(this.selector).jstree(true).get_selected(true)
-              .map(function(node) { return _this.nodeToFacet(node); });
+              .map(function(node) { return _this.nodeToFacet(node); })
+              .filter(function(facet) { return !facet.isRoot; });
     },
 
     /**
@@ -309,71 +312,6 @@
         return Array.isArray(f.children) && f.children.length > 0;
       });
     },
-
-    // addFacet: function(facet) {
-    //   var hasDim = this.model.core.data.map(function(el) {
-    //     return el.facet_id;
-    //   }).indexOf(facet.dim) > 0;
-    //
-    //   if (!hasDim) {
-    //     this.model.core.data.push({
-    //       "facet_id": facet.dim,
-    //       "text": facet.label || facet.dim,
-    //       "icon": false,
-    //       "children": []
-    //     });
-    //   }
-    //
-    //   var node = this.model.core.data.filter(function(el) {
-    //     return el.facet_id === facet.dim;
-    //   });
-    //   if (node && node.length > 0) {
-    //     this.add(node[0], facet.path, facet.count);
-    //   }
-    // },
-    //
-    // add: function(node, path, count, index) {
-    //   if (!index) {
-    //     index = 0;
-    //   }
-    //
-    //   if (!node.children) {
-    //     node.children = [];
-    //   }
-    //
-    //   var child = node.children.filter(function(c) {
-    //     return c.facet_id === path[index];
-    //   });
-    //   if (child && child.length !== 0) {
-    //     this.add(child, path, count, index+1);
-    //   } else {
-    //     this.addPath(node, path, count, index);
-    //   }
-    // },
-    //
-    // addPath: function(node, path, count, index) {
-    //   var toAdd = {
-    //     "facet_id": path[index],
-    //     "text": path[index] + (this.showCounts && count > 1 ? " (" + count + ")" : ""),
-    //     "icon": false
-    //   };
-    //
-    //   if (!index) {
-    //     index = 0;
-    //   }
-    //
-    //   if (Array.isArray(node.children)) {
-    //     node.children.push(toAdd);
-    //   } else {
-    //     node.children = [toAdd];
-    //   }
-    //
-    //   if (index >= path.length-1) {
-    //     return;   // At target node
-    //   } else {
-    //     this.addPath(node.children[0], path, count, index+1);
-    //   }
-    // },
 
   };
 }(Mirador));

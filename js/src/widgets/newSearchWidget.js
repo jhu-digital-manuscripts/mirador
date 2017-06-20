@@ -463,7 +463,8 @@
         "context": _this.context,
       });
 
-      this.setFacetCategories(newService);
+      // this.setFacetCategories(newService);
+      this.getFacets();
     },
 
     /**
@@ -826,6 +827,9 @@
     handleFacets: function(searchResults, append) {
       var _this = this;
 
+      // Update visibility of manifests
+      this.onFacetSelect(this.getManifestList(searchResults));
+
       if (!searchResults.categories) {
         console.log("[SW] No categories found in search results. " + searchResults["@id"]);
         return;
@@ -859,6 +863,22 @@
       });
 
       return searchResults;
+    },
+
+    /**
+     * Update the list of valid books from search results. This is
+     * designed to be used with search results from facet requests.
+     *
+     * @param searchResults {object} search results object
+     * @returns array of manifest IDs
+     */
+    getManifestList: function(searchResults) {
+      // Create a list of manifests to pass back to to parent, if applicable
+      return searchResults.matches.filter(function(m) {
+        return m.object["@type"] === "sc:Manifest";
+      }).map(function(m) {
+        return m.object["@id"];
+      });
     },
 //
 //     handleFacets: function(searchResults, setui) {
@@ -906,23 +926,6 @@
 //         ]
 //       }
 //      */
-//
-//
-//     /**
-//      * Update the list of valid books from search results. This is
-//      * designed to be used with search results from facet requests.
-//      *
-//      * @param searchResults {object} search results object
-//      */
-//     updateBookList: function(searchResults) {
-//       // Create a list of manifests to pass back to to parent, if applicable
-//       this.bookList = searchResults.matches.filter(function(m) {
-//         return m.object["@type"] === "sc:Manifest";
-//       }).map(function(m) {
-//         return m.object["@id"];
-//       });
-// console.log("[SW] bookList: " + JSON.stringify(this.bookList));
-//     },
 //
 //     /**
 //      * Clear all selected facets. This will also get all default facets
