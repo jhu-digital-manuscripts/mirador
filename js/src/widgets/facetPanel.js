@@ -16,6 +16,14 @@
  *  - getSelectedNodes(): get JSON representation of all currently selected nodes
  *  - getNodes(nodes) : get JSON representations of all nodes specified by ID.
  *                      If no IDs are specified, get all nodes in the tree
+ *
+ * EVENTS:
+ *  Publish:
+ *    FACET_SELECTED : one or more facets has been selected (or deselected)
+ *      {
+ *        "origin": "widget id",
+ *        "selected": []        // Array of selected facets
+ *      }
  */
 (function($){
   $.FacetPanel = function(options) {
@@ -26,12 +34,6 @@
       facetSelected: null,
       eventEmitter: null,
       facets: null,
-      /**
-       * Function specified by parent object telling this widget
-       * what to do when a user selects a leaf.
-       * function ([facets])
-       */
-      onSelect: null,
       model: {
         "core": {
           "data": [],
@@ -118,14 +120,12 @@
         if (!_this.isLeafNode(data.node)) {
           data.instance.toggle_node(data.node);
           return;   // Toggle category on single click
-        } else
-        if (!_this.onSelect || typeof _this.onSelect !== "function") {
-          return;   // Do nothing if 'onSelect' does not exist or is not a function
         }
 
-        if (_this.onSelect) {
-          _this.onSelect(data.selected);
-        }
+        _this.eventEmitter.publish("FACET_SELECTED", {
+          "origin": _this.id,
+          "selected": data.selected
+        });
       });
 
       this.element.find("i.clear").on("click", function(event) {
@@ -136,10 +136,11 @@
           }
         });
 
-        if (_this.onSelect && typeof _this.onSelect === "function") {
-          _this.onSelect(facets);
-        }
         tree.jstree("deselect_all");
+        _this.eventEmitter.publish("FACET_SELECTED", {
+          "origin": _this.id,
+          "selected": facets
+        });
       });
     },
 

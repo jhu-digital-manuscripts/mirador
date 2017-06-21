@@ -131,6 +131,12 @@
         _this.handleFacets(data.results, data.append);
       });
 
+      this.eventEmitter.subscribe("FACET_SELECTED", function(event, data) {
+        if (_this.facetPanel && _this.facetPanel.id === data.origin) {
+          _this.facetSelected(data.selected);
+        }
+      });
+
       this.eventEmitter.subscribe("windowPinned", function(event, data) {
         if (data.windowId === _this.windowId) {
           _this.config.pinned = data.status;
@@ -717,8 +723,7 @@
           "eventEmitter": this.eventEmitter,
           "parentId": this.windowId,
           "appendTo": this.appendTo,
-          "state": this.state,
-          "onSelect": function(selected) { _this.facetSelected(selected); }
+          "state": this.state
         });
       }
     },
