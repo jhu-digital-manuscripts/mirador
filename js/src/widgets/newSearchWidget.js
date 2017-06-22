@@ -885,65 +885,6 @@
         return m.object["@id"];
       });
     },
-//
-//     handleFacets: function(searchResults, setui) {
-//       this.updateBookList(searchResults);
-//       /*
-//        * --- IMPL note ---
-//        * SearchResults contains a list of objects that match some set of
-//        * facets. Filter the list for only manifests, then reduce the
-//        * list to a list of manifest IDs for simplicity.
-//        */
-//       if (this.onFacetSelect && typeof this.onFacetSelect === "function") {
-//         this.onFacetSelect(this.bookList);
-//       }
-//
-//       if (setui) {
-//         if (!this.facetPanel) {
-//           this.initFacets();
-//         } else {
-//           this.facetPanel.destroy();
-//           this.initFacets();
-//         }
-//
-//         if (this.config.allowFacets && this.facetPanel) {
-//           searchResults = this.resultsCategoriesToFacets(searchResults);
-//           this.facetPanel.setFacets(searchResults.categories);
-//           this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
-//         }
-//       }
-//     },
-//
-//     /**
-//       searchResults: {
-//         "@id": "...",
-//         ...
-//         "matches": [ // Contain list of matching books // ],
-//         "categories": [
-//           {
-//             "name": "facet_id",     // Facet 'dimension'
-//             "label": "A Label for this" // Human readable label for the category, to be added
-//             "values": [
-//               "label": "a label",   // Facet 'path' or 'value'
-//               "count": 1            // Facet count
-//             ]
-//           }
-//         ]
-//       }
-//      */
-//
-//     /**
-//      * Clear all selected facets. This will also get all default facets
-//      * and retrieve and update the book list.
-//      */
-//     clearSelectedFacets: function() {
-//       this.selectedFacets = [];
-//       // this.getFacets([{"dim": "facet_location"}], true);
-//       if (this.searchService) {
-//         this.facetPanel.setFacets(this.searchService.config.search.settings.categories);
-//         this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
-//       }
-//     },
 
     resultsPagerText: Handlebars.compile([
       '{{#if last}}',

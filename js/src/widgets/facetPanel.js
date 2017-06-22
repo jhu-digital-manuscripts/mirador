@@ -33,6 +33,14 @@
       parentId: null,
       facetSelected: null,
       eventEmitter: null,
+      state: null,          // Application state
+      /**
+       *  "facet_id": {
+       *    "open": (true|false),     // Is this category displayed (open)?
+       *    "values": []              // All selected values for this category
+       *  }
+       */
+      wState: {},           // Widget state
       facets: null,
       model: {
         "core": {
@@ -122,6 +130,7 @@
           return;   // Toggle category on single click
         }
 
+        _this.modifyState(data.node);
         _this.eventEmitter.publish("FACET_SELECTED", {
           "origin": _this.id,
           "selected": data.selected
@@ -137,6 +146,7 @@
         });
 
         tree.jstree("deselect_all");
+        _this.modifyState();
         _this.eventEmitter.publish("FACET_SELECTED", {
           "origin": _this.id,
           "selected": facets
@@ -243,6 +253,9 @@
           widget.jstree("refresh");
         }
         this.element.show();
+
+        // Now open/close and select/deselect nodes according to saved state
+        this.applyState(this.wState);
       }
     },
 
@@ -280,6 +293,8 @@
         };
         instance.create_node(treeCats[0], toAdd);
       });
+
+      this.applyState(this.wState);
     },
 
     /**
@@ -313,6 +328,134 @@
         return Array.isArray(f.children) && f.children.length > 0;
       });
     },
+
+    /**
+     * The state of this widget contains information about all currently
+     * selected nodes in the tree that lead to the current tree. It
+     * has information about which categories are open and which
+     * values are selected. Note that selected values are especially
+     * important, as they directly lead to facet search requests that
+     * generate the tree.
+     *
+     * If no objects are supplied to mutate the state, this will clear
+     * the state.
+     *
+     * @param modified {array} of facet objects
+     */
+    modifyState: function(modified) {
+      if (!modified) {
+        this.wState = {};
+        return;
+      }
+
+      var _this = this;
+      if (Array.isArray(modified)) {
+        modified.forEach(function(m) { _this.doStateChange(m); });
+      } else {
+        this.doStateChange(modified);
+      }
+    },
+
+    /**
+     * Modify the current state of the object by applying a facet
+     * object. This object may or may not have a selected value.
+     *
+     * @param modified facet object
+     * @returns state with mod applied
+     */
+    doStateChange: function(mob) {
+      var _this = this;
+      var state = this.wState;
+      /*
+       * From the mob, find the appropriate category and value
+       * in the current state.
+       * > If no value in MOB, then mark category appropriately as
+       *   selected or not
+       * > If it exists, remove it from the state (deselect)
+       * > If does not exist, add it to the state (select)
+       */
+      var cat = state[mob.original.facet_id];
+      if (!cat) { // No matches. This will add category AND value (if present)
+        cat = {"open": true, "values": []};
+      } else {  // Category closed
+        cat.open = false;
+      }
+
+      if (mob.original.label) {
+        var index = cat.values.indexOf(mob.original.label);
+        if (index === -1) {
+          cat.values.push(mob.original.label);
+        } else if (cat.values.length > 1) {
+          cat.values.splice(index, 1);
+        } else {
+          cat = undefined;
+        }
+      }
+
+      if (!cat) {
+        delete(state[mob.original.facet_id]);
+      } else {
+        state[mob.original.facet_id] = cat;
+      }
+    },
+
+    /**
+     * Apply a state to the UI. This will open or close appropriate
+     * categories and select or deselect appropriate values.
+     *
+     * @param state {object} state to apply
+     */
+    applyState: function(state) {
+      var _this = this;
+      var instance = this.element.find(this.selector).jstree(true);
+
+      instance.deselect_all(true);
+      Object.keys(state).forEach(function(key) {
+        var cat = state[key];
+
+        var catNode = _this.getTreeNode(instance, key);
+        // Open or close node appropriately
+        if (catNode) {
+          if (cat.open && !catNode.state.opened) {
+            instance.open_node(catNode);
+          } else if (!cat.open && catNode.state.opened) {
+            instance.close_node(catNode);
+          }
+        }
+
+        // Select all values found in 'state'
+        cat.values.forEach(function(val) {
+          var valNode = _this.getTreeNode(instance, key, val);
+          if (valNode) {
+            instance.select_node(valNode, true);
+          }
+        });
+      });
+    },
+
+    getTreeNode: function(instance, category, value) {
+      var data = this.element.find(this.selector).jstree(true).get_json();
+
+      var nodeId;
+      data.forEach(function(treeCat) {
+        if (!value && treeCat.original.facet_id === cateogry) {
+          nodeId = treeCat.id;
+        } else {
+          treeCat.children.forEach(function(cNode) {
+            if (value === cNode.original.label) {
+              nodeId = cNode.id;
+            }
+          });
+        }
+      });
+
+      if (nodeId) {
+        return instance.get_node(nodeId);
+      } else {
+        console.log("[FP] Failed to find node. " + category + ":" + value);
+        return undefined;
+      }
+    }
 
   };
 }(Mirador));
