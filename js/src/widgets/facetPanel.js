@@ -106,6 +106,8 @@
       });
     },
 
+    // TODO jstree event handlers here might conflict with other instances of jstree
+    // not in this widget.
     listenForActions: function() {
       var _this = this;
       var tree = this.element.find(this.selector);
@@ -137,6 +139,29 @@
         });
       });
 
+      /**
+       * Changing tree data, must wait for the refresh to complete
+       *
+       * data: {obj} tree instance
+       */
+      tree.on("refresh.jstree", function(event, data) {
+        _this.applyState(_this.wState);
+      });
+
+      /**
+       * Called after a node has been created successfully.
+       *
+       *  data: {
+       *    "node": {},
+       *    "parent": "parentId",
+       *    "position": "0"     // Position of the node among the parent children
+       *  }
+       */
+      tree.on("create_node.jstree", function(event, data) {
+        _this.applyState(_this.wState);
+      });
+
+      // "Clear All" button
       this.element.find("i.clear").on("click", function(event) {
         var facets = [];
         tree.jstree("get_selected", true).forEach(function(node) {
@@ -248,14 +273,13 @@
         if (needsInit) {    // Create JSTree instance if necessary
           widget.jstree(this.model);
           widget.prop("id", _this.id);
+          this.applyState(this.wState);
         } else {            // Otherwise, replace data and redraw
+
           widget.jstree(true).settings.core.data = this.model.core.data;
           widget.jstree("refresh");
         }
         this.element.show();
-
-        // Now open/close and select/deselect nodes according to saved state
-        this.applyState(this.wState);
       }
     },
 
@@ -293,8 +317,6 @@
         };
         instance.create_node(treeCats[0], toAdd);
       });
-
-      this.applyState(this.wState);
     },
 
     /**
@@ -434,23 +456,25 @@
     },
 
     getTreeNode: function(instance, category, value) {
-      var data = this.element.find(this.selector).jstree(true).get_json();
+      var data = instance.get_json();
 
-      var nodeId;
+      var node;
       data.forEach(function(treeCat) {
-        if (!value && treeCat.original.facet_id === cateogry) {
-          nodeId = treeCat.id;
+        var catNode = instance.get_node(treeCat.id);
+        if (!value && catNode.original.facet_id === category) {
+          node = catNode;
         } else {
           treeCat.children.forEach(function(cNode) {
-            if (value === cNode.original.label) {
-              nodeId = cNode.id;
+            var c = instance.get_node(cNode.id);
+            if (value === c.original.label) {
+              node = c;
             }
           });
         }
       });
 
-      if (nodeId) {
-        return instance.get_node(nodeId);
+      if (node) {
+        return node;
       } else {
         console.log("[FP] Failed to find node. " + category + ":" + value);
         return undefined;
