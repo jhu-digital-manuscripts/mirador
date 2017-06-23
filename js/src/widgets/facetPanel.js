@@ -448,33 +448,32 @@
         // Select all values found in 'state'
         cat.values.forEach(function(val) {
           var valNode = _this.getTreeNode(instance, key, val);
-          if (valNode) {
-            instance.select_node(valNode, true);
+          if (valNode && !valNode.state.selected) {
+            instance.select_node(valNode);
+            // Force CSS class
+            var domSelector = valNode.li_attr.id + " > div";
+            _this.element.find(domSelector).addClass("jstree-wholerow-clicked");
           }
         });
       });
     },
 
     getTreeNode: function(instance, category, value) {
-      var data = instance.get_json();
-
-      var node;
-      data.forEach(function(treeCat) {
-        var catNode = instance.get_node(treeCat.id);
-        if (!value && catNode.original.facet_id === category) {
-          node = catNode;
-        } else {
-          treeCat.children.forEach(function(cNode) {
-            var c = instance.get_node(cNode.id);
-            if (value === c.original.label) {
-              node = c;
-            }
-          });
-        }
+      var data = instance.get_json(null, {
+        "no_state": true,
+        "no_li_attr": true,
+        "no_a_attr": true,
+        "flat": true
       });
 
-      if (node) {
-        return node;
+      var matches = data.filter(function(n) {
+        var treeNode = instance.get_node(n.id);
+        // Match if (no value AND category match) OR (category match AND value match)
+        return (treeNode.original.facet_id === category) && (!value || treeNode.original.label === value);
+      });
+
+      if (matches.length > 0) {
+        return instance.get_node(matches[0].id);
       } else {
         console.log("[FP] Failed to find node. " + category + ":" + value);
         return undefined;
