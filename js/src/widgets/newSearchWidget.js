@@ -222,51 +222,64 @@
      * Modify the query to account for any selected facets that would
      * narrow the search results.
      */
-     getSearchQuery: function() {
-       var query;
+    getSearchQuery: function() {
+      var query;
 
-       var config = this.searchService.config;
-       var delimiters = config.query.delimiters;
+      var config = this.searchService.config;
+      var delimiters = config.query.delimiters;
 
-       if (this.element.find(".search-disclosure-btn-less").css("display") != "none") {
-         // Basic search is active
-         query = $.generateBasicQuery(
-           this.element.find(".js-query").val(),
-           this.searchService.config.getDefaultFields(),
-           delimiters.or
-         );
-       } else {
-         query = this.advancedSearch.getQuery();    // Advanced search is active
-       }
+      if (this.element.find(".search-disclosure-btn-less").css("display") != "none") {
+        // Basic search is active
+        query = $.generateBasicQuery(
+          this.element.find(".js-query").val(),
+          this.searchService.config.getDefaultFields(),
+          delimiters.or
+        );
+      } else {
+        query = this.advancedSearch.getQuery();    // Advanced search is active
+      }
 
-       // Modify query to account for current facets by adding a restriction
-       // to only books that match the facets
-       if (Array.isArray(this.bookList) && this.bookList.length > 0) {
-         var parts = [];
-         this.bookList.forEach(function(b, index) {
-           parts.push({
-             "op": delimiters.or,
-             "category": "manifest_id",
-             "term": b
-           });
-         });
+      query = this.appendBookList(query);
 
-         var bookQuery = $.generateQuery(parts, delimiters.field);
-         query = "(" + query + delimiters.and + bookQuery + ")";
+      return query;
+    },
 
-       //   var multi = this.bookList.length > 1;
-       //   query = "(" + query + delimiters.and + (multi ? "(" : "");
-       //   this.bookList.forEach(function(b, index) {
-       //     query += (index > 0 ? delimiters.or : "") + "manifest_id:'" + b + "'";
-       //   });
-       //   query += (multi ? ")" : "") + ")";
-       // } else if (Array.isArray(this.selectedFacets) && this.selectedFacets.length > 0) {
-       //   // TODO There are no matching books for the selected facets
-       //   query = "(" + query + delimiters.and + "manifest_id:'')";
-       }
+    /**
+     * TODO TEMPORARY
+     *
+     * Add the book list restriction from facet widget to the a
+     * search query if necessary. This will restrict the results
+     * to only those books.
+     *
+     * This should be a temporary measure! Adding a book list restriction
+     * in this will is not possible for a large number of books.
+     *
+     * @param searchQuery {string}
+     * @returns full query with original search + book restriction
+     */
+    appendBookList: function(searchQuery) {
+      var query;
 
-       return query;
- },
+      var config = this.searchService.config;
+      var delimiters = config.query.delimiters;
+      // Modify query to account for current facets by adding a restriction
+      // to only books that match the facets
+      if (Array.isArray(this.bookList) && this.bookList.length > 0) {
+        var parts = [];
+        this.bookList.forEach(function(b, index) {
+          parts.push({
+            "op": delimiters.or,
+            "category": "manifest_id",
+            "term": b
+          });
+        });
+
+        var bookQuery = $.generateQuery(parts, delimiters.field);
+        query = "(" + searchQuery + delimiters.and + bookQuery + ")";
+      }
+
+      return query;
+    },
 
     getFacetsQuery: function() {
       // if (!this.searchService.config) {
@@ -490,7 +503,8 @@
             return;
           }
           if (_this.advancedSearch.hasQuery()) {
-            _this.doSearch(_this.searchService, _this.advancedSearch.getQuery(),
+            var query = _this.appendBookList(_this.advancedSearch.getQuery());
+            _this.doSearch(_this.searchService, query,
               _this.getSortOrder(), _this.getFacetsQuery());
           }
         },
