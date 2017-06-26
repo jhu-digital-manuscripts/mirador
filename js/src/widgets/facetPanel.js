@@ -242,9 +242,13 @@
      *          }
      *        ]
      */
-    setFacets: function(facets) {
+    setFacets: function(facets, clearState) {
       var _this = this;
       var needsInit = this.model.core.data.length === 0;
+
+      if (clearState) {
+        this.wState = {};
+      }
 
       this.facets = facets;
       if (Array.isArray(facets)) {
@@ -431,6 +435,7 @@
       var _this = this;
       var instance = this.element.find(this.selector).jstree(true);
 
+      instance.close_all();
       instance.deselect_all(true);
       Object.keys(state).forEach(function(key) {
         var cat = state[key];
