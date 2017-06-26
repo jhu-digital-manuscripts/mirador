@@ -174,7 +174,8 @@
 
         var query = _this.getSearchQuery();
         if (query && query.length > 0) {
-          _this.doSearch(_this.searchService, query, _this.getSortOrder());
+          _this.doSearch(_this.searchService, query, _this.getSortOrder(),
+            _this.getFacetsQuery());
         } else {
           jQuery(_this.messages["no-term"]).appendTo(messages);
         }
@@ -221,50 +222,77 @@
      * Modify the query to account for any selected facets that would
      * narrow the search results.
      */
-    getSearchQuery: function() {
-      var query;
+     getSearchQuery: function() {
+       var query;
 
-      var config = this.searchService.config;
-      var delimiters = config.query.delimiters;
+       var config = this.searchService.config;
+       var delimiters = config.query.delimiters;
 
-      if (this.element.find(".search-disclosure-btn-less").css("display") != "none") {
-        // Basic search is active
-        query = $.generateBasicQuery(
-          this.element.find(".js-query").val(),
-          this.searchService.config.getDefaultFields(),
-          delimiters.or
-        );
-      } else {
-        query = this.advancedSearch.getQuery();    // Advanced search is active
-      }
+       if (this.element.find(".search-disclosure-btn-less").css("display") != "none") {
+         // Basic search is active
+         query = $.generateBasicQuery(
+           this.element.find(".js-query").val(),
+           this.searchService.config.getDefaultFields(),
+           delimiters.or
+         );
+       } else {
+         query = this.advancedSearch.getQuery();    // Advanced search is active
+       }
 
-      // Modify query to account for current facets by adding a restriction
-      // to only books that match the facets
-      if (Array.isArray(this.bookList) && this.bookList.length > 0) {
-        var parts = [];
-        this.bookList.forEach(function(b, index) {
-          parts.push({
-            "op": delimiters.or,
-            "category": "manifest_id",
-            "term": b
-          });
-        });
+       // Modify query to account for current facets by adding a restriction
+       // to only books that match the facets
+       if (Array.isArray(this.bookList) && this.bookList.length > 0) {
+         var parts = [];
+         this.bookList.forEach(function(b, index) {
+           parts.push({
+             "op": delimiters.or,
+             "category": "manifest_id",
+             "term": b
+           });
+         });
 
-        // var bookQuery = $.generateQuery(parts, delimiters.field);
-        // query = "(" + query + delimiters.and + bookQuery + ")";
+         var bookQuery = $.generateQuery(parts, delimiters.field);
+         query = "(" + query + delimiters.and + bookQuery + ")";
 
-      //   var multi = this.bookList.length > 1;
-      //   query = "(" + query + delimiters.and + (multi ? "(" : "");
-      //   this.bookList.forEach(function(b, index) {
-      //     query += (index > 0 ? delimiters.or : "") + "manifest_id:'" + b + "'";
+       //   var multi = this.bookList.length > 1;
+       //   query = "(" + query + delimiters.and + (multi ? "(" : "");
+       //   this.bookList.forEach(function(b, index) {
+       //     query += (index > 0 ? delimiters.or : "") + "manifest_id:'" + b + "'";
+       //   });
+       //   query += (multi ? ")" : "") + ")";
+       // } else if (Array.isArray(this.selectedFacets) && this.selectedFacets.length > 0) {
+       //   // TODO There are no matching books for the selected facets
+       //   query = "(" + query + delimiters.and + "manifest_id:'')";
+       }
+
+       return query;
+ },
+
+    getFacetsQuery: function() {
+      // if (!this.searchService.config) {
+      //   console.log("[SW] No search service config info found ... ");
+      //   return;
+      // }
+      //
+      // var query;
+      // var facets = this.facetPanel.getSelectedNodes();
+      //
+      // if (facets && facets.length > 0) {
+      //   var delimiters = this.searchService.config.query.delimiters;
+      //   var facetParts = [];
+      //   facets
+      //   .forEach(function(f) {
+      //     facetParts.push({
+      //       "op": delimiters.or,
+      //       "category": f.category,
+      //       "term": f.value
+      //     });
       //   });
-      //   query += (multi ? ")" : "") + ")";
-      // } else if (Array.isArray(this.selectedFacets) && this.selectedFacets.length > 0) {
-      //   // TODO There are no matching books for the selected facets
-      //   query = "(" + query + delimiters.and + "manifest_id:'')";
-      }
-
-      return query;
+      //   query = $.toTermList(facetParts);
+      // }
+      //
+      // return query;
+      return undefined;
     },
 
     /**
@@ -462,7 +490,8 @@
             return;
           }
           if (_this.advancedSearch.hasQuery()) {
-            _this.doSearch(_this.searchService, _this.advancedSearch.getQuery(), _this.getSortOrder());
+            _this.doSearch(_this.searchService, _this.advancedSearch.getQuery(),
+              _this.getSortOrder(), _this.getFacetsQuery());
           }
         },
         "clearMessages": function() { _this.element.find(".pre-search-message").empty(); },
@@ -478,12 +507,12 @@
      * @param searchService : search service object
      * @param query : search query
      * @param sortOrder : (OPTIONAL) string specifying sort order of results
+     * @param facets : (OPTIONAL) array of facet objects
      * @param page : (OPTIONAL) offset within results set
      * @param maxPerPage : (OPTIONAL) results to display per page
      * @param resumeToken : (OPTIONAL) string token possibly used by a search service
-     * @param facets : (OPTIONAL) array of facet objects
      */
-    doSearch: function(searchService, query, sortOrder, offset, maxPerPage, resumeToken, facets) {
+    doSearch: function(searchService, query, sortOrder, facets, offset, maxPerPage, resumeToken) {
       this.context = this.searchState();
 
       this.context.searchService = searchService;
@@ -642,6 +671,7 @@
             _this.context.searchService,
             _this.context.search.query,
             _this.context.search.sortOrder,
+            _this.getFacetsQuery(),
             newOffset,
             _this.context.search.numExpected
           );
@@ -833,7 +863,8 @@
       var _this = this;
 
       // Update visibility of manifests
-      this.onFacetSelect(this.getManifestList(searchResults));
+      this.bookList = this.getManifestList(searchResults);
+      this.onFacetSelect(this.bookList);
 
       if (!searchResults.categories) {
         console.log("[SW] No categories found in search results. " + searchResults["@id"]);
