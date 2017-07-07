@@ -181,7 +181,11 @@
       })();
 
       if (ref.thumbnail) {
-        ref.thumbnail.forEach(function(thumb, index) {
+        var thumbs = ref.thumbnail;
+        if (!Array.isArray(ref.thumbnail)) {
+          thumbs = [ref.thumbnail];
+        }
+        thumbs.forEach(function(thumb, index) {
           if (maxThumbs !== -1 && index > maxThumbs-1) {
             return false;
           }
