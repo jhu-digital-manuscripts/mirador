@@ -233,6 +233,15 @@
       });
     },
 
+    addWindow: function(manifest, viewType, canvasID) {
+      var windowConfig = {
+        "manifest": manifest,
+        "canvasID": canvasID,
+        "viewType": viewType
+      };
+      this.eventEmitter.publish('ADD_WINDOW', windowConfig);
+    },
+
     bindEvents: function() {
       var _this = this;
 
@@ -242,22 +251,30 @@
       });
 
       this.element.on('click', function() {
-        var windowConfig = {
-          manifest: _this.manifest,
-          canvasID: null,
-          viewType: 'ThumbnailsView'
-        };
-        _this.eventEmitter.publish('ADD_WINDOW', windowConfig);
+        var viewType = "ThumbnailsView";
+
+        if (_this.manifest) {
+          _this.addWindow(_this.manifest, viewType);
+        } else if (_this.manifestRef) {
+          // For references, we must first load the manifest before adding a new window.
+          var manifestId = _this.manifestRef["@id"];
+          var location = _this.manifestRef.location;
+
+          var manifest = new $.Manifest(manifestId, location);
+          manifest.request.done(function() {
+            _this.addWindow(manifest, viewType);
+          });
+        }
       });
 
       this.element.find('.preview-image').on('click', function(e) {
         e.stopPropagation();
-        var windowConfig = {
-          manifest: _this.manifest,
-          canvasID: jQuery(this).attr('data-image-id'),
-          viewType: _this.state.getStateProperty('windowSettings').viewType //get the view type from settings rather than always defaulting to ImageView
-        };
-        _this.eventEmitter.publish('ADD_WINDOW', windowConfig);
+        // var windowConfig = {
+        //   manifest: _this.manifest,
+        //   canvasID: jQuery(this).attr('data-image-id'),
+        //   viewType: _this.state.getStateProperty('windowSettings').viewType //get the view type from settings rather than always defaulting to ImageView
+        // };
+        // _this.eventEmitter.publish('ADD_WINDOW', windowConfig);
       });
     },
 
