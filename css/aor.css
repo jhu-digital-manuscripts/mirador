@@ -415,3 +415,23 @@
 .ui-tooltip-content {
   margin: 0 5px;
 }
+
+/* Hamlet additions */
+.substitution {
+
+}
+.substitution .sub-title {
+  font-weight: bold;
+  border-bottom: 0;
+  margin: 3px 0;
+}
+.substitution table {
+  margin: 0;
+}
+.substitution table td {
+  vertical-align: top;
+}
+.substitution table td:first-child {
+  font-style: italic;
+  padding-right: 10px;
+}
