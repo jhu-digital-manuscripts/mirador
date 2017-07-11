@@ -425,13 +425,10 @@
   border-bottom: 0;
   margin: 3px 0;
 }
-.substitution table {
-  margin: 0;
+.full-width {
+  display: block;
+  width: 100%;
 }
-.substitution table td {
-  vertical-align: top;
-}
-.substitution table td:first-child {
+.italic {
   font-style: italic;
-  padding-right: 10px;
 }
