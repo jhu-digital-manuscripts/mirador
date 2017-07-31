@@ -111,7 +111,13 @@
    * @return string      escaped term
    */
   $.escapeSearchTerm =  function(term) {
-    return term ? term.replace(/\\/g, '\\\\').replace(/'/g, "\\'") : term;
+    return term && typeof term === "string" ? term.replace(/\\/g, '\\\\').replace(/'/g, "\\'") : term;
+  };
+
+  $.toTermList = function(queryParts) {
+    return queryParts.map(function(q) {
+      return q.category + ":'" + $.escapeSearchTerm(q.term) + "'";
+    }).join(" ");
   };
 
 // -----------------------------------------------------------------------------

@@ -94,6 +94,7 @@ $.JhiiifSearchService.prototype = {
    * @return none
    */
   assignDefaults: function() {
+    // var _this = this;
     var fields = [];
     var categories = {
       'class': 'advanced-search-categories',
@@ -126,6 +127,17 @@ $.JhiiifSearchService.prototype = {
 
     // Create config for advanced search category dropdown
     this.search.categories = categories;
+
+    // Massage facets if necessary into a form better suited for jsTree
+    // if (Array.isArray(this.search.settings.categories)) {
+    //   this.search.settings.categories.forEach(function(cat) {
+    //     jQuery.extend(cat, {
+    //       "text": cat.label,
+    //       "dim": cat.name,
+    //       "path": []
+    //     });
+    //   });
+    // }
   },
 
   getField: function(fieldId) {

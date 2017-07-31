@@ -42,10 +42,6 @@
   background: -webkit-linear-gradient(top,#dbdbdb 0,#eaeaea 100%);
   background: linear-gradient(to bottom,#dbdbdb 0,#eaeaea 100%);
 }
-/*
-TODO investigate how to disable selection of top level nodes.
-By default, when a top level node, all child nodes are also selected/highlighted.
-*/
 
 .jstree-node {
   font-size: 125%;

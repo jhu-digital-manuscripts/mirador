@@ -50,7 +50,8 @@
               "state": this.state,
               "showHideAnimation": {duration: 160, easing: "easeOutCubic", queue: false},
               "config": {
-                "hasContextMenu": false
+                "hasContextMenu": false,
+                "searchBooks": false
               },
               "onFacetSelect": function(selected) {
                 _this.filterManifestList(selected);
@@ -142,7 +143,12 @@
         },
 
         manifestVisible: function(manifest) {
-          return this.selectedObjects.indexOf(manifest.getId()) !== -1 ||
+          // Visible IF
+          //    no selected objects OR
+          //    manifest ID is not in selected objects  OR
+          //    any manifest parent is in the selected objects
+          return !Array.isArray(this.selectedObjects) || this.selectedObjects.length === 0 ||
+            this.selectedObjects.indexOf(manifest.getId()) !== -1 ||
             this.selectedObjects.filter(function(s) { return manifest.isWithin(s); }).length > 0;
         },
 

@@ -67,7 +67,7 @@
        * Function (selected)
        */
       onFacetSelect: null,
-      selectedFacets: [],
+      selectedFacets: {},
       showHideAnimation: "fast"
     }, options);
     if (!this.context) {
@@ -128,7 +128,13 @@
       });
 
       this.eventEmitter.subscribe("FACETS_COMPLETE." + this.windowId, function(event, data) {
-        _this.handleFacets(data.results, data.setui);
+        _this.handleFacets(data.results, data.append);
+      });
+
+      this.eventEmitter.subscribe("FACET_SELECTED", function(event, data) {
+        if (_this.facetPanel && _this.facetPanel.id === data.origin) {
+          _this.facetSelected(data.selected);
+        }
       });
 
       this.eventEmitter.subscribe("windowPinned", function(event, data) {
@@ -168,7 +174,8 @@
 
         var query = _this.getSearchQuery();
         if (query && query.length > 0) {
-          _this.doSearch(_this.searchService, query, _this.getSortOrder());
+          _this.doSearch(_this.searchService, query, _this.getSortOrder(),
+            _this.getFacetsQuery());
         } else {
           jQuery(_this.messages["no-term"]).appendTo(messages);
         }
@@ -218,7 +225,8 @@
     getSearchQuery: function() {
       var query;
 
-      var delimiters = this.searchService.config.query.delimiters;
+      var config = this.searchService.config;
+      var delimiters = config.query.delimiters;
 
       if (this.element.find(".search-disclosure-btn-less").css("display") != "none") {
         // Basic search is active
@@ -231,21 +239,73 @@
         query = this.advancedSearch.getQuery();    // Advanced search is active
       }
 
+      query = this.appendBookList(query);
+
+      return query;
+    },
+
+    /**
+     * TODO TEMPORARY
+     *
+     * Add the book list restriction from facet widget to the a
+     * search query if necessary. This will restrict the results
+     * to only those books.
+     *
+     * This should be a temporary measure! Adding a book list restriction
+     * in this will is not possible for a large number of books.
+     *
+     * @param searchQuery {string}
+     * @returns full query with original search + book restriction
+     */
+    appendBookList: function(searchQuery) {
+      var query;
+
+      var config = this.searchService.config;
+      var delimiters = config.query.delimiters;
       // Modify query to account for current facets by adding a restriction
       // to only books that match the facets
       if (Array.isArray(this.bookList) && this.bookList.length > 0) {
-        var multi = this.bookList.length > 1;
-        query = "(" + query + delimiters.and + (multi ? "(" : "");
+        var parts = [];
         this.bookList.forEach(function(b, index) {
-          query += (index > 0 ? delimiters.or : "") + "manifest_id:'" + b + "'";
+          parts.push({
+            "op": delimiters.or,
+            "category": "manifest_id",
+            "term": b
+          });
         });
-        query += (multi ? ")" : "") + ")";
-      } else if (Array.isArray(this.selectedFacets) && this.selectedFacets.length > 0) {
-        // TODO There are no matching books for the selected facets
-        query = "(" + query + delimiters.and + "manifest_id:'')";
+
+        var bookQuery = $.generateQuery(parts, delimiters.field);
+        query = "(" + searchQuery + delimiters.and + bookQuery + ")";
       }
 
       return query;
+    },
+
+    getFacetsQuery: function() {
+      // if (!this.searchService.config) {
+      //   console.log("[SW] No search service config info found ... ");
+      //   return;
+      // }
+      //
+      // var query;
+      // var facets = this.facetPanel.getSelectedNodes();
+      //
+      // if (facets && facets.length > 0) {
+      //   var delimiters = this.searchService.config.query.delimiters;
+      //   var facetParts = [];
+      //   facets
+      //   .forEach(function(f) {
+      //     facetParts.push({
+      //       "op": delimiters.or,
+      //       "category": f.category,
+      //       "term": f.value
+      //     });
+      //   });
+      //   query = $.toTermList(facetParts);
+      // }
+      //
+      // return query;
+      return undefined;
     },
 
     /**
@@ -267,7 +327,7 @@
 
     addSearchService: function(service) {console.log(service["@id"]);
       if (!this.config.searchBooks && service["@id"].indexOf("manifest") >= 0) {
-        return; // End early if encountering a book when they should not be included.
+        return; // End early if encountering a service for a book when they should not be included.
       }
 
       var _this = this;
@@ -396,23 +456,6 @@
       var _this = this;
       var result = jQuery.Deferred();
 
-/*
- * TODO This will result in a race condition!
- * Assume the widget is configured to have Service 1 selected on init.
- * Service 2 happens to appear first in the data list.
- *
- * Currently, Service 2 will be encountered first. Since the widget has not
- * yet been initialized, Service 2 will be requested.
- * While waiting for Service 2, Service 1 is encountered by the search
- * widget initialization code. It notices that we want Service 1 to appear.
- * Service 1 will now be requested.
- * Now we have 2 in-flight requests for search service configs.
- *
- * How should this behavior work with 2 simultaneous requests?
- * - Cancel (or ignore) initial request in favor of newest request.
- * - Wait for initial request, then submit next request.
- * - Don't do anything special, let the two resolve themselves.
- */
       this.eventEmitter.subscribe("SEARCH_SERVICE_FOUND." + this.windowId, function(event, data) {
         _this.eventEmitter.unsubscribe("SEARCH_SERVICE_FOUND." + this.windowId);
         if (data.service.id === service) {
@@ -460,14 +503,17 @@
             return;
           }
           if (_this.advancedSearch.hasQuery()) {
-            _this.doSearch(_this.searchService, _this.advancedSearch.getQuery(), _this.getSortOrder());
+            var query = _this.appendBookList(_this.advancedSearch.getQuery());
+            _this.doSearch(_this.searchService, query,
+              _this.getSortOrder(), _this.getFacetsQuery());
           }
         },
         "clearMessages": function() { _this.element.find(".pre-search-message").empty(); },
         "context": _this.context,
       });
 
-      this.clearSelectedFacets();
+      // this.setFacetCategories(newService);
+      this.getFacets();
     },
 
     /**
@@ -475,12 +521,12 @@
      * @param searchService : search service object
      * @param query : search query
      * @param sortOrder : (OPTIONAL) string specifying sort order of results
+     * @param facets : (OPTIONAL) array of facet objects
      * @param page : (OPTIONAL) offset within results set
      * @param maxPerPage : (OPTIONAL) results to display per page
      * @param resumeToken : (OPTIONAL) string token possibly used by a search service
-     * @param facets : (OPTIONAL) array of facet objects
      */
-    doSearch: function(searchService, query, sortOrder, offset, maxPerPage, resumeToken, facets) {
+    doSearch: function(searchService, query, sortOrder, facets, offset, maxPerPage, resumeToken) {
       this.context = this.searchState();
 
       this.context.searchService = searchService;
@@ -639,6 +685,7 @@
             _this.context.searchService,
             _this.context.search.query,
             _this.context.search.sortOrder,
+            _this.getFacetsQuery(),
             newOffset,
             _this.context.search.numExpected
           );
@@ -705,85 +752,167 @@
       }
     },
 
+    /**
+     * Initialize the facet widget to enable facet search.
+     */
     initFacets: function() {
       var _this = this;
 
-      if (_this.config.allowFacets) {
+      if (this.config.allowFacets) {
+        if (this.facetPanel) {
+          this.facetPanel.destroy();
+        }
+
         this.facetPanel = new $.FacetPanel({
-          eventEmitter: this.eventEmitter,
-          parentId: this.windowId,
-          appendTo: this.appendTo,
-          state: this.state,
-          onSelect: function(selected) {
-            _this.facetSelected(selected);
-          }
+          "eventEmitter": this.eventEmitter,
+          "parentId": this.windowId,
+          "appendTo": this.appendTo,
+          "state": this.state
         });
       }
     },
 
     /**
-     * Function to handle the selection and deselection of facets.
+     * Set the initial categories for the facet panel.
      *
-     * @param selected [array] most recently selected facets
+     * After switching to a search service, the service's configuration
+     * information is retreived or read. This information contains
+     * a listing of all facet categories for the service. No values
+     * under the categories are included.
+     */
+    setFacetCategories: function(searchService) {
+      if (!searchService) {
+        searchService = this.searchService;
+      }
+      if (searchService.config) {
+        this.facetPanel.setFacets(searchService.config.search.settings.categories);
+        this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
+      }
+    },
+
+    /**
+     * Get the label corresponding to the category ID.
+     *
+     * @param catId {string} category ID
+     */
+    getCategoryLabel: function(catId) {
+      var catConfig = this.searchService.config.search.settings.categories;
+      if (!catId || catConfig.filter(function(c) { return c.name === catId; }).length === 0) {
+        return;   // Do nothing if there is no matching category
+      }
+
+      return catConfig.filter(function(c) {
+        return c.name === catId;
+      })[0].label;
+    },
+
+    /**
+     * Get the category ID for a given label. If more than one match
+     * is found, return the first possibility.
+     *
+     * @param catLabel {string} label for a category
+     */
+    getCategoryId: function(catLabel) {
+      var catConfig = this.searchService.config.search.settings.categories;
+      if (!catLabel || catConfig.filter(function(c) { return c.label === catLabel; }).length === 0) {
+        return;   // Do nothing if there is no matching category
+      }
+
+      return catConfig.filter(function(c) {
+        return c.label === catLabel;
+      })[0].name;
+    },
+
+    /**
+     * When a facet is selected in the facet panel, do a facet search
+     * against the current search service. Repopulate the facet UI
+     * with the returned facets. The facet search will also return
+     * a list of matching books that should be displayed in the
+     * manifests panel.
+     *
+     * @param selected {array}
+     *  {
+     *    "category": "...",    // selected category ID
+     *    "value": "...",       // selected value, undefined should be treated as empty string
+     *    "ui_id": "...",       //
+     *    "children": [],       // Any child nodes (only applicable for root nodes)
+     *    "isRoot": true|false  // Category that was selected?
+     *  }
      */
     facetSelected: function(selected) {
       var _this = this;
 
-      selected.forEach(function(sel) {
-        var filtered = _this.selectedFacets.filter(function(s) {
-          return s.ui_id === sel.ui_id;
-        });
-
-        if (filtered.length === 0) {  // If facet not found, add it to the list
-          _this.selectedFacets.push(sel);
-        } else {  // If facet found, remove from list
-          _this.selectedFacets = _this.selectedFacets.filter(function(s) {
-            return s.ui_id !== sel.ui_id;
-          });
-        }
-      });
-
-      if (Array.isArray(this.selectedFacets) && this.selectedFacets.length > 0) {
-        this.getFacets(this.selectedFacets);
-      } else {
-        this.clearSelectedFacets();
-      }
+      this.getFacets(this.facetPanel.getSelectedNodes());
     },
 
-    getFacets: function(facets, setui) {
+    getFacets: function(facets) {
+      if (!this.searchService.config) {
+        console.log("[SW] No search service config info found ... ");
+        return;
+      }
+
+      var query;
+
+      if (facets && facets.length > 0) {
+        var delimiters = this.searchService.config.query.delimiters;
+        var facetParts = [];
+        facets.forEach(function(f) {
+          facetParts.push({
+            "op": delimiters.or,
+            "category": f.category,
+            "term": f.value
+          });
+        });
+        query = $.toTermList(facetParts);
+      }
+
       this.eventEmitter.publish("GET_FACETS", {
         "origin": this.windowId,
         "service": this.searchService,
-        "facets": facets,
-        "setui": setui
+        "facets": query
       });
     },
 
-    handleFacets: function(searchResults, setui) {
-      this.updateBookList(searchResults);
-      /*
-       * --- IMPL note ---
-       * SearchResults contains a list of objects that match some set of
-       * facets. Filter the list for only manifests, then reduce the
-       * list to a list of manifest IDs for simplicity.
-       */
-      if (this.onFacetSelect && typeof this.onFacetSelect === "function") {
-        this.onFacetSelect(this.bookList);
+    handleFacets: function(searchResults, append) {
+      var _this = this;
+
+      // Update visibility of manifests
+      this.bookList = this.getManifestList(searchResults);
+      this.onFacetSelect(this.bookList);
+
+      if (!searchResults.categories) {
+        console.log("[SW] No categories found in search results. " + searchResults["@id"]);
+        return;
       }
 
-      if (setui) {
-        if (!this.facetPanel) {
-          this.initFacets();
+      if (this.config.allowFacets && this.facetPanel) {
+        searchResults = this.resultsCategoriesToFacets(searchResults);
+        if (append) {
+          searchResults.categories.forEach(function(cat) {
+            _this.facetPanel.addValues(cat.name, cat.values);
+          });
         } else {
-          this.facetPanel.destroy();
-          this.initFacets();
+          this.facetPanel.setFacets(searchResults.categories);
         }
 
-        if (this.config.allowFacets && this.facetPanel) {
-          this.facetPanel.setFacets(searchResults.facets);
-          this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
-        }
+        this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
       }
+    },
+
+    resultsCategoriesToFacets: function(searchResults) {
+      if (!searchResults || !Array.isArray(searchResults.categories)) {
+        return searchResults;
+      }
+      var _this = this;
+      var categoryConfig = this.searchService.config.search.settings.categories;
+
+      searchResults.categories.forEach(function(cat) {
+        jQuery.extend(cat, {
+          "label": _this.getCategoryLabel(cat.name)
+        });
+      });
+
+      return searchResults;
     },
 
     /**
@@ -791,24 +920,15 @@
      * designed to be used with search results from facet requests.
      *
      * @param searchResults {object} search results object
+     * @returns array of manifest IDs
      */
-    updateBookList: function(searchResults) {
+    getManifestList: function(searchResults) {
       // Create a list of manifests to pass back to to parent, if applicable
-      this.bookList = searchResults.matches.filter(function(m) {
+      return searchResults.matches.filter(function(m) {
         return m.object["@type"] === "sc:Manifest";
       }).map(function(m) {
         return m.object["@id"];
       });
-
-    },
-
-    /**
-     * Clear all selected facets. This will also get all default facets
-     * and retrieve and update the book list.
-     */
-    clearSelectedFacets: function() {
-      this.selectedFacets = [];
-      this.getFacets([{"dim": "facet_location"}], true);
     },
 
     resultsPagerText: Handlebars.compile([
