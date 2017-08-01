@@ -44,7 +44,11 @@
         }
       });
 
-      this.fetchTplData(this.manifestId);
+      if (this.manifest) {
+        this.fetchTplData(this.manifestId);
+      } else if (this.manifestRef) {
+        this.fetchRefTpl();
+      }
 
       if (_this.state.getStateProperty('preserveManifestOrder')) {
         if (this.appendTo.children().length === 0) {
@@ -71,9 +75,9 @@
       this.bindEvents();
       this.listenForActions();
 
-      if (!this.visible) {
-        this.element.hide();
-      }
+      // if (!this.visible) {
+      //   this.element.hide();
+      // }
     },
 
     fetchTplData: function() {
@@ -149,6 +153,65 @@
       })();
 
     },
+
+    fetchRefTpl: function() {
+      console.log("[MLI] Listing a manifest REFERENCE. " + JSON.stringify(this.manifestRef));
+      var _this = this;
+      var location = this.manifestRef.location;
+      var ref = this.manifestRef;
+
+      this.tplData = {
+        label: $.JsonLd.getTextValue(ref.label),
+        repository: location,
+        canvasCount: undefined,
+        images: [],
+        index: _this.state.getManifestIndex(ref["@id"])
+      };
+
+      this.tplData.repoImage = (function() {
+        var repo = _this.tplData.repository;
+        if (ref.logo) {
+          if (typeof ref.logo === "string")
+            return ref.logo;
+          if (typeof ref.logo['@id'] !== 'undefined')
+            return ref.logo['@id'];
+        }
+        return '';
+      })();
+
+      if (ref.thumbnail) {
+        ref.thumbnail.forEach(function(thumb, index) {
+          var toAdd = {
+            height: _this.thumbHeight,
+            index: index
+          };
+
+          if (typeof thumb === "string") {
+            toAdd.url = thumb;
+          } else if (thumb.service && $.Iiif.getComplianceLevelFromProfile(thumb.service.profile) !== -1) {
+            // If there is a IIIF service available
+
+            var width;
+            if (ref.width) {
+              // Always prefer defined thumbnail width
+              width = ref.width;
+            } else if (thumb.service.width && thumb.service.height) {
+              // Service has actual dimensions of images, we can determine width from aspect ratio and our desired height
+              var aspectRatio = thumb.service.width / thumb.service.height;
+              width = Math.round(aspectRatio * _this.thumbHeight);    // Round to nearest int
+            } else {
+              // Some default
+              width = 60;
+            }
+
+            toAdd.width = width;
+            toAdd.url = $.Iiif.makeUriWithWidth(thumb.service["@id"], width, $.Iiif.getComplianceLevelFromProfile(thumb.service.profile));
+          }
+          _this.tplData.images.push(toAdd);
+        });
+      }
+    },
+
 
     render: function() {
 

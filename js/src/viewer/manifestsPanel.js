@@ -78,6 +78,10 @@
             _this.onManifestReceived(event, newManifest);
           });
 
+          _this.eventEmitter.subscribe("manifestReferenced", function(event, ref) {
+            _this.onManifestReferenced(ref);
+          });
+
           _this.eventEmitter.subscribe("SEARCH_SIZE_UPDATED." + this.searcher.windowId, function() {
             _this.setContainerPositions();
           });
@@ -212,6 +216,17 @@
           if (this.searcher) {
             this.searcher.addIIIFObject(newManifest.jsonLd);
           }
+        },
+
+        onManifestReferenced: function(reference) {
+          this.manifestListItems.push(new $.ManifestListItem({
+            manifestRef: reference,
+            resultsWidth: this.resultsWidth,
+            state: this.state,
+            eventEmitter: this.eventEmitter,
+            appendTo: this.manifestListElement
+          }));
+          this.element.find("#manifest-search").keyup();
         },
 
         setContainerPositions: function() {

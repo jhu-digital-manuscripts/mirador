@@ -1,3 +1,13 @@
+/**
+ * Event:
+ *  - "manifestQueued" : published when a manifest is first encountered
+ *                      currently subscribed in SaveController and Workspace
+ *  - "manifestReceived" : published when data for any manifest is retrieved.
+ *                      currently subscribed here and ManifestsPanel and Slot
+ *      Really, the only time we NEED the full manifest data is when one has
+ *      been selected for viewing. A new slot will be spawned and a window
+ *      created and populated with data from the manifest and child canvases.
+ */
 (function($) {
 
   $.Viewer = function(options) {
@@ -286,30 +296,42 @@
       this.toggleOverlay('bookmarkPanelVisible');
     },
 
+    /**
+     * Original behavior: Load entire collection tree for all collections
+     * specified on Mirador init. Load all manifests specified in init
+     * found in any loaded collection.
+     *
+     * This way of loading IIIF data allows for a very rich browsing
+     * experience, but is very slow and demands a fast connection. Propose
+     * to not load collection tree, but do not load any manifests until
+     * they are opened in a window.
+     *
+     * One caveat: manifests that are directly referenced in the Mirador
+     * init. These should probably be loaded like the current behavior.
+     * Otherwise, we will have no data to populate the UI.
+     *
+     * Use the same syntax in Mirador init to add data.
+     *  data: {   // Pick ONE property
+     *    "manifestUri": "",
+     *    "collectionUri": "",
+     *    "manifestContent": { ... }
+     *  }
+     */
     getManifestsData: function() {
       var _this = this;
 
       _this.data.forEach(function(manifest) {
+        var location = manifest.location ? manifest.location : "";
         if (manifest.hasOwnProperty('manifestContent')) {
+          // Full manifest is specified in init data, using property 'manifestContent'
           var content = manifest.manifestContent;
-          _this.addManifestFromUrl(content['@id'], manifest.location ? manifest.location : '', content);
+          _this.addManifestFromUrl(content['@id'], location, content);
         } else if (manifest.hasOwnProperty('manifestUri')) {
-          var url = manifest.manifestUri;
-          _this.addManifestFromUrl(url, manifest.location ? manifest.location : '', null);
+          // No content found, but manifest ID found in property 'manifestUri'
+          _this.addManifestFromUrl(manifest.manifestUri, location, null);
         } else if (manifest.hasOwnProperty('collectionUri')) {
-          jQuery.getJSON(manifest.collectionUri).done(function (data, status, jqXHR) {
-            if (data.hasOwnProperty('manifests')){
-              jQuery.each(data.manifests, function (ci, mfst) {
-                _this.addManifestFromUrl(mfst['@id'], '', null);
-              });
-            } else if (data.hasOwnProperty('members')){
-              jQuery.each(data.members, function (ci, mfst) {
-                _this.addManifestFromUrl(mfst['@id'], '', null);
-              });
-            }
-          }).fail(function(jqXHR, status, error) {
-            console.log(jqXHR, status, error);
-          });
+          // No manifest ID or content found, collection ID found
+          _this.addCollectionFromUrl(manifest.collectionUri, location, null);
         }
       });
     },
@@ -323,6 +345,60 @@
       );
     },
 
+    /**
+     *
+     * @param url {string} collection ID
+     * @param location {string} (optional) label for current repository
+     * @param content {object} (optional) full JSON data, if already known
+     * @param depth {number} current depth in collection tree
+     * @fires collectionQueued : collection found, starting to load
+     * @fires collectionReceived : collection data done loading
+     * @fires manifestReferenced : manifest found in collection, not loaded or queued
+     */
+    addCollectionFromUrl: function(url, location, content, depth) {
+      var _this = this;
+      var collection;
+
+      if (!this.state.getStateProperty("collections")[url]) {
+        collection = new $.Collection(url, location, content);
+        this.eventEmitter.publish("collectionQueued", collection, location);
+
+        collection.request.done(function() {
+          _this.eventEmitter.publish("collectionReceived", collection);
+
+          // Do stuff with child manifests
+          collection.getManifestBlocks().forEach(function(man) {
+            // TODO we can load manifest data if this block has no extra metadata
+            // but what metric should we use to determine this?
+            _this.eventEmitter.publish("manifestReferenced", man, location);
+          });
+
+          // Load child collections, provided we don't go too far down the rabbit hole
+          if (depth < 4) {
+            collection.getCollectionBlocks().forEach(function(col) {
+              _this.addCollectionFromUrl(col["@id"], location, null, depth+1);
+            });
+          }
+        }).fail(function(jqXHR, status, error) {
+          console.log(jqXHR, status, error);
+        });
+      }
+    },
+
+    /**
+     * Load manifest data from a URL. We can decorate it with a location
+     * label or provide the manifest data if it has already been loaded.
+     *
+     * When this request is first made, a 'manifestQueued' event will be
+     * triggered. After data has been loaded and otherwise setup, a
+     * 'manifestReceived' event will be triggered.
+     *
+     * @param url resolvable URL ID of the manifest
+     * @param location (optional) label for the manifests current repository
+     * @param content (optional) manifest JSON data, if already loaded
+     * @fires manifestQueued
+     * @fires manifestReceived
+     */
     addManifestFromUrl: function(url, location, content) {
       var _this = this,
         manifest;

@@ -39,8 +39,39 @@
         jQuery.extend(true, config, object);
       }
     });
-    this.init(jQuery.extend(true, {}, $.DEFAULT_SETTINGS, config));
+
+    /*
+    We want to deep copy/merge nested objects in the config, but array values should be overwritten
+    So, stringify arrays so extend overwrites them and then convert them back to arrays
+    */
+    function iterateStringify(object) {
+      for (var property in object) {
+        if (object.hasOwnProperty(property)) {
+          if (object[property] instanceof Array) {
+            object[property] = JSON.stringify(object[property]);
+          } else if (typeof object[property] === "object") {
+            iterateStringify(object[property]);
+          } else {}
+        }
+      }
+    }
+    function iterateParse(object) {
+      for (var property in object) {
+        if (object.hasOwnProperty(property)) {
+          if (typeof object[property] === "string" && object[property][0] === '[') {
+            object[property] = JSON.parse(object[property]);
+          } else if (typeof object[property] === "object") {
+            iterateParse(object[property]);
+          } else {}
+        }
+      }
+    }
+    iterateStringify(config);
+    var newConfig = jQuery.extend(true, {}, $.DEFAULT_SETTINGS, config);
+    iterateParse(newConfig);
+    this.init(newConfig);
   };
+
 
   $.SaveController.prototype = {
 
@@ -106,10 +137,6 @@
        history.replaceState(this.currentConfig, "Mirador Session", cleanURL);
       } else {
        history.replaceState(this.currentConfig, "Mirador Session", cleanURL+"#"+this.sessionID);
-      }
-
-      if (config.editorPanel) {
-        this.currentConfig.editorPanelConfig = config.editorPanelConfig;
       }
 
       this.bindEvents();
@@ -271,6 +298,43 @@
         _this.set('manifests', manifests, {parent: 'currentConfig'});
       });
 
+      _this.eventEmitter.subscribe("manifestReferenced", function(event, manifestObject, repository) {
+        var data = _this.currentConfig.data,
+        objectInConfig = false,
+        url = manifestObject.uri;
+
+        jQuery.each(data, function(index, manifestObject){
+          if (manifestObject.manifestUri === url) {
+            objectInConfig = true;
+          }
+        });
+        if (!objectInConfig) {
+          data.push({"manifestUri":url, "location":repository});
+          _this.set("data", data, {parent: "currentConfig"});
+        }
+        var manifests = _this.currentConfig.manifests;
+        manifests[url] = manifestObject;
+        _this.set('manifests', manifests, {parent: 'currentConfig'});
+      });
+
+      _this.eventEmitter.subscribe("collectionQueued", function(event, colObj, location) {
+        var data = _this.currentConfig.data;
+        var url = colObj.uri;
+
+        var objectInConfig = data.filter(function(obj) {
+          return obj.collectionUri === url;
+        });
+
+        if (objectInConfig.length === 0) {
+          data.push({"collectionUri": url, "location": location});
+          _this.set("data", data, {parent: "currentConfig"});
+        }
+
+        var collections = _this.currentConfig.collections;
+        collections[url] = colObj;
+        _this.set("collections", collections, {parent: "currentConfig"});
+      });
+
       _this.eventEmitter.subscribe("slotsUpdated", function(event, options) {
         _this.slots = options.slots;
       });
@@ -346,6 +410,38 @@
 
     },
 
+    cleanup: function(obj) {
+
+      /**
+       * Setup an array-based implementation of a Set
+       * to track the objects we have
+       * already cloned - this will generically clean circular refs.
+       **/
+      var clonedSet = [];
+
+      function cloner(obj) {
+
+        if(obj === null || typeof(obj) != 'object') {
+          return obj;
+        }
+
+        if (clonedSet.indexOf(obj) === -1) {
+          clonedSet.push(obj);
+          var temp = Array.isArray(obj) ? [] : {};
+          for(var key in obj) {
+            if (obj.hasOwnProperty(key)) {
+              temp[key] = cloner(obj[key]);
+            }
+          }
+          return temp;
+        }
+
+        return undefined;
+      }
+
+      return cloner(obj);
+    },
+
     save: function() {
       var _this = this;
 
@@ -353,7 +449,7 @@
       // localStorage is a key:value store that
       // only accepts strings.
 
-      localStorage.setItem(_this.sessionID, JSON.stringify(_this.currentConfig));
+      localStorage.setItem(_this.sessionID, JSON.stringify(_this.cleanup(_this.currentConfig)));
     }
 
   };

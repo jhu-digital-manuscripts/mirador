@@ -31,6 +31,7 @@
     },
 
     'manifests' : [],
+    'collections': {},
     'data' : [],
 
     'layout': '1x1',
@@ -52,7 +53,10 @@
       //control what is available in the side panel. if "sidePanel" is false, these options won't be applied
       "sidePanelOptions" : {
         "toc" : true,
-        "annotations" : false
+        "annotations" : false,
+        "tocTabAvailable": true,
+        "layersTabAvailable": false,
+        "searchTabAvailable": false
       },
       "sidePanelVisible" : true, //whether or not to make the side panel visible in this window on load. This setting is dependent on sidePanel being true
       "overlay" : true, //whether or not to make the metadata overlay available/visible in this window
@@ -73,7 +77,8 @@
             "contrast" : true,
             "saturate" : true,
             "grayscale" : true,
-            "invert" : true
+            "invert" : true,
+            "mirror" : false
           }
         }
       },
@@ -187,7 +192,13 @@
 
     'annotationBodyEditor': {
       'module': 'TinyMCEAnnotationBodyEditor',
-      'options': {}
+      'options': {
+        config: {
+          plugins: "image link media directionality",
+          toolbar: "bold italic | bullist numlist | link image media | removeformat | ltr rtl",
+          tags: []
+        }
+      }
     },
 
     'jsonStorageEndpoint': {
@@ -210,26 +221,7 @@
     'lockController' : {
       'lockProfile' : 'lazyZoom',
       'notifyMaxMin' : true
-    },
-
-    /**
-     * Configuration properties for the editor panel (transcription display panel)
-     * {
-     *  'showTools' : TRUE|FALSE,       // show or hide the 'editorTools' (start transcription tool bar)
-     *  'position' : 'bottom|right',    // position of the editor panel
-     *  'showOverlay' : TRUE|FALSE
-     * }
-     */
-    'editorPanelConfig': {
-      'showTools' : false,
-      'position' : 'right',
-      'showOverlay' : false
-    },
-
-    'manifestList': {
-      'maxSequenceThumbs': 20
     }
-
   };
 
 }(Mirador));
