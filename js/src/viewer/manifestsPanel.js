@@ -78,6 +78,10 @@
             _this.onManifestReceived(event, newManifest);
           });
 
+          _this.eventEmitter.subscribe("collectionReceived", function(event, collection) {
+            _this.onCollectionReceived(collection);
+          });
+
           _this.eventEmitter.subscribe("manifestReferenced", function(event, ref) {
             _this.onManifestReferenced(ref);
           });
@@ -137,7 +141,7 @@
             this.manifestListItems.forEach(function(item) { item.element.show(); });
           } else {
             this.manifestListItems.forEach(function(item) {
-              if (_this.manifestVisible(item.manifest)) {
+              if (_this.manifestVisible(item.manifest) || _this.manifestVisible(item.manifestRef)) {
                 item.element.show();    // This manifest is 'selected'
               } else {
                 item.element.hide();
@@ -147,13 +151,18 @@
         },
 
         manifestVisible: function(manifest) {
+          if (!manifest) {
+            return false;
+          }
+          var manifestId = manifest.hasOwnProperty("getId") ? manifest.getId() : manifest["@id"];
           // Visible IF
           //    no selected objects OR
           //    manifest ID is not in selected objects  OR
           //    any manifest parent is in the selected objects
           return !Array.isArray(this.selectedObjects) || this.selectedObjects.length === 0 ||
-            this.selectedObjects.indexOf(manifest.getId()) !== -1 ||
-            this.selectedObjects.filter(function(s) { return manifest.isWithin(s); }).length > 0;
+            this.selectedObjects.indexOf(manifestId) !== -1 ||
+            (manifest.hasOwnProperty("isWithin") &&
+              this.selectedObjects.filter(function(s) { return manifest.isWithin(s); }).length > 0);
         },
 
         hide: function() {
@@ -227,6 +236,12 @@
             appendTo: this.manifestListElement
           }));
           this.element.find("#manifest-search").keyup();
+        },
+
+        onCollectionReceived: function(collection) {
+          if (this.searcher) {
+            this.searcher.addIIIFObject(collection);
+          }
         },
 
         setContainerPositions: function() {
