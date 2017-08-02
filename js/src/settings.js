@@ -43,6 +43,9 @@
     // whether or not to preserve the order of the manifests, as provided in the configuration, in the manifest listing page
     'preserveManifestOrder' : false,
 
+    // Maximum number of thumbnails to display in the manifest browser
+    'manifestsPageMaxThumbs' : -1,
+
     //default window settings, but can be changed in Mirador configuration on initialization
     'windowSettings' : {
       "availableViews" : ['ThumbnailsView', 'ImageView', 'ScrollView', 'BookView'], //any subset removes others

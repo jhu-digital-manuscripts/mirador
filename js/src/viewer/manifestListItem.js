@@ -123,10 +123,11 @@
         });
       }
 
-      var maxThumbs;
-      if (this.state.currentConfig.manifestList) {
-        maxThumbs = this.state.currentConfig.manifestList.maxSequenceThumbs;
-      }
+      // var maxThumbs;
+      // if (this.state.currentConfig.manifestList) {
+      //   maxThumbs = this.state.currentConfig.manifestList.maxSequenceThumbs;
+      // }
+      var maxThumbs = this.state.getStateProperty("manifestsPageMaxThumbs");
       jQuery.each(_this.allImages, function(index, value) {
         var width = value.width;
 
@@ -155,10 +156,10 @@
     },
 
     fetchRefTpl: function() {
-      console.log("[MLI] Listing a manifest REFERENCE. " + JSON.stringify(this.manifestRef));
       var _this = this;
       var location = this.manifestRef.location;
       var ref = this.manifestRef;
+      var maxThumbs = this.state.getStateProperty("manifestsPageMaxThumbs");
 
       this.tplData = {
         label: $.JsonLd.getTextValue(ref.label),
@@ -181,6 +182,9 @@
 
       if (ref.thumbnail) {
         ref.thumbnail.forEach(function(thumb, index) {
+          if (maxThumbs !== -1 && index > maxThumbs-1) {
+            return false;
+          }
           var toAdd = {
             height: _this.thumbHeight,
             index: index
