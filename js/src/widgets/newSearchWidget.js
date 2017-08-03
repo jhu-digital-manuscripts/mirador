@@ -325,7 +325,7 @@
       });
     },
 
-    addSearchService: function(service) {console.log(service["@id"]);
+    addSearchService: function(service) {
       if (!this.config.searchBooks && service["@id"].indexOf("manifest") >= 0) {
         return; // End early if encountering a service for a book when they should not be included.
       }
@@ -878,7 +878,9 @@
 
       // Update visibility of manifests
       this.bookList = this.getManifestList(searchResults);
-      this.onFacetSelect(this.bookList);
+      if (this.onFacetSelect) {
+        this.onFacetSelect(this.bookList);
+      }
 
       if (!searchResults.categories) {
         console.log("[SW] No categories found in search results. " + searchResults["@id"]);

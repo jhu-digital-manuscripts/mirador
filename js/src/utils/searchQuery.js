@@ -111,7 +111,18 @@
    * @return string      escaped term
    */
   $.escapeSearchTerm =  function(term) {
-    return term && typeof term === "string" ? term.replace(/\\/g, '\\\\').replace(/'/g, "\\'") : term;
+    if (!term) {
+      return term;
+    } else if (typeof term === "string") {
+      return term.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    } else if (Array.isArray(term)) {
+      term.forEach(function(val, index) {
+        term[index] = $.escapeSearchTerm(val);
+      });
+      return term;
+    } else {
+      return term; // Fallback, just return the term
+    }
   };
 
   $.toTermList = function(queryParts) {
