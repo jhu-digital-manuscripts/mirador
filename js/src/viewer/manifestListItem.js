@@ -269,12 +269,18 @@
 
       this.element.find('.preview-image').on('click', function(e) {
         e.stopPropagation();
-        // var windowConfig = {
-        //   manifest: _this.manifest,
-        //   canvasID: jQuery(this).attr('data-image-id'),
-        //   viewType: _this.state.getStateProperty('windowSettings').viewType //get the view type from settings rather than always defaulting to ImageView
-        // };
-        // _this.eventEmitter.publish('ADD_WINDOW', windowConfig);
+
+        var canvasID = jQuery(this).attr('data-image-id');
+        if (canvasID) {
+          var windowConfig = {
+            manifest: _this.manifest,
+            canvasID: jQuery(this).attr('data-image-id'),
+            viewType: _this.state.getStateProperty('windowSettings').viewType //get the view type from settings rather than always defaulting to ImageView
+          };
+          _this.eventEmitter.publish('ADD_WINDOW', windowConfig);
+        } else {
+          _this.element.click();
+        }
       });
     },
 
