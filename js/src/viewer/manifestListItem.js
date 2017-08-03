@@ -132,7 +132,7 @@
         var width = value.width;
 
         _this.imagesTotalWidth += (width + _this.margin);
-        if (maxThumbs && index >= maxThumbs) {
+        if (maxThumbs !== -1 && index >= maxThumbs) {
           return false;
         }
         if (_this.imagesTotalWidth >= _this.maxPreviewImagesWidth) {
