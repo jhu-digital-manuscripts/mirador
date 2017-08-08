@@ -101,7 +101,20 @@
           if (typeof manifest.logo['@id'] !== 'undefined')
             return manifest.logo['@id'];
         }
-        return '';
+        if (_this.state.getStateProperty("repoImages")) {
+          if (_this.tplData.repository === '(Added from URL)') {
+            repo = '';
+          }
+          var imageName = _this.state.getStateProperty("repoImages")[repo];
+
+          if (imageName) {
+            return _this.state.getStateProperty("buildPath") + _this.state.getStateProperty("imagesPath") + "logos/" + imageName;
+          } else {
+            return "";
+          }
+        } else {
+          return '';
+        }
       })();
 
       for ( var i=0; i < manifest.sequences[0].canvases.length; i++) {
@@ -173,14 +186,13 @@
         label: label,
         title: this.refMetadata("Title"),
         date: this.refMetadata("Date"),
-        repository: location,
         canvasCount: undefined,
         images: [],
         index: _this.state.getManifestIndex(ref["@id"])
       };
 
       this.tplData.repoImage = (function() {
-        var repo = _this.tplData.repository;
+        var repo = location;
         if (ref.logo) {
           if (typeof ref.logo === "string")
             return ref.logo;
