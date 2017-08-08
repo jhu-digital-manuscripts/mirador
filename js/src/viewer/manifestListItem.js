@@ -157,12 +157,22 @@
 
     fetchRefTpl: function() {
       var _this = this;
-      var location = this.manifestRef.location;
+      var location = this.manifestRef.location || this.location;
       var ref = this.manifestRef;
       var maxThumbs = this.state.getStateProperty("manifestsPageMaxThumbs");
 
+      var label = this.refMetadata("Repository");
+      if (this.refMetadata("Shelfmark")) {
+        label += ", " + this.refMetadata("Shelfmark");
+      } else if (this.refMetadata("Common Name")) {
+        label += ", " + this.refMetadata("Common Name");
+      }
+
       this.tplData = {
-        label: $.JsonLd.getTextValue(ref.label),
+        // label: $.JsonLd.getTextValue(ref.label),
+        label: label,
+        title: this.refMetadata("Title"),
+        date: this.refMetadata("Date"),
         repository: location,
         canvasCount: undefined,
         images: [],
@@ -177,7 +187,20 @@
           if (typeof ref.logo['@id'] !== 'undefined')
             return ref.logo['@id'];
         }
-        return '';
+        if (_this.state.getStateProperty("repoImages")) {
+          if (_this.tplData.repository === '(Added from URL)') {
+            repo = '';
+          }
+          var imageName = _this.state.getStateProperty("repoImages")[repo];
+
+          if (imageName) {
+            return _this.state.getStateProperty("buildPath") + _this.state.getStateProperty("imagesPath") + "logos/" + imageName;
+          } else {
+            return "";
+          }
+        } else {
+          return '';
+        }
       })();
 
       if (ref.thumbnail) {
@@ -220,6 +243,26 @@
       }
     },
 
+    /**
+     *
+     */
+    refMetadata: function(key, ref) {
+      if (!key) {
+        return undefined;
+      } else if (!ref) {
+        ref = this.manifestRef;
+      }
+
+      var match = ref.metadata.filter(function(md) {
+        return md.label === key;
+      });
+
+      if (match.length > 0) {
+        return match[0].value;
+      } else {
+        return undefined;
+      }
+    },
 
     render: function() {
 
@@ -369,8 +412,20 @@
             '{{#if repository}}',
               '<div class="repo-label">{{repository}}</div>',
             '{{/if}}',
-            '<div class="canvas-count">{{canvasCount}} {{pluralize canvasCount (t "item") (t "items")}}</div>',
+            '{{#if canvasCount}}',
+              '<div class="canvas-count">{{canvasCount}} {{pluralize canvasCount (t "item") (t "items")}}</div>',
+            '{{/if}}',
           '</div>',
+          '{{#if title}}',
+            '<div class="item-info-row">',
+              '<h3 class="ms-title">{{title}}</h3>',
+            '</div>',
+          '{{/if}}',
+          '{{#if date}}',
+            '<div class="item-info-row">',
+              '<div class="ms-date">{{date}}</div>',
+            '</div>',
+          '{{/if}}',
         '</div>',
       '</div>',
       '<div class="preview-thumb">',

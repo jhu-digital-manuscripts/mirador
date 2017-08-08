@@ -370,7 +370,8 @@
           collection.getManifestBlocks().forEach(function(man) {
             // TODO we can load manifest data if this block has no extra metadata
             // but what metric should we use to determine this?
-            _this.eventEmitter.publish("manifestReferenced", man, location);
+            man.location = location;
+            _this.eventEmitter.publish("manifestReferenced", man);
           });
 
           // Load child collections, provided we don't go too far down the rabbit hole

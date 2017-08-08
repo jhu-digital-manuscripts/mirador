@@ -430,3 +430,16 @@
   color: blue;
   display: none;
 }
+
+
+/**
+ * Manifest browser stuff
+ */
+.ms-title {
+  font-weight: normal;
+  white-space: nowrap;
+  overflow-x: hidden;
+}
+.items-listing h3 {
+  font-size: initial;
+}
