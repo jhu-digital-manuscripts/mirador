@@ -36,7 +36,7 @@
             this.resultsWidth = clone.find('.select-results').outerWidth();
             this.controlsHeight = clone.find('.manifest-panel-controls').outerHeight();
             this.paddingListElement = this.controlsHeight;
-            this.manifestListElement.css("padding-bottom", this.paddingListElement);
+            // this.manifestListElement.css("padding-bottom", this.paddingListElement);
             clone.remove();
 
             if (this.state.getStateProperty("initialCollection")) {
@@ -263,17 +263,17 @@
         },
 
         setContainerPositions: function() {
-          var vals = {
-            "top": this.element.find("#load-controls").position().top +
-                this.element.find("#load-controls").outerHeight(true) -
-                10 + "px",
-            "width": jQuery("#" + this.state.currentConfig.id).outerWidth(true) -
-                this.element.find(".facet-container-scrollable").outerWidth(true) - 25 + "px",
-            "left": this.element.find(".facet-container-scrollable").outerWidth(true) + 15 + "px"
-          };
-
-          this.element.find(".select-results").css(vals);
-          this.element.find(".search-results-display").css(vals);
+          // var vals = {
+          //   "top": this.element.find("#load-controls").position().top +
+          //       this.element.find("#load-controls").outerHeight(true) -
+          //       10 + "px",
+          //   "width": jQuery("#" + this.state.currentConfig.id).outerWidth(true) -
+          //       this.element.find(".facet-container-scrollable").outerWidth(true) - 25 + "px",
+          //   "left": this.element.find(".facet-container-scrollable").outerWidth(true) + 15 + "px"
+          // };
+          //
+          // this.element.find(".select-results").css(vals);
+          // this.element.find(".search-results-display").css(vals);
         },
 
         template: Handlebars.compile([

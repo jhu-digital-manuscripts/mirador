@@ -239,7 +239,7 @@
         query = this.advancedSearch.getQuery();    // Advanced search is active
       }
 
-      query = this.appendBookList(query);
+      // query = this.appendBookList(query);
 
       return query;
     },
@@ -282,30 +282,29 @@
     },
 
     getFacetsQuery: function() {
-      // if (!this.searchService.config) {
-      //   console.log("[SW] No search service config info found ... ");
-      //   return;
-      // }
-      //
-      // var query;
-      // var facets = this.facetPanel.getSelectedNodes();
-      //
-      // if (facets && facets.length > 0) {
-      //   var delimiters = this.searchService.config.query.delimiters;
-      //   var facetParts = [];
-      //   facets
-      //   .forEach(function(f) {
-      //     facetParts.push({
-      //       "op": delimiters.or,
-      //       "category": f.category,
-      //       "term": f.value
-      //     });
-      //   });
-      //   query = $.toTermList(facetParts);
-      // }
-      //
-      // return query;
-      return undefined;
+      if (!this.searchService.config) {
+        console.log("[SW] No search service config info found ... ");
+        return;
+      }
+
+      var query;
+      var facets = this.facetPanel.getSelectedNodes();
+
+      if (facets && facets.length > 0) {
+        var delimiters = this.searchService.config.query.delimiters;
+        var facetParts = [];
+        facets
+        .forEach(function(f) {
+          facetParts.push({
+            "op": delimiters.or,
+            "category": f.category,
+            "term": f.value
+          });
+        });
+        query = $.toTermList(facetParts);
+      }
+
+      return query;
     },
 
     /**

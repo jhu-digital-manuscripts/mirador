@@ -1,3 +1,11 @@
+.manifest-panel-controls {
+  float: left;
+  width: 425px;
+  height: 100%;
+  margin-right: 15px;
+  border-right: 1px solid rgb( 146,145,145);
+}
+
 #load-controls input {
   background: white;
   padding: 1px 12px;
@@ -5,16 +13,11 @@
 }
 
 .select-results {
-  height: auto;
-  position: absolute;
-  top: 175px;
-  bottom: 0;
-  width: calc(100% - 15px);
+  position: relative;
+  border-top: 0;
 }
 
-.browser-search-container {
-  float: left;
-}
+.browser-search-container {}
 
 .browser-search .searchResults {
   background-color: white;
@@ -66,9 +69,10 @@
 /* Handle search results */
 .browser-search-container .search-results-display {
   position: absolute;
-  top: 170px;
-  bottom: 0;
-  width: calc(100% - 10px);
+  top: 9px;
+  bottom: 9px;
+  left: 450px;
+  width: calc(100% - 454px);
   background-color: white;
   overflow-y: auto;
   z-index: 3;
@@ -90,7 +94,7 @@
 
 /* Search UI inputs tweaks */
 .browser-search-container .search-within-form input[type="text"] {
-    width: 250px;
+  width: 250px;
 }
 .browser-search-container .advanced-search-inputs input {
   width: calc(100% - 26px);
@@ -99,10 +103,10 @@
   width: 100%;
 }
 .browser-search-container .advanced-search-inputs {
-    width: 200px;
+  width: 200px;
 }
 .browser-search-container .advanced-search-selector {
-    width: 200px;
+  width: 175px;
 }
 .browser-search-container .advanced-search-selector .advanced-search-operators {
   width: 40px;
