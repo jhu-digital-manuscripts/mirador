@@ -26,9 +26,11 @@
   padding-top: 0;
 }
 
-.browser-search .search-within-object-select {
-  width: auto;
+.browser-search .searchResults h2 {
+  margin: 6px 0;
 }
+
+.browser-search .search-within-object-select {}
 
 .browser-search-container .close {
   position: absolute;
@@ -94,7 +96,7 @@
 
 /* Search UI inputs tweaks */
 .browser-search-container .search-within-form input[type="text"] {
-  width: 250px;
+  width: 313px;
 }
 .browser-search-container .advanced-search-inputs input {
   width: calc(100% - 26px);

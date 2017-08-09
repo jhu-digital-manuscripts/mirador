@@ -941,10 +941,10 @@
     template: Handlebars.compile([
       '<div class="searchResults" {{#if hidden}}style="display: none;"{{/if}}>',
         // SearchWithin selector
-        '<div>',
-          'Search within: ',
+        '<p>',
+          '<h2>Choose Collection: </h2>',
           '<select class="search-within-object-select"></select>',
-        '</div>',
+        '</p>',
         '<form id="search-form" class="search-within-form">',
           '<input class="js-query" type="text" placeholder="search"/>',
           '<input type="submit" value="Search"/>',
