@@ -285,6 +285,8 @@
       if (!this.searchService.config) {
         console.log("[SW] No search service config info found ... ");
         return;
+      } else if (!this.facetPanel) {
+        return;
       }
 
       var query;
@@ -840,7 +842,9 @@
      */
     facetSelected: function(selected) {
       var _this = this;
-
+      if (!this.facetPanel) {
+        return;
+      }
       this.getFacets(this.facetPanel.getSelectedNodes());
     },
 
