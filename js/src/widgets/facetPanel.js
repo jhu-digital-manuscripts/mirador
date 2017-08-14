@@ -74,7 +74,7 @@
       selected: {},
       container: [
         "<div class=\"facet-container-scrollable\">",
-          "<h2>Browse:<i class=\"fa fa-lg fa-times-circle clear\" title=\"Clear all\"></i></h2>",
+          "<h2>Browse:<span class=\"clear-btn\">Clear all<i class=\"fa fa-lg fa-times-circle\" title=\"Clear all\"></i></span></h2>",
           "<div class=\"facet-container\"></div>",
         "</div>"
       ].join("")
