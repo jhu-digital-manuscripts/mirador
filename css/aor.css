@@ -21,35 +21,47 @@
 }
 .items-listing li {
   display: inline-grid;
-  grid-template-rows: [row] 80px;
-  grid-template-columns: [thumb] 100px [metadata] 40% [sequence] auto [end] 10px;
+  grid-template-columns: [thumb] 60px [metadata] auto [sequence] 25% [end] 10px;
   grid-column-gap: 10px;
   width: 100%;
+  padding-left: 0;
 }
 .repo-image {
   grid-column: thumb;
+  align-self: center;
+  max-width: 50px;
+  max-height: 50px;
 }
 .select-metadata {
   grid-column: metadata;
   width: 100%;
+  height: initial;
   max-width: initial;
 }
 .preview-thumb {
   grid-column: sequence;
   justify-self: end;
+  align-self: center;
   position: initial;
   overflow: hidden;
 }
 .manifest-title h2, .manifeset-title h3 {
   font-weight: normal;
-  white-space: nowrap;
   overflow-x: hidden;
+  margin-bottom: 6px;
 }
 .item-info {
-  display: block;
+  position: relative;
 }
 .canvas-count {
   text-align: inherit;
+}
+.ms-title {
+  font-weight: normal;
+  overflow-x: hidden;
+}
+.items-listing h3 {
+  font-size: initial;
 }
 /* ------------------------------------------------------------------------- */
 
@@ -429,17 +441,4 @@
   cursor: pointer;
   color: blue;
   display: none;
-}
-
-
-/**
- * Manifest browser stuff
- */
-.ms-title {
-  font-weight: normal;
-  white-space: nowrap;
-  overflow-x: hidden;
-}
-.items-listing h3 {
-  font-size: initial;
 }
