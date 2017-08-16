@@ -162,7 +162,7 @@
       });
 
       // "Clear All" button
-      this.element.find("i.clear").on("click", function(event) {
+      this.element.find(".clear-btn").on("click", function(event) {
         var facets = [];
         tree.jstree("get_selected", true).forEach(function(node) {
           if (node && _this.isLeafNode(node)) {
