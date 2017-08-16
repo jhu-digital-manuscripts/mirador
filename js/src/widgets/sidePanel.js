@@ -147,7 +147,8 @@
           state: this.state,
           config: {
             allowFacets: false,
-            searchBooks: true
+            searchBooks: true,
+            inSidebar: true
           }
         });
       }

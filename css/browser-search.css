@@ -1,9 +1,9 @@
 .manifest-panel-controls {
   float: left;
-  width: 425px;
+  /*width: 425px;*/
   height: 100%;
   margin-right: 15px;
-  border-right: 1px solid rgb( 146,145,145);
+  /*border-right: 1px solid rgb( 146,145,145);*/
 }
 
 #load-controls input {
@@ -13,8 +13,16 @@
 }
 
 .select-results {
-  position: relative;
+  position: absolute;
   border-top: 0;
+  top: 90px;
+  left: 435px;
+  right: 0;
+  bottom: 0;
+  height: auto;
+  border-left: 1px solid #d3d3d3;
+  border-top: 1px solid #d3d3d3;
+  padding-left: 12px;
 }
 
 .browser-search-container {}
@@ -24,6 +32,7 @@
   width: inherit;
   height: inherit;
   padding-top: 0;
+  overflow-x: hidden;
 }
 
 .searchResults h2 {
@@ -71,13 +80,17 @@
 /* Handle search results */
 .browser-search-container .search-results-display {
   position: absolute;
-  top: 9px;
-  bottom: 9px;
-  left: 450px;
-  width: calc(100% - 454px);
+  top: 90px;
+  bottom: 0;
+  left: 435px;
+  width: calc(100% - 453px);
   background-color: white;
   overflow-y: auto;
   z-index: 3;
+  padding: 8px;
+  border-left: 1px solid #d3d3d3;
+  border-top: 1px solid #d3d3d3;
+  margin-top: -1px;
 }
 .search-results-close {
   margin: 6px 0;
@@ -115,4 +128,27 @@
 }
 .browser-search-container .advanced-search-selector .advanced-search-categories {
   width: calc(100% - 40px);
+}
+
+/* Accommodating longer collection descriptions */
+.moo {
+  width: 1810px;
+}
+.moo label {
+  float: left;
+}
+.moo select {
+  width: 350px;
+  margin: 0 12px;
+}
+.moo .moo-desc {
+  float: left;
+  width: 1000px;
+  margin-right: 320px
+}
+.moo-sidebar select {
+  width: 100%;
+}
+.moo-sidebar .moo-desc {
+  display: none;
 }

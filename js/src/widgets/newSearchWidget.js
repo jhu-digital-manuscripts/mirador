@@ -50,7 +50,8 @@
         animated: false,
         hasContextMenu: true,
         allowFacets: true,
-        searchBooks: false     // Will individual books be searchable? Or search only through collections
+        searchBooks: false,     // Will individual books be searchable? Or search only through collections
+        inSidebar: false
       },
       allowFacets: true,
       facetPanel: null,
@@ -87,7 +88,8 @@
 
       // Template takes no data. Data added asyncronously later.
       this.element = jQuery(this.template({
-        "hidden": this.startHidden
+        "hidden": this.startHidden,
+        "inSidebar": this.config.inSidebar
       })).appendTo(this.appendTo);
 
       if (this.context) {
@@ -945,26 +947,32 @@
     template: Handlebars.compile([
       '<div class="searchResults" {{#if hidden}}style="display: none;"{{/if}}>',
         // SearchWithin selector
-        '<p>',
-          '<h2>Choose Collection: </h2>',
-          '<select class="search-within-object-select"></select>',
-        '</p>',
-        '<form id="search-form" class="search-within-form">',
-          '<input class="js-query" type="text" placeholder="search"/>',
-          '<input type="submit" value="Search"/>',
-        '</form>',
-        '<div class="search-disclose-btn-more">Advanced Search</div>',
-        '<div class="search-disclose-btn-less" style="display: none;">Basic Search</div>',
-        '<div class="search-results-sorter">',
-          '<label>Sort results by: ',
-            '<select>',
-              '<option value="relevance">Relevance</option>',
-              '<option value="index">Page Order</option>',
-            '</select>',
+        '<div class="{{#if inSidebar}}moo-sidebar{{else}}moo{{/if}}">',
+          '<label>Choose Collection:',
+            '<select class="search-within-object-select"></select>',
           '</label>',
+          '<div class="moo-desc">',
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+          '</div>',
         '</div>',
-        '<div class="search-disclose-container">',
-          '<div class="search-disclose" style="display: none;"></div>',
+        '<div class="bahh">',
+          '<form id="search-form" class="search-within-form">',
+            '<input class="js-query" type="text" placeholder="search"/>',
+            '<input type="submit" value="Search"/>',
+          '</form>',
+          '<div class="search-disclose-btn-more">Advanced Search</div>',
+          '<div class="search-disclose-btn-less" style="display: none;">Basic Search</div>',
+          '<div class="search-results-sorter">',
+            '<label>Sort results by: ',
+              '<select>',
+                '<option value="relevance">Relevance</option>',
+                '<option value="index">Page Order</option>',
+              '</select>',
+            '</label>',
+          '</div>',
+          '<div class="search-disclose-container">',
+            '<div class="search-disclose" style="display: none;"></div>',
+          '</div>',
         '</div>',
       '</div>',
       '<div class="search-results-display" style="display:none;">',

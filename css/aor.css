@@ -310,9 +310,7 @@
   margin-top: 10px;
   margin-bottom: 10px;
 }
-.search-disclose-container {
-  border-top: 1px solid rgb( 146, 145, 145 );
-}
+.search-disclose-container {}
 .search-disclose-btn-more,
 .search-disclose-btn-less {
   text-decoration: underline;
@@ -441,4 +439,8 @@
   cursor: pointer;
   color: blue;
   display: none;
+}
+
+.repo-image span.default-logo {
+  background-size: 50px 50px;
 }
