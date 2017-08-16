@@ -422,11 +422,11 @@ a {
   /*transition: all 0.1s ease-out; ?*/
 }
 
-.preview-image:hover {
+/*.preview-image:hover {
   box-shadow: 0px 0px 5px rgba(0, 191, 255, 1);
   transform: scale(1.1);
   transition: all 0.6 ease-out;
-}
+}*/
 
 .thumbnail-image {
   background-color: gray;
