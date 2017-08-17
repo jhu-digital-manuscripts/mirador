@@ -506,7 +506,7 @@
             return;
           }
           if (_this.advancedSearch.hasQuery()) {
-            var query = _this.appendBookList(_this.advancedSearch.getQuery());
+            var query = _this.advancedSearch.getQuery();
             _this.doSearch(_this.searchService, query,
               _this.getSortOrder(), _this.getFacetsQuery());
           }
@@ -517,6 +517,22 @@
 
       // this.setFacetCategories(newService);
       this.getFacets();
+      this.setDescription();
+    },
+
+    /**
+     * Change description in UI to the description in currently selected
+     * manifest or collection. The appropriate object is found from the
+     * current search service.
+     */
+    setDescription: function() {
+      var current = this.state.getObjFromSearchService();
+
+      if (current && current.hasOwnProperty("description")) {
+        this.element.find(".manifest-picker-desc").html(current.description());
+      } else {
+        this.element.find(".manifest-picker-desc").empty();
+      }
     },
 
     /**
@@ -947,15 +963,13 @@
     template: Handlebars.compile([
       '<div class="searchResults" {{#if hidden}}style="display: none;"{{/if}}>',
         // SearchWithin selector
-        '<div class="{{#if inSidebar}}moo-sidebar{{else}}moo{{/if}}">',
+        '<div class="{{#if inSidebar}}manifest-picker-sidebar{{else}}manifest-picker{{/if}}">',
           '<label>Choose Collection:',
             '<select class="search-within-object-select"></select>',
           '</label>',
-          '<div class="moo-desc">',
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-          '</div>',
+          '<div class="manifest-picker-desc"></div>',
         '</div>',
-        '<div class="bahh">',
+        '<div class="search-widget">',
           '<form id="search-form" class="search-within-form">',
             '<input class="js-query" type="text" placeholder="search"/>',
             '<input type="submit" value="Search"/>',

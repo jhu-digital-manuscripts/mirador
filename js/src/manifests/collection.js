@@ -144,6 +144,12 @@
       }
       // Neither present
       return [];
+    },
+    description: function() {
+      return this.jsonLd.description;
+    },
+    getId: function() {
+      return this.jsonLd["@id"];
     }
   };
 

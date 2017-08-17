@@ -211,6 +211,21 @@
       _this.eventEmitter.publish("saveControllerConfigUpdated");
     },
 
+    /**
+     * Get the manifest or collection object associated with a search
+     * service ID.
+     *
+     * @param searchServiceId {string} ID of a search service
+     * @returns the manifest or collection object
+     */
+    getObjFromSearchService: function(searchServiceId) {
+      if (!searchServiceId) {
+        return false;
+      }
+      var shortened = searchServiceId.substring(0, searchServiceId.lastIndexOf('/'));
+      return this.currentConfig.collections[shortened] || this.currentConfig.manifests[shortened];
+    },
+
     bindEvents: function() {
       var _this = this;
       // listen to existing events and use the

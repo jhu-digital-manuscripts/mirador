@@ -14,8 +14,7 @@
 
 .select-results {
   position: absolute;
-  border-top: 0;
-  top: 90px;
+  top: 15%;
   left: 435px;
   right: 0;
   bottom: 0;
@@ -131,24 +130,27 @@
 }
 
 /* Accommodating longer collection descriptions */
-.moo {
-  width: 1810px;
+.manifest-picker {
+  width: 100%;
+  height: 65px;
 }
-.moo label {
+.manifest-picker label {
   float: left;
+  min-width: 375px;
+  max-width: 40%;
+  font-size: 16px;
 }
-.moo select {
-  width: 350px;
-  margin: 0 12px;
+.manifest-picker select {
+  font-size: 14px;
+  width: 60%;
 }
-.moo .moo-desc {
+.manifest-picker .manifest-picker-desc {
   float: left;
-  width: 1000px;
-  margin-right: 320px
+  width: 60%;
 }
-.moo-sidebar select {
+.manifest-picker-sidebar select {
   width: 100%;
 }
-.moo-sidebar .moo-desc {
+.manifest-picker-sidebar .manifest-picker-desc {
   display: none;
 }

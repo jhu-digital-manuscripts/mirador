@@ -327,6 +327,9 @@
       }
 
       return result;
+    },
+    description: function() {
+      return this.jsonLd.description;
     }
 
   };
