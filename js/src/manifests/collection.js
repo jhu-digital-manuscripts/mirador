@@ -146,7 +146,7 @@
       return [];
     },
     description: function() {
-      return this.jsonLd.description;
+      return this.jsonLd ? this.jsonLd.description : undefined;
     },
     getId: function() {
       return this.jsonLd["@id"];

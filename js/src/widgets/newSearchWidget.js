@@ -517,9 +517,9 @@
      * current search service.
      */
     setDescription: function() {
-      var current = this.state.getObjFromSearchService();
+      var current = this.state.getObjFromSearchService(this.searchService.id);
 
-      if (current && current.hasOwnProperty("description")) {
+      if (current && typeof current.description === "function" && current.description()) {
         this.element.find(".manifest-picker-desc").html(current.description());
       } else {
         this.element.find(".manifest-picker-desc").empty();

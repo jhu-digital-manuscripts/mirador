@@ -331,7 +331,7 @@
           _this.addManifestFromUrl(manifest.manifestUri, location, null);
         } else if (manifest.hasOwnProperty('collectionUri')) {
           // No manifest ID or content found, collection ID found
-          _this.addCollectionFromUrl(manifest.collectionUri, location, null);
+          _this.addCollectionFromUrl(manifest.collectionUri, location, null, 0);
         }
       });
     },
