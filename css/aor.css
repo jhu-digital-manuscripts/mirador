@@ -433,6 +433,17 @@
 .search-results-close {
   display: none;
   cursor: pointer;
+  border-radius: 5px;
+  padding: 6px;
+  background-color: white;
+}
+
+.search-results-close:hover {
+  background-color: #fcfcfc;
+}
+
+.search-results-close:active {
+  background-color: #f7f7f7;
 }
 
 .results-to-top {
