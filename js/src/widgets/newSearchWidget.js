@@ -489,12 +489,17 @@
             console.log("%c No advanced search widget found. Cannot do advanced search.", "color: red;");
             return;
           }
+          var facetable = _this.config.allowFacets;
           jQuery.when(_this.currentSearchService()).then(function(s) {
             if (_this.advancedSearch.hasQuery()) {
               var query = _this.advancedSearch.getQuery();
-              _this.doSearch(_this.searchService, query,
-                _this.getSortOrder(), _this.getFacetsQuery());
+
+              if (facetable) {
+                _this.doSearch(_this.searchService, query, _this.getSortOrder(), _this.getFacetsQuery());
+              } else {
+                _this.doSearch(_this.searchService, query, _this.getSortOrder());
               }
+            }
           });
         },
         "clearMessages": function() { _this.element.find(".pre-search-message").empty(); },
@@ -691,7 +696,7 @@
               _this.context.searchService,
               _this.context.search.query,
               _this.context.search.sortOrder,
-              _this.getFacetsQuery(),
+              _this.config.allowFacets ? _this.getFacetsQuery() : undefined,
               newOffset,
               _this.context.search.numExpected
             );
