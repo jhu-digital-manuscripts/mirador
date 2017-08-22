@@ -169,18 +169,20 @@
 
         messages.empty();
 
-        // Basic search
-        if (_this.searchService.config.getDefaultFields().length === 0) {
-          jQuery(_this.messages["no-defaults"]).appendTo(messages);
-        }
+        jQuery.when(_this.currentSearchService()).then(function(service) {
+          // Basic search
+          if (_this.searchService.config.getDefaultFields().length === 0) {
+            jQuery(_this.messages["no-defaults"]).appendTo(messages);
+          }
 
-        var query = _this.getSearchQuery();
-        if (query && query.length > 0) {
-          _this.doSearch(_this.searchService, query, _this.getSortOrder(),
-            _this.getFacetsQuery());
-        } else {
-          jQuery(_this.messages["no-term"]).appendTo(messages);
-        }
+          var query = _this.getSearchQuery();
+          if (query && query.length > 0) {
+            _this.doSearch(_this.searchService, query, _this.getSortOrder(),
+              _this.getFacetsQuery());
+          } else {
+            jQuery(_this.messages["no-term"]).appendTo(messages);
+          }
+        });
       });
 
       this.element.find(".search-within-object-select").on("change", function() {
@@ -246,46 +248,9 @@
       return query;
     },
 
-    /**
-     * TODO TEMPORARY
-     *
-     * Add the book list restriction from facet widget to the a
-     * search query if necessary. This will restrict the results
-     * to only those books.
-     *
-     * This should be a temporary measure! Adding a book list restriction
-     * in this will is not possible for a large number of books.
-     *
-     * @param searchQuery {string}
-     * @returns full query with original search + book restriction
-     */
-    appendBookList: function(searchQuery) {
-      var query;
-
-      var config = this.searchService.config;
-      var delimiters = config.query.delimiters;
-      // Modify query to account for current facets by adding a restriction
-      // to only books that match the facets
-      if (Array.isArray(this.bookList) && this.bookList.length > 0) {
-        var parts = [];
-        this.bookList.forEach(function(b, index) {
-          parts.push({
-            "op": delimiters.or,
-            "category": "manifest_id",
-            "term": b
-          });
-        });
-
-        var bookQuery = $.generateQuery(parts, delimiters.field);
-        query = "(" + searchQuery + delimiters.and + bookQuery + ")";
-      }
-
-      return query;
-    },
-
     getFacetsQuery: function() {
       if (!this.searchService.config) {
-        console.log("[SW] No search service config info found ... ");
+        console.log("[SW] No search service config info found ... MOOO");
         return;
       } else if (!this.facetPanel) {
         return;
@@ -473,6 +438,25 @@
       return result;
     },
 
+    currentSearchService: function() {
+      if (!this.searchService) {  // Do nothing if no search service has been defined
+        return undefined;
+      } else if (this.searchService.config) { // Do nothing if search service has already been retrieved.
+        return this.searchService;
+      }
+
+      var _this = this;
+      var result = jQuery.Deferred();
+
+      jQuery.when(this.getSearchService(this.searchService.id)).then(function(service) {
+        result.resolve(service);
+      }).fail(function() {
+        result.reject();
+      });
+
+      return result;
+    },
+
     /**
      * Change the UI in response to the user selecting a different search
      * service. Expect that the search service has already been
@@ -505,11 +489,13 @@
             console.log("%c No advanced search widget found. Cannot do advanced search.", "color: red;");
             return;
           }
-          if (_this.advancedSearch.hasQuery()) {
-            var query = _this.advancedSearch.getQuery();
-            _this.doSearch(_this.searchService, query,
-              _this.getSortOrder(), _this.getFacetsQuery());
-          }
+          jQuery.when(_this.currentSearchService()).then(function(s) {
+            if (_this.advancedSearch.hasQuery()) {
+              var query = _this.advancedSearch.getQuery();
+              _this.doSearch(_this.searchService, query,
+                _this.getSortOrder(), _this.getFacetsQuery());
+              }
+          });
         },
         "clearMessages": function() { _this.element.find(".pre-search-message").empty(); },
         "context": _this.context,
@@ -700,14 +686,16 @@
           event.preventDefault();
 
           var newOffset = (pageNumber - 1) * onPageCount;
-          _this.doSearch(
-            _this.context.searchService,
-            _this.context.search.query,
-            _this.context.search.sortOrder,
-            _this.getFacetsQuery(),
-            newOffset,
-            _this.context.search.numExpected
-          );
+          jQuery.when(_this.currentSearchService()).then(function(s) {
+            _this.doSearch(
+              _this.context.searchService,
+              _this.context.search.query,
+              _this.context.search.sortOrder,
+              _this.getFacetsQuery(),
+              newOffset,
+              _this.context.search.numExpected
+            );
+          });
         }
       });
     },
@@ -867,30 +855,29 @@
     },
 
     getFacets: function(facets) {
-      if (!this.searchService.config) {
-        console.log("[SW] No search service config info found ... ");
-        return;
-      }
+      var _this = this;
 
-      var query;
+      jQuery.when(this.currentSearchService()).then(function(service) {
+        var query;
 
-      if (facets && facets.length > 0) {
-        var delimiters = this.searchService.config.query.delimiters;
-        var facetParts = [];
-        facets.forEach(function(f) {
-          facetParts.push({
-            "op": delimiters.or,
-            "category": f.category,
-            "term": f.value
+        if (facets && facets.length > 0) {
+          var delimiters = service.config.query.delimiters;
+          var facetParts = [];
+          facets.forEach(function(f) {
+            facetParts.push({
+              "op": delimiters.or,
+              "category": f.category,
+              "term": f.value
+            });
           });
-        });
-        query = $.toTermList(facetParts);
-      }
+          query = $.toTermList(facetParts);
+        }
 
-      this.eventEmitter.publish("GET_FACETS", {
-        "origin": this.windowId,
-        "service": this.searchService,
-        "facets": query
+        _this.eventEmitter.publish("GET_FACETS", {
+          "origin": _this.windowId,
+          "service": service,
+          "facets": query
+        });
       });
     },
 
