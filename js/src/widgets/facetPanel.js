@@ -53,19 +53,10 @@
           "three_state": false,
         },
         "plugins": [
-          "sort",
           // "state",        // Need to check API for configuration
           "wholerow",
           "checkbox"
         ],
-        "sort": function(o1, o2) {
-          var n1 = this.get_node(o1).text;
-          var n2 = this.get_node(o2).text;
-          if (!isNaN(n1) && !isNaN(n2)) {
-            return n1 - n2;
-          }
-          return n1.localeCompare(n2);
-        }
       },
       element: null,
       appendTo: null,
