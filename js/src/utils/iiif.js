@@ -26,15 +26,15 @@
 
     getComplianceLevelFromProfile: function(profile) {
         // what to return if we can't determine profile? 0 is not a good idea
-        // would be better to have $.Iiif.supports(profile, feature) but that needs a lot more! 
+        // would be better to have $.Iiif.supports(profile, feature) but that needs a lot more!
         var compliance = -1;
         var complianceString = null;
         if(profile) {
             if(typeof(profile) === 'string'){
-                complianceString = profile;    
+                complianceString = profile;
             } else if (typeof(profile) === 'object'){
                complianceString = profile[0];
-            }   
+            }
             switch(complianceString){
                 case "http://iiif.io/api/image/2/level0.json":
                     compliance = 0;
@@ -49,7 +49,7 @@
         }
         return compliance;
     },
-    
+
     makeUriWithWidth: function(uri, width, version) {
       uri = uri.replace(/\/$/, '');
       if (version[0] == '1') {
@@ -83,9 +83,31 @@
       }
 
       return json.image_host;
+    },
+
+    /**
+     * Crappy hack to find the collection name associated with either a manifest
+     * or collection. This requires following the jhu naming convension for
+     * iiif objects.
+     *
+     * @param id {string}
+     */
+    getCollectionName: function(id) {
+      if (!id) {
+        return undefined;
+      }
+      if (id.endsWith("/")) { // Strip trailing '/' if necessary
+        id = id.substring(0, id.length - 1);
+      }
+      var parts = id.split("/").filter(function(s) { return s.length > 0; });
+
+      if (parts[parts.length - 1] === "manifest") {
+        return parts[parts.length - 2].split("\.")[0];
+      } else if (parts[parts.length - 2] === "collection") {
+        return parts[parts.length - 1];
+      }
     }
 
   };
 
 }(Mirador));
-

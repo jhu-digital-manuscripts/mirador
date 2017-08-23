@@ -41,13 +41,8 @@
           "id": "viewer",
           "layout": "1x1",
           "data": [
-            // {"collectionUri": "http://rosetest.library.jhu.edu/iiif-pres-dlmm/collection/aorcollection", "location": "aor"},
-            // {"collectionUri": "http://rosetest.library.jhu.edu/iiif-pres-dlmm/collection/rosecollection", "location": "rose"},
-            // {"collectionUri": "http://rosetest.library.jhu.edu/iiif-pres-dlmm/collection/pizancollection", "location": "pizan"}
-            {"manifestUri": "http://localhost:8080/iiif-pres/hamletcollection.Hamlet/manifest"},
-            {"collectionUri": "http://localhost:8080/iiif-pres/collection/aorcollection", "location": "aor"},
-            {"collectionUri": "http://localhost:8080/iiif-pres/collection/rosecollection", "location": "rose"},
-            {"collectionUri": "http://localhost:8080/iiif-pres/collection/pizancollection", "location": "pizan"}
+            // {"manifestUri": "http://localhost:8080/iiif-pres/hamletcollection.Hamlet/manifest"},
+            {"collectionUri": "http://localhost:8080/iiif-pres/collection/top"}
           ],
           "windowObjects": [],
           "openManifestsPage": true,
@@ -75,12 +70,12 @@
               "close": false
             }
           },
-          "manifestsPageMaxThumbs": 3,
-          "repoImages": {
-            "aor": "jhu-aor.jpg",
-            "rose": "rose.jpg",
-            "pizan": "pizan.jpg"
-          }
+          "manifestsPageMaxThumbs": 3
+          // "repoImages": {
+          //   "aor": "jhu-aor.jpg",
+          //   "rose": "rose.jpg",
+          //   "pizan": "pizan.jpg"
+          // }
         };
 
         let loadedCol = getParameterByName("col");

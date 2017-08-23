@@ -112,8 +112,9 @@
           } else {
             return "";
           }
-        } else {
-          return '';
+        } else {  // No logo or 'location' found, look for image with the name of the collection
+          var name = $.Iiif.getCollectionName(manifest["@id"]);
+          return name ? _this.state.getStateProperty("buildPath") + _this.state.getStateProperty("imagesPath") + "logos/" + name + ".jpg" : '';
         }
       })();
 
@@ -193,13 +194,13 @@
 
       this.tplData.repoImage = (function() {
         var repo = location;
-        if (ref.logo) {
+        if (ref.logo) {console.log("[MLI] Found reference logo.");
           if (typeof ref.logo === "string")
             return ref.logo;
           if (typeof ref.logo['@id'] !== 'undefined')
             return ref.logo['@id'];
         }
-        if (_this.state.getStateProperty("repoImages")) {
+        if (_this.state.getStateProperty("repoImages")) {console.log("[MLI] Moo " + JSON.stringify(_this.state.getStateProperty("repoImages")));
           if (_this.tplData.repository === '(Added from URL)') {
             repo = '';
           }
@@ -210,8 +211,9 @@
           } else {
             return "";
           }
-        } else {
-          return '';
+        } else {  // No logo or 'location' found, look for image with the name of the collection
+          var name = $.Iiif.getCollectionName(ref["@id"]);
+          return name ? _this.state.getStateProperty("buildPath") + _this.state.getStateProperty("imagesPath") + "logos/" + name + ".jpg" : '';
         }
       })();
 
