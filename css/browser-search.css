@@ -134,9 +134,11 @@
   height: 65px;
 }
 .manifest-picker label {
+  display: flex;
   float: left;
   width: 40%;
   font-size: 14px;
+  align-items: baseline;
 }
 .manifest-picker select {
   font-size: 14px;
@@ -151,4 +153,44 @@
 }
 .manifest-picker-sidebar .manifest-picker-desc {
   display: none;
+}
+
+/* Playing with jQuery UI select menu */
+.ui-icon.top {
+  position: relative;
+  float: left;
+  background-image: url("../images/logos/top.jpg");
+  margin-right: 12px;
+}
+.ui-icon.dlmm {}
+.ui-icon.aorcollection {
+  background-image: url("../images/logos/aorcollection.jpg");
+}
+.ui-icon.rosecollection {
+  background-image: url("../images/logos/rosecollection.jpg");
+}
+.ui-icon.pizancollection {
+  background-image: url("../images/logos/pizancollection.jpg");
+}
+.ui-icon.hamletcollection {
+  background-image: url("../images/logos/hamletcollection.jpg");
+}
+
+.ui-menu-icons .ui-menu-item {
+  padding: 2px 12px;
+  font-size: 14px;
+  min-height: 24px;
+}
+.ui-icon {
+  background-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+.ui-icon.child {
+  position: relative;
+  float: left;
+  margin: 0 12px;
+}
+.ui-state-default {
+  background: white;
 }

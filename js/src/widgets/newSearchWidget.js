@@ -92,6 +92,12 @@
         "inSidebar": this.config.inSidebar
       })).appendTo(this.appendTo);
 
+      // Do jQuery UI magic to turn dropdown into jQuery SelectMenu
+      this.element.find(".search-within-object-select")
+        .iconselectmenu({width: "60%"})
+        .iconselectmenu("menuWidget")
+          .addClass("ui-menu-icons customicons");
+
       if (this.context) {
         // Handle any context info passed into widget
         this.initFromContext();
@@ -185,12 +191,16 @@
         });
       });
 
-      this.element.find(".search-within-object-select").on("change", function() {
+      function selectChange() {
         var selected = jQuery(this).val();
         _this.getSearchService(selected).done(function(s) {
           _this.switchSearchServices(s);
           _this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + _this.windowId);
         });
+      }
+      this.element.find(".search-within-object-select").on("change", selectChange);
+      this.element.find(".search-within-object-select").iconselectmenu({
+        change: selectChange
       });
 
       this.element.find(".search-results-close").on("click", function() {
@@ -300,8 +310,6 @@
 
       var _this = this;
       var id = service.id || service["@id"];
-      var label = service.label || (service.service ? service.service.label : id);
-
       // Search service will likely NOT have an 'id' property, but instead
       //  have a '@id' property. Change this to 'id' for things to work.
       service.id = id;
@@ -313,50 +321,10 @@
       });
 
       if (found.length === 0) {
-        var selectEl = this.element.find(".search-within-object-select");
         // If this is a new service, add it to the UI and push it to
         // the list of known services.
         this.searchServices.push(service);
-        selectEl.append(jQuery("<option value=\"" + id + "\">" + label + "</option>"));
-
-        var my_options = this.element.find(".search-within-object-select option");
-        var selected = selectEl.val();
-
-        /*
-         * Hacky way of sorting by type and name. The drop down is then sorted
-         * first by type, then each type will be sorted by its search ID. IIIF
-         * Collections are placed at the top.
-         *
-         * For the JHU IIIF service, this works out because each book name
-         * contains information about its containing collection:
-         *    JHU Name: <collectionName>.<bookName>
-         *
-         * NOTE: this can not be used generally. The IIIF spec RECOMMENDS the URL
-         *       structure that this relies on, but does not make it required.
-         *       Other IIIF services could potentially use different URL schemes.
-         */
-        my_options.sort(function(a,b) {
-          var objA = _this.getObjectType(a.value);
-          var objB = _this.getObjectType(b.value);
-
-          if (objA.name === "top") {
-            return -1;
-          } else if (objB.name === "top") {
-            return 1;
-          } else if (objA.type === objB.type) {
-            return a.value.toLowerCase().localeCompare(b.value.toLowerCase());
-          } else if (objA.type === "collection") {
-            return -1;
-          } else if (objB.type === "collection") {
-            return 1;
-          }
-
-          return 0;
-        });
-
-        selectEl.empty().append( my_options );
-        selectEl.val(selected);
-
+        this.addCollectionToDropdown(id);
       } else {
         found.forEach(function(s) {
           jQuery.extend(true, s, service);  // This will not overwrite any currently present properties.
@@ -386,6 +354,75 @@
         });
         _this.advancedSearchSet = true;
       }
+    },
+
+    /**
+     * Use knowlege of the DOM structure to insert an element for the
+     * input collection in the correct place.
+     *
+     * @param id {string} ID search service
+     */
+    addCollectionToDropdown: function(id) {
+      var _this = this;
+      var col = this.state.getObjFromSearchService(id);
+      if (!col) {
+        return false;
+      }
+
+      var optionEl = jQuery(this.optionTemplate());
+      var template = {
+        "objId": id,
+        // ID here is a search service ID, so strip off the trailing portion
+        "cssClass": $.Iiif.getCollectionName(id.substring(0, id.lastIndexOf("/"))),
+        "label": col.jsonLd.label
+      };
+
+      var moo = this.element.find(".search-within-object-select");
+      if (moo.children().length === 0) {
+        moo.append(jQuery(_this.optionTemplate(template)));
+        moo.iconselectmenu("refresh");
+      }
+      /*
+       * We must first get the collection object. From there, we can inspect
+       * some metadata. Initial design will not support deeply nested collections.
+       *
+       * Iterate through all <option>s in the select.
+       *   > If the current option data-name matches collection _parent_
+       *      - append optionEl after the option, add 'child' css class to optionEl
+       *   > If the current option data-name matches collection _child_
+       *      - Number of 'child' css classes to add to optionEl = number of
+       *        'child' css classes on current option
+       *      - Add 'child' css class to current option
+       *      - Prepend optionEl before curren option
+       *   > If current option data-name matches optionEl name, terminate immediately,
+       *     as duplicates must not be added to the list
+       */
+      moo.children().each(function(index, el) {
+        el = jQuery(el);
+        var elId = el.attr("value").substring(0, el.attr("value").lastIndexOf("/"));
+        var elCollection = $.Iiif.getCollectionName(elId);
+        if (col.isWithin(elId)) {
+          // optionEl.data("class", optionEl.data("class") + " child");
+          template.cssClass += " child";
+          jQuery(_this.optionTemplate(template)).insertAfter(el);
+          moo.iconselectmenu("refresh");
+          return false;
+        }
+
+        // Find all child collections of 'col' that match the current <option>
+        var childMatches = col.getCollectionUris().filter(function(uri) {
+          return uri === elCollection;
+        });
+        if (childMatches.length > 0) {
+          // Count # of times 'child' class appears in current <option>
+          var numChilds = (el.attr("class").match(/child/g) || []).length;
+          for (var i = 0; i < numChilds; i++) {
+            template.cssClass += " child";
+          }
+          jQuery(_this.optionTemplate(template)).insertBefore(el);
+          moo.iconselectmenu("refresh");
+        }
+      });
     },
 
     /**
@@ -469,7 +506,7 @@
       this.searchService = newService;
 
       // Ensure the correct value appears in the 'search-within' dropdown.
-      this.element.find(".search-within-object-select").val(newService.id);
+      this.element.find(".search-within-object-select").val(newService.id).iconselectmenu("refresh");
 
       // Switch advanced search UI as needed
       if (this.advancedSearch) {
@@ -951,6 +988,10 @@
         'Showing {{offset}} - {{last}} {{#if total}}out of {{total}}{{/if}}',
       '{{/if}}',
     ].join('')),
+
+    optionTemplate: Handlebars.compile(
+      '<option value="{{objId}}" {{#if cssClass}}data-class="{{cssClass}}"{{/if}}>{{label}}</option>'
+    ),
 
     template: Handlebars.compile([
       '<div class="searchResults" {{#if hidden}}style="display: none;"{{/if}}>',

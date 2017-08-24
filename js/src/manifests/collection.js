@@ -150,7 +150,30 @@
     },
     getId: function() {
       return this.jsonLd["@id"];
-    }
+    },
+    /**
+     * Check if a IIIF ID is within this collection.
+     */
+    isWithin: function(someId, within) {
+      var _this = this;
+      if (!within) { within = this.within || this.jsonLd.within; } // If no 'within' is provided, start with base 'within' of this collection
+      if (!within || !someId) { return false; }  // Quit early if 'within' still not defined, there is nothing to check.
+
+      var result = false;
+      if (Array.isArray(within)) {
+        within.forEach(function(w) {
+          result = result || _this.isWithin(someId, w);
+        });
+      } else if (typeof within === "object") {
+        result = someId === within["@id"];
+      } else if (typeof within === "string") {
+        result = someId === within;
+      } else {
+        result = false;
+      }
+
+      return result;
+    },
   };
 
 }(Mirador));
