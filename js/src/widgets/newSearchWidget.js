@@ -839,15 +839,15 @@
      * a listing of all facet categories for the service. No values
      * under the categories are included.
      */
-    setFacetCategories: function(searchService) {
-      if (!searchService) {
-        searchService = this.searchService;
-      }
-      if (searchService.config) {
-        this.facetPanel.setFacets(searchService.config.search.settings.categories);
-        this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
-      }
-    },
+    // setFacetCategories: function(searchService) {
+    //   if (!searchService) {
+    //     searchService = this.searchService;
+    //   }
+    //   if (searchService.config) {
+    //     this.facetPanel.setFacets(searchService.config.search.settings.categories);
+    //     this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
+    //   }
+    // },
 
     /**
      * Get the label corresponding to the category ID.
@@ -949,15 +949,17 @@
 
       if (this.config.allowFacets && this.facetPanel) {
         searchResults = this.resultsCategoriesToFacets(searchResults);
-        if (append) {
-          searchResults.categories.forEach(function(cat) {
-            _this.facetPanel.addValues(cat.name, cat.values);
-          });
-        } else {
-          this.facetPanel.setFacets(searchResults.categories);
-        }
+        jQuery.when(this.resultsCategoriesToFacets(searchResults)).then(function(sr) {
+          if (append) {
+            sr.categories.forEach(function(cat) {
+              _this.facetPanel.addValues(cat.name, cat.values);
+            });
+          } else {
+            _this.facetPanel.setFacets(sr.categories);
+          }
+          _this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
+        });
 
-        this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
       }
     },
 
@@ -966,15 +968,22 @@
         return searchResults;
       }
       var _this = this;
-      var categoryConfig = this.searchService.config.search.settings.categories;
+      var result = jQuery.Deferred();
+      jQuery.when(this.currentSearchService()).then(function(s) {
+        var categoryConfig = s.config.search.settings.categories;
 
-      searchResults.categories.forEach(function(cat) {
-        jQuery.extend(cat, {
-          "label": _this.getCategoryLabel(cat.name)
+        searchResults.categories.forEach(function(cat) {
+          jQuery.extend(cat, {
+            "label": _this.getCategoryLabel(cat.name)
+          });
         });
+
+        result.resolve(searchResults);
+      }).fail(function() {
+        result.reject();
       });
 
-      return searchResults;
+      return result;
     },
 
     /**
