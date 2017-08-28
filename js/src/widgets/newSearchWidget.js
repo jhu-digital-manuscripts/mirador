@@ -93,10 +93,12 @@
       })).appendTo(this.appendTo);
 
       // Do jQuery UI magic to turn dropdown into jQuery SelectMenu
-      this.element.find(".search-within-object-select")
-        .iconselectmenu({width: "60%"})
-        .iconselectmenu("menuWidget")
+      if (!this.config.inSidebar) {
+        this.element.find(".search-within-object-select")
+          .iconselectmenu({width: "60%"})
+          .iconselectmenu("menuWidget")
           .addClass("ui-menu-icons customicons");
+      }
 
       if (this.context) {
         // Handle any context info passed into widget
@@ -199,9 +201,11 @@
         });
       }
       this.element.find(".search-within-object-select").on("change", selectChange);
-      this.element.find(".search-within-object-select").iconselectmenu({
-        change: selectChange
-      });
+      if (!this.config.inSidebar) {
+        this.element.find(".search-within-object-select").iconselectmenu({
+          change: selectChange
+        });
+      }
 
       this.element.find(".search-results-close").on("click", function() {
         _this.appendTo.find(".search-results-display").fadeOut(160);
@@ -365,22 +369,25 @@
     addCollectionToDropdown: function(id) {
       var _this = this;
       var col = this.state.getObjFromSearchService(id);
+      var stylized = !this.config.inSidebar;  // Should do setup for fancy dropdown?
       if (!col) {
         return false;
       }
 
-      var optionEl = jQuery(this.optionTemplate());
+      // var optionEl = jQuery(this.optionTemplate());
       var template = {
         "objId": id,
         // ID here is a search service ID, so strip off the trailing portion
         "cssClass": $.Iiif.getCollectionName(id.substring(0, id.lastIndexOf("/"))),
-        "label": col.jsonLd.label
+        "label": col.jsonLd.label,
+        "inSidebar": stylized
       };
 
       var moo = this.element.find(".search-within-object-select");
-      if (moo.children().length === 0) {
+      if (moo.children().length === 0) {  // If no children exist in the dropdown, add it immediately
         moo.append(jQuery(_this.optionTemplate(template)));
-        moo.iconselectmenu("refresh");
+        if (stylized) moo.iconselectmenu("refresh");
+        return;
       }
       /*
        * We must first get the collection object. From there, we can inspect
@@ -401,11 +408,11 @@
         el = jQuery(el);
         var elId = el.attr("value").substring(0, el.attr("value").lastIndexOf("/"));
         var elCollection = $.Iiif.getCollectionName(elId);
+
         if (col.isWithin(elId)) {
-          // optionEl.data("class", optionEl.data("class") + " child");
           template.cssClass += " child";
           jQuery(_this.optionTemplate(template)).insertAfter(el);
-          moo.iconselectmenu("refresh");
+          if (stylized) moo.iconselectmenu("refresh");
           return false;
         }
 
@@ -416,11 +423,11 @@
         if (childMatches.length > 0) {
           // Count # of times 'child' class appears in current <option>
           var numChilds = (el.attr("class").match(/child/g) || []).length;
-          for (var i = 0; i < numChilds; i++) {
-            template.cssClass += " child";
+          if (numChilds > 0) {
+            template.cssClass += " child-" + numChilds;
           }
           jQuery(_this.optionTemplate(template)).insertBefore(el);
-          moo.iconselectmenu("refresh");
+          if (stylized) moo.iconselectmenu("refresh");
         }
       });
     },
@@ -506,7 +513,10 @@
       this.searchService = newService;
 
       // Ensure the correct value appears in the 'search-within' dropdown.
-      this.element.find(".search-within-object-select").val(newService.id).iconselectmenu("refresh");
+      this.element.find(".search-within-object-select").val(newService.id);
+      if (!this.config.inSidebar) {
+        this.element.find(".search-within-object-select").iconselectmenu("refresh");
+      }
 
       // Switch advanced search UI as needed
       if (this.advancedSearch) {
@@ -989,9 +999,15 @@
       '{{/if}}',
     ].join('')),
 
-    optionTemplate: Handlebars.compile(
-      '<option value="{{objId}}" {{#if cssClass}}data-class="{{cssClass}}"{{/if}}>{{label}}</option>'
-    ),
+    // TODO why the heck does this 'if' match to the opposite of what is intended?
+    // in Manifest browser, 'inSidebar' === false, but goes through the render path of #if inSidebar
+    optionTemplate: Handlebars.compile([
+      '{{#if inSidebar}}',
+        '<option value="{{objId}}" {{#if cssClass}}data-class="{{cssClass}}"{{/if}}>{{label}}</option>',
+      '{{else}}',
+        '<option value="{{objId}}">{{label}}</option>',
+      '{{/if}}'
+    ].join('')),
 
     template: Handlebars.compile([
       '<div class="searchResults" {{#if hidden}}style="display: none;"{{/if}}>',
