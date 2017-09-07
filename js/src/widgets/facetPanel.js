@@ -118,12 +118,13 @@
        */
       // tree.on("select_node.jstree", function(event, data) {
       tree.on("activate_node.jstree", function(event, data) {
+        _this.modifyState(data.node);
+
         if (!_this.isLeafNode(data.node)) {
           data.instance.toggle_node(data.node);
           return;   // Toggle category on single click
         }
 
-        _this.modifyState(data.node);
         _this.eventEmitter.publish("FACET_SELECTED", {
           "origin": _this.id,
           "selected": data.selected
@@ -155,14 +156,16 @@
       // "Clear All" button
       this.element.find(".clear-btn").on("click", function(event) {
         var facets = [];
+        var nodes = [];
         tree.jstree("get_selected", true).forEach(function(node) {
           if (node && _this.isLeafNode(node)) {
+            nodes.push(node);
             facets.push(_this.nodeToFacet(node));
           }
         });
 
-        tree.jstree("deselect_all");
-        _this.modifyState();
+        tree.jstree("deselect_node", nodes, true);
+        _this.modifyState(nodes);
         _this.eventEmitter.publish("FACET_SELECTED", {
           "origin": _this.id,
           "selected": facets
@@ -394,17 +397,17 @@
       var cat = state[mob.original.facet_id];
       if (!cat) { // No matches. This will add category AND value (if present)
         cat = {"open": true, "values": []};
-      } else {  // Category closed
-        cat.open = false;
+      } else if (mob.parent === "#"){  // Mob is a category (as opposed to value node)
+        cat.open = !cat.open;
       }
 
       if (mob.original.label) {
         var index = cat.values.indexOf(mob.original.label);
-        if (index === -1) {
+        if (index === -1) { // Add value if not already there
           cat.values.push(mob.original.label);
-        } else if (cat.values.length > 1) {
+        } else if (cat.values.length > 1) { // Remove value if it is not alone
           cat.values.splice(index, 1);
-        } else {
+        } else { // If this value is the only one in the list, get rid of this state category
           cat = undefined;
         }
       }
