@@ -351,7 +351,7 @@
             '<li>',
               '<b>{{label}}</b>',
               '{{#if description}}',
-                ': {{description}}',
+                ': {{{description}}}',
               '{{/if}}',
               '{{#if values}}',
                 '<br>Can take values: ',
