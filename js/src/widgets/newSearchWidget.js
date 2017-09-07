@@ -978,6 +978,11 @@
           });
         });
 
+        // Filter out any categories that have no label
+        searchResults.categories = searchResults.categories.filter(function(cat) {
+          return cat.label && cat.label.length > 0;
+        });
+
         result.resolve(searchResults);
       }).fail(function() {
         result.reject();
