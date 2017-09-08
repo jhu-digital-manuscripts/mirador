@@ -166,6 +166,9 @@
         });
       } else if (typeof within === "object") {
         result = someId === within["@id"];
+        if (!result && within.within) {
+          result = this.isWithin(someId, within.within);
+        }
       } else if (typeof within === "string") {
         result = someId === within;
       } else {
@@ -174,6 +177,9 @@
 
       return result;
     },
+    toString: function() {
+      return "[Collection (" + this.uri + ")]";
+    }
   };
 
 }(Mirador));

@@ -305,12 +305,9 @@
     getLabel: function() {
       return this.jsonLd.label;
     },
-    within: function() {
-      return this.jsonLd.within;
-    },
     isWithin: function(someId, within) {
       var _this = this;
-      if (!within) { within = this.within; }
+      if (!within) { within = this.within || this.jsonLd.within; }
       if (!within || !someId) { return false; }  // Quit early if 'within' still not defined, there is nothing to check.
 
       var result = false;
@@ -319,7 +316,10 @@
           result = result || _this.isWithin(someId, w);
         });
       } else if (typeof within === "object") {
-        result = someId === within["@id"];
+        result = (someId === within["@id"]);
+        if (!result && within.within) {
+          result = this.isWithin(someId, within.within);
+        }
       } else if (typeof within === "string") {
         result = someId === within;
       } else {
@@ -330,6 +330,9 @@
     },
     description: function() {
       return this.jsonLd.description;
+    },
+    toString: function() {
+      return "[Manifest (" + this.uri + ")]";
     }
 
   };

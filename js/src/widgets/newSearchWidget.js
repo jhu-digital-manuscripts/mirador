@@ -53,7 +53,6 @@
         searchBooks: false,     // Will individual books be searchable? Or search only through collections
         inSidebar: false
       },
-      allowFacets: true,
       facetPanel: null,
       /**
        * Callback function to be executed when a facet is selected that
@@ -112,6 +111,7 @@
       // As those services are discovered, request info.json configs
       // Populate search dropdowns (done in event handler in #bindEvents)
       if (this.baseObject) {
+        console.log("[SW] Getting services related to [" + (this.baseObject["@id"]) + "]");
         this.eventEmitter.publish("GET_RELATED_SEARCH_SERVICES", {
           "origin": _this.windowId,
           "baseObject": _this.baseObject
@@ -309,6 +309,7 @@
 
     addSearchService: function(service) {
       if (!this.config.searchBooks && service["@id"].indexOf("manifest") >= 0) {
+        console.log("[SW] Found a book, but ignoring it.");
         return; // End early if encountering a service for a book when they should not be included.
       }
 
@@ -328,7 +329,7 @@
         // If this is a new service, add it to the UI and push it to
         // the list of known services.
         this.searchServices.push(service);
-        this.addCollectionToDropdown(id);
+        this.addServiceToDropdown(id);
       } else {
         found.forEach(function(s) {
           jQuery.extend(true, s, service);  // This will not overwrite any currently present properties.
@@ -366,7 +367,7 @@
      *
      * @param id {string} ID search service
      */
-    addCollectionToDropdown: function(id) {
+    addServiceToDropdown: function(id) {
       var _this = this;
       var col = this.state.getObjFromSearchService(id);
       var stylized = !this.config.inSidebar;  // Should do setup for fancy dropdown?
@@ -407,27 +408,30 @@
       moo.children().each(function(index, el) {
         el = jQuery(el);
         var elId = el.attr("value").substring(0, el.attr("value").lastIndexOf("/"));
-        var elCollection = $.Iiif.getCollectionName(elId);
+        var elObj = _this.state.getObjFromSearchService(el.attr("value"));
 
-        if (col.isWithin(elId)) {
+        if (col.isWithin(elId)) { // Is the object to add a child of this <option>?
           template.cssClass += " child";
           jQuery(_this.optionTemplate(template)).insertAfter(el);
           if (stylized) moo.iconselectmenu("refresh");
-          return false;
-        }
-
-        // Find all child collections of 'col' that match the current <option>
-        var childMatches = col.getCollectionUris().filter(function(uri) {
-          return uri === elCollection;
-        });
-        if (childMatches.length > 0) {
-          // Count # of times 'child' class appears in current <option>
-          var numChilds = (el.attr("class").match(/child/g) || []).length;
-          if (numChilds > 0) {
-            template.cssClass += " child-" + numChilds;
-          }
+        } else
+        if (elObj && elObj.isWithin(id.substring(0, id.lastIndexOf('/')))) { // Is the object to add a parent of this <option>?
           jQuery(_this.optionTemplate(template)).insertBefore(el);
-          if (stylized) moo.iconselectmenu("refresh");
+        } else {
+          var elCollection = $.Iiif.getCollectionName(elId);
+          // Find all child collections of 'col' that match the current <option>
+          var childMatches = col.getCollectionUris().filter(function(uri) {
+            return uri === elCollection;
+          });
+          if (childMatches.length > 0) {
+            // Count # of times 'child' class appears in current <option>
+            var numChilds = (el.attr("class").match(/child/g) || []).length;
+            if (numChilds > 0) {
+              template.cssClass += " child-" + numChilds;
+            }
+            jQuery(_this.optionTemplate(template)).insertBefore(el);
+            if (stylized) moo.iconselectmenu("refresh");
+          }
         }
       });
     },
@@ -553,7 +557,6 @@
         "context": _this.context,
       });
 
-      // this.setFacetCategories(newService);
       this.getFacets();
       this.setDescription();
     },
@@ -832,24 +835,6 @@
     },
 
     /**
-     * Set the initial categories for the facet panel.
-     *
-     * After switching to a search service, the service's configuration
-     * information is retreived or read. This information contains
-     * a listing of all facet categories for the service. No values
-     * under the categories are included.
-     */
-    // setFacetCategories: function(searchService) {
-    //   if (!searchService) {
-    //     searchService = this.searchService;
-    //   }
-    //   if (searchService.config) {
-    //     this.facetPanel.setFacets(searchService.config.search.settings.categories);
-    //     this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
-    //   }
-    // },
-
-    /**
      * Get the label corresponding to the category ID.
      *
      * @param catId {string} category ID
@@ -908,6 +893,9 @@
 
     getFacets: function(facets) {
       var _this = this;
+      if (!this.config.allowFacets) {
+        return;
+      }
 
       jQuery.when(this.currentSearchService()).then(function(service) {
         var query;

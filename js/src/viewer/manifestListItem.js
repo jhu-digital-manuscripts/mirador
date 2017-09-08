@@ -194,13 +194,13 @@
 
       this.tplData.repoImage = (function() {
         var repo = location;
-        if (ref.logo) {console.log("[MLI] Found reference logo.");
+        if (ref.logo) {
           if (typeof ref.logo === "string")
             return ref.logo;
           if (typeof ref.logo['@id'] !== 'undefined')
             return ref.logo['@id'];
         }
-        if (_this.state.getStateProperty("repoImages")) {console.log("[MLI] Moo " + JSON.stringify(_this.state.getStateProperty("repoImages")));
+        if (_this.state.getStateProperty("repoImages")) {
           if (_this.tplData.repository === '(Added from URL)') {
             repo = '';
           }
@@ -318,6 +318,7 @@
           var location = _this.manifestRef.location;
 
           var manifest = new $.Manifest(manifestId, location);
+          _this.eventEmitter.publish("manifestQueued", manifest);
           manifest.request.done(function() {
             _this.addWindow(manifest, viewType);
           });
