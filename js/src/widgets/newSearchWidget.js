@@ -211,25 +211,25 @@
         _this.appendTo.find(".search-results-display").fadeOut(160);
       });
 
-      if (this.searchService.config.search.settings.fields.length > 0) {
-        this.element.find(".search-disclose-btn-more").on("click", function() {
-          _this.config.advancedSearchActive = true;
-          _this.element.find(".search-disclose-btn-more").hide(0);
-          _this.element.find(".search-disclose-btn-less").show(0);
-          _this.element.find("#search-form").hide(_this.showHideAnimation);
-          _this.element.find(".search-disclose").show(_this.showHideAnimation);
-          _this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + _this.windowId);
-        });
+      // if (this.searchService.config.search.settings.fields.length > 0) {
+      this.element.find(".search-disclose-btn-more").on("click", function() {
+        _this.config.advancedSearchActive = true;
+        _this.element.find(".search-disclose-btn-more").hide(0);
+        _this.element.find(".search-disclose-btn-less").show(0);
+        _this.element.find("#search-form").hide(_this.showHideAnimation);
+        _this.element.find(".search-disclose").show(_this.showHideAnimation);
+        _this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + _this.windowId);
+      });
 
-        this.element.find(".search-disclose-btn-less").on("click", function() {
-          _this.config.advancedSearchActive = false;
-          _this.element.find(".search-disclose-btn-less").hide(0);
-          _this.element.find(".search-disclose-btn-more").show(0);
-          _this.element.find("#search-form").show(_this.showHideAnimation);
-          _this.element.find(".search-disclose").hide(_this.showHideAnimation);
-          _this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + _this.windowId);
-        });
-      }
+      this.element.find(".search-disclose-btn-less").on("click", function() {
+        _this.config.advancedSearchActive = false;
+        _this.element.find(".search-disclose-btn-less").hide(0);
+        _this.element.find(".search-disclose-btn-more").show(0);
+        _this.element.find("#search-form").show(_this.showHideAnimation);
+        _this.element.find(".search-disclose").hide(_this.showHideAnimation);
+        _this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + _this.windowId);
+      });
+      // }
     },
 
     /**

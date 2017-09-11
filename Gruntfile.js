@@ -43,7 +43,8 @@ module.exports = function(grunt) {
     'bower_components/simplePagination.js/jquery.simplePagination.js',
     'bower_components/jQuery-contextMenu/dist/*.js',
     'bower_components/jstree/dist/jstree.min.js',
-    'js/lib/sanitize-html.min.js'
+    'js/lib/sanitize-html.min.js',
+    'node_modules/lazysizes/lazysizes.min.js'
   ],
 
   // source files

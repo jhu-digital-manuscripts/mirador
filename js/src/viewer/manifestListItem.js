@@ -72,6 +72,12 @@
         this.element = jQuery(this.template(this.tplData)).prependTo(this.appendTo).hide().fadeIn('slow');
       }
 
+      // Trying Unveil2 for thumbnails
+      // this.element.find("img").unveil({
+      //   "offset": 150
+      //   // "container": jQuery.find(".select-results")
+      // });
+
       this.bindEvents();
       this.listenForActions();
 
@@ -446,7 +452,7 @@
       '<div class="preview-thumb">',
         '<div class="preview-images">',
         '{{#each images}}',
-          '<img src="{{url}}" width="{{width}}" height="{{height}}" class="preview-image flash" data-image-id="{{id}}">',
+          '<img data-src="{{url}}" width="{{width}}" height="{{height}}" class="preview-image flash lazyload" data-image-id="{{id}}">',
         '{{/each}}',
         '</div>',
         '{{#if remaining}}',
