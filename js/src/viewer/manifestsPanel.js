@@ -136,6 +136,8 @@
           var _this = this;
           this.selectedObjects = selected || [];
 
+          this.element.find(".select-results").scrollTop(0);
+
           // selected is an array of strings, manifest IDs
           if (!selected) {
             this.manifestListItems.forEach(function(item) { item.element.show(); });
