@@ -38,7 +38,7 @@
 }
 .jstree-container-ul > .jstree-node > div.jstree-wholerow.jstree-wholerow-hovered,
 .jstree-default .jstree-wholerow-hovered {
-  background: #f7f7f7;
+  background: #efefef;
 }
 .jstree-default .jstree-wholerow-clicked {
   background: #dbdbdb;

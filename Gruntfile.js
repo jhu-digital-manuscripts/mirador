@@ -162,6 +162,19 @@ module.exports = function(grunt) {
           expand: true,
           src: 'locales/**',
           dest: 'build/mirador'
+        }, {
+          expand: true,
+          flatten: true,
+          src: 'bower_components/jstree/dist/themes/default/*.png',
+          dest: 'build/mirador/css/'
+        }, {
+          src: 'bower_components/jstree/dist/themes/default/throbber.gif',
+          dest: 'build/mirador/css/throbber.gif'
+        }, {
+          expand: true,
+          flatten: true,
+          src: 'images/jquery-ui/*',
+          dest: 'build/mirador/css/images/'
         }]
       }
     },
