@@ -96,7 +96,7 @@
       if (!id) {
         return undefined;
       }
-      if (id.endsWith("/")) { // Strip trailing '/' if necessary
+      if (id.substring(id.length) === "/") {
         id = id.substring(0, id.length - 1);
       }
       var parts = id.split("/").filter(function(s) { return s.length > 0; });
