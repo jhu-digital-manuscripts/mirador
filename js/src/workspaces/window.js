@@ -1110,7 +1110,7 @@
                                  '</div>',
                                  '<div class="content-container">',
                                  '{{#if sidePanel}}',
-                                 '<div class="sidePanel">',
+                                 '<div class="sidePanel minimized">',
                                  '</div>',
                                  '{{/if}}',
                                  '<div class="overlay"></div>',
