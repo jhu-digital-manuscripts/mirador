@@ -1039,13 +1039,13 @@
             '<div class="search-disclose" style="display: none;"></div>',
           '</div>',
         '</div>',
+        '<div class="search-results-display" style="display:none;">',
+          '<div class="search-results-close"><i class="fa fa-2x fa-caret-up" title="Close results"></i>Close results</div>',
+          '<div class="results-pager"></div>',
+          '<p class="results-pager-text"></p>',
+          '<div class="search-results-list"></div>',
+        '</div>',
       '</div>',
-      '<div class="search-results-display" style="display:none;">',
-        '<div class="search-results-close"><i class="fa fa-2x fa-caret-up" title="Close results"></i>Close results</div>',
-        '<div class="results-pager"></div>',
-        '<p class="results-pager-text"></p>',
-        '<div class="search-results-list"></div>',
-      '</div>'
     ].join(''))
   };
 
