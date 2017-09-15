@@ -198,3 +198,8 @@
 .ui-icon.hamletcollection {
   background-image: url("../images/logos/hamletcollection.jpg");
 }
+
+/* Crap to get 'collection picker' dropdown to work in IE */
+#viewer {
+  z-index: 1;
+}
