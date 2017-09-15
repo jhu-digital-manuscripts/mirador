@@ -97,7 +97,7 @@
 
 .sidePanel {
   /* Reposition side panel to right side */
-  left: initial;
+  left: auto;
   right: 0;
   /* Now make it look better */
   padding: 0;
