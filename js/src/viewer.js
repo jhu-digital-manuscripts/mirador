@@ -178,6 +178,7 @@
           });
         } else {
           var manifest = new $.Manifest(data.manifestId);
+          _this.eventEmitter.publish("manifestQueued", manifest);
           manifest.request.done(function() {
             _this.manifests.push(manifest);
             _this.eventEmitter.publish("MANIFEST_FOUND", {

@@ -369,13 +369,12 @@
      */
     addServiceToDropdown: function(id) {
       var _this = this;
-      var col = this.state.getObjFromSearchService(id);
       var stylized = !this.config.inSidebar;  // Should do setup for fancy dropdown?
+      var col = this.state.getObjFromSearchService(id);
       if (!col) {
         return false;
       }
 
-      // var optionEl = jQuery(this.optionTemplate());
       var template = {
         "objId": id,
         // ID here is a search service ID, so strip off the trailing portion
@@ -388,6 +387,16 @@
       if (moo.children().length === 0) {  // If no children exist in the dropdown, add it immediately
         moo.append(jQuery(_this.optionTemplate(template)));
         if (stylized) moo.iconselectmenu("refresh");
+        return;
+      }
+
+      // Make sure we don't add duplicate entries. Match by ID
+      var duplicateMatches = moo.children().filter(function(opt) {
+        opt = jQuery(opt);
+        return opt.attr("value") ? opt.attr("value").substring(0, opt.attr("value").lastIndexOf("/")) == id : false;
+      });
+      if (duplicateMatches.length > 0) {
+        // Desired ID already in dropdown
         return;
       }
       /*
@@ -414,16 +423,20 @@
           template.cssClass += " child";
           jQuery(_this.optionTemplate(template)).insertAfter(el);
           if (stylized) moo.iconselectmenu("refresh");
-        } else
-        if (elObj && elObj.isWithin(id.substring(0, id.lastIndexOf('/')))) { // Is the object to add a parent of this <option>?
+        } else if (elObj && elObj.isWithin(id.substring(0, id.lastIndexOf('/')))) { // Is the object to add a parent of this <option>?
           jQuery(_this.optionTemplate(template)).insertBefore(el);
         } else {
           var elCollection = $.Iiif.getCollectionName(elId);
-          // Find all child collections of 'col' that match the current <option>
-          var childMatches = col.getCollectionUris().filter(function(uri) {
-            return uri === elCollection;
-          });
-          if (childMatches.length > 0) {
+          // Find all children of 'col' that match the current <option>
+          var numChildMatches =
+            (col.getCollectionUris ? col.getCollectionUris().filter(function(uri) {
+              return uri === elId;
+            }).length : 0) ||
+            (col.getManifestUris ? col.getManifestUris().filter(function(uri) {
+              return uri === elId;
+            }).length : 0);
+
+          if (numChildMatches > 0) {
             // Count # of times 'child' class appears in current <option>
             var numChilds = (el.attr("class").match(/child/g) || []).length;
             if (numChilds > 0) {
