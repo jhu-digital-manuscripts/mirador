@@ -28,7 +28,7 @@
             this.element = jQuery(this.template({
                 showURLBox : this.state.getStateProperty('showAddFromURLBox')
             })).appendTo(this.appendTo);
-            this.manifestListElement = this.element.find('ul');
+            this.manifestListElement = this.element.find('table');
 
             //this code gives us the max width of the results area, used to determine how many preview images to show
             //cloning the element and adjusting the display and visibility means it won't break the normal flow
@@ -297,8 +297,9 @@
               '</div>',
             '</div>',
               '<div class="select-results">',
-                '<ul class="items-listing">',
-                '</ul>',
+                // '<ul class="items-listing">',
+                // '</ul>',
+                '<table class="items-listing"></table>',
               '</div>',
           '</div>',
           '</div>'

@@ -54,7 +54,7 @@
         if (this.appendTo.children().length === 0) {
           this.element = jQuery(this.template(this.tplData)).prependTo(this.appendTo).hide().fadeIn('slow');
         } else {
-          var liList = _this.appendTo.find('li');
+          var liList = _this.appendTo.find('tr');
           jQuery.each(liList, function(index, item) {
               var prev = parseFloat(jQuery(item).attr('data-index-number'));
               var next = parseFloat(jQuery(liList[index+1]).attr('data-index-number'));
@@ -71,19 +71,8 @@
       } else {
         this.element = jQuery(this.template(this.tplData)).prependTo(this.appendTo).hide().fadeIn('slow');
       }
-
-      // Trying Unveil2 for thumbnails
-      // this.element.find("img").unveil({
-      //   "offset": 150
-      //   // "container": jQuery.find(".select-results")
-      // });
-
       this.bindEvents();
       this.listenForActions();
-
-      // if (!this.visible) {
-      //   this.element.hide();
-      // }
     },
 
     fetchTplData: function() {
@@ -416,50 +405,99 @@
     },
 
     template: Handlebars.compile([
-      '<li data-index-number={{index}}>',
-      '<div class="repo-image">',
-        '{{#if repoImage}}',
-        '<img src="{{repoImage}}" alt="repoImg">',
-        '{{else}}',
-        '<span class="default-logo"></span>',
-        '{{/if}}',
-      '</div>',
-      '<div class="select-metadata">',
-        '<div class="manifest-title">',
-          '<h2 title="{{{label}}}">{{{label}}}</h2>',
-        '</div>',
-        '<div class="item-info">',
-          '<div class="item-info-row">',
-            '{{#if repository}}',
-              '<div class="repo-label">{{repository}}</div>',
-            '{{/if}}',
-            '{{#if canvasCount}}',
-              '<div class="canvas-count">{{canvasCount}} {{pluralize canvasCount (t "item") (t "items")}}</div>',
+      '<tr class="manifest-entry" data-index-number={{index}}>',
+        '<td class="repo-image-container">',
+          '<div class="repo-image">',
+            '{{#if repoImage}}',
+              '<img src="{{repoImage}}" alt="repoImg">',
+            '{{else}}',
+              '<span class="default-logo"></span>',
             '{{/if}}',
           '</div>',
-          '{{#if title}}',
-            '<div class="item-info-row">',
-              '<h3 class="ms-title">{{title}}</h3>',
+        '</td>',
+        '<td class="select-metadata">',
+          '<div>',
+            '<div class="manifest-title" title="Object title: {{label}}">{{{label}}}</div>',
+            '<div class="item-info">',
+              '<div class="item-info-row">',
+                '{{#if repository}}',
+                  '<div class="repo-label">{{repository}}</div>',
+                '{{/if}}',
+                '{{#if canvasCount}}',
+                  '<div class="canvas-count">{{canvasCount}} {{pluralize canvasCount (t "item") (t "items")}}</div>',
+                '{{/if}}',
+              '</div>',
+              '{{#if title}}',
+                '<div class="item-info-row">',
+                  '<div class="ms-title">{{title}}</div>',
+                '</div>',
+              '{{/if}}',
+              '{{#if date}}',
+                '<div class="item-info-row">',
+                  '<div class="ms-date">{{date}}</div>',
+                '</div>',
+              '{{/if}}',
             '</div>',
+          '</div>',
+        '</td>',
+        '<td class="preview-thumb">',
+          '{{#each images}}',
+            '<img data-src="{{url}}" width="{{width}}" height="{{height}}" class="preview-image flash lazyload" data-image-id="{{id}}" alt="{{id}}">',
+          '{{/each}}',
+          // '<div class="preview-images">',
+          //   '{{#each images}}',
+          //     '<img data-src="{{url}}" width="{{width}}" height="{{height}}" class="preview-image flash lazyload" data-image-id="{{id}}" alt="{{id}}">',
+          //   '{{/each}}',
+          // '</div>',
+          '{{#if remaining}}',
+            '<i class="fa fa fa-ellipsis-h remaining"></i>',
           '{{/if}}',
-          '{{#if date}}',
-            '<div class="item-info-row">',
-              '<div class="ms-date">{{date}}</div>',
-            '</div>',
-          '{{/if}}',
-        '</div>',
-      '</div>',
-      '<div class="preview-thumb">',
-        '<div class="preview-images">',
-        '{{#each images}}',
-          '<img data-src="{{url}}" width="{{width}}" height="{{height}}" class="preview-image flash lazyload" data-image-id="{{id}}">',
-        '{{/each}}',
-        '</div>',
-        '{{#if remaining}}',
-          '<i class="fa fa fa-ellipsis-h remaining"></i>',
-        '{{/if}}',
-      '</div>',
-      '</li>'
+        '</td>',
+      '</tr>',
+      // '<li data-index-number={{index}}>',
+      // '<div class="repo-image">',
+      //   '{{#if repoImage}}',
+      //   '<img src="{{repoImage}}" alt="repoImg">',
+      //   '{{else}}',
+      //   '<span class="default-logo"></span>',
+      //   '{{/if}}',
+      // '</div>',
+      // '<div class="select-metadata">',
+      //   '<div class="manifest-title">',
+      //     '<h2 title="{{{label}}}">{{{label}}}</h2>',
+      //   '</div>',
+      //   '<div class="item-info">',
+      //     '<div class="item-info-row">',
+      //       '{{#if repository}}',
+      //         '<div class="repo-label">{{repository}}</div>',
+      //       '{{/if}}',
+      //       '{{#if canvasCount}}',
+      //         '<div class="canvas-count">{{canvasCount}} {{pluralize canvasCount (t "item") (t "items")}}</div>',
+      //       '{{/if}}',
+      //     '</div>',
+      //     '{{#if title}}',
+      //       '<div class="item-info-row">',
+      //         '<h3 class="ms-title">{{title}}</h3>',
+      //       '</div>',
+      //     '{{/if}}',
+      //     '{{#if date}}',
+      //       '<div class="item-info-row">',
+      //         '<div class="ms-date">{{date}}</div>',
+      //       '</div>',
+      //     '{{/if}}',
+      //   '</div>',
+      // '</div>',
+      // '<div class="preview-thumb">',
+      //   '<div class="preview-images">',
+      //   '{{#each images}}',
+      //     '<img data-src="{{url}}" width="{{width}}" height="{{height}}" class="preview-image flash lazyload" data-image-id="{{id}}">',
+      //   '{{/each}}',
+      //   '</div>',
+      //   '{{#if remaining}}',
+      //     '<i class="fa fa fa-ellipsis-h remaining"></i>',
+      //   '{{/if}}',
+      // '</div>',
+      // '</li>'
     ].join(''))
   };
 

@@ -15,19 +15,22 @@
   float: right;
   margin: 0 10px;
   cursor: pointer;
-  padding: 2px 5px;
-  color: darkgray;
+  padding: 6px;
+  color: black;
   font-size: 12px;
+  opacity: 0.75;
+  border-radius: 3px;
 }
 .clear-btn i {
   margin-left: 6px;
   font-size: 26px;
 }
-.facet-container-scrollable > h2  .clear-btn:hover {
-  color: gray;
+.facet-container-scrollable > h2 .clear-btn:hover {
+  opacity: 0.85;
+  background-color: #ddd;
 }
-.facet-container-scrollable > h2  .clear-btn:active {
-  color: black;
+.facet-container-scrollable > h2 .clear-btn:active {
+  opacity: 1;
 }
 .facet-container-scrollable h2 {
   margin-left: 10px;
