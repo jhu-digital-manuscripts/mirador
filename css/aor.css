@@ -107,6 +107,10 @@
   min-height: 25px;
 }
 
+.overlay {
+  background-color: rgba(239,239,239,0.99);
+}
+
 .sidePanel {
   /* Reposition side panel to right side */
   left: auto;
