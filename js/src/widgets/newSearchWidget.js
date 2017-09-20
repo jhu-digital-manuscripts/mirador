@@ -94,7 +94,7 @@
       // Do jQuery UI magic to turn dropdown into jQuery SelectMenu
       if (!this.config.inSidebar) {
         this.element.find(".search-within-object-select")
-          .iconselectmenu({width: "60%"})
+          .iconselectmenu()
           .iconselectmenu("menuWidget")
           .addClass("ui-menu-icons customicons");
       }

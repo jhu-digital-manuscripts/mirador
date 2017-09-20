@@ -131,28 +131,41 @@
 /* Accommodating longer collection descriptions */
 .manifest-picker {
   width: 100%;
-  height: 65px;
+  height: 75px;
 }
 .manifest-picker label {
   display: flex;
   float: left;
-  width: 40%;
+  height: 100%;
+  margin-right: 24px;
   font-size: 14px;
   align-items: baseline;
 }
-.manifest-picker select {
+.manifest-picker select, .manifest-picker span {
   font-size: 14px;
-  width: 60%;
-}
-.manifest-picker .manifest-picker-desc {
-  float: left;
-  width: 60%;
+  width: 70%;
 }
 .manifest-picker-sidebar select {
   width: 100%;
 }
+.manifest-picker .manifest-picker-desc {
+  font-size: 16px;
+}
 .manifest-picker-sidebar .manifest-picker-desc {
   display: none;
+}
+@media screen and (max-width: 1024px) {
+  .manifest-picker label {
+    display: block;
+    margin-right: 0;
+    width: 40%;
+  }
+  .manifest-picker span, .manifest-picker select {
+    width: 95%;
+  }
+  .manifest-picker .manifest-picker-desc {
+    font-size: 12px;
+  }
 }
 
 /* Playing with jQuery UI select menu */

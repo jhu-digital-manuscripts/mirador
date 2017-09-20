@@ -21,6 +21,9 @@
   opacity: 0.75;
   border-radius: 3px;
 }
+.clear-btn {
+  display: none;
+}
 .clear-btn i {
   margin-left: 6px;
   font-size: 26px;

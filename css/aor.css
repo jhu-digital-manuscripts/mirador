@@ -28,10 +28,8 @@
 .items-listing .manifest-entry {
   margin: 0 12px;
   cursor: pointer;
+  display: flex;
 }
-/*.items-listing .manifest-entry td {
-  padding-right: 12px;
-}*/
 .items-listing .manifest-entry:hover {
   background: #ddd;
 }
@@ -43,18 +41,21 @@
   width: 50px;
   height: 50px;
 }
+.repo-image, .preview-thumb {
+  align-self: center;
+}
 .items-listing .select-metadata {
   float: none;
   width: 99%;
+  max-width: none;
+  height: auto;
   padding-right: 12px;
 }
 .preview-thumb {
   position: relative;
-  width: 250px;
-  vertical-align: middle;
-}
-.select-metadata {
-  vertical-align: top;
+  width: 315px;
+  height: 80px;
+  overflow: hidden;
 }
 .manifest-title {
   font-weight: normal;
