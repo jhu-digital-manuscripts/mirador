@@ -131,10 +131,8 @@
           return node && _this.isLeafNode(node);
         });
         if (!nodes || nodes.length === 0) {
-          console.log("[FP] No nodes currently selected.");
           clearBtn.hide();
         } else {
-          console.log("[FP] one or more nodes selected. ");_ = nodes;
           clearBtn.show();
         }
 
