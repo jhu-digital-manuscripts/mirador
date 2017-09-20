@@ -102,6 +102,7 @@
     listenForActions: function() {
       var _this = this;
       var tree = this.element.find(this.selector);
+      var clearBtn = this.element.find(".clear-btn");
 
       /**
        * This event is broadcast to ALL jsTree instances, so if a facet
@@ -123,6 +124,18 @@
         if (!_this.isLeafNode(data.node)) {
           data.instance.toggle_node(data.node);
           return;   // Toggle category on single click
+        }
+
+        // Find all selected values, filtering out top level categories
+        var nodes = tree.jstree("get_selected", true).filter(function(node) {
+          return node && _this.isLeafNode(node);
+        });
+        if (!nodes || nodes.length === 0) {
+          console.log("[FP] No nodes currently selected.");
+          clearBtn.hide();
+        } else {
+          console.log("[FP] one or more nodes selected. ");_ = nodes;
+          clearBtn.show();
         }
 
         _this.eventEmitter.publish("FACET_SELECTED", {
@@ -154,7 +167,7 @@
       });
 
       // "Clear All" button
-      this.element.find(".clear-btn").on("click", function(event) {
+      clearBtn.on("click", function(event) {
         var facets = [];
         var nodes = [];
         tree.jstree("get_selected", true).forEach(function(node) {
@@ -166,6 +179,7 @@
 
         tree.jstree("deselect_node", nodes, true);
         _this.modifyState(nodes);
+        clearBtn.hide();
         _this.eventEmitter.publish("FACET_SELECTED", {
           "origin": _this.id,
           "selected": facets
