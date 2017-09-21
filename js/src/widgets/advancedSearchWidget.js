@@ -278,7 +278,7 @@
     registerPartials: function() {
       Handlebars.registerPartial('advancedSearch', [
         '<div class="advanced-search">',
-          '<i class="fa fa-2x fa-question-circle search-description-icon" title="This is a title."></i>',
+          '<i class="fa fa-2x fa-question-circle search-description-icon" title="Moo"></i>',
           '<form id="advanced-search-form" class="perform-advanced-search">',
             '<div class="advanced-search-lines">',
               '<table><tbody>',
@@ -308,12 +308,13 @@
             '{{#ifCond type "===" "dropdown"}}',
               '{{> searchDropDown this}}',
             '{{/ifCond}}',
-            '<input type="text" class="{{class}}" placeholder="{{placeholder}}" {{#if name}}data-query="{{name}}"{{/if}}/>',
+            '<input type="text" class="{{class}}" placeholder="{{placeholder}}" aria-label="{{#if name}}Search {{name}}" ',
+                'data-query="{{name}}"{{else}}"Search {{placeholder}}"{{/if}}/>',
           '{{/each}}',
           '</div>',
         '</td>',
         '<td>',
-          '<button class="advanced-search-remove" type="button"><i class="fa fa-times"></i></button>',
+          '<button class="advanced-search-remove" type="button" aria-label="Remove row"><i class="fa fa-times"></i></button>',
         '</td></tr>',
       ].join(''));
 
@@ -328,7 +329,8 @@
        * }
        */
       Handlebars.registerPartial('searchDropDown', [
-        '<select class="{{class}}" {{#if name}}data-query="{{name}}"{{/if}}>',
+        // '<select class="{{class}}" title="{{placeholder}}" aria-label="{{#if name}}Pick a specific {{name}}" data-query="{{name}}"{{else}}{{placeholder}}" {{/if}}>',
+        '<select class="{{class}}" aria-label="{{#if name}}Pick a specific {{name}}" data-query="{{name}}"{{else}}{{placeholder}}" {{/if}}>',
           '{{#if addBlank}}',
             '<option></option>',
           '{{/if}}',

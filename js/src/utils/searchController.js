@@ -171,29 +171,31 @@
      * @return cached object if reading from cache
      */
     cache: function(id, value, force) {
-      console.assert(id, '[SearchController] cache ID must be provided');
-      var _this = this;
+      return false;
 
-      if (!value) {
-        // No value provided, read this ID from cache
-        return sessionStorage.getItem(id);
-
-      } else {
-        // Value provided, add this to cache
-        try {
-          this.cachedKeys.push(id);
-          sessionStorage.setItem(id, value);
-        } catch (e) {
-          if (e === 'QuotaExceededError' && force) {
-            // sessionStorage.clear();
-            this.cachedKeys.forEach(function(key) { sessionStorage.removeItem(key); });
-            this.cachedKeys = [];
-            _this.cache(id, value, false);
-          } else {
-            console.log('[SearchController] Unexpected error encountered while writing search result to cache. ' + e);
-          }
-        }
-      }
+      // console.assert(id, '[SearchController] cache ID must be provided');
+      // var _this = this;
+      //
+      // if (!value) {
+      //   // No value provided, read this ID from cache
+      //   return sessionStorage.getItem(id);
+      //
+      // } else {
+      //   // Value provided, add this to cache
+      //   try {
+      //     this.cachedKeys.push(id);
+      //     sessionStorage.setItem(id, value);
+      //   } catch (e) {
+      //     if (e === 'QuotaExceededError' && force) {
+      //       // sessionStorage.clear();
+      //       this.cachedKeys.forEach(function(key) { sessionStorage.removeItem(key); });
+      //       this.cachedKeys = [];
+      //       _this.cache(id, value, false);
+      //     } else {
+      //       console.log('[SearchController] Unexpected error encountered while writing search result to cache. ' + e);
+      //     }
+      //   }
+      // }
     },
 
     /**

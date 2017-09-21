@@ -32,6 +32,7 @@ $.JhiiifSearchService = function(options) {
   this.query = {
     operators: {
       'class': 'advanced-search-operators',
+      'placeholder': 'Select boolean operation',
       'choices': [
         {value: 'and', label: 'AND'},
         {value: 'or', label: 'OR'}
@@ -98,6 +99,7 @@ $.JhiiifSearchService.prototype = {
     var fields = [];
     var categories = {
       'class': 'advanced-search-categories',
+      'placeholder': 'Choose search field',
       'choices': [],
     };
 

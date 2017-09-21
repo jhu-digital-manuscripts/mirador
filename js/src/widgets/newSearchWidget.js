@@ -1035,7 +1035,7 @@
         '</div>',
         '<div class="search-widget">',
           '<form id="search-form" class="search-within-form">',
-            '<input class="js-query" type="text" placeholder="search"/>',
+            '<input class="js-query" type="text" aria-label="Enter search query:" placeholder="search"/>',
             '<input type="submit" value="Search"/>',
           '</form>',
           '<div class="search-disclose-btn-more">Advanced Search</div>',
