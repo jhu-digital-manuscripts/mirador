@@ -1,5 +1,13 @@
 /* Modifying base Mirador junk */
 
+/* 'Add Item' screen */
+.slot h1 {
+  color: lightgray;
+}
+.slot:hover h1 {
+  color: white;
+}
+
 .mirador-icon-close {
   float: left;
   background: none;
@@ -337,6 +345,9 @@
 }
 .search-results-sorter {
   margin-bottom: 10px;
+}
+.searchResults .js-query {
+  width: 225px;
 }
 .advanced-search-lines table td {
   padding: 4px 0;
