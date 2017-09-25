@@ -270,7 +270,7 @@
             facet.values.forEach(function(val) {
               jQuery.extend(val, {
                 "facet_id": facet.name,
-                "text": val.label + (val.count > 1 ? " (" + val.count + ")": ""),
+                "text": val.label + " (" + val.count + ")",
                 "icon": false
               });
             });
@@ -323,7 +323,7 @@
       values.forEach(function(val) {
         var toAdd = {
           "facet_id": category,
-          "text": val.label + (val.count > 1 ? " (" + val.count + ")" : "")
+          "text": val.label + " (" + val.count + ")"
         };
         instance.create_node(treeCats[0], toAdd);
       });
