@@ -1030,7 +1030,7 @@
       '<div class="searchResults" {{#if hidden}}style="display: none;"{{/if}}>',
         // SearchWithin selector
         '<div class="{{#if inSidebar}}manifest-picker-sidebar{{else}}manifest-picker{{/if}}">',
-          '<label>Choose Collection:',
+          '<label>{{#if inSidebar}}Search Within:{{else}}Choose Collection:{{/if}}',
             '<select class="search-within-object-select"></select>',
           '</label>',
           '<div class="manifest-picker-desc"></div>',
