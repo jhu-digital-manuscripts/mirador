@@ -338,13 +338,16 @@
       // Initialize advanced search with first encountered search service.
       // For subsequent services, if the service is supposed to be selected
       // according to a previous context, switch to it.
-      if (this.state.getStateProperty("initialCollection") && id.indexOf(this.state.getStateProperty("initialCollection")) >= 0) {
-        // If there is an initialCollection to view, switch to it
-        this.getSearchService(id).done(function(s) {
-          _this.switchSearchServices(s);
-          if (!_this.advancedSearchSet) { _this.listenForActions(); }
-          _this.advancedSearchSet = true;
-        });
+      var initialCol = this.state.getStateProperty("initialCollection");
+      if (initialCol) {
+        if (initialCol && id.indexOf(initialCol) >= 0) {
+          // If there is an initialCollection to view, switch to it
+          this.getSearchService(id).done(function(s) {
+            _this.switchSearchServices(s);
+            if (!_this.advancedSearchSet) { _this.listenForActions(); }
+            _this.advancedSearchSet = true;
+          });
+        }
       } else if (this.context.searchService === id) {
         // When adding a search service, if the ID of the service matches the ID of the initialization value, switch to it.
         this.getSearchService(id).done(function(s) {
@@ -949,7 +952,6 @@
       }
 
       if (this.config.allowFacets && this.facetPanel) {
-        searchResults = this.resultsCategoriesToFacets(searchResults);
         jQuery.when(this.resultsCategoriesToFacets(searchResults)).then(function(sr) {
           if (append) {
             sr.categories.forEach(function(cat) {

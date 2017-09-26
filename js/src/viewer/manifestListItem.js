@@ -35,8 +35,8 @@
       //ultimately use 95% of space available, since sometimes it still displays too many images
       this.maxPreviewImagesWidth = this.resultsWidth - (this.repoWidth + this.margin + this.metadataWidth + this.margin + this.remainingWidth);
       this.maxPreviewImagesWidth = this.maxPreviewImagesWidth * 0.95;
-
       Handlebars.registerHelper('pluralize', function(count, singular, plural) {
+        
         if (count === 1) {
           return singular;
         } else {
@@ -52,7 +52,7 @@
 
       if (_this.state.getStateProperty('preserveManifestOrder')) {
         if (this.appendTo.children().length === 0) {
-          this.element = jQuery(this.template(this.tplData)).prependTo(this.appendTo).hide().fadeIn('slow');
+          this.element = jQuery(this.template(this.tplData)).prependTo(this.appendTo);//.hide().fadeIn('slow');
         } else {
           var liList = _this.appendTo.find('.manifest-entry');
           jQuery.each(liList, function(index, item) {
@@ -60,16 +60,16 @@
               var next = parseFloat(jQuery(liList[index+1]).attr('data-index-number'));
               var current = _this.tplData.index;
               if (current <= prev && (next > current || isNaN(next)) ) {
-                _this.element = jQuery(_this.template(_this.tplData)).insertBefore(jQuery(item)).hide().fadeIn('slow');
+                _this.element = jQuery(_this.template(_this.tplData)).insertBefore(jQuery(item));//.hide().fadeIn('slow');
                 return false;
               } else if (current > prev && (current < next || isNaN(next))) {
-                _this.element = jQuery(_this.template(_this.tplData)).insertAfter(jQuery(item)).hide().fadeIn('slow');
+                _this.element = jQuery(_this.template(_this.tplData)).insertAfter(jQuery(item));//.hide().fadeIn('slow');
                 return false;
               }
           });
         }
       } else {
-        this.element = jQuery(this.template(this.tplData)).prependTo(this.appendTo).hide().fadeIn('slow');
+        this.element = jQuery(this.template(this.tplData)).prependTo(this.appendTo);//.hide().fadeIn('slow');
       }
       this.bindEvents();
       this.listenForActions();
@@ -87,6 +87,7 @@
         images: [],
         index: _this.state.getManifestIndex(manifest['@id']),
         location: location || $.Iiif.getCollectionName(ref["@id"]),
+        visible: this.visible
       };
 
       this.tplData.repoImage = (function() {
@@ -188,6 +189,7 @@
         images: [],
         index: _this.state.getManifestIndex(ref["@id"]),
         location: location || $.Iiif.getCollectionName(ref["@id"]),
+        visible: this.visible
       };
 
       this.tplData.repoImage = (function() {
@@ -409,7 +411,7 @@
     },
 
     template: Handlebars.compile([
-      '<li class="manifest-entry" data-index-number={{index}}>',
+      '<li class="manifest-entry" data-index-number={{index}} style={{#if visible}}"display: block;"{{else}}"display: none;"{{/if}}>',
       '<div class="repo-image">',
         '{{#if repoImage}}',
         '<img src="{{repoImage}}" alt="{{location}}">',

@@ -39,10 +39,6 @@
             // this.manifestListElement.css("padding-bottom", this.paddingListElement);
             clone.remove();
 
-            if (this.state.getStateProperty("initialCollection")) {
-              this.selectedObjects.push(this.state.getStateProperty("initialCollection"));
-            }
-
             this.searcher = new $.NewSearchWidget({
               "appendTo": this.element.find(".browser-search"),
               "windowId": $.genUUID(),
@@ -154,7 +150,6 @@
 
         manifestVisible: function(manifest) {
           if (!manifest) {
-            // console.log("No manifest to look at...");
             return false;
           }
           var manifestId = manifest.hasOwnProperty("getId") ? manifest.getId() : manifest["@id"];
@@ -162,25 +157,14 @@
             if (manifest.hasOwnProperty("jsonLd")) {
               manifestId = manifest.jsonLd["@id"];
             } else {
-              // console.log("Failed to find manifestId");
               return false;
             }
-          }
-
-          if (!manifestId.hasOwnProperty("indexOf")) {
-            // console.log("manifestId >> (" + (typeof manifestId) + ") " + manifestId);
-          }
-          else if (manifestId.indexOf("Hamlet") >= 0) {
-            // console.log("Found Hamlet!");
           }
           // Visible IF
           //    no selected objects OR
           //    manifest ID is not in selected objects  OR
           //    any manifest parent is in the selected objects
-          return !Array.isArray(this.selectedObjects) || this.selectedObjects.length === 0 ||
-            this.selectedObjects.indexOf(manifestId) !== -1 ;//||
-            // (manifest.hasOwnProperty("isWithin") &&
-            //   this.selectedObjects.filter(function(s) { return manifest.isWithin(s); }).length > 0);
+          return !Array.isArray(this.selectedObjects) || this.selectedObjects.indexOf(manifestId) !== -1;
         },
 
         hide: function() {
@@ -238,7 +222,7 @@
             appendTo: _this.manifestListElement,
             visible: _this.manifestVisible(newManifest)
           }));
-          _this.element.find('#manifest-search').keyup();
+          // _this.element.find('#manifest-search').keyup();
 
           if (this.searcher) {
             this.searcher.addIIIFObject(newManifest.jsonLd);
@@ -253,9 +237,9 @@
             eventEmitter: this.eventEmitter,
             appendTo: this.manifestListElement,
             visible: this.manifestVisible(reference),
-            location: location
+            location: location,
           }));
-          this.element.find("#manifest-search").keyup();
+          // this.element.find("#manifest-search").keyup();
         },
 
         onCollectionReceived: function(collection) {
