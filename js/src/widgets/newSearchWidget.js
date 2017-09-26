@@ -587,8 +587,10 @@
 
       if (current && typeof current.description === "function" && current.description()) {
         this.element.find(".manifest-picker-desc").html(current.description());
+        this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
       } else {
         this.element.find(".manifest-picker-desc").empty();
+        this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
       }
     },
 

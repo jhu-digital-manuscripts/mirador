@@ -130,41 +130,29 @@
 
 /* Accommodating longer collection descriptions */
 .manifest-picker {
+  display: flex;
   width: 100%;
-  height: 75px;
+  margin-bottom: 12px;
 }
 .manifest-picker label {
-  display: flex;
-  float: left;
-  height: 100%;
   margin-right: 24px;
   font-size: 14px;
   align-items: baseline;
 }
 .manifest-picker select, .manifest-picker span {
   font-size: 14px;
-  width: 70%;
-}
-.manifest-picker-sidebar select {
-  width: 100%;
+  width: 350px;
 }
 .manifest-picker .manifest-picker-desc {
+  width: 70%;
   font-size: 16px;
 }
 .manifest-picker-sidebar .manifest-picker-desc {
   display: none;
 }
 @media screen and (max-width: 1024px) {
-  .manifest-picker label {
-    display: block;
-    margin-right: 0;
-    width: 40%;
-  }
-  .manifest-picker span, .manifest-picker select {
-    width: 95%;
-  }
   .manifest-picker .manifest-picker-desc {
-    font-size: 12px;
+    font-size: 14px;
   }
 }
 

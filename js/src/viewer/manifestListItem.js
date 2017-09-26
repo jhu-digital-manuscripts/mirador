@@ -36,7 +36,7 @@
       this.maxPreviewImagesWidth = this.resultsWidth - (this.repoWidth + this.margin + this.metadataWidth + this.margin + this.remainingWidth);
       this.maxPreviewImagesWidth = this.maxPreviewImagesWidth * 0.95;
       Handlebars.registerHelper('pluralize', function(count, singular, plural) {
-        
+
         if (count === 1) {
           return singular;
         } else {
@@ -411,7 +411,7 @@
     },
 
     template: Handlebars.compile([
-      '<li class="manifest-entry" data-index-number={{index}} style={{#if visible}}"display: block;"{{else}}"display: none;"{{/if}}>',
+      '<li class="manifest-entry" data-index-number={{index}} style={{#if visible}}""{{else}}"display: none;"{{/if}}>',
       '<div class="repo-image">',
         '{{#if repoImage}}',
         '<img src="{{repoImage}}" alt="{{location}}">',
