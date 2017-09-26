@@ -35,14 +35,29 @@
           return decodeURIComponent(results[2].replace(/\+/g, " "));
         }
 
-        // Called without "let" or "var"
-        // so we can play with it in the browser
         let init = {
           "id": "viewer",
           "layout": "1x1",
           "data": [
             {"collectionUri": "http://localhost:8080/iiif-pres/collection/top"}
           ],
+          "mainMenuSettings": {
+            "userLogo": {
+              "label": "Digital Scholarly Library Viewer",
+              "attributes": { "id": "logo-title", "href": "http://dlmm.sharedblogs.library.jhu.edu/", "target": "_blank" }
+            },
+            "userButtons": [
+              {
+                "label": "About the Viewer",
+                "iconClass": "fa fa-fw fa-lg fa-book",
+                "attributes": {
+                  "href": "http://dlmm.sharedblogs.library.jhu.edu/en/digital-library-of-medieval-manuscripts/the-iiif-viewer/",
+                  "title": "Background about the viewer and how to use it.",
+                  "target": "_blank"
+                },
+              }
+            ]
+          },
           "windowObjects": [],
           "openManifestsPage": true,
           "preserveManifestOrder": true,
@@ -84,6 +99,7 @@
           };
         }
 
+        // Called without "let" or "var" so we can play with it in the browser
         myMiradorInstance = Mirador(init);
       });
     </script>
