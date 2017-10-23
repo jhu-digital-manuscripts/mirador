@@ -439,7 +439,7 @@
               return uri === elId;
             }).length : 0);
 
-          if (numChildMatches > 0) {
+          if (numChildMatches > 0 && el.attr("class")) {
             // Count # of times 'child' class appears in current <option>
             var numChilds = (el.attr("class").match(/child/g) || []).length;
             if (numChilds > 0) {
