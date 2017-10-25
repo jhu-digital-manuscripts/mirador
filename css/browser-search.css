@@ -200,6 +200,13 @@
   background-image: url("../images/logos/hamletcollection.jpg");
 }
 
+.ui-selectmenu-menu {
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+body .ui-tooltip {
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
 /* Crap to get 'collection picker' dropdown to work in IE */
 #viewer {
   z-index: 1;
