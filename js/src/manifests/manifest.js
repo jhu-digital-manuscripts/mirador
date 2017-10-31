@@ -193,9 +193,7 @@
 
       var service = {};
       if (Array.isArray(serviceProperty)) {
-        serviceProperty
-        .filter(function(service) { return service['@context'] === "http://iiif.io/api/search/0/context.json"; })
-        .forEach(function(service) { _this.service = service; });
+        service = serviceProperty[0];
       }
       else if (serviceProperty["@context"] === "http://iiif.io/api/search/0/context.json" ||
           serviceProperty["@context"] === "http://manuscriptlib.org/jhiff/search/context.json") {
