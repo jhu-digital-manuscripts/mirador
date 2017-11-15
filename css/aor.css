@@ -432,3 +432,9 @@
 .italic {
   font-style: italic;
 }
+.annotationItem .section {
+  margin: 6px;
+}
+.annotationItem .section span {
+  margin-left: -6px;
+}
