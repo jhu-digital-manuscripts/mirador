@@ -13,6 +13,7 @@
             state:                      null,
             eventEmitter:               null,
             searcher:                   null,
+            searchConfig:               {},
             selectedObjects:            []    // Array of IDs that have been selected to display. Can be manifests or collections
         }, options);
 
@@ -39,20 +40,24 @@
             // this.manifestListElement.css("padding-bottom", this.paddingListElement);
             clone.remove();
 
-            this.searcher = new $.NewSearchWidget({
-              "appendTo": this.element.find(".browser-search"),
-              "windowId": $.genUUID(),
-              "eventEmitter": this.eventEmitter,
-              "state": this.state,
-              "showHideAnimation": {duration: 160, easing: "easeOutCubic", queue: false},
-              "config": {
-                "hasContextMenu": false,
-                "searchBooks": false
-              },
-              "onFacetSelect": function(selected) {
-                _this.filterManifestList(selected);
-              }
-            });
+            this.searchConfig = this.state.getStateProperty('manifestsPanelOptions').search;
+            if (this.searchConfig.enable) {
+              this.searcher = new $.NewSearchWidget({
+                "appendTo": this.element.find(".browser-search"),
+                "windowId": $.genUUID(),
+                "eventEmitter": this.eventEmitter,
+                "state": this.state,
+                "showHideAnimation": {duration: 160, easing: "easeOutCubic", queue: false},
+                "config": {
+                  "hasContextMenu": false,
+                  "searchBooks": false,
+                  "allowFacets": this.searchConfig.showFacetBrowse
+                },
+                "onFacetSelect": function(selected) {
+                  _this.filterManifestList(selected);
+                }
+              });
+            }
 
             // this.manifestLoadStatusIndicator = new $.ManifestLoadStatusIndicator({
             //   manifests: this.parent.manifests,
@@ -82,9 +87,11 @@
             _this.onManifestReferenced(ref, location);
           });
 
-          _this.eventEmitter.subscribe("SEARCH_SIZE_UPDATED." + this.searcher.windowId, function() {
-            _this.setContainerPositions();
-          });
+          if (this.searcher) {
+            _this.eventEmitter.subscribe("SEARCH_SIZE_UPDATED." + this.searcher.windowId, function() {
+              _this.setContainerPositions();
+            });
+          }
         },
 
         bindEvents: function() {

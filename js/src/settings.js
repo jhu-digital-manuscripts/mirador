@@ -36,15 +36,19 @@
 
     'layout': '1x1',
 
-    'openManifestsPage' : false, //defaults to false, whether or not Mirador should display the manifests page,
-                                //only valid if no windowObjects have been initialized
-                                //if there are multiple slots, it will be bound to the first slot and the selected manifest will open in that slot
-
-    // whether or not to preserve the order of the manifests, as provided in the configuration, in the manifest listing page
-    'preserveManifestOrder' : false,
-
-    // Maximum number of thumbnails to display in the manifest browser
-    'manifestsPageMaxThumbs' : -1,
+    'manifestsPanelOptions': {
+      'openManifestsPage' : false, //defaults to false, whether or not Mirador should display the manifests page,
+                                  //only valid if no windowObjects have been initialized
+                                  //if there are multiple slots, it will be bound to the first slot and the selected manifest will open in that slot
+      // whether or not to preserve the order of the manifests, as provided in the configuration, in the manifest listing page
+      'preserveManifestOrder' : false,
+      // Maximum number of thumbnails to display in the manifest browser
+      'manifestsPageMaxThumbs' : -1,
+      'search': {
+        'enable': true,   // Enable or disable search on the manifests panel
+        'showFacetBrowse': true   // Show the category/facet browser.
+      }
+    },
 
     //default window settings, but can be changed in Mirador configuration on initialization
     'windowSettings' : {

@@ -147,7 +147,8 @@
       // retrieve manifests
       this.getManifestsData();
 
-      if (this.state.getStateProperty('windowObjects').length === 0 && this.state.getStateProperty('openManifestsPage')) {
+      if (this.state.getStateProperty('windowObjects').length === 0 &&
+          this.state.getStateProperty('manifestsPanelOptions').openManifestsPage) {
         this.workspace.slots[0].addItem();
       }
     },
@@ -404,7 +405,6 @@
     addManifestFromUrl: function(url, location, content) {
       var _this = this,
         manifest;
-
       if (!_this.state.getStateProperty('manifests')[url]) {
         manifest = new $.Manifest(url, location, content);
         _this.eventEmitter.publish('manifestQueued', manifest, location);

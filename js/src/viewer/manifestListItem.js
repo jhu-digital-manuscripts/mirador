@@ -50,7 +50,7 @@
         this.fetchRefTpl();
       }
 
-      if (_this.state.getStateProperty('preserveManifestOrder')) {
+      if (_this.state.getStateProperty('manifestsPanelOptions').preserveManifestOrder) {
         if (this.appendTo.children().length === 0) {
           this.element = jQuery(this.template(this.tplData)).prependTo(this.appendTo);//.hide().fadeIn('slow');
         } else {
@@ -86,7 +86,7 @@
         canvasCount: manifest.sequences[0].canvases.length,
         images: [],
         index: _this.state.getManifestIndex(manifest['@id']),
-        location: location || $.Iiif.getCollectionName(ref["@id"]),
+        location: location || $.Iiif.getCollectionName(manifest["@id"]),
         visible: this.visible
       };
 
@@ -139,7 +139,7 @@
       // if (this.state.currentConfig.manifestList) {
       //   maxThumbs = this.state.currentConfig.manifestList.maxSequenceThumbs;
       // }
-      var maxThumbs = this.state.getStateProperty("manifestsPageMaxThumbs");
+      var maxThumbs = this.state.getStateProperty("manifestsPanelOptions").manifestsPageMaxThumbs;
       jQuery.each(_this.allImages, function(index, value) {
         var width = value.width;
 
@@ -171,7 +171,7 @@
       var _this = this;
       var location = this.manifestRef.location || this.location;
       var ref = this.manifestRef;
-      var maxThumbs = this.state.getStateProperty("manifestsPageMaxThumbs");
+      var maxThumbs = this.state.getStateProperty("manifestsPanelOptions").manifestsPageMaxThumbs;
 
       var label = this.refMetadata("Repository");
       if (this.refMetadata("Shelfmark")) {
@@ -411,7 +411,8 @@
     },
 
     template: Handlebars.compile([
-      '<li class="manifest-entry" data-index-number={{index}} style={{#if visible}}""{{else}}"display: none;"{{/if}}>',
+      // '<li class="manifest-entry" data-index-number={{index}} style={{#if visible}}""{{else}}"display: none;"{{/if}}>',
+      '<li class="manifest-entry" data-index-number={{index}} >',
       '<div class="repo-image">',
         '{{#if repoImage}}',
         '<img src="{{repoImage}}" alt="{{location}}">',
