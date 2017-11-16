@@ -260,12 +260,14 @@
           "details": []
         };
 
-        canvas.metadata.forEach(function(item) {
-          tplData.details.push({
-            "label": item.label,
-            "value": _this.stringifyObject(item.value)
+        if (Array.isArray(canvas.metadata)) {
+          canvas.metadata.forEach(function(item) {
+            tplData.details.push({
+              "label": item.label,
+              "value": _this.stringifyObject(item.value)
+            });
           });
-        });
+        }
 
         if (tplData.details.length > 0) {
           // Add this metadata section only if there is metadata to add
