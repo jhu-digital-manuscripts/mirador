@@ -85,14 +85,24 @@
   background-color: white;
   overflow-y: auto;
   z-index: 3;
-  padding: 8px;
+  padding: 0 8px 8px 8px;
   border-left: 1px solid #d3d3d3;
   border-top: 1px solid #d3d3d3;
   margin-top: -1px;
 }
 .search-results-close {
-  margin: 6px 0;
-  width: 150px;
+  margin: -1px -8px 10px -10px;
+  padding: 6px 0 8px 18px;
+  border: 1px solid #d3d3d3;
+  border-right: 0;
+  background-color: white;
+  cursor: pointer;
+}
+.search-results-close:hover {
+  background-color: #ddd;
+}
+.search-results-close:active {
+  background-color: #b3b3b3;
 }
 .search-results-close i {
   margin-right: 12px;

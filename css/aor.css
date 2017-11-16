@@ -480,3 +480,10 @@
 .annotationItem .section span {
   margin-left: -6px;
 }
+
+/* CNI additions */
+.external-link {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}
