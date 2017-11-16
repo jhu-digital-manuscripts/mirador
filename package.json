@@ -47,6 +47,7 @@
     "travis": "./node_modules/grunt-cli/bin/grunt ci --verbose --force & npm run test"
   },
   "dependencies": {
+    "CETEIcean": "^0.4.0",
     "lazysizes": "^4.0.0-rc3"
   },
   "engine": "node < 7.0.0"

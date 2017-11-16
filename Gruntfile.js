@@ -44,7 +44,8 @@ module.exports = function(grunt) {
     'bower_components/jQuery-contextMenu/dist/*.js',
     'bower_components/jstree/dist/jstree.min.js',
     'js/lib/sanitize-html.min.js',
-    'node_modules/lazysizes/lazysizes.min.js'
+    'node_modules/lazysizes/lazysizes.min.js',
+    'node_modules/CETEIcean/js/CETEI.js'
   ],
 
   // source files
@@ -98,7 +99,9 @@ module.exports = function(grunt) {
           'bower_components/jstree/dist/themes/default/style.min.css',
           'css/aor.css',
           'css/browser-search.css',
-          'css/search-facets.css'
+          'css/search-facets.css',
+          // 'node_modules/CETEIcean/css/*'
+          // 'css/aor-tei.css'
         ],
         dest: 'build/mirador/css/mirador-combined.css'
       }

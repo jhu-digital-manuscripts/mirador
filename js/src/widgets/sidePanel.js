@@ -110,7 +110,8 @@
           tabId: 'annotationsTab',
           windowId: _this.windowId,
           canvasID: _this.canvasID,
-          eventEmitter: _this.eventEmitter
+          eventEmitter: _this.eventEmitter,
+          state: _this.state
         });
       }
       // if (_this.annotationsTabAvailable) {

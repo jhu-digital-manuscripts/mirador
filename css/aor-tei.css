@@ -1,0 +1,20 @@
+tei-tei {
+  font-size: 0.75rem;
+}
+tei-div {
+  display: block;
+}
+tei-hi[rend="ital"] {
+  font-style: italic;
+}
+tei-title {
+  font-style: italic;
+}
+tei-head {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+tei-p {
+  display: block;
+  margin: 0.5rem 0;
+}

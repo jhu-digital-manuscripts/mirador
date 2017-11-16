@@ -3,6 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <script src='https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.js'></script>
+    <link href='https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.css' rel='stylesheet' />
     <link rel="stylesheet" type="text/css" href="build/mirador/css/mirador-combined.css">
     <title>Mirador Viewer</title>
     <style type="text/css">
@@ -13,11 +15,14 @@
        width: 100%;
        height: 100%;
        position: fixed;
+       top: 0;
+       left: 0;
      }
     </style>
   </head>
   <body>
     <div id="viewer"></div>
+    <div class="perseids-container"></div>
 
     <script src="build/mirador/mirador.js"></script>
     <script type="text/javascript">
@@ -39,8 +44,7 @@
           "id": "viewer",
           "layout": "1x1",
           "data": [
-            {"collectionUri": "http://localhost:8080/iiif-pres/collection/hamletcollection"},
-            {"collectionUri": "http://localhost:8080/iiif-pres/collection/aorcollection"}
+            {"collectionUri": "http://localhost:8080/iiif-pres/collection/top"}
             // {"manifestUri": "http://localhost:8080/iiif-pres/aorcollection.FolgersHa2/manifest"}
           ],
           "mainMenuSettings": {
