@@ -458,57 +458,25 @@
   margin: 0 5px;
 }
 
-.search-results-close {
-  display: none;
-  cursor: pointer;
-  border-radius: 5px;
-  padding: 6px;
-  background-color: white;
-}
+/* Hamlet additions */
+.substitution {
 
-.search-results-close:hover {
-  background-color: #fcfcfc;
 }
-
-.search-results-close:active {
-  background-color: #f7f7f7;
+.substitution .sub-title {
+  font-weight: bold;
+  border-bottom: 0;
+  margin: 3px 0;
 }
-
-.results-to-top {
-  cursor: pointer;
-  color: blue;
-  display: none;
+.full-width {
+  display: block;
+  width: 100%;
 }
-
-.repo-image span.default-logo {
-  background-size: 50px 50px;
-}
-
 .italic {
   font-style: italic;
 }
-.emphasize {
-  text-decoration: underline;
+.annotationItem .section {
+  margin: 6px;
 }
-a.Tooltip {
-  position: relative;
-  font-weight: bold;
-  text-decoration: none;
-  color: green;
-}
-.Tooltip span {
-  display: none;
-}
-.Tooltip:hover span {
-  display: block;
-}
-span.rubric {
-  color: red;
-}
-span.init {
-  font-weight: bold;
-  font-size: 1.15em;
-}
-span.bold {
-  font-weight: bold;
+.annotationItem .section span {
+  margin-left: -6px;
 }

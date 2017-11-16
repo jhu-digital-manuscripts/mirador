@@ -39,28 +39,20 @@
           "id": "viewer",
           "layout": "1x1",
           "data": [
-            {"collectionUri": "http://localhost:8080/iiif-pres/collection/top"}
+            {"collectionUri": "http://localhost:8080/iiif-pres/collection/hamletcollection"},
+            {"manifestUri": "http://localhost:8080/iiif-pres/aorcollection.FolgersHa2/manifest"}
           ],
           "mainMenuSettings": {
             "userLogo": {
-              "label": "Digital Scholarly Library Viewer",
-              "attributes": { "id": "logo-title", "href": "http://dlmm.sharedblogs.library.jhu.edu/", "target": "_blank" }
-            },
-            "userButtons": [
-              {
-                "label": "About the Viewer",
-                "iconClass": "fa fa-fw fa-lg fa-book",
-                "attributes": {
-                  "href": "http://dlmm.sharedblogs.library.jhu.edu/en/digital-library-of-medieval-manuscripts/the-iiif-viewer/",
-                  "title": "Background about the viewer and how to use it.",
-                  "target": "_blank"
-                },
-              }
-            ]
+              "label": "Reading Hamlet",
+              // "attributes": { "id": "logo-title", "href": "http://dlmm.sharedblogs.library.jhu.edu/", "target": "_blank" }
+            }
           },
           "windowObjects": [],
-          "openManifestsPage": true,
-          "preserveManifestOrder": true,
+          "manifestsPanelOptions": {
+            "openManifestsPage": true,
+            "preserveManifestOrder": true,
+          },
           "showAddFromURLBox": false,
           "windowSettings": {
              "sidePanelOptions": {
