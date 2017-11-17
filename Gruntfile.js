@@ -100,6 +100,7 @@ module.exports = function(grunt) {
           'css/aor.css',
           'css/browser-search.css',
           'css/search-facets.css',
+          'css/aor-tei.css'
           // 'node_modules/CETEIcean/css/*'
           // 'css/aor-tei.css'
         ],

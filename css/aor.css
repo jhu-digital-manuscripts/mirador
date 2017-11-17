@@ -509,5 +509,6 @@
   overflow: auto;
   background-color: #ebeff2;
   border: 2px solid #656565;
+  z-index: 1;
   display: none;
 }
