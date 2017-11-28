@@ -256,7 +256,6 @@
         _this.setPosition(element, thePeople);
         thePeople.show();
         thePeople.append('<i class="loading fa fa-spinner fa-spin fa-2x fa-fw"></i>');
-        console.log("[Moo] " + href);
         jQuery.get({
           url: href,
           dataType: "xml"

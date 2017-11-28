@@ -14,6 +14,9 @@ tei-head {
   font-size: 1.25rem;
   font-weight: bold;
 }
+tei-forename {
+  margin-left: 0 6px;
+}
 tei-p {
   display: block;
   margin: 0.5rem 0;

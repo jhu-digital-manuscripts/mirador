@@ -474,6 +474,32 @@
 .italic {
   font-style: italic;
 }
+.emphasize {
+  text-decoration: underline;
+}
+a.Tooltip {
+  position: relative;
+  font-weight: bold;
+  text-decoration: none;
+  color: green;
+}
+.Tooltip span {
+  display: none;
+}
+.Tooltip:hover span {
+  display: block;
+  cursor: default;
+}
+span.rubric {
+  color: red;
+}
+span.init {
+  font-weight: bold;
+  font-size: 1.15em;
+}
+span.bold {
+  font-weight: bold;
+}
 .annotationItem .section {
   margin: 6px;
 }
