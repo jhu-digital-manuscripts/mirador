@@ -507,6 +507,12 @@ span.bold {
   margin-left: -6px;
 }
 
+.annotationItem a {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 /* CNI additions */
 .external-link {
   color: blue;

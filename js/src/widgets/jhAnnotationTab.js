@@ -68,6 +68,7 @@
      * @return (none)
      */
     processAnnotationList: function(canvasLabel, annotationList) {
+      var _this = this;
       var annotations = [];
       var appendTo = this.appendTo.find('ul.annotations');
 
@@ -85,17 +86,7 @@
         if (annotation['@type'] !== 'oa:Annotation') {
           return;
         }
-
-        if (!annotation.id) {
-          annotation.id = annotation['@id'];
-        }
-        if (!annotation.resource.id) {
-          annotation.resource.id = annotation.resource['@id'];
-        }
-        if (!annotation.resource.type) {
-          annotation.resource.type = annotation.resource['@type'];
-        }
-
+        _this.massageForHandlebars(annotation);
         annotations.push(annotation);
       });
 
@@ -106,6 +97,29 @@
       jQuery(tmpTemplate(templateData)).appendTo(appendTo);
 
       this.doStuff();
+    },
+
+    /**
+     * Modify objects so that Handlebars can deal with them.
+     * IIIF has various properties with special characters in them,
+     * such as '@id' and '@type'. Handlebars currently cannot handle
+     * the '@' character in property names, so change these to
+     * 'id', 'type', etc
+     */
+    massageForHandlebars: function(obj) {
+      var _this = this;
+      Object.keys(obj).forEach(function(key) {
+        var val = obj[key];
+        if (typeof val === 'object') {
+          _this.massageForHandlebars(obj[key]);
+        }
+
+        if (key.indexOf('@') > -1) {
+          var newKey = key.substring(1, key.length);
+          obj[newKey] = obj[key];
+        }
+      });
+      return obj;
     },
 
     initMap: function(key) {
@@ -369,10 +383,26 @@
               '{{#ifCond this.resource.type "==" "cnt:ContentAsText"}}',
                 '<div class="editable">{{{this.resource.chars}}}</div>',
               '{{/ifCond}}',
+              '{{#ifCond this.motivation "==" "oa:linking"}}',
+                '{{> hotlink this}}',
+              '{{/ifCond}}',
               // Could add other conditions here to match other annotation types
             '</li>',
           '{{/each}}',
         '{{/each}}'
+      ].join(''));
+
+      Handlebars.registerPartial('hotlink', [
+        '<div>',
+          '{{#ifCond resource.type "==" "oa:Choice"}}',
+            '<ul>',
+              '<li><h3>{{resource.default.label}}</h3></li>',
+              '<li><p>{{resource.item.chars}}</p><p><a href="{{resource.item.id}}" target="_blank">(link)</a></p></li>',
+            '</ul>',
+          '{{else}}',
+            '<ul><li><h3>{{this.resource.label}}</h3><p><a href="{{this.resource.id}}" target="_blank">(link)</a></p></li></ul>',
+          '{{/ifCond}}',
+        '</div>'
       ].join(''));
 
       Handlebars.registerPartial('pageLeft', '<span class="aor-icon side-left"></span>');
