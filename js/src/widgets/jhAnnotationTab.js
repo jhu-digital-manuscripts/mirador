@@ -83,7 +83,7 @@
       // Massage data slightly, Handlebars cannot deal with weird JSON-LD
       // properties such as '@id', just change these to 'id'
       annotationList.forEach(function(annotation) {
-        if (annotation['@type'] !== 'oa:Annotation') {
+        if (annotation['@type'] !== 'oa:Annotation' || annotation.motivation === 'oa:linking') {
           return;
         }
         _this.massageForHandlebars(annotation);
@@ -95,6 +95,11 @@
 
       var templateData = this.templateData(annotations);
       jQuery(tmpTemplate(templateData)).appendTo(appendTo);
+
+      new $.JHHotspotDecorator({
+        hotspots: annotationList.filter(function(a) { return a.motivation === 'oa:linking'; }),
+        annotationsHtml: this.element
+      });
 
       this.doStuff();
     },
@@ -390,19 +395,6 @@
             '</li>',
           '{{/each}}',
         '{{/each}}'
-      ].join(''));
-
-      Handlebars.registerPartial('hotlink', [
-        '<div>',
-          '{{#ifCond resource.type "==" "oa:Choice"}}',
-            '<ul>',
-              '<li><h3>{{resource.default.label}}</h3></li>',
-              '<li><p>{{resource.item.chars}}</p><p><a href="{{resource.item.id}}" target="_blank">(link)</a></p></li>',
-            '</ul>',
-          '{{else}}',
-            '<ul><li><h3>{{this.resource.label}}</h3><p><a href="{{this.resource.id}}" target="_blank">(link)</a></p></li></ul>',
-          '{{/ifCond}}',
-        '</div>'
       ].join(''));
 
       Handlebars.registerPartial('pageLeft', '<span class="aor-icon side-left"></span>');
