@@ -1,0 +1,40 @@
+a.hotspot-toggle {
+  color: dimgrey;
+  padding: 6px 10px;
+  text-decoration: none;
+}
+a.hotspot-toggle:hover {
+  color: black;
+}
+
+.hotspot-collapse-container {
+  border: 1px solid #656565;
+  border-radius: 5px;
+  background-color: #ebeff2;
+  padding: 0 12px;
+  display: none;
+}
+
+.tab-group button {
+  display: none;
+  background-color: white;
+  border: 1px solid white;
+  padding: 10px;
+  font-size: initial;
+}
+.tab-group button:hover {
+  background-color: #ededed;
+  border: 1px solid black;
+}
+
+.tab-content div {
+  border-bottom: 1px solid grey;
+  padding: 12px 0;
+  overflow-x: hidden;
+}
+.tab-content div:last-child {
+  border: 0;
+}
+.tab-content h2 {
+  margin: 0;
+}

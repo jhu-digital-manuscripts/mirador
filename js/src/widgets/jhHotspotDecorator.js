@@ -8,7 +8,7 @@
 $.JHHotspotDecorator = function(options) {
   jQuery.extend(true, this, {
     hotspots: null,
-    annotationsHtml: null
+    annotationsHtml: null,
   }, options);
 
   this.init();
@@ -37,7 +37,9 @@ $.JHHotspotDecorator.prototype = {
   modifyAnnotations: function(hotspot) {
     var targetData = hotspot.on;
     var link = this.getLink(hotspot);
-    var templateData = this.hotspotToTemplateData(hotspot);
+    var templateData = {
+      refs: this.hotspotToTemplateData(hotspot)
+    };
 
     var match;
     if (typeof targetData === 'string') {
@@ -60,30 +62,31 @@ $.JHHotspotDecorator.prototype = {
             (targetData.selector.suffix ? targetData.selector.suffix : "");
         var el = jQuery(match).find("div.editable:contains('" + query + "')");
 
-        var parts = el.html().split(query);
-        var result = parts[0];
-        var toggle;
+        templateData.label = targetData.selector.exact;
 
-        for (var i = 1; i < parts.length; i++) {
-          toggle = this.getToggle(parts[i]);
-          if (!toggle) {
-            if (Array.isArray(templateData)) {
-              toggle = this.hotspotContainer(templateData[0]);
-              result += query + this.appendToToggle(toggle, templateData.slice(1, templateData.length)) +
-                        parts[i].substring(toggle.length, parts[i].length);
-            } else {
-              var moo = this.hotspotContainer(templateData);
-              result += query + moo + parts[i].substring(moo.length, parts[i].length);
-            }
-          } else {
-            result += query + this.appendToToggle(toggle, templateData) +
-                      parts[i].substring(toggle.length, parts[i].length);
-          }
-        }
+        var newstuff = jQuery(this.hotspotContainer(templateData));
+        el.append(jQuery(this.topTemplate()));
+        el.find('.references-container').append(newstuff);
 
-        el.html(result);
+        this.bindEvents(newstuff);
       }
     }
+  },
+
+  bindEvents: function(el) {
+    el.find('a.hotspot-toggle').click(function(event) {
+      var clicked = jQuery(this);
+      var visible = (clicked.attr('aria-expanded') == 'true');
+      clicked.attr('aria-expanded', !visible);
+
+      if (visible) {
+        clicked.removeClass('fa-minus-square').addClass('fa-plus-square');
+        clicked.next().hide(150);
+      } else {
+        clicked.removeClass('fa-plus-square').addClass('fa-minus-square');
+        clicked.next().show(150);
+      }
+    });
   },
 
   /**
@@ -117,11 +120,11 @@ $.JHHotspotDecorator.prototype = {
 
       return res;
     } else {
-      return {
+      return [{
         "label": hotspot.label,
         "description": hotspot.resource.chars,
         "link": hotspot.resource['@id']
-      };
+      }];
     }
   },
 
@@ -154,43 +157,6 @@ $.JHHotspotDecorator.prototype = {
     }
   },
 
-  /**
-   * @param snippet {string} : Check a string to see if it already contains a 'hotspot toggle'
-   *                This snippet is called after splitting an HTML segment to look for an 
-   *                annotation target
-   * @returns toggle jQuery object, or FALSE if none is found
-   */
-  getToggle: function(snippet) {
-    // var things = jQuery(snippet).find('a.hotspot-toggle');
-    var things = jQuery(snippet).find('div.moo-container');
-    if (things.length > 0) {
-      return things;
-    } else {
-      return undefined;
-    }
-  },
-
-  /**
-   * Append hotspot data to a toggle that already exists.
-   * @param toggle jQuery object of a toggle
-   * @param hotspotData hotspot data already formatted for handlebars
-   */
-  appendToToggle: function(toggle, hotspotData) {
-    var _this = this;
-    var data = hotspotData;
-    
-    if (!Array.isArray(hotspotData)) {
-      data = [hotspotData];
-    }
-    toggle = jQuery(toggle);
-    data.forEach(function(d) {
-      toggle.find('.tab-group').append(jQuery(_this.hotspotTab(d)));
-      toggle.find('.tab-content').append(jQuery(_this.hotspotTabContent(d)));
-    });
-
-    return toggle.html();
-  },
-
   register: function() {
     /*
      * Button requires only label
@@ -203,8 +169,8 @@ $.JHHotspotDecorator.prototype = {
 
     Handlebars.registerPartial('hotspotTabContent', [
       '<div data-ref="{{label}}">',
-        '<p>{{label}}</p>',
-        '<p>{{description}}</p>',
+        // '<h2>{{label}}</h2>',
+        '{{#if description}}<p>{{description}}</p>{{/if}}',
         '<a href="{{link}}" target="_blank">{{link}}</a>',
       '</div>'
     ].join(''));
@@ -222,22 +188,29 @@ $.JHHotspotDecorator.prototype = {
    * Any additions to this will need to add {{> hotspotTab}} and {{> hotspotTabContent}}
    */
   hotspotContainer: Handlebars.compile([
-    '<div class="moo-container>"',
-    '<a href="javascript:;" class="fa fa-lg fa-plus-square hotspot-toggle" data-toggle="collapse" aria-expanded="false">',
+    '<div class="hotspot-container">',
+      '{{label}}',
+      '<a href="javascript:;" class="fa fa-lg fa-plus-square hotspot-toggle" data-toggle="collapse" aria-expanded="false">',
+      '</a>',
       '<div class="hotspot-collapse-container">',
         '<div class="tab-group">',
-          '{{> hotspotTab }}',
+          '{{#each refs}}{{> hotspotTab }}{{/each}}',
         '</div>',
         '<div class="tab-content">',
-          '{{> hotspotTabContent }}',
+          '{{#each refs}}{{> hotspotTabContent }}{{/each}}',
         '</div>',
       '</div>',
-    '</a>',
     '</div>'
   ].join('')),
 
   hotspotTab: Handlebars.compile('{{> hotspotTab }}'),
-  hotspotTabContent: Handlebars.compile('{{> hotspotTabContent }}')
+  hotspotTabContent: Handlebars.compile('{{> hotspotTabContent }}'),
+
+  topTemplate: Handlebars.compile([
+    '<div class="references-container">',
+      '<span class="emphasize">References: </span>',
+    '</div>'
+  ].join(''))
 };
 
 }(Mirador));
