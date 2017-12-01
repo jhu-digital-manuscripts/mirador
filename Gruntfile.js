@@ -100,9 +100,8 @@ module.exports = function(grunt) {
           'css/aor.css',
           'css/browser-search.css',
           'css/search-facets.css',
-          'css/aor-tei.css'
-          // 'node_modules/CETEIcean/css/*'
-          // 'css/aor-tei.css'
+          'css/aor-tei.css',
+          'css/jh-hotspots.css'
         ],
         dest: 'build/mirador/css/mirador-combined.css'
       }
