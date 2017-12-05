@@ -38,16 +38,22 @@ $.JHHotspotDecorator.prototype = {
     var targetData = hotspot.on;
     var link = this.getLink(hotspot);
     var templateData = {
+      id: $.genUUID(),
       refs: this.hotspotToTemplateData(hotspot)
     };
 
     var match;
+    var newstuff;
     if (typeof targetData === 'string') {
       match = this.getMatchingAnnotation(targetData);
       if (!match) {
         return;
       }
-      match.append(jQuery(this.hotspotTabContent(templateData)));
+
+      newstuff = jQuery(this.hotspotContainer(templateData));
+      match.append(jQuery(this.topTemplate()));
+      match.find('.references-container').append(newstuff);
+      this.bindEvents(newstuff);
     } else if (typeof targetData === 'object') {
       match = this.getMatchingAnnotation(targetData['@id']);
       if (!match) {
@@ -64,27 +70,48 @@ $.JHHotspotDecorator.prototype = {
 
         templateData.label = targetData.selector.exact;
 
-        var newstuff = jQuery(this.hotspotContainer(templateData));
-        el.append(jQuery(this.topTemplate()));
-        el.find('.references-container').append(newstuff);
-
+        newstuff = this.hotspotContainer(templateData);
+        el.html(function(_, html) {
+          return html.split(query).join(
+            (targetData.selector.prefix ? targetData.selector.prefix : "") +
+            targetData.selector.exact + newstuff +
+            (targetData.selector.suffix ? targetData.selector.suffix : "")
+          );
+        });
+        
+        this.bindEvents(el);
+      } else {
+        // No TextQuoteSelector, simply append references to end of the annotation.
+        newstuff = jQuery(this.hotspotContainer(templateData));
+        match.append(jQuery(this.topTemplate()));
+        match.find('.references-container').append(newstuff);
         this.bindEvents(newstuff);
       }
     }
   },
 
   bindEvents: function(el) {
-    el.find('a.hotspot-toggle').click(function(event) {
+    var _this = this;
+
+    jQuery(el).find('a.hotspot-toggle').click(function(event) {
       var clicked = jQuery(this);
+      var annoId = clicked.data('anno');
+      if (!annoId) {
+        return;
+      }
+
       var visible = (clicked.attr('aria-expanded') == 'true');
       clicked.attr('aria-expanded', !visible);
 
+      var expandinator = _this.annotationsHtml.find('div[data-anno="' + annoId + '"]');
       if (visible) {
         clicked.removeClass('fa-minus-square').addClass('fa-plus-square');
-        clicked.next().hide(150);
+        // expandinator.hide(150);
+        clicked.parent().next().hide(150);
       } else {
         clicked.removeClass('fa-plus-square').addClass('fa-minus-square');
-        clicked.next().show(150);
+        // expandinator.show(150);
+        clicked.parent().next().show(150);
       }
     });
   },
@@ -103,6 +130,7 @@ $.JHHotspotDecorator.prototype = {
 
     if (hotspot.resource['@type'] === 'oa:Choice') {
       res.push({
+        "id": hotspot['@id'],
         "label": hotspot.resource.default.label,
         "description": hotspot.resource.default.chars,
         "link": hotspot.resource.default['@id']
@@ -111,6 +139,7 @@ $.JHHotspotDecorator.prototype = {
       if (Array.isArray(hotspot.resource.items)) {
         hotspot.resource.items.forEach(function(item) {
           res.push({
+            "id": hotspot['@id'],
             "label": item.label,
             "description": item.chars,
             "link": item['@id']
@@ -121,6 +150,7 @@ $.JHHotspotDecorator.prototype = {
       return res;
     } else {
       return [{
+        "id": hotspot['@id'],
         "label": hotspot.label,
         "description": hotspot.resource.chars,
         "link": hotspot.resource['@id']
@@ -169,7 +199,6 @@ $.JHHotspotDecorator.prototype = {
 
     Handlebars.registerPartial('hotspotTabContent', [
       '<div data-ref="{{label}}">',
-        // '<h2>{{label}}</h2>',
         '{{#if description}}<p>{{description}}</p>{{/if}}',
         '<a href="{{link}}" target="_blank">{{link}}</a>',
       '</div>'
@@ -188,11 +217,10 @@ $.JHHotspotDecorator.prototype = {
    * Any additions to this will need to add {{> hotspotTab}} and {{> hotspotTabContent}}
    */
   hotspotContainer: Handlebars.compile([
-    '<div class="hotspot-container">',
-      '{{label}}',
-      '<a href="javascript:;" class="fa fa-lg fa-plus-square hotspot-toggle" data-toggle="collapse" aria-expanded="false">',
+      // '{{label}}',
+      '<a href="javascript:;" class="fa fa-lg fa-plus-square hotspot-toggle" data-toggle="collapse" aria-expanded="false" data-anno="{{id}}">',
       '</a>',
-      '<div class="hotspot-collapse-container">',
+      '<div class="hotspot-collapse-container" data-anno="{{id}}">',
         '<div class="tab-group">',
           '{{#each refs}}{{> hotspotTab }}{{/each}}',
         '</div>',
@@ -200,7 +228,6 @@ $.JHHotspotDecorator.prototype = {
           '{{#each refs}}{{> hotspotTabContent }}{{/each}}',
         '</div>',
       '</div>',
-    '</div>'
   ].join('')),
 
   hotspotTab: Handlebars.compile('{{> hotspotTab }}'),
