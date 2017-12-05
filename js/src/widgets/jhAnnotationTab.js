@@ -259,9 +259,9 @@
         // Rip apart the href to hack together the CTS URN
         // TODO REMOVE THIS! This ugly hack should be replaced with a different
         // mechanism. Ex: add a data-api="..." attribute or something to the anchor
-        var hrefprefix = "http://cts.perseids.org/read/";
+        var hrefprefix = "https://cts.perseids.org/read/";
         var parts = href.substring(hrefprefix.length).split("/");
-        href = "http://cts.perseids.org/api/cts/?request=GetPassage&urn=urn:cts";
+        href = "https://cts.perseids.org/api/cts/?request=GetPassage&urn=urn:cts";
         parts.forEach(function(value, index, array) {
           if (index === 2 || index === 3) {
             href += ".";
@@ -279,7 +279,6 @@
           url: href,
           dataType: "xml"
         }).done(function(data) {
-          console.log("[Moo] done");
           _ = thePeople;
           var datastr = new XMLSerializer().serializeToString(jQuery(data).find("TEI").get(0));
           _this.CETEI.makeHTML5(datastr, function(html) {
