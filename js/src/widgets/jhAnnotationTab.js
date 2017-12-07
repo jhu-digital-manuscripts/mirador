@@ -233,6 +233,7 @@
 
       var href = element.attr("href");
 
+      if (_this.popupTimer) { window.clearTimeout(_this.popupTimer); }
       if (href.indexOf("pleiades.stoa.org") >= 0) {
         thePeople.hide();
         // If this link is a pleiades Places link, do the map thing
