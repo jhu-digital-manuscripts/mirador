@@ -852,7 +852,8 @@
           "eventEmitter": this.eventEmitter,
           "parentId": this.windowId,
           "appendTo": this.appendTo,
-          "state": this.state
+          "state": this.state,
+          "top": (this.config.showCollectionPicker ? "199px" : "143px"),
         });
       }
     },

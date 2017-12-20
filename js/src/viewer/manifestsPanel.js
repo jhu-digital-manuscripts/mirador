@@ -64,14 +64,19 @@
 
               if (!this.facetable) {
                 this.element.find('.search-results-display').addClass('full-width');
+                this.element.find('.select-results').css({
+                  "left": 0,
+                  "top": (this.searchConfig.showCollectionPicker ? "191px" : "144px")
+                });
+              } else {
+                this.setContainerPositions();
               }
-
             } else {
               this.filterManifestList();
-            }
-
-            if (!this.facetable) {
-              this.element.find('.select-results').addClass('full-width');
+              this.element.find('.select-results').css({
+                "top": "36px",
+                "left": 0
+              });
             }
             
             // this.manifestLoadStatusIndicator = new $.ManifestLoadStatusIndicator({
@@ -277,13 +282,28 @@
         },
 
         setContainerPositions: function() {
-          var resizedEl = this.element.find(".browser-search-container");
-          var vals = {
-            "top": resizedEl.position().top + resizedEl.outerHeight(true) + "px"
-          };
+          var vals;
+          if (this.searcher) {
+            if (this.facetable) {
+              vals = {"top": 0};
+              if (this.searchConfig.showCollectionPicker && this.searchConfig.showDescription) {
+                vals.top = "15%";
+              } else if (this.searchConfig.showCollectionPicker && !this.searchConfig.showDescription) {
+                vals.top = "91px";
+              }
 
-          this.element.find(".select-results").css(vals);
-          this.element.find(".search-results-display").css(vals);
+              this.element.find(".select-results").css(vals);
+              this.element.find(".search-results-display").css(vals);
+            } else {
+              var resizedEl = this.element.find(".browser-search-container");
+              vals = {
+                "top": resizedEl.position().top + resizedEl.outerHeight(true) + "px"
+              };
+              
+              this.element.find(".select-results").css(vals);
+              this.element.find(".search-results-display").css(vals);
+            }
+          }
         },
 
         template: Handlebars.compile([

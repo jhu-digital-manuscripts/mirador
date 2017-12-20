@@ -84,6 +84,10 @@
       this.setFacets(this.facets);
       this.listenForActions();
       this.bindEvents();
+
+      if (this.top) {
+        this.element.css({"top": this.top});
+      }
     },
 
     bindEvents: function() {
