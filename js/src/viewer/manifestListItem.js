@@ -20,7 +20,8 @@
       allImages:                  [],
       remaining:                  0,
       state:                      null,
-      eventEmitter:               null
+      eventEmitter:               null,
+      maxThumbs:                  -1,
     }, options);
 
     this.init();
@@ -31,6 +32,9 @@
 
     init: function() {
       var _this = this;
+console.log("[MLI] visible: " + this.visible);
+      this.maxThumbs = this.state.getStateProperty("manifestList").maxThumbs;
+
       //need a better way of calculating this because JS can't get width and margin of hidden elements, so must manually set that info
       //ultimately use 95% of space available, since sometimes it still displays too many images
       this.maxPreviewImagesWidth = this.resultsWidth - (this.repoWidth + this.margin + this.metadataWidth + this.margin + this.remainingWidth);
@@ -135,16 +139,11 @@
         });
       }
 
-      // var maxThumbs;
-      // if (this.state.currentConfig.manifestList) {
-      //   maxThumbs = this.state.currentConfig.manifestList.maxSequenceThumbs;
-      // }
-      var maxThumbs = this.state.getStateProperty("manifestsPageMaxThumbs");
       jQuery.each(_this.allImages, function(index, value) {
         var width = value.width;
 
         _this.imagesTotalWidth += (width + _this.margin);
-        if (maxThumbs !== -1 && index >= maxThumbs) {
+        if (_this.maxThumbs !== -1 && index >= _this.maxThumbs) {
           return false;
         }
         if (_this.imagesTotalWidth >= _this.maxPreviewImagesWidth) {
@@ -171,7 +170,6 @@
       var _this = this;
       var location = this.manifestRef.location || this.location;
       var ref = this.manifestRef;
-      var maxThumbs = this.state.getStateProperty("manifestsPageMaxThumbs");
 
       var label = this.refMetadata("Repository");
       if (this.refMetadata("Shelfmark")) {
@@ -223,7 +221,7 @@
           thumbs = [ref.thumbnail];
         }
         thumbs.forEach(function(thumb, index) {
-          if (maxThumbs !== -1 && index > maxThumbs-1) {
+          if (_this.maxThumbs !== -1 && index > _this.maxThumbs-1) {
             return false;
           }
           var toAdd = {

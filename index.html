@@ -39,7 +39,7 @@
           "id": "viewer",
           "layout": "1x1",
           "data": [
-            {"collectionUri": "http://localhost:8080/iiif-pres/collection/top"}
+            {"collectionUri": "http://localhost:8080/iiif-pres/collection/aorcollection"}
           ],
           "mainMenuSettings": {
             "userLogo": {
@@ -84,7 +84,11 @@
               "close": false
             }
           },
-          "manifestsPageMaxThumbs": 3
+          "manifestList": {
+            "maxThumbs": 3,
+            "enableSearch": true,
+            "enableFacets": false
+          }
         };
 
         let loadedCol = getParameterByName("col");

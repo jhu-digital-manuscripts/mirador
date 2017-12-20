@@ -38,22 +38,30 @@
             this.paddingListElement = this.controlsHeight;
             // this.manifestListElement.css("padding-bottom", this.paddingListElement);
             clone.remove();
+            
+            this.hasSearcher = this.state.getStateProperty('manifestList').enableSearch;
+            this.facetable = this.state.getStateProperty('manifestList').enableFacets;
 
-            this.searcher = new $.NewSearchWidget({
-              "appendTo": this.element.find(".browser-search"),
-              "windowId": $.genUUID(),
-              "eventEmitter": this.eventEmitter,
-              "state": this.state,
-              "showHideAnimation": {duration: 160, easing: "easeOutCubic", queue: false},
-              "config": {
-                "hasContextMenu": false,
-                "searchBooks": false
-              },
-              "onFacetSelect": function(selected) {
-                _this.filterManifestList(selected);
-              }
-            });
-
+            if (this.hasSearcher) {
+              this.searcher = new $.NewSearchWidget({
+                "appendTo": this.element.find(".browser-search"),
+                "windowId": $.genUUID(),
+                "eventEmitter": this.eventEmitter,
+                "state": this.state,
+                "showHideAnimation": {duration: 160, easing: "easeOutCubic", queue: false},
+                "config": {
+                  "hasContextMenu": false,
+                  "searchBooks": false,
+                  "allowFacets": this.state.getStateProperty('manifestList').enableFacets
+                },
+                "onFacetSelect": function(selected) {
+                  _this.filterManifestList(selected);
+                }
+              });
+            } else {
+              this.filterManifestList();
+            }
+            
             // this.manifestLoadStatusIndicator = new $.ManifestLoadStatusIndicator({
             //   manifests: this.parent.manifests,
             //   appendTo: this.element.find('.select-results')
@@ -82,9 +90,11 @@
             _this.onManifestReferenced(ref, location);
           });
 
-          _this.eventEmitter.subscribe("SEARCH_SIZE_UPDATED." + this.searcher.windowId, function() {
-            _this.setContainerPositions();
-          });
+          if (this.hasSearcher) {
+            _this.eventEmitter.subscribe("SEARCH_SIZE_UPDATED." + this.searcher.windowId, function() {
+              _this.setContainerPositions();
+            });
+          }
         },
 
         bindEvents: function() {
@@ -160,7 +170,13 @@
               return false;
             }
           }
+
+          // If there is no search widget OR if there are no facets, force visible
+          if (!this.hasSearcher || !this.facetable) {
+            return true;
+          }
           // Visible IF
+          //    there is a search+facet widgets AND
           //    no selected objects OR
           //    manifest ID is not in selected objects  OR
           //    any manifest parent is in the selected objects
