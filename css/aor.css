@@ -68,21 +68,23 @@
 .manifest-title {
   font-weight: normal;
   overflow-x: hidden;
-  font-size: 1.5em;
+  font-size: 1.8em;
 }
 .item-info-row {
-  opacity: 0.8;
+  color: gray;
 }
 .item-info {
   position: relative;
-}
-.canvas-count {
-  text-align: inherit;
+  font-size: 1.2em;
 }
 .ms-title {
   font-weight: normal;
   overflow-x: hidden;
   font-size: 1.4em;
+}
+.repo-label, .canvas-count {
+  font-size: 1em;
+  color: gray;
 }
 /* ------------------------------------------------------------------------- */
 
