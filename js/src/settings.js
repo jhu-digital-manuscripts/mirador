@@ -46,7 +46,11 @@
     'manifestList': {
       'maxThumbs' : -1,   // Maximum number of thumbnails to display in the manifest browser
       'enableSearch': true,
-      'enableFacets': true
+      'enableFacets': true,
+      'search': {
+        'showCollectionPicker': true,   // Show the dropdown to select other collections
+        'showDescription': true,    // Display collection description if available
+      }
     },
     
     //default window settings, but can be changed in Mirador configuration on initialization

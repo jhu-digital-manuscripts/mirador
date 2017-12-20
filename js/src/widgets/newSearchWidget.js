@@ -51,7 +51,9 @@
         hasContextMenu: true,
         allowFacets: true,
         searchBooks: false,     // Will individual books be searchable? Or search only through collections
-        inSidebar: false
+        inSidebar: false,
+        showDescription: true,  // Will display a description if present. Value of FALSE will never show description
+        showCollectionPicker: true,     // Show the dropdown to switch to another collection?
       },
       facetPanel: null,
       /**
@@ -88,7 +90,8 @@
       // Template takes no data. Data added asyncronously later.
       this.element = jQuery(this.template({
         "hidden": this.startHidden,
-        "inSidebar": this.config.inSidebar
+        "inSidebar": this.config.inSidebar,
+        "showCollectionPicker": this.config.showCollectionPicker
       })).appendTo(this.appendTo);
 
       // Do jQuery UI magic to turn dropdown into jQuery SelectMenu
@@ -574,7 +577,9 @@
       });
 
       this.getFacets();
-      this.setDescription();
+      if (this.config.showDescription) {
+        this.setDescription();
+      }
     },
 
     /**
@@ -1031,12 +1036,14 @@
     template: Handlebars.compile([
       '<div class="searchResults" {{#if hidden}}style="display: none;"{{/if}}>',
         // SearchWithin selector
-        '<div class="{{#if inSidebar}}manifest-picker-sidebar{{else}}manifest-picker{{/if}}">',
-          '<label>{{#if inSidebar}}Search Within:{{else}}Choose Collection:{{/if}}',
-            '<select class="search-within-object-select"></select>',
-          '</label>',
-          '<div class="manifest-picker-desc"></div>',
-        '</div>',
+        '{{#if showCollectionPicker}}',
+          '<div class="{{#if inSidebar}}manifest-picker-sidebar{{else}}manifest-picker{{/if}}">',
+            '<label>{{#if inSidebar}}Search Within:{{else}}Choose Collection:{{/if}}',
+              '<select class="search-within-object-select"></select>',
+            '</label>',
+            '<div class="manifest-picker-desc"></div>',
+          '</div>',
+        '{{/if}}',
         '<div class="search-widget">',
           '<form id="search-form" class="search-within-form">',
             '<input class="js-query" type="text" aria-label="Enter search query:" placeholder="search"/>',

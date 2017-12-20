@@ -13,7 +13,7 @@
 
 .select-results {
   position: absolute;
-  top: 15%;
+  top: 144px;
   left: 435px;
   right: 0;
   bottom: 0;
@@ -78,7 +78,7 @@
 /* Handle search results */
 .browser-search-container .search-results-display {
   position: absolute;
-  top: 90px;
+  top: 144px;
   bottom: 0;
   left: 435px;
   width: calc(100% - 453px);
@@ -210,4 +210,14 @@ body .ui-tooltip {
 /* Crap to get 'collection picker' dropdown to work in IE */
 #viewer {
   z-index: 1;
+}
+
+/*  */
+.select-results.full-width {
+  left: 0;
+}
+.browser-search-container .search-results-display.full-width {
+  left: 0;
+  width: initial;
+  right: 0;
 }

@@ -41,6 +41,7 @@
             
             this.hasSearcher = this.state.getStateProperty('manifestList').enableSearch;
             this.facetable = this.state.getStateProperty('manifestList').enableFacets;
+            this.searchConfig = this.state.getStateProperty('manifestList').search;
 
             if (this.hasSearcher) {
               this.searcher = new $.NewSearchWidget({
@@ -52,14 +53,25 @@
                 "config": {
                   "hasContextMenu": false,
                   "searchBooks": false,
-                  "allowFacets": this.state.getStateProperty('manifestList').enableFacets
+                  "allowFacets": this.state.getStateProperty('manifestList').enableFacets,
+                  "showCollectionPicker": this.searchConfig.showCollectionPicker,
+                  "showDescription": this.searchConfig.showDescription
                 },
                 "onFacetSelect": function(selected) {
                   _this.filterManifestList(selected);
                 }
               });
+
+              if (!this.facetable) {
+                this.element.find('.search-results-display').addClass('full-width');
+              }
+
             } else {
               this.filterManifestList();
+            }
+
+            if (!this.facetable) {
+              this.element.find('.select-results').addClass('full-width');
             }
             
             // this.manifestLoadStatusIndicator = new $.ManifestLoadStatusIndicator({
@@ -265,9 +277,9 @@
         },
 
         setContainerPositions: function() {
-          var resizedEl = this.element.find(".manifest-picker");
+          var resizedEl = this.element.find(".browser-search-container");
           var vals = {
-            "top": resizedEl.position().top + resizedEl.outerHeight(true) + 10 + "px"
+            "top": resizedEl.position().top + resizedEl.outerHeight(true) + "px"
           };
 
           this.element.find(".select-results").css(vals);
