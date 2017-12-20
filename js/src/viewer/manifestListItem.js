@@ -32,7 +32,6 @@
 
     init: function() {
       var _this = this;
-console.log("[MLI] visible: " + this.visible);
       this.maxThumbs = this.state.getStateProperty("manifestList").maxThumbs;
 
       //need a better way of calculating this because JS can't get width and margin of hidden elements, so must manually set that info
