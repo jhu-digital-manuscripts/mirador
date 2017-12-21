@@ -47,6 +47,7 @@
       'maxThumbs' : -1,   // Maximum number of thumbnails to display in the manifest browser
       'enableSearch': true,
       'enableFacets': true,
+      'showLogos': true,    // Display manifest logos?
       'search': {
         'showCollectionPicker': true,   // Show the dropdown to select other collections
         'showDescription': true,    // Display collection description if available

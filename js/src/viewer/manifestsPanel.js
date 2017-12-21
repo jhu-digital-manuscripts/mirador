@@ -42,6 +42,7 @@
             this.hasSearcher = this.state.getStateProperty('manifestList').enableSearch;
             this.facetable = this.state.getStateProperty('manifestList').enableFacets;
             this.searchConfig = this.state.getStateProperty('manifestList').search;
+            this.showLogos = this.state.getStateProperty('manifestList').showLogos;
 
             if (this.hasSearcher) {
               this.searcher = new $.NewSearchWidget({
@@ -270,6 +271,7 @@
             eventEmitter: this.eventEmitter,
             appendTo: this.manifestListElement,
             visible: this.manifestVisible(reference),
+            showLogo: this.showLogos,
             location: location,
           }));
           // this.element.find("#manifest-search").keyup();

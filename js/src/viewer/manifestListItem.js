@@ -22,6 +22,7 @@
       state:                      null,
       eventEmitter:               null,
       maxThumbs:                  -1,
+      showLogo:                   null
     }, options);
 
     this.init();
@@ -177,10 +178,19 @@
         label += ", " + this.refMetadata("Common Name");
       }
 
+      var title = "";
+      if (this.refMetadata("Title")) {
+        title = this.refMetadata("Title").substr(0, 200);
+        if (title.length < this.refMetadata("Title").length) {
+          title += "... ";
+        }
+      }
+      
       this.tplData = {
+        showLogo: this.showLogo,
         label: ref.label,
         secondaryData: [
-          this.refMetadata("Title"),
+          title,
         ],
         repository: this.refMetadata("Repository"),
         canvasCount: this.refMetadata("pageCount"),
@@ -410,13 +420,15 @@
 
     template: Handlebars.compile([
       '<li class="manifest-entry" data-index-number={{index}} style={{#if visible}}""{{else}}"display: none;"{{/if}}>',
-      '<div class="repo-image">',
-        '{{#if repoImage}}',
-        '<img src="{{repoImage}}" alt="{{location}}">',
-        '{{else}}',
-        '<span class="default-logo"></span>',
-        '{{/if}}',
-      '</div>',
+      '{{#if showLogo}}',
+        '<div class="repo-image">',
+          '{{#if repoImage}}',
+          '<img src="{{repoImage}}" alt="{{location}}">',
+          '{{else}}',
+          '<span class="default-logo"></span>',
+          '{{/if}}',
+        '</div>',
+      '{{/if}}',
       '<div class="select-metadata">',
         '<div class="item-info">',
           '<div class="item-info-row">',
@@ -432,14 +444,6 @@
           '<div>{{{label}}}</div>',
         '</div>',
         '<div class="item-info">',
-          // '<div class="item-info-row">',
-          //   '{{#if repository}}',
-          //     '<div class="repo-label">{{repository}}</div>',
-          //   '{{/if}}',
-          //   '{{#if canvasCount}}',
-          //     '<div class="canvas-count">{{canvasCount}} {{pluralize canvasCount (t "item") (t "items")}}</div>',
-          //   '{{/if}}',
-          // '</div>',
           '{{#each secondaryData}}',
             '<div class="item-info-row">{{this}}</div>',
           '{{/each}}',
