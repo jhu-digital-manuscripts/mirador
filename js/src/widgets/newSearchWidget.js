@@ -211,7 +211,7 @@
       }
 
       this.element.find(".search-results-close").on("click", function() {
-        _this.appendTo.find(".search-results-display").fadeOut(160);
+        _this.appendTo.find(".search-results-display").slideUp(160);
       });
 
       // if (this.searchService.config.search.settings.fields.length > 0) {
@@ -251,17 +251,18 @@
 
       if (this.element.find(".search-disclosure-btn-less").css("display") != "none") {
         // Basic search is active
-        query = $.generateBasicQuery(
-          this.element.find(".js-query").val(),
-          this.searchService.config.getDefaultFields(),
-          delimiters.or
-        );
+        var textbox = this.element.find(".js-query").val();
+        if (textbox && textbox.length > 0) {
+          query = $.generateBasicQuery(
+            textbox,
+            this.searchService.config.getDefaultFields(),
+            delimiters.or
+          );
+        }
       } else {
         query = this.advancedSearch.getQuery();    // Advanced search is active
       }
-
-      // query = this.appendBookList(query);
-
+      
       return query;
     },
 
@@ -680,7 +681,7 @@
         this.hidePager();
       }
 
-      this.appendTo.find(".search-results-display").fadeIn(160);
+      this.appendTo.find(".search-results-display").slideDown(160);
     },
 
     showAdvancedSearch: function() {
@@ -1066,9 +1067,11 @@
         '</div>',
         '<div class="search-results-display" style="display:none;">',
           '<div class="search-results-close"><i class="fa fa-2x fa-caret-up" title="Close results"></i>Close results</div>',
-          '<div class="results-pager"></div>',
-          '<p class="results-pager-text"></p>',
-          '<div class="search-results-list"></div>',
+          '<div class="search-results-container">',
+            '<div class="results-pager"></div>',
+            '<p class="results-pager-text"></p>',
+            '<div class="search-results-list"></div>',
+          '</div>',
         '</div>',
       '</div>',
     ].join(''))

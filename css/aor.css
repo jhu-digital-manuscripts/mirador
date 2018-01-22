@@ -460,22 +460,6 @@
   margin: 0 5px;
 }
 
-.search-results-close {
-  display: none;
-  cursor: pointer;
-  border-radius: 5px;
-  padding: 6px;
-  background-color: white;
-}
-
-.search-results-close:hover {
-  background-color: #fcfcfc;
-}
-
-.search-results-close:active {
-  background-color: #f7f7f7;
-}
-
 .results-to-top {
   cursor: pointer;
   color: blue;
@@ -513,4 +497,9 @@ span.init {
 }
 span.bold {
   font-weight: bold;
+}
+.annotation-title {
+  font-size: 1.2em;
+  text-decoration: underline;
+  color: gray;
 }
