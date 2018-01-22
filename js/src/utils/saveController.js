@@ -316,7 +316,7 @@
       _this.eventEmitter.subscribe("manifestReferenced", function(event, manifestObject, repository) {
         var data = _this.currentConfig.data,
         objectInConfig = false,
-        url = manifestObject.uri;
+        url = manifestObject['@id'];
 
         jQuery.each(data, function(index, manifestObject){
           if (manifestObject.manifestUri === url) {
