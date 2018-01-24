@@ -26,6 +26,7 @@
       this.registerWidget();
       this.element = jQuery(this.template()).appendTo(this.appendTo);
       this.bindEvents();
+      this.listenForActions();
     },
 
     bindEvents: function() {
@@ -46,6 +47,22 @@
       });
     },
 
+    listenForActions: function() {
+      var _this = this;
+      var selector = this.element.find('.annotation-type-selector');
+
+      // Filter annotations by type
+      selector.change(function() {
+        var type = selector.val();
+        if (!type || type === "" || type === "All") {
+          _this.element.find('.annotationItem').show();
+        } else {
+          _this.element.find('.annotationItem').hide();
+          _this.element.find('.annotationItem[data-type=' + type + ']').show();
+        }
+      });
+    },
+
     /**
      * Once an annotation list is received, process and display it.
      *
@@ -53,12 +70,15 @@
      * @return (none)
      */
     processAnnotationList: function(canvasLabel, annotationList) {
+      var _this = this;
       var annotations = [];
       var appendTo = this.appendTo.find('ul.annotations');
 
       this.appendTo.find(".messages").empty();
       appendTo.empty();
       appendTo.scrollTop(0);
+
+      this.clearTypesSelector();
 
       if (!annotationList || annotationList.length === 0) {
         jQuery(this.message.empty).appendTo(this.appendTo.find('.messages'));
@@ -80,6 +100,8 @@
         if (!annotation.resource.type) {
           annotation.resource.type = annotation.resource['@type'];
         }
+        annotation.aortype = _this.getMetadata(annotation, 'type');
+        _this.addTypesToSelector(annotation.aortype);
 
         annotations.push(annotation);
       });
@@ -89,6 +111,46 @@
 
       var templateData = this.templateData(annotations);
       jQuery(tmpTemplate(templateData)).appendTo(appendTo);
+    },
+
+    /**
+     * Get the value of metadata key from an annotation.
+     */
+    getMetadata: function(annotation, key) {
+      if (!annotation || !annotation.metadata) {
+        return false;
+      }
+
+      var matches = annotation.metadata.filter(function(d) {
+        return d.label === key;
+      }).map(function(d) {
+        return d.value;
+      });
+
+      return matches.length > 0 ? matches[0] : false;
+    },
+
+    addTypesToSelector: function(type) {
+      var selector = this.element.find('.annotation-type-selector');
+      if (type) {
+        // Only add type if it is not already present
+        if (selector.find('option[value=' + type + ']').length === 0) {
+          selector.append(jQuery(this.typeOption(type)));
+        }
+        if (selector.find('option').length > 2) {
+          selector.show();
+          selector.parent().show();
+        }
+      }
+    },
+
+    // Cleary annotation type selector and hide
+    clearTypesSelector: function() {
+      var selector = this.element.find('.annotation-type-selector');
+      selector.hide();
+      selector.parent().hide();
+      this.element.find('.annotation-type-selector option').remove();
+      selector.append(jQuery("<option value=\"\">All</option>"));
     },
 
     /**
@@ -149,7 +211,7 @@
         '{{#each template}}',
           '<h2>{{canvasLabel}}</h2>',
           '{{#each annotations}}',
-            '<li class="annotationItem {{#if this.selected}}selected{{/if}}" data-id="{{this.id}}">',
+            '<li class="annotationItem {{#if this.selected}}selected{{/if}}" data-id="{{this.id}}" {{#if aortype}}data-type="{{aortype}}"{{/if}}>',
               '{{#ifCond this.resource.type "==" "cnt:ContentAsText"}}',
                 '<div class="editable">{{{this.resource.chars}}}</div>',
               '{{/ifCond}}',
@@ -167,11 +229,16 @@
       $.registerHandlebarsHelpers();
     },
 
+    typeOption: Handlebars.compile('<option value="{{this}}">{{this}}</option>'),
+
     template: Handlebars.compile([
       '<div class="jhAnnotationTab {{position}}">',
         '<div class="messages"></div>',
+        '<label>Filter by type: ',
+          '<select class="annotation-type-selector">',
+          '</select>',
+        '</label>',
         '<ul class="annotations">',
-          // '{{> annotationList}}',
         '</ul>',
       '</div>'
     ].join('')),

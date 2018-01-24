@@ -503,3 +503,11 @@ span.bold {
   text-decoration: underline;
   color: gray;
 }
+
+.annotation-type-selector {
+  display: none;
+  margin-top: 12px;
+}
+.jhAnnotationTab label {
+  margin: 12px;
+}
