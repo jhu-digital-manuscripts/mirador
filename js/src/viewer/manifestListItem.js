@@ -237,7 +237,8 @@
           var toAdd = {
             height: _this.thumbHeight,
             label: label,
-            index: index
+            index: index,
+            id: thumb.depicts
           };
 
           if (typeof thumb === "string") {
@@ -327,6 +328,7 @@
           var location = _this.manifestRef.location;
 
           var manifest = new $.Manifest(manifestId, location);
+          _this.manifest = manifest;
           _this.eventEmitter.publish("manifestQueued", manifest);
           manifest.request.done(function() {
             _this.addWindow(manifest, viewType);
@@ -338,17 +340,34 @@
         e.stopPropagation();
 
         var canvasID = jQuery(this).attr('data-image-id');
-        if (canvasID) {
-          var windowConfig = {
-            manifest: _this.manifest,
-            canvasID: jQuery(this).attr('data-image-id'),
-            viewType: _this.state.getStateProperty('windowSettings').viewType //get the view type from settings rather than always defaulting to ImageView
-          };
-          _this.eventEmitter.publish('ADD_WINDOW', windowConfig);
-        } else {
-          _this.element.click();
+
+        if (_this.manifest) {
+          _this.doImageClick(canvasID);
+        } else if (_this.manifestRef) {
+          var manifestId = _this.manifestRef["@id"];
+          var location = _this.manifestRef.location;
+
+          var manifest = new $.Manifest(manifestId, location);
+          _this.manifest = manifest;
+          _this.eventEmitter.publish("manifestQueued", manifest);
+          manifest.request.done(function() {
+            _this.doImageClick(canvasID);
+          });
         }
       });
+    },
+    
+    doImageClick: function(canvasID) {
+      if (canvasID) {
+        var windowConfig = {
+          manifest: this.manifest,
+          canvasID: canvasID,
+          viewType: this.state.getStateProperty('windowSettings').viewType //get the view type from settings rather than always defaulting to ImageView
+        };
+        this.eventEmitter.publish('ADD_WINDOW', windowConfig);
+      } else {
+        this.element.click();
+      }
     },
 
     updateDisplay: function(newWidth) {
