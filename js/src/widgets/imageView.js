@@ -201,7 +201,7 @@
      */
     setImageRotation: function(degrees, animationTime) {
       var _this = this;
-      var animationFactor = 30;
+      var animationFactor = 20;   // Number of frames in the animation
       var viewport = this.osd.viewport;
       if (!viewport) {
         return;
@@ -217,7 +217,7 @@
             window.clearInterval(interval);
             return;
           }
-// TODO bug here when switching pages from search results
+
           viewport.setRotation(viewport.getRotation() + degrees);
         },
         animationTime);
@@ -273,8 +273,8 @@
       });
 
       this.element.find('.mirador-osd-go-home').on('click', function() {
-        _this.goHomeRotation(0);
         _this.osd.viewport.goHome();
+        _this.goHomeRotation(300);
       });
 
       this.element.find('.mirador-osd-up').on('click', function() {
@@ -404,11 +404,11 @@
       }
 
       this.element.find('.mirador-osd-rotate-right').on('click', function() {
-        _this.setImageRotation(90, 0);
+        _this.setImageRotation(90, 200);
       });
 
       this.element.find('.mirador-osd-rotate-left').on('click', function() {
-        _this.setImageRotation(-90, 0);
+        _this.setImageRotation(-90, 200);
       });
 
       this.element.find('.mirador-osd-brightness-slider').slider({
