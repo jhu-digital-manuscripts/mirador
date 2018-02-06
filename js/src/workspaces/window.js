@@ -102,7 +102,7 @@
         this.annoEndpointAvailable = false;
         this.canvasControls.annotations.annotationState = 'off';
       }
-      _this.getAnnotations();
+      // _this.getAnnotations();
 
       // if manipulationLayer is true,  but all individual options are set to false, set manipulationLayer to false
       if (this.canvasControls.imageManipulation.manipulationLayer) {
@@ -341,7 +341,6 @@
       }));
 
       _this.events.push(_this.eventEmitter.subscribe("UPDATE_WINDOW." + this.id, function(event, options) {
-        console.log("[Window] updating. " + options.manifest);
         _o = options;
         _this.update(options);
       }));
