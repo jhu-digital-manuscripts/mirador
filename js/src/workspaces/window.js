@@ -259,6 +259,10 @@
           _this.destroy();
         }
       }));
+
+      if (this.canvasID) {
+        _this.eventEmitter.publish(('currentCanvasIDUpdated.' + _this.id), this.canvasID);
+      }
     },
 
     destroy:function(){
