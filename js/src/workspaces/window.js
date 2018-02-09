@@ -866,6 +866,16 @@
       if (urls.length !== 0) {
         jQuery.each(urls, function(index, url) {
           jQuery.get(url, function(list) {
+            var reader = false;
+            if (list && list.metadata) {
+              var match = list.metadata.filter(function(m) {
+                return m.label === "reader";
+              });
+              if (match.length > 0) {
+                reader = match[0].value;
+              }
+            }
+            
             var annotations = list.resources;
             jQuery.each(annotations, function(index, value) {
               //if there is no ID for this annotation, set a random one
@@ -881,7 +891,8 @@
             _this.eventEmitter.publish('ANNOTATIONS_LIST_UPDATED', {
               windowId: _this.id,
               canvasLabel: _this.manifest.getCanvasLabel(canvasId),
-              annotationsList: _this.annotationsList
+              annotationsList: _this.annotationsList,
+              reader: reader
             });
           });
         });

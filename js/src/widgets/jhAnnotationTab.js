@@ -34,7 +34,7 @@
 
       this.eventEmitter.subscribe("ANNOTATIONS_LIST_UPDATED", function(event, data) {
         if (data.windowId === _this.windowId) {
-          _this.processAnnotationList(data.canvasLabel, data.annotationsList);
+          _this.processAnnotationList(data.canvasLabel, data.reader, data.annotationsList);
         }
       });
 
@@ -69,7 +69,7 @@
      * @param  annotationList IIIF Presentation annotation list
      * @return (none)
      */
-    processAnnotationList: function(canvasLabel, annotationList) {
+    processAnnotationList: function(canvasLabel, reader, annotationList) {
       var _this = this;
       var annotations = [];
       var appendTo = this.appendTo.find('ul.annotations');
@@ -111,6 +111,10 @@
 
       var templateData = this.templateData(annotations);
       jQuery(tmpTemplate(templateData)).appendTo(appendTo);
+
+      if (reader) {
+        this.element.find("h2").append(" (" + reader + ")");
+      }
     },
 
     /**
