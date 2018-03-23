@@ -5,6 +5,7 @@
       element: null,
       appendTo: null,
       windowId: null,
+      state: null,
       tabId: null,
       manifest: null,
       visible: false,
@@ -63,6 +64,91 @@
       });
     },
 
+    listenForInternalRefs: function() {
+      var _this = this;
+
+      this.element.find('a.internal-ref').click(function() {
+        var el = jQuery(this);
+        /*
+         * At this point, we have the target ID in the element data-targetid as a IIIF URI
+         * There are several possibilities at this point:
+         *    - targetid is a page URI > navigate to image view (or book view?) for the page
+         *    - targetid is a manifest URI > navigate to thumbnail view for the book
+         *    - targetid is a collection URI (will likely not happen)
+         */
+        var targetManifest = el.data('manifestid');
+        var targetObject = el.data('targetid');
+        var needNewManifest = targetManifest === _this.manifest.getId();
+console.log('## Click! ' + targetManifest);
+        if (targetManifest === targetObject) {
+          // Target object is a manifest, open thumbnail view
+          if (needNewManifest) {
+            _this.getManfiest(targetManifest).done(function(manifest) {
+              _this.goToManifest(manifest);
+            });
+          }
+        } else if (targetObject.indexOf('/canvas') > 0) {   // Make sure target is a canvas...
+          _this.getManifest(targetManifest).done(function(manifest) {
+            _this.goToPage(manifest, targetObject);
+          });
+        }
+      });
+    },
+
+    /**
+     * @param manifest {object} manifest object
+     * @param page {string} page/canvas ID
+     */
+    goToPage: function(manifest, page) {
+      var windowConfig = {
+        'manifest': manifest,
+        'canvasID': page,
+        'viewType': this.state.getStateProperty('windowSettings').viewType
+      };
+      this.eventEmitter.publish('ADD_WINDOW', windowConfig);
+    },
+
+    /**
+     * @param manifest {object} manifest object
+     */
+    goToManifest: function(manifest) {
+      var windowConfig = {
+        'manifest': manifest,
+        'viewType': 'ThumbnailsView'
+      };
+      this.eventEmitter.publish('ADD_WINDOW', windowConfig);
+    },
+
+    /**
+     * First check to see if manifest has already been loaded in the `saveController`. If so,
+     * return that object immediately. Otherwise, load the manifest from the ID, save it in
+     * the `saveController` and return the new manifest object.
+     * 
+     * @param manfiestUri {string} manifest ID
+     * @returns jQuery Deferred of a manifest object
+     */
+    getManifest: function(manifestUri) {
+      var promise = jQuery.Deferred();
+
+      if (this.manifest.getId() === manifestUri) {
+        promise.resolve(this.manifest);
+      } else {
+        var manifest = this.state.get('manifests', 'currentConfig').get(manifestUri);
+        if (manifest && manifest.jsonLd) {  // Manifest already loaded. Is there a better way to determine this?
+          promise.resolve(manifest);
+        } else {
+          // Manifest may have been referenced, but not loaded
+          manifest = new $.Manifest(manifestUri);
+          _this.eventEmitter.publish('manifestQueued', manifest);
+          manifest.request.done(function() {
+            promise.resolve(manifest);
+          });
+        }
+      }
+
+      return promise;
+    },
+
     /**
      * Once an annotation list is received, process and display it.
      *
@@ -115,6 +201,8 @@
       if (reader) {
         this.element.find("h2").append(" (" + reader + ")");
       }
+
+      this.listenForInternalRefs();
     },
 
     /**

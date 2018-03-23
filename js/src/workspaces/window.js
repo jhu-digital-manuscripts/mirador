@@ -894,7 +894,7 @@
 
             _this.eventEmitter.publish('ANNOTATIONS_LIST_UPDATED', {
               windowId: _this.id,
-              canvasLabel: _this.manifest.getCanvasLabel(canvasId),
+              // canvasLabel: _this.manifest.getCanvasLabel(canvasId),
               annotationsList: _this.annotationsList,
               reader: reader
             });

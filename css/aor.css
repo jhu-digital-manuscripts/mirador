@@ -511,3 +511,6 @@ span.bold {
 .jhAnnotationTab label {
   margin: 12px;
 }
+a.internal-ref {
+  color: blue;
+}
