@@ -514,3 +514,15 @@ span.bold {
 a.internal-ref {
   color: blue;
 }
+a.external-link {
+  color: blue;
+}
+a.external-link:after {
+  content: "\f08e";
+  display: inline-block;
+  margin-left: 5px;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+}
