@@ -23,6 +23,8 @@
     this.visible = options.visible;
     this.queryUrl = options.queryUrl;
 
+    this.searchTab = null;
+
     this.init();
   };
 
@@ -103,7 +105,7 @@
       }
 
       if (_this.annotationsTabAvailable) {
-        new $.JhAnnotationTab({
+        this.searchTab = new $.JhAnnotationTab({
           manifest: _this.manifest,
           // parent: _this.parent,
           appendTo: _this.element.find('.tabContentArea'),
@@ -236,6 +238,28 @@
 
       _this.eventEmitter.subscribe('currentCanvasIDUpdated.' + _this.windowId, function(event, newCanvasId) {
         _this.canvasID = newCanvasId;
+      });
+
+      _this.eventEmitter.subscribe('REQUEST_SEARCH.' + _this.windowId, function(event, data) {
+        if (!data || !data.service || !data.query) {
+          console.log(' Sad moo ' + JSON.stringify(data));
+          return;
+        }
+        console.log("Received a search request in this window! " + _this.windowId + "\n" + JSON.stringify(data));
+        // We want to toggle the search tab on, then send a search request to the search controller
+        // var index = -1;
+
+        var index = _this.appendTo.find('.tabGroup .tab[data-tabid=searchTab]').index();
+        console.log(' >> Should update tab ' + index);
+        _this.eventEmitter.publish('tabSelected.' + _this.windowId, index);
+
+        if (index) {
+          _this.eventEmitter.publish('SEARCH', {
+            'origin': _this.windowId,
+            'service': data.service,
+            'query': data.query
+          });
+        }
       });
 
     },

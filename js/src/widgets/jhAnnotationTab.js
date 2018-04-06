@@ -64,6 +64,38 @@
       });
     },
 
+    /**
+     * Add UI events that you want annotations to listen for here
+     */
+    listenForThings: function() {
+      this.listenForInternalRefs();
+      this.listenForSearchClicks();
+    },
+
+    listenForSearchClicks: function() {
+      var _this = this;
+
+      this.element.find('a.searchable').click(function() {
+        var el = jQuery(this);
+
+        var searchField = el.data('searchfield');
+        var searchTerm = el.text().replace(/,?\s*/, '');
+        var withinUri = el.data('searchwithin');
+
+        // Mush on search URL end if needed
+        if (withinUri.indexOf('jhsearch') < 0) {
+          withinUri += (withinUri.charAt(withinUri.length - 1) === '/' ? '' : '/') + 'jhsearch';
+        }
+
+        var request = {
+          service: withinUri,
+          query: $.generateBasicQuery(searchTerm, Array.of(searchField), '&')
+        };
+        
+        _this.eventEmitter.publish('REQUEST_SEARCH.' + _this.windowId, request);
+      });
+    },
+
     listenForInternalRefs: function() {
       var _this = this;
 
@@ -202,7 +234,7 @@ console.log('## Click! ' + targetManifest);
         this.element.find("h2").append(" (" + reader + ")");
       }
 
-      this.listenForInternalRefs();
+      this.listenForThings();
     },
 
     /**
