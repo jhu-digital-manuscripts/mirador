@@ -511,11 +511,13 @@ span.bold {
 .jhAnnotationTab label {
   margin: 12px;
 }
-a.internal-ref {
+a.internal-ref,
+a.external-link,
+a.searchable {
   color: blue;
 }
-a.external-link {
-  color: blue;
+a.internal-ref:hover, a.external-link:hover, a.searchable:hover {
+  text-decoration: underline;
 }
 a.external-link:after {
   content: "\f08e";
