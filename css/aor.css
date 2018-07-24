@@ -528,3 +528,40 @@ a.external-link:after {
   text-rendering: auto;
   -webkit-font-smoothing: antialiased;
 }
+/* "Reader" icons */
+.annotationItem .Unknown {}
+.annotationItem .other-reader {
+  font-weight: bold;
+}
+/* .annotations h2.Dee:after { */
+.annotationItem .Dee:after {
+  display: block;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-image: url('../images/aor/dee.jpg');
+  content: "";
+  height: 50px;
+  width: 50px;
+  float: left;
+}
+/* .annotations h2.Harvey:after { */
+.annotationItem .Harvey:after {
+  display: block;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-image: url('../images/aor/harvey.jpg');
+  content: "";
+  height: 50px;
+  width: 50px;
+  float: left;
+}
+.annotationItem .Winthrop:after {
+  display: block;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-image: url('../images/aor/winthrop.jpg');
+  content: "";
+  height: 50px;
+  width: 50px;
+  float: left;
+}

@@ -231,7 +231,9 @@ console.log('## Click! ' + targetManifest);
       jQuery(tmpTemplate(templateData)).appendTo(appendTo);
 
       if (reader) {
-        this.element.find("h2").append(" (" + reader + ")");
+        var header = this.element.find('h2');
+        header.append(" (" + reader + ")");
+        header.addClass(reader);
       }
 
       this.listenForThings();
