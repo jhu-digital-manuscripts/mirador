@@ -69,32 +69,87 @@
      */
     listenForThings: function() {
       this.listenForInternalRefs();
-      this.listenForSearchClicks();
+      this.listenForPeopleClicks();
+      // this.listenForSearchClicks();
     },
 
-    listenForSearchClicks: function() {
+    listenForPeopleClicks: function() {
       var _this = this;
 
-      this.element.find('a.searchable').click(function() {
-        var el = jQuery(this);
+      var options = {
+        'search': { name: 'Search', icon: 'fa-search' },
+        'isni': { name: 'ISNI', icon: 'fa-external-link' },
+        'external': { name: 'External link', icon: 'fa-external-link'}
+      };
 
-        var searchField = el.data('searchfield');
-        var searchTerm = el.text().replace(/,?\s*/, '');
-        var withinUri = el.data('searchwithin');
-
-        // Mush on search URL end if needed
-        if (withinUri.indexOf('jhsearch') < 0) {
-          withinUri += (withinUri.charAt(withinUri.length - 1) === '/' ? '' : '/') + 'jhsearch';
+      this.element.contextMenu({
+        selector: 'a.searchable',
+        trigger: 'left',
+        build: function($trigger, e) {
+          var items = {};
+          if ($trigger.hasClass('searchable')) {
+            items.search = options.search;
+            items.search.callback = function() {
+              var within = $trigger.data('searchwithin');
+              var field = $trigger.data('searchfield');
+              var term = $trigger.text();
+              _this.doSearch(within, term, field);
+            };
+          }
+          if ($trigger.data('isni')) {
+            items.isni = options.isni;
+            items.isni.callback = function() {
+              window.open($trigger.data('isni'), '_blank');
+            };
+          }
+          return {
+            items: items
+          };
         }
-
-        var request = {
-          service: withinUri,
-          query: $.generateBasicQuery(searchTerm, Array.of(searchField), '&')
-        };
-        
-        _this.eventEmitter.publish('REQUEST_SEARCH.' + _this.windowId, request);
       });
     },
+
+    /**
+     * @param {string} searchWithin : search will be done within this URI
+     * @param {string} term : search term
+     * @param {string} field : specific search field, if applicable
+     */
+    doSearch: function(searchWithin, term, field) {
+      if (searchWithin.indexOf('jhsearch') < 0) {
+        // Append 'jhsearch' if necessary
+        searchWithin += (searchWithin.charAt(searchWithin.length - 1) === '/' ? '' : '/') + 'jhsearch';
+      }
+
+      var request = {
+        service: searchWithin,
+        query: $.generateBasicQuery(term, Array.of(field), '&')
+      };
+      this.eventEmitter.publish('REQUEST_SEARCH.' + this.windowId, request);
+    },
+
+    // listenForSearchClicks: function() {
+    //   var _this = this;
+
+    //   this.element.find('a.searchable').click(function() {
+    //     var el = jQuery(this);
+
+    //     var searchField = el.data('searchfield');
+    //     var searchTerm = el.text().replace(/,?\s*/, '');
+    //     var withinUri = el.data('searchwithin');
+
+    //     // Mush on search URL end if needed
+    //     if (withinUri.indexOf('jhsearch') < 0) {
+    //       withinUri += (withinUri.charAt(withinUri.length - 1) === '/' ? '' : '/') + 'jhsearch';
+    //     }
+
+    //     var request = {
+    //       service: withinUri,
+    //       query: $.generateBasicQuery(searchTerm, Array.of(searchField), '&')
+    //     };
+        
+    //     _this.eventEmitter.publish('REQUEST_SEARCH.' + _this.windowId, request);
+    //   });
+    // },
 
     listenForInternalRefs: function() {
       var _this = this;

@@ -47,7 +47,10 @@
     "travis": "./node_modules/grunt-cli/bin/grunt ci --verbose --force & npm run test"
   },
   "dependencies": {
-    "lazysizes": "^4.0.0-rc3"
+    "jquery": "^3.3.1",
+    "jquery-ui": "^1.12.1",
+    "lazysizes": "^4.0.0-rc3",
+    "urijs": "^1.19.1"
   },
   "engine": "node < 7.0.0"
 }
