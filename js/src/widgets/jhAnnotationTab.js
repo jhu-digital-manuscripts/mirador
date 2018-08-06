@@ -165,13 +165,15 @@ console.log('## Click! ' + targetManifest);
       if (this.manifest.getId() === manifestUri) {
         promise.resolve(this.manifest);
       } else {
-        var manifest = this.state.get('manifests', 'currentConfig').get(manifestUri);
+        var manifest = this.state.get('manifests', 'currentConfig').find(function(man) {
+          return man.jsonLd ? man.getId() === manifestUri : false;
+        });
         if (manifest && manifest.jsonLd) {  // Manifest already loaded. Is there a better way to determine this?
           promise.resolve(manifest);
         } else {
           // Manifest may have been referenced, but not loaded
           manifest = new $.Manifest(manifestUri);
-          _this.eventEmitter.publish('manifestQueued', manifest);
+          this.eventEmitter.publish('manifestQueued', manifest);
           manifest.request.done(function() {
             promise.resolve(manifest);
           });
