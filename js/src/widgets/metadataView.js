@@ -26,7 +26,7 @@
 
       this.metadataTypes.details = _this.getMetadataDetails(_this.manifest);
       this.metadataTypes.rights = _this.getMetadataRights(_this.manifest);
-      this.metadataTypes.links = _this.getMetadataLinks(_this.manifest);
+      // this.metadataTypes.links = _this.getMetadataLinks(_this.manifest);
 
       //vvvvv This is *not* how this should be done.
       jQuery.each(this.metadataTypes, function(metadataKey, metadataValues) {
