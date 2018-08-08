@@ -318,7 +318,7 @@
       }
 
       var _this = this;
-      var id = service.id || service["@id"];
+      var id = service.id || service["@id"] || service;
       // Search service will likely NOT have an 'id' property, but instead
       //  have a '@id' property. Change this to 'id' for things to work.
       service.id = id;
@@ -628,7 +628,7 @@
 
       this.eventEmitter.publish("SEARCH", {
         "origin": this.windowId,
-        "service": typeof searchService === "object" ? searchService : searchService.id,
+        "service": typeof searchService === "string" ? searchService : searchService.id,
         "query": query,
         "offset": offset,
         "maxPerPage": maxPerPage,

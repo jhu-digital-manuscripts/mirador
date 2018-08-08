@@ -105,7 +105,7 @@
       }
 
       if (_this.annotationsTabAvailable) {
-        this.searchTab = new $.JhAnnotationTab({
+        this.annoTab = new $.JhAnnotationTab({
           manifest: _this.manifest,
           // parent: _this.parent,
           appendTo: _this.element.find('.tabContentArea'),
@@ -137,7 +137,7 @@
       }
 
       if (_this.searchTabAvailable) {
-        new $.NewSearchWidget({
+        this.searchTab = new $.NewSearchWidget({
           startHidden: true,
           windowId: this.windowId,
           appendTo: this.element.find(".tabContentArea"),
@@ -245,13 +245,20 @@
           console.log(' Sad moo ' + JSON.stringify(data));
           return;
         }
-        console.log("Received a search request in this window! " + _this.windowId + "\n" + JSON.stringify(data));
+        // console.log("Received a search request in this window! " + _this.windowId + "\n" + JSON.stringify(data));
         // We want to toggle the search tab on, then send a search request to the search controller
         // var index = -1;
 
         var index = _this.appendTo.find('.tabGroup .tab[data-tabid=searchTab]').index();
-        console.log(' >> Should update tab ' + index);
         _this.eventEmitter.publish('tabSelected.' + _this.windowId, index);
+
+        _this.searchTab.context = {
+          searchService: typeof data.service === 'string' ? data.service : data.service.id,
+          search: {
+            query: data.query,
+            offset: 0
+          }
+        };
 
         if (index) {
           _this.eventEmitter.publish('SEARCH', {
