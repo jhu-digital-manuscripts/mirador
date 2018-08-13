@@ -208,6 +208,19 @@
           if (typeof ref.logo['@id'] !== 'undefined')
             return ref.logo['@id'];
         }
+
+        var annotator = _this.refMetadata('Reader');
+        var logoPrefix = _this.state.getStateProperty('buildPath') + _this.state.getStateProperty('imagesPath') + 'aor/';
+        console.log(' >>> (' + annotator + ')');
+        switch (annotator) {
+          case "John Dee":
+            return logoPrefix + 'dee.jpg';
+          case "Gabriel Harvey":
+            return logoPrefix + 'harvey.jpg';
+          default:
+            break;
+        }
+
         if (_this.state.getStateProperty("repoImages")) {
           if (_this.tplData.repository === '(Added from URL)') {
             repo = '';
@@ -224,6 +237,7 @@
           return name ? _this.state.getStateProperty("buildPath") + _this.state.getStateProperty("imagesPath") + "logos/" + name + ".jpg" : '';
         }
       })();
+      console.log(' > (' + this.tplData.repoImage + ')');
 
       if (ref.thumbnail) {
         var thumbs = ref.thumbnail;
