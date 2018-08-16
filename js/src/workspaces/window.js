@@ -148,6 +148,8 @@
         templateData.searchPanel = true;
       }
 
+      templateData.changeViewIcon = this.state.getStateProperty('windowSettings').viewIconChangesToCurrentView;
+
       //determine if any buttons should be hidden in template
       templateData.iconClasses = {};
       jQuery.each(this.focuses, function(index, value) {
@@ -847,7 +849,11 @@
 
     updateManifestInfo: function() {
       var _this = this;
-      _this.element.find('.mirador-icon-view-type > i:first').removeClass().addClass(_this.iconClasses[_this.viewType]);
+      if (this.state.getStateProperty('windowSettings').viewIconChangesToCurrentView) {
+        _this.element.find('.mirador-icon-view-type > i:first')
+          .removeClass()
+          .addClass(_this.iconClasses[_this.viewType]);
+      }
 
       if (this.focusOverlaysAvailable[this.viewType].overlay.MetadataView) {
         this.element.find('.mirador-icon-metadata-view').addClass('selected');
@@ -1059,7 +1065,11 @@
                                  '<div class="manifest-info">',
                                  '<div class="window-manifest-navigation">',
                                  '<a href="javascript:;" class="mirador-btn mirador-icon-view-type" role="button" title="{{t "viewTypeTooltip"}}" aria-label="{{t "viewTypeTooltip"}}">',
+                                 '{{#if changeViewIcon}}',
                                  '<i class="{{currentFocusClass}}"></i>',
+                                 '{{else}}',
+                                 '<i class="fa fa-photo fa-lg fa-fw"></i>',
+                                 '{{/if}}',
                                  '<i class="fa fa-caret-down"></i>',
                                  '<ul class="dropdown image-list">',
                                  '{{#if ImageView}}',
