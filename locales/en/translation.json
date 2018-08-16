@@ -61,7 +61,7 @@
     "polygonTooltip": "Polygon annotation",
     "rectangleTooltip": "Rectangle annotation",
     "related": "Related",
-    "resetTooltip": "Reset image",
+    "resetTooltip": "Reset image colors, saturation, contrast, and brightness",
     "rights": "Rights",
     "rightsStatus": "Rights Status",
     "rotateLeftTooltip": "Rotate 90&deg; left",
@@ -78,5 +78,15 @@
     "url": "URL",
     "viewTypeTooltip": "Change view type",
     "within": "Within",
-    "yes": "Yes"
+    "yes": "Yes",
+    "resetPanZoomTooltip": "Reset image position, zoom, and rotation",
+    "zoomOutTooltip": "Zoom out",
+    "zoomInTooltip": "Zoom in",
+    "panLeftTooltip": "Move image left",
+    "panRightTooltip": "Move image right",
+    "panUpTooltip": "Move image up",
+    "panDownTooltip": "Move image down",
+    "toggleThumbnailsTooltip": "Toggle thumbnail strip",
+    "nextPageTooltip": "Go to next page",
+    "prevPageTooltip": "Go to previous page"
 }
