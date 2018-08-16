@@ -208,6 +208,19 @@
           if (typeof ref.logo['@id'] !== 'undefined')
             return ref.logo['@id'];
         }
+
+        var annotator = _this.refMetadata('Reader');
+        var logoPrefix = _this.state.getStateProperty('buildPath') + _this.state.getStateProperty('imagesPath') + 'aor/';
+
+        switch (annotator) {
+          case "John Dee":
+            return logoPrefix + 'dee.jpg';
+          case "Gabriel Harvey":
+            return logoPrefix + 'harvey.jpg';
+          default:
+            break;
+        }
+
         if (_this.state.getStateProperty("repoImages")) {
           if (_this.tplData.repository === '(Added from URL)') {
             repo = '';
