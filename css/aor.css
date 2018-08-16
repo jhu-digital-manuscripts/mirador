@@ -297,6 +297,16 @@
   border-bottom: 6px solid transparent;
 }
 
+/* Image manipulation controls */
+.mirador-osd-reset .fa-photo {
+  left: -7px;
+  top: -7px;
+}
+.mirador-osd-reset .fa-refresh {
+  left: 2px;
+  top: 0;
+}
+
 
 /*
  * ##############################

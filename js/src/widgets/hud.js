@@ -51,6 +51,8 @@
       }
 
       this.listenForActions();
+      this.setQtips(this.element.find('.mirador-osd-navigation'));
+      this.setQtips(this.element.find('.mirador-pan-zoom-controls'));
     },
 
     togglePinned: function(isPinned) {
@@ -218,74 +220,91 @@
       });
     },
 
+    setQtips: function(element) {
+      var _this = this;
+      element.find('a').each(function () {
+        var curEl = jQuery(this);
+        curEl.qtip({
+          content: { text: curEl.attr('title') },
+          position: {
+            my: 'bottom center',
+            at: 'top center',
+            viewport: true,
+            container: _this.qtipElement
+          },
+          style: { classes: 'qtip-dark qtip-shadow qtip-rounded' }
+        });
+      });
+    },
+
     template: Handlebars.compile([
-                                 '<div class="mirador-hud">',
-                                 '{{#if showNextPrev}}',
-                                 '<a class="mirador-osd-previous hud-control ">',
-                                 '<i class="fa fa-3x fa-chevron-left "></i>',
-                                 '</a>',
-                                 '{{/if}}',
-                                 '<div class="mirador-osd-context-controls hud-container">',
-                                 '{{#if showAnno}}',
-                                  '<div class="mirador-osd-annotation-controls">',
-                                  '<a class="mirador-osd-annotations-layer hud-control" role="button" title="{{t "annotationTooltip"}}" aria-label="{{t "annotationTooltip"}}">',
-                                  '<i class="fa fa-lg fa-comments"></i>',
-                                  '</a>',
-                                  '</div>',
-                                 '{{/if}}',
-                                 '{{#if showImageControls}}',
-                                  '<div class="mirador-manipulation-controls">',
-                                  '<a class="mirador-manipulation-toggle hud-control" role="button" title="{{t "imageManipulationTooltip"}}" aria-label="{{t "imageManipulationTooltip"}}">',
-                                  '<i class="material-icons">tune</i>',
-                                  '</a>',
-                                  '</div>',
-                                 '{{/if}}',
-                                 '</div>',
-                                 '{{#if showNextPrev}}',
-                                 '<a class="mirador-osd-next hud-control ">',
-                                 '<i class="fa fa-3x fa-chevron-right"></i>',
-                                 '</a>',
-                                 '{{/if}}',
-                                 '{{#if showBottomPanel}}',
-                                 '<a class="mirador-osd-toggle-bottom-panel hud-control" role="button" aria-label="Toggle Bottom Panel">',
-                                 '<i class="fa fa-2x fa-ellipsis-h"></i>',
-                                 '</a>',
-                                 '{{/if}}',
-                                 '<div class="mirador-pan-zoom-controls hud-control">',
-                                 '<a class="mirador-osd-up hud-control" role="button" aria-label="Move image up">',
-                                 '<i class="fa fa-chevron-circle-up"></i>',
-                                 '</a>',
-                                 '<a class="mirador-osd-right hud-control" role="button" aria-label="Move image right">',
-                                 '<i class="fa fa-chevron-circle-right"></i>',
-                                 '</a>',
-                                 '<a class="mirador-osd-down hud-control" role="button" aria-label="Move image down">',
-                                 '<i class="fa fa-chevron-circle-down"></i>',
-                                 '</a>',
-                                 '<a class="mirador-osd-left hud-control" role="button" aria-label="Move image left">',
-                                 '<i class="fa fa-chevron-circle-left"></i>',
-                                 '</a>',
-                                //  '{{#if zoomSlider}}',
-                                //  '<div class=""></div>',  // Zoom slider
-                                //  '{{else}}',
-                                 '<a class="mirador-osd-zoom-in hud-control" role="button" aria-label="Zoom in">',
-                                 '<i class="fa fa-plus-circle"></i>',
-                                 '</a>',
-                                 '<a class="mirador-osd-zoom-out hud-control" role="button" aria-label="Zoom out">',
-                                 '<i class="fa fa-minus-circle"></i>',
-                                 '</a>',
-                                //  '{{/if}}',
-                                //  '<div class="mirador-osd-zoom-slider hud-control"></div>',  // Zoom slider
-                                 '<a class="mirador-osd-go-home hud-control" role="button" aria-label="Reset image bounds">',
-                                 '<i class="fa fa-refresh"></i>',
-                                 '<a class="mirador-osd-rotate-left hud-control ">',
-                                 '<i class="fa fa-3x fa-rotate-left "></i>',    // Rotate right icon
-                                 '</a>',
-                                 '<a class="mirador-osd-rotate-right hud-control ">',
-                                 '<i class="fa fa-3x fa-rotate-right "></i>',    // Rotate right icon
-                                 '</a>',
-                                 '</a>',
-                                 '</div>',
-                                 '</div>'
+      '<div class="mirador-hud">',
+        '<div class="mirador-osd-context-controls hud-container">',
+          '{{#if showAnno}}',
+            '<div class="mirador-osd-annotation-controls">',
+              '<a class="mirador-osd-annotations-layer hud-control" role="button" title="{{t "annotationTooltip"}}" aria-label="{{t "annotationTooltip"}}">',
+                '<i class="fa fa-lg fa-comments"></i>',
+              '</a>',
+            '</div>',
+          '{{/if}}',
+          '{{#if showImageControls}}',
+            '<div class="mirador-manipulation-controls">',
+              '<a class="mirador-manipulation-toggle hud-control" role="button" title="{{t "imageManipulationTooltip"}}" aria-label="{{t "imageManipulationTooltip"}}">',
+                '<i class="material-icons">tune</i>',
+              '</a>',
+            '</div>',
+          '{{/if}}',
+        '</div>',
+        '<div class="mirador-osd-navigation">',
+          '{{#if showNextPrev}}',
+            '<a class="mirador-osd-previous hud-control "  title="{{t "prevPageTooltip"}}">',
+              '<i class="fa fa-3x fa-chevron-left "></i>',
+            '</a>',
+            '<a class="mirador-osd-next hud-control "  title="{{t "nextPageTooltip"}}">',
+              '<i class="fa fa-3x fa-chevron-right"></i>',
+            '</a>',
+          '{{/if}}',
+          '{{#if showBottomPanel}}',
+            '<a class="mirador-osd-toggle-bottom-panel hud-control" role="button"  title="{{t "toggleThumbnailsTooltip"}}">',
+              '<i class="fa fa-2x fa-ellipsis-h"></i>',
+            '</a>',
+          '{{/if}}',
+        '</div>',
+        '<div class="mirador-pan-zoom-controls hud-control">',
+          '<a class="mirador-osd-up hud-control" role="button"  title="{{t "panUpTooltip"}}">',
+            '<i class="fa fa-chevron-circle-up"></i>',
+          '</a>',
+          '<a class="mirador-osd-right hud-control" role="button"  title="{{t "panRightTooltip"}}">',
+            '<i class="fa fa-chevron-circle-right"></i>',
+          '</a>',
+          '<a class="mirador-osd-down hud-control" role="button"  title="{{t "panDownTooltip"}}">',
+            '<i class="fa fa-chevron-circle-down"></i>',
+          '</a>',
+          '<a class="mirador-osd-left hud-control" role="button"  title="{{t "panLeftTooltip"}}">',
+            '<i class="fa fa-chevron-circle-left"></i>',
+          '</a>',
+          //  '{{#if zoomSlider}}',
+          //  '<div class=""></div>',  // Zoom slider
+          //  '{{else}}',
+          '<a class="mirador-osd-zoom-in hud-control" role="button"  title="{{t "zoomInTooltip"}}">',
+            '<i class="fa fa-plus-circle"></i>',
+          '</a>',
+          '<a class="mirador-osd-zoom-out hud-control" role="button"  title="{{t "zoomOutTooltip"}}">',
+            '<i class="fa fa-minus-circle"></i>',
+          '</a>',
+          //  '{{/if}}',
+          //  '<div class="mirador-osd-zoom-slider hud-control"></div>',  // Zoom slider
+          '<a class="mirador-osd-go-home hud-control" role="button"  title="{{t "resetPanZoomTooltip"}}">',
+            '<i class="fa fa-refresh"></i>',
+          '</a>',
+          '<a class="mirador-osd-rotate-left hud-control " title="{{t "rotateLeftTooltip"}}">',
+            '<i class="fa fa-3x fa-rotate-left "></i>',    // Rotate right icon
+          '</a>',
+          '<a class="mirador-osd-rotate-right hud-control " title="{{t "rotateRightTooltip"}}">',
+            '<i class="fa fa-3x fa-rotate-right "></i>',    // Rotate right icon
+          '</a>',
+        '</div>',
+      '</div>'
     ].join(''))
 
   };
