@@ -333,6 +333,26 @@
     },
     toString: function() {
       return "[Manifest (" + this.uri + ")]";
+    },
+    /**
+     * Get manifest metadata by key. Return full map if no key is provided.
+     * @param {string} key 
+     */
+    metadata: function(key) {
+      if (!this.jsonLd.metadata) {
+        return;
+      }
+
+      if (!key) {
+        return this.jsonLd.metadata;
+      }
+
+      var matches = this.jsonLd.metadata.filter(function(md) {
+        return md.label === key;
+      });
+      if (matches.length > 0) {
+        return matches[0].value;
+      }
     }
 
   };
