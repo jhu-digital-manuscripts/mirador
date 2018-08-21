@@ -79,7 +79,7 @@
       this.listenForActions();
     },
 
-    fetchTplData: function() {
+    fetchTplData: function(id) {
       var _this = this,
       location = _this.manifest.location,
       manifest = _this.manifest.jsonLd;
@@ -90,7 +90,7 @@
         canvasCount: manifest.sequences[0].canvases.length,
         images: [],
         index: _this.state.getManifestIndex(manifest['@id']),
-        location: location || $.Iiif.getCollectionName(ref["@id"]),
+        location: location || $.Iiif.getCollectionName(manifest["@id"]),
         visible: this.visible
       };
 
