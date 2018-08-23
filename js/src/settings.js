@@ -1,4 +1,4 @@
-(function($) {
+(function ($) { // eslint-disable-line
 
   /**
    * Default values for settings
