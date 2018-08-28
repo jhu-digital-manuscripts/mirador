@@ -114,7 +114,6 @@
       // As those services are discovered, request info.json configs
       // Populate search dropdowns (done in event handler in #bindEvents)
       if (this.baseObject) {
-        console.log("[SW] Getting services related to [" + (this.baseObject["@id"]) + "]");
         this.eventEmitter.publish("GET_RELATED_SEARCH_SERVICES", {
           "origin": _this.windowId,
           "baseObject": _this.baseObject

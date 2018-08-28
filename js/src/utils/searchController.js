@@ -464,7 +464,7 @@
       }
 
       var queryUrl = URI(serviceUrl).query(data);   // .query() function automatically encodes stuff
-console.log("[SC] " + queryUrl);
+
       // Can cache search results here
       var cached = _this.cache(queryUrl);
       if (cached) {

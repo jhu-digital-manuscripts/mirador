@@ -9,7 +9,6 @@
 
   $.HistoryController.prototype = {
     init: function () {
-      console.log(' >> This is a history MOOOO ');
       this.bindEvents();
     },
 
@@ -21,7 +20,7 @@
        * is a boolean value describing the panel's visibility (true = visible)
        */
       _this.eventEmitter.subscribe('manifestsPanelVisible.set', function(event, manifestPanelVisible) {
-        console.log(' >> HISTORY manifestsPanelVisible.set');
+        
       });
 
       /**
@@ -46,9 +45,7 @@
           }
        */
       _this.eventEmitter.subscribe('windowUpdated', function(event, options) {
-        console.log(' >> HISTORY windowUpdated');
-        moo1 = options;
-        console.log(' ## ' + JSON.stringify(options, null, 2));
+        
       });
 
       /**
@@ -84,13 +81,11 @@
        *  }
        */
       _this.eventEmitter.subscribe('WINDOW_ELEMENT_UPDATED', function(event, options) {
-        console.log(' >> HISTORY WINDOW_ELEMENT_UPDATED');
-        moo2 = options;
+        
       });
 
       _this.eventEmitter.subscribe('windowSlotAddressUpdated', function(event, options) {
-        console.log(' >> HISTORY windowSlotAddressUpdated');
-        moo3 = options;
+        
       });
 
       // _this.eventEmitter.subscribe('manifestQueued', function(event, manifestObject, repository) {
@@ -113,8 +108,7 @@
        *  }
        */
       _this.eventEmitter.subscribe("slotsUpdated", function(event, options) {
-        console.log(' >> HISTORY slotsUpdated');
-        moo4 = options;
+        
       });
 
       /**
@@ -131,29 +125,27 @@
           }
        */
       _this.eventEmitter.subscribe("layoutChanged", function(event, layoutDescription) {
-        console.log(' >> HISTORY layoutChanged');
-        moo7 = layoutDescription;
+        
       });
 
       _this.eventEmitter.subscribe("windowSlotAdded", function(event, options) {
-        console.log(' >> HISTORY windowSlotAdded');
-        moo5 = options;
+        
       });
 
       _this.eventEmitter.subscribe("windowsRemoved", function(event) {
-        console.log(' >> HISTORY windowsRemoved');
+        
       });
 
       _this.eventEmitter.subscribe("windowRemoved", function(event, windowID) {
-        console.log(' >> HISTORY windowRemoved');
+        
       });
 
       _this.eventEmitter.subscribe('SEARCH', function (event, data) {
-        console.log(' >> HISTORY SEARCH');
+        
       });
 
       _this.eventEmitter.subscribe('GET_FACETS', function (event, data) {
-        console.log(' >> HISTORY GET_FACETS'); // another search
+        
       });
 
       /**
@@ -164,8 +156,7 @@
        *  }
        */
       _this.eventEmitter.subscribe('CANVAS_ID_UPDATED', function (event, data) {
-        console.log(' >> HISTORY CANVAS_ID_UPDATED');
-        moo8 = data;
+        
       });
 
       /**
@@ -176,7 +167,7 @@
        * }
        */
       _this.eventEmitter.subscribe('TAB_SELECTED', function (event, data) { 
-        console.log(' >> HISTORY TAB_SELECTED ' + JSON.stringify(data));
+        
       });
     }
   };
