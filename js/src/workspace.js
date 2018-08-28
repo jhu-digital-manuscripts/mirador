@@ -475,6 +475,7 @@
     },
 
     addWindow: function(windowConfig) {
+      console.log(' >> addWindow ' + JSON.stringify(windowConfig));
       // Windows can be added from a config,
       // from a saved state, (in both those cases they are in the form of "windowObjects")
       // from the workspace windows list after a grid layout change,

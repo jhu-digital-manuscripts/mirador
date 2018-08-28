@@ -167,6 +167,17 @@
         console.log(' >> HISTORY CANVAS_ID_UPDATED');
         moo8 = data;
       });
+
+      /**
+       * data: {
+       *    "windowId":"f51774c0-97ec-4881-8d87-2362756155aa",
+       *    "tabId":"searchTab",
+       *    "tabIndex":1
+       * }
+       */
+      _this.eventEmitter.subscribe('TAB_SELECTED', function (event, data) { 
+        console.log(' >> HISTORY TAB_SELECTED ' + JSON.stringify(data));
+      });
     }
   };
 }(Mirador));

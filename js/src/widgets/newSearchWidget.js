@@ -163,6 +163,16 @@
           _this.element.hide();
         }
       });
+
+      /**
+       * data: {
+       *    context: {} // See this.context
+       * }
+       */
+      this.eventEmitter.subscribe("INIT_SEARCH_TAB." + this.windowId, function (event, data) {
+        jQuery.extend(true, _this.context, data.context);
+        _this.initFromContext();
+      });
     },
 
     listenForActions: function() {
@@ -826,6 +836,9 @@
       }
       if (this.context.ui.advanced) {
         this.showAdvancedSearch();
+        if (this.advancedSearch) {
+          this.advancedSearch.setContext(this.context);
+        }
       } else {
         this.element.find(".js-query").val(this.context.ui.basic);
       }
