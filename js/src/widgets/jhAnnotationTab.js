@@ -122,7 +122,7 @@
 
       var request = {
         service: searchWithin,
-        query: $.generateBasicQuery(term, Array.of(field), '&')
+        query: $.generateBasicQuery('"' + term + '"', Array.of(field), '&')
       };
       this.eventEmitter.publish('REQUEST_SEARCH.' + this.windowId, request);
     },
