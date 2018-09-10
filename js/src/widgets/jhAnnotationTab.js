@@ -265,7 +265,7 @@
 
       if (reader) {
         var header = this.element.find('h2');
-        header.append(" (" + reader + ")");
+        header.append(" (Reader: " + reader + ")");
         header.addClass(reader);
       }
 
