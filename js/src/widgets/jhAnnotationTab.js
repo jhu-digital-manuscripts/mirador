@@ -11,6 +11,7 @@
       visible: false,
       pendingRequests: {},
       eventEmitter: null,
+      slotAddress: null,
       message: {
         error: '<h1 class="error">Failed to load annotation list.</h1>',
         empty: '<h1 class="empty">No annotations available.</h1>',
@@ -131,44 +132,91 @@
       var _this = this;
 
       this.element.find('a.internal-ref').click(function() {
-        var el = jQuery(this);
-        /*
-         * At this point, we have the target ID in the element data-targetid as a IIIF URI
-         * There are several possibilities at this point:
-         *    - targetid is a page URI > navigate to image view (or book view?) for the page
-         *    - targetid is a manifest URI > navigate to thumbnail view for the book
-         *    - targetid is a collection URI (will likely not happen)
-         */
-        var targetManifest = el.data('manifestid');
-        var targetObject = el.data('targetid');
-        var needNewManifest = targetManifest === _this.manifest.getId();
+        _this.doRefClick(jQuery(this));
+      });
 
-        if (targetManifest === targetObject) {
-          // Target object is a manifest, open thumbnail view
-          if (needNewManifest) {
-            _this.getManfiest(targetManifest).done(function(manifest) {
-              _this.goToManifest(manifest);
-            });
-          }
-        } else if (targetObject.indexOf('/canvas') > 0) {   // Make sure target is a canvas...
-          _this.getManifest(targetManifest).done(function(manifest) {
-            _this.goToPage(manifest, targetObject);
-          });
+      this.appendTo.contextMenu({
+        selector: '.internal-ref',
+        items: {
+          "here": {name: "Open in this slot"},
+          "sep1": "---------",
+          "above": {name: "Open in slot above"},
+          "below": {name: "Open in slot below"},
+          "left": {name: "Open in slot left"},
+          "right": {name: "Open in slot right"},
+        },
+        callback: function (key, options) {
+          _this.doRefClick(jQuery(this), key);
         }
       });
+    },
+
+    doRefClick: function(element, where) {
+      var _this = this;
+      /*
+       * At this point, we have the target ID in the element data-targetid as a IIIF URI
+       * There are several possibilities at this point:
+       *    - targetid is a page URI > navigate to image view (or book view?) for the page
+       *    - targetid is a manifest URI > navigate to thumbnail view for the book
+       *    - targetid is a collection URI (will likely not happen)
+       */
+      var targetManifest = element.data('manifestid');
+      var targetObject = element.data('targetid');
+      var needNewManifest = targetManifest === _this.manifest.getId();
+
+      if (targetManifest === targetObject) {
+        // Target object is a manifest, open thumbnail view
+        if (needNewManifest) {
+          _this.getManfiest(targetManifest).done(function(manifest) {
+            _this.goToManifest(manifest, null, where);
+          });
+        }
+      } else if (targetObject.indexOf('/canvas') > 0) {   // Make sure target is a canvas...
+        _this.getManifest(targetManifest).done(function(manifest) {
+          _this.goToPage(manifest, targetObject, where);
+        });
+      }
     },
 
     /**
      * @param manifest {object} manifest object
      * @param page {string} page/canvas ID
      */
-    goToPage: function(manifest, page) {
+    goToPage: function(manifest, page, where) {
       var windowConfig = {
+        'slotAddress': this.slotAddress,
         'manifest': manifest,
         'canvasID': page,
         'viewType': this.state.getStateProperty('windowSettings').viewType
       };
-      this.eventEmitter.publish('ADD_WINDOW', windowConfig);
+
+      if (!where) {
+        where = "here";
+      }
+
+      switch(where) {
+        case "above":
+          this.eventEmitter.publish('SPLIT_UP_FROM_WINDOW', {id: this.windowId, windowConfig: windowConfig});
+          break;
+        case "below":
+          this.eventEmitter.publish('SPLIT_DOWN_FROM_WINDOW', {id: this.windowId, windowConfig: windowConfig});
+          break;
+        case "left":
+          this.eventEmitter.publish('SPLIT_LEFT_FROM_WINDOW', {id: this.windowId, windowConfig: windowConfig});
+          break;
+        case "right":
+          this.eventEmitter.publish('SPLIT_RIGHT_FROM_WINDOW', {id: this.windowId, windowConfig: windowConfig});
+          break;
+        case "here":
+          if (manifest.getId() == this.manifest.getId()) {
+            this.eventEmitter.publish('SET_CURRENT_CANVAS_ID.' + this.windowId, page);
+          } else {
+            this.eventEmitter.publish('ADD_WINDOW', windowConfig);
+          }
+          break;
+        default:
+          break;
+      }
     },
 
     /**
