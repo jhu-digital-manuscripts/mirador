@@ -114,6 +114,7 @@
           canvasID: _this.canvasID,
           eventEmitter: _this.eventEmitter,
           state: _this.state,
+          slotAddress: _this.slotAddress
         });
       }
       // if (_this.annotationsTabAvailable) {
