@@ -131,19 +131,16 @@
     listenForInternalRefs: function() {
       var _this = this;
 
-      this.element.find('a.internal-ref').click(function() {
-        _this.doRefClick(jQuery(this));
-      });
-
       this.appendTo.contextMenu({
         selector: '.internal-ref',
+        trigger: 'left',
         items: {
-          "here": {name: "Open in this slot"},
+          "here": {name: "Open here"},
           "sep1": "---------",
-          "above": {name: "Open in slot above"},
-          "below": {name: "Open in slot below"},
-          "left": {name: "Open in slot left"},
-          "right": {name: "Open in slot right"},
+          "above": {name: "Open above"},
+          "below": {name: "Open below"},
+          "left": {name: "Open to the left"},
+          "right": {name: "Open to the right"},
         },
         callback: function (key, options) {
           _this.doRefClick(jQuery(this), key);
