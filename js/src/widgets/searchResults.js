@@ -11,7 +11,7 @@
   $.SearchResults = function(options) {
     jQuery.extend(true, this, {
       parentId: null,
-      slotAddress: null,
+      state: null,
       viewer: null,
       hideParent: null,
       appendTo: null,
@@ -111,7 +111,7 @@
 
         // Open search result in currently selected window
         var windowConfig = {
-          "slotAddress": _this.slotAddress,
+          "slotAddress": _this.state.getSlotAddress(_this.parentId),
           "context": _this.context
         };
 

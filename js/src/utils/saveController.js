@@ -154,6 +154,14 @@
       return returnObject;
     },
 
+    getSlotAddress: function(windowId) {
+      var windowObj = this.getWindowObjectById(windowId);
+      if (windowObj) {
+        return windowObj.slotAddress;
+      }
+      return undefined;
+    },
+
     getWindowAnnotationsList: function(windowId) {
       if (this.windowsAnnotationsLists) {
         return this.windowsAnnotationsLists[windowId];

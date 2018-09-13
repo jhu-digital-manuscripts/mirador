@@ -11,7 +11,6 @@
       visible: false,
       pendingRequests: {},
       eventEmitter: null,
-      slotAddress: null,
       message: {
         error: '<h1 class="error">Failed to load annotation list.</h1>',
         empty: '<h1 class="empty">No annotations available.</h1>',
@@ -181,10 +180,10 @@
      */
     goToPage: function(manifest, page, where) {
       var windowConfig = {
-        'slotAddress': this.slotAddress,
+        'slotAddress': this.state.getSlotAddress(this.windowId),
         'manifest': manifest,
         'canvasID': page,
-        'viewType': this.state.getStateProperty('windowSettings').viewType
+        'viewType': this.state.getWindowObjectById(this.windowId).viewType
       };
 
       if (!where) {
