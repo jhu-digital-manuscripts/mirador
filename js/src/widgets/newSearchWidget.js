@@ -652,7 +652,7 @@
 
       this.searchResults = new $.SearchResults({
         "parentId": _this.windowId,
-        "slotAddress": _this.slotAddress,
+        "state": _this.state,
         // "currentObject": _this.context.search.object,
         "currentObject": _this.baseObject,
         "appendTo": _this.element.find(".search-results-list"),
