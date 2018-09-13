@@ -299,8 +299,6 @@
         } else {
           windowObjects = [options];
         }
-console.log(' >> Moo change');
-_ = windowObjects;
         _this.set("windowObjects", windowObjects, {parent: "currentConfig"} );
       });
 
