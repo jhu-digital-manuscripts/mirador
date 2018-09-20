@@ -1,0 +1,60 @@
+.related-text-view {
+  color: white;
+  padding: 6px;
+  height: 100%;
+  overflow-y: auto;
+  
+}
+
+tei-notesstmt {
+  display: block;
+  overflow-x: auto;
+  margin-bottom: 150px;
+}
+
+tei-note {
+  display: block;
+}
+
+/* This will display the <note rend=""> attribute as a header */
+/* tei-note::before {
+  display: block;
+  margin: 1em 0 1em 0;
+  font-size: 1.4em;
+  content: attr(rend);
+}
+
+tei-note::after {
+  display: block;
+  border-style: inset;
+  border-width: 1px;
+  margin: 0.5em auto 0.5em auto;
+} */
+
+tei-p {
+  display: block;
+  margin: 1rem 1rem 0 0;
+}
+
+tei-list {
+  display: block;
+  list-style-type: disc;
+  padding-left: 2.5em;
+  margin: 1em 0 1em 0;
+}
+
+tei-head {
+  display: block;
+  font-size: 1.2em;
+  margin: 0.83em 0 0.83em 0;
+}
+
+tei-item {
+  display: list-item;
+  margin-left: 2.5em;
+}
+
+tei-item::before {
+  display: inline;
+  content: attr(n);
+}

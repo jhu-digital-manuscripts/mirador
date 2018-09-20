@@ -34,6 +34,7 @@
       },
       manifests:             [],
       searchController:      null,
+      teiUtil: null,
     }, options);
 
     this.id = this.state.getStateProperty('id');
@@ -53,6 +54,10 @@
         "eventEmitter": this.eventEmitter
       });
     }
+
+    var windowSettings = this.state.getStateProperty('windowSettings');
+    windowSettings.teiUtil = new $.TeiUtils();
+    this.state.set('windowSettings', windowSettings, {parent: 'currentConfig'});
   };
 
   $.Viewer.prototype = {
