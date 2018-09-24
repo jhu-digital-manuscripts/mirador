@@ -197,6 +197,17 @@
       return manifestIndex;
     },
 
+    getManifestObject: function(id) {
+      var obj;
+      jQuery.each(this.currentConfig.data, function(index, d) {
+        if (d.manifestUri === id) {
+          obj = d;
+          return false;
+        }
+      });
+      return obj;
+    },
+
     get: function(prop, parent) {
       if (parent) {
         return this[parent][prop];

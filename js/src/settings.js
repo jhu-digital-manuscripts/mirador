@@ -56,7 +56,7 @@
     
     //default window settings, but can be changed in Mirador configuration on initialization
     'windowSettings' : {
-      "availableViews" : ['ThumbnailsView', 'ImageView', 'ScrollView', 'BookView'], //any subset removes others
+      "availableViews" : ['ThumbnailsView', 'ImageView', 'ScrollView', 'BookView', 'RelatedTextView'], //any subset removes others
       "viewIconChangesToCurrentView": true, // Determines whether 'mirador-icon-view-type' UI icon will change 
                                             // to match the current selected view type.
       "viewType" : 'ImageView', //one of [_'ThumbnailsView'_, 'ImageView', 'ScrollView', 'BookView'] - if using availableViews, must be in subset

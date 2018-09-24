@@ -102,9 +102,9 @@
       var parts = id.split("/").filter(function(s) { return s.length > 0; });
 
       if (parts[parts.length - 1] === "manifest") {
-        return parts[parts.length - 2].split("\.")[0];
-      } else if (parts[parts.length - 2] === "collection") {
-        return parts[parts.length - 1];
+        return parts[parts.length - 3];
+      } else if (parts[parts.length - 1] === "collection") {
+        return parts[parts.length - 2];
       }
     }
 
