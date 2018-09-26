@@ -15,7 +15,7 @@
       currentImageMode:  'ImageView',
       imageModes:        ['ImageView', 'BookView'],
       originalImageModes:['ImageView', 'BookView'],
-      focuses:           ['ThumbnailsView', 'ImageView', 'ScrollView', 'BookView', 'RelatedTextView'],
+      focuses:           ['ThumbnailsView', 'ImageView', 'ScrollView', 'BookView'],
       focusModules:           {'ThumbnailsView': null, 'ImageView': null, 'ScrollView': null, 'BookView': null, 'RelatedTextView': null},
       focusOverlaysAvailable: {
         'ThumbnailsView': {
@@ -123,6 +123,13 @@
         id: _this.id,
         annotationsAvailable: this.annotationsAvailable
       });
+
+      // Check manifest for a 'related' property, if it exists, show the RelatedTextView
+      if (!this.manifest.jsonLd.related) {
+        this.focuses = this.focuses.filter(function(focus) { return focus !== 'RelatedTextView'; });
+      } else if (this.focuses.indexOf('RelatedTextView') === -1) {
+        this.focuses.push('RelatedTextView');
+      }
 
       //check config
       if (typeof this.bottomPanelAvailable !== 'undefined' && !this.bottomPanelAvailable) {
@@ -771,6 +778,9 @@
     },
 
     toggleRelatedTextView: function() {
+      if (!this.manifest.jsonLd.related) {
+        return;
+      }
       if (this.focusModules.RelatedTextView === null) {
         this.focusModules.RelatedTextView = new $.RelatedTextView({
           manifest: this.manifest,
