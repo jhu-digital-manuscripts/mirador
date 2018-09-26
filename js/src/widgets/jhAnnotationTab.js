@@ -77,9 +77,10 @@
       var _this = this;
 
       var options = {
-        'search': { name: 'Search', icon: 'fa-search' },
-        'isni': { name: 'ISNI', icon: 'fa-external-link' },
-        'external': { name: 'External link', icon: 'fa-external-link'}
+        searchBook: { name: 'Search book', icon: 'fa-search' },
+        searchCollection: { name: 'Search collection', icon: 'fa-search-plus' },
+        isni: { name: 'ISNI', icon: 'fa-external-link' },
+        external: { name: 'External link', icon: 'fa-external-link'}
       };
 
       this.element.contextMenu({
@@ -88,8 +89,16 @@
         build: function($trigger, e) {
           var items = {};
           if ($trigger.hasClass('searchable')) {
-            items.search = options.search;
-            items.search.callback = function() {
+            items.searchBook = options.searchBook;
+            items.searchBook.callback = function () {
+              var within = _this.manifest.getId() + '/jhsearch';
+              var field = $trigger.data('searchfield');
+              var term = $trigger.text();
+              _this.doSearch(within, term, field);
+            };
+
+            items.searchCollection = options.searchCollection;
+            items.searchCollection.callback = function() {
               var within = $trigger.data('searchwithin');
               var field = $trigger.data('searchfield');
               var term = $trigger.text();
@@ -129,6 +138,8 @@
 
     listenForInternalRefs: function() {
       var _this = this;
+
+      // Inspect the clicked element for multiple targets?
 
       this.appendTo.contextMenu({
         selector: '.internal-ref',
