@@ -80,6 +80,10 @@
         searchBook: { name: 'Search book', icon: 'fa-search' },
         searchCollection: { name: 'Search collection', icon: 'fa-search-plus' },
         isni: { name: 'ISNI', icon: 'fa-external-link' },
+        perseus: { name: 'Perseus', icon: 'fa-external-link' },
+        ustc: { name: 'USTC', icon: 'fa-external-link' },
+        eebo: { name: 'EEBO', icon: 'fa-external-link' },
+        'digitale_sammlungen': { name: 'Digitale Sammlungen', icon: 'fa-external-link' },
         external: { name: 'External link', icon: 'fa-external-link'}
       };
 
@@ -105,12 +109,25 @@
               _this.doSearch(within, term, field);
             };
           }
-          if ($trigger.data('isni')) {
-            items.isni = options.isni;
-            items.isni.callback = function() {
-              window.open($trigger.data('isni'), '_blank');
-            };
-          }
+          var data = $trigger.data();
+          Object.keys(data).forEach(function(dataKey) {
+            var data = $trigger.data(dataKey);
+
+            if (options[dataKey]) {
+              items[dataKey] = options[dataKey];
+              items[dataKey].callback = function() {
+                window.open(data, '_blank');
+              };
+            } else if (dataKey === 'other') {
+              items.other = {
+                name: data,
+                icon: 'fa-external-link',
+                callback: function() {
+                  window.open(data, '_blank');
+                }
+              };
+            }
+          });
           return {
             items: items
           };
