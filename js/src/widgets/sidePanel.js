@@ -3,7 +3,6 @@
   $.SidePanel= function(options) {
     jQuery.extend(true, this, {
       windowId: null,
-      slotAddress: null,
       pinned: null,
       element:           null,
       appendTo:          null,
@@ -113,7 +112,7 @@
           windowId: _this.windowId,
           canvasID: _this.canvasID,
           eventEmitter: _this.eventEmitter,
-          state: _this.state,
+          state: _this.state
         });
       }
       // if (_this.annotationsTabAvailable) {
@@ -145,7 +144,6 @@
           tabId: "searchTab",
           baseObject: this.manifest.jsonLd,
           pinned: this.pinned,
-          slotAddress: this.slotAddress,
           context: this.searchContext,
           state: this.state,
           config: {

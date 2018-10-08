@@ -16,7 +16,7 @@
       imageModes:        ['ImageView', 'BookView'],
       originalImageModes:['ImageView', 'BookView'],
       focuses:           ['ThumbnailsView', 'ImageView', 'ScrollView', 'BookView'],
-      focusModules:           {'ThumbnailsView': null, 'ImageView': null, 'ScrollView': null, 'BookView': null},
+      focusModules:           {'ThumbnailsView': null, 'ImageView': null, 'ScrollView': null, 'BookView': null, 'RelatedTextView': null},
       focusOverlaysAvailable: {
         'ThumbnailsView': {
           'overlay' : {'MetadataView' : false},
@@ -37,6 +37,11 @@
           'overlay' : {'MetadataView' : false},
           'sidePanel' : {'SidePanel' : false},
           'bottomPanel' : {'ThumbnailsView' : true},
+        },
+        'RelatedTextView': {
+          'overlay': { 'MetadataView': false },
+          'sidePanel': { 'SidePanel': false },
+          'bottomPanel': { 'ThumbnailsView': true }
         }
       },
       windowOptions: null,
@@ -45,7 +50,8 @@
         'ThumbnailsView' : false,
         'ImageView' : true,
         'ScrollView' : false,
-        'BookView' : false
+        'BookView' : false,
+        'RelatedTextView': false
       },
       bottomPanel: null, //the actual module for the bottom panel
       overlay: null,
@@ -54,7 +60,8 @@
         "ImageView" : "fa fa-photo fa-lg fa-fw",
         "BookView" : "fa fa-columns fa-lg fa-fw",
         "ScrollView" : "fa fa-ellipsis-h fa-lg fa-fw",
-        "ThumbnailsView" : "fa fa-th fa-lg fa-rotate-90 fa-fw"
+        "ThumbnailsView" : "fa fa-th fa-lg fa-rotate-90 fa-fw",
+        "RelatedTextView" : "fa fa-coffee fa-lg fa-fw"
       },
       pinned: false
     }, options);
@@ -116,6 +123,13 @@
         id: _this.id,
         annotationsAvailable: this.annotationsAvailable
       });
+
+      // Check manifest for a 'related' property, if it exists, show the RelatedTextView
+      if (!this.manifest.jsonLd.related) {
+        this.focuses = this.focuses.filter(function(focus) { return focus !== 'RelatedTextView'; });
+      } else if (this.focuses.indexOf('RelatedTextView') === -1) {
+        this.focuses.push('RelatedTextView');
+      }
 
       //check config
       if (typeof this.bottomPanelAvailable !== 'undefined' && !this.bottomPanelAvailable) {
@@ -240,16 +254,19 @@
       switch(focusState) {
         case 'ThumbnailsView':
           _this.toggleThumbnails(_this.canvasID);
-        break;
+          break;
         case 'ImageView':
           _this.toggleImageView(_this.canvasID);
-        break;
+          break;
         case 'BookView':
           _this.toggleBookView(_this.canvasID);
-        break;
+          break;
         case 'ScrollView':
           _this.toggleScrollView(_this.canvasID);
-        break;
+          break;
+        case 'RelatedTextView':
+          _this.toggleRelatedTextView();
+          break;
         default:
           break;
       }
@@ -760,6 +777,26 @@
       this.toggleFocus('ThumbnailsView', '');
     },
 
+    toggleRelatedTextView: function() {
+      if (!this.manifest.jsonLd.related) {
+        return;
+      }
+      if (this.focusModules.RelatedTextView === null) {
+        this.focusModules.RelatedTextView = new $.RelatedTextView({
+          manifest: this.manifest,
+          appendTo: this.element.find('.view-container'),
+          state: this.state,
+          eventEmitter: this.eventEmitter,
+          windowId: this.id,
+          teiUtil: this.teiUtil
+        });
+      } else {
+        // var view = this.focusModules.RelatedTextView;
+        // view.
+      }
+      this.toggleFocus('RelatedTextView', '');
+    },
+
     toggleImageView: function(canvasID) {
       this.canvasID = canvasID;
       if (this.focusModules.ImageView === null) {
@@ -993,6 +1030,10 @@
         _this.element.find('.slot-controls').stop().slideFadeToggle(300);
       });
 
+      this.element.find('.related-text-option').on('click', function() {
+        _this.toggleRelatedTextView();
+      });
+
       this.element.find('.single-image-option').on('click', function() {
         _this.toggleImageView(_this.canvasID);
       });
@@ -1090,6 +1131,9 @@
         '{{/if}}',
         '<i class="fa fa-caret-down"></i>',
         '<ul class="dropdown image-list">',
+          '{{#if RelatedTextView}}',
+            '<li class="related-text-option"><i class="{{iconClasses.RelatedTextView}}"></i> {{t "relatedTextView"}}</li>',
+          '{{/if}}',
           '{{#if ImageView}}',
             '<li class="single-image-option"><i class="{{iconClasses.ImageView}}"></i> {{t "imageView"}}</li>',
           '{{/if}}',

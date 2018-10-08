@@ -199,18 +199,18 @@
 .ui-icon.dlmm {
   background-image: url("../images/logos/dlmm.jpg");
 }
-.ui-icon.aorcollection {
+.ui-icon.aor {
   background-image: url("../images/logos/aorcollection.jpg");
 }
-.ui-icon.rosecollection {
+.ui-icon.rose {
   background-image: url("../images/logos/rosecollection.jpg");
   margin-left: 24px;
 }
-.ui-icon.pizancollection {
+.ui-icon.pizan {
   background-image: url("../images/logos/pizancollection.jpg");
   margin-left: 24px;
 }
-.ui-icon.hamletcollection {
+.ui-icon.hamlet {
   background-image: url("../images/logos/hamletcollection.jpg");
 }
 

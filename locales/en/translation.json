@@ -88,5 +88,7 @@
     "panDownTooltip": "Move image down",
     "toggleThumbnailsTooltip": "Toggle thumbnail strip",
     "nextPageTooltip": "Go to next page",
-    "prevPageTooltip": "Go to previous page"
+    "prevPageTooltip": "Go to previous page",
+    "relatedTextView": "Description",
+    "noDescription": "No description available"
 }

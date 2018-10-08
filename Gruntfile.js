@@ -40,11 +40,12 @@ module.exports = function(grunt) {
     'js/lib/spectrum.js',
     'js/lib/i18next.min.js',
     'js/lib/modernizr.custom.js',
+    'js/lib/CETEI.js',  // CETEI downloaded from Github, v1.0.0
     'bower_components/simplePagination.js/jquery.simplePagination.js',
     'bower_components/jQuery-contextMenu/dist/*.js',
-    'bower_components/jstree/dist/jstree.min.js',
     'js/lib/sanitize-html.min.js',
-    'node_modules/lazysizes/lazysizes.min.js'
+    'node_modules/lazysizes/lazysizes.min.js',
+    'node_modules/jstree/dist/jstree.min.js'
   ],
 
   // source files
@@ -96,10 +97,11 @@ module.exports = function(grunt) {
           'css/material-icons.css',
           'bower_components/simplePagination.js/simplePagination.css',
           'bower_components/jQuery-contextMenu/dist/*.css',
-          'bower_components/jstree/dist/themes/default/style.min.css',
+          'node_modules/jstree/dist/themes/default/style.min.css',
           'css/aor.css',
           'css/browser-search.css',
-          'css/search-facets.css'
+          'css/search-facets.css',
+          'css/tei.css'
         ],
         dest: 'build/mirador/css/mirador-combined.css'
       }

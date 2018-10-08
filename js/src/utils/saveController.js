@@ -154,6 +154,14 @@
       return returnObject;
     },
 
+    getSlotAddress: function(windowId) {
+      var windowObj = this.getWindowObjectById(windowId);
+      if (windowObj) {
+        return windowObj.slotAddress;
+      }
+      return undefined;
+    },
+
     getWindowAnnotationsList: function(windowId) {
       if (this.windowsAnnotationsLists) {
         return this.windowsAnnotationsLists[windowId];
@@ -187,6 +195,17 @@
         }
       });
       return manifestIndex;
+    },
+
+    getManifestObject: function(id) {
+      var obj;
+      jQuery.each(this.currentConfig.data, function(index, d) {
+        if (d.manifestUri === id) {
+          obj = d;
+          return false;
+        }
+      });
+      return obj;
     },
 
     get: function(prop, parent) {

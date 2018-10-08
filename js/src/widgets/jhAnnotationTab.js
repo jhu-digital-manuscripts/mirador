@@ -77,9 +77,14 @@
       var _this = this;
 
       var options = {
-        'search': { name: 'Search', icon: 'fa-search' },
-        'isni': { name: 'ISNI', icon: 'fa-external-link' },
-        'external': { name: 'External link', icon: 'fa-external-link'}
+        searchBook: { name: 'Search book', icon: 'fa-search' },
+        searchCollection: { name: 'Search collection', icon: 'fa-search-plus' },
+        isni: { name: 'ISNI', icon: 'fa-external-link' },
+        perseus: { name: 'Perseus', icon: 'fa-external-link' },
+        ustc: { name: 'USTC', icon: 'fa-external-link' },
+        eebo: { name: 'EEBO', icon: 'fa-external-link' },
+        'digitale_sammlungen': { name: 'Digitale Sammlungen', icon: 'fa-external-link' },
+        external: { name: 'External link', icon: 'fa-external-link'}
       };
 
       this.element.contextMenu({
@@ -88,20 +93,41 @@
         build: function($trigger, e) {
           var items = {};
           if ($trigger.hasClass('searchable')) {
-            items.search = options.search;
-            items.search.callback = function() {
+            items.searchBook = options.searchBook;
+            items.searchBook.callback = function () {
+              var within = _this.manifest.getId() + '/jhsearch';
+              var field = $trigger.data('searchfield');
+              var term = $trigger.text();
+              _this.doSearch(within, term, field);
+            };
+
+            items.searchCollection = options.searchCollection;
+            items.searchCollection.callback = function() {
               var within = $trigger.data('searchwithin');
               var field = $trigger.data('searchfield');
               var term = $trigger.text();
               _this.doSearch(within, term, field);
             };
           }
-          if ($trigger.data('isni')) {
-            items.isni = options.isni;
-            items.isni.callback = function() {
-              window.open($trigger.data('isni'), '_blank');
-            };
-          }
+          var data = $trigger.data();
+          Object.keys(data).forEach(function(dataKey) {
+            var data = $trigger.data(dataKey);
+
+            if (options[dataKey]) {
+              items[dataKey] = options[dataKey];
+              items[dataKey].callback = function() {
+                window.open(data, '_blank');
+              };
+            } else if (dataKey === 'other') {
+              items.other = {
+                name: data,
+                icon: 'fa-external-link',
+                callback: function() {
+                  window.open(data, '_blank');
+                }
+              };
+            }
+          });
           return {
             items: items
           };
@@ -122,7 +148,7 @@
 
       var request = {
         service: searchWithin,
-        query: $.generateBasicQuery(term, Array.of(field), '&')
+        query: $.generateBasicQuery('"' + term + '"', Array.of(field), '&')
       };
       this.eventEmitter.publish('REQUEST_SEARCH.' + this.windowId, request);
     },
@@ -130,45 +156,91 @@
     listenForInternalRefs: function() {
       var _this = this;
 
-      this.element.find('a.internal-ref').click(function() {
-        var el = jQuery(this);
-        /*
-         * At this point, we have the target ID in the element data-targetid as a IIIF URI
-         * There are several possibilities at this point:
-         *    - targetid is a page URI > navigate to image view (or book view?) for the page
-         *    - targetid is a manifest URI > navigate to thumbnail view for the book
-         *    - targetid is a collection URI (will likely not happen)
-         */
-        var targetManifest = el.data('manifestid');
-        var targetObject = el.data('targetid');
-        var needNewManifest = targetManifest === _this.manifest.getId();
+      // Inspect the clicked element for multiple targets?
 
-        if (targetManifest === targetObject) {
-          // Target object is a manifest, open thumbnail view
-          if (needNewManifest) {
-            _this.getManfiest(targetManifest).done(function(manifest) {
-              _this.goToManifest(manifest);
-            });
-          }
-        } else if (targetObject.indexOf('/canvas') > 0) {   // Make sure target is a canvas...
-          _this.getManifest(targetManifest).done(function(manifest) {
-            _this.goToPage(manifest, targetObject);
-          });
+      this.appendTo.contextMenu({
+        selector: '.internal-ref',
+        trigger: 'left',
+        items: {
+          "here": {name: "Open here"},
+          "sep1": "---------",
+          "above": {name: "Open above"},
+          "below": {name: "Open below"},
+          "left": {name: "Open to the left"},
+          "right": {name: "Open to the right"},
+        },
+        callback: function (key, options) {
+          _this.doRefClick(jQuery(this), key);
         }
       });
+    },
+
+    doRefClick: function(element, where) {
+      var _this = this;
+      /*
+       * At this point, we have the target ID in the element data-targetid as a IIIF URI
+       * There are several possibilities at this point:
+       *    - targetid is a page URI > navigate to image view (or book view?) for the page
+       *    - targetid is a manifest URI > navigate to thumbnail view for the book
+       *    - targetid is a collection URI (will likely not happen)
+       */
+      var targetManifest = element.data('manifestid');
+      var targetObject = element.data('targetid');
+      var needNewManifest = targetManifest === _this.manifest.getId();
+
+      if (targetManifest === targetObject) {
+        // Target object is a manifest, open thumbnail view
+        if (needNewManifest) {
+          _this.getManfiest(targetManifest).done(function(manifest) {
+            _this.goToManifest(manifest, null, where);
+          });
+        }
+      } else if (targetObject.indexOf('/canvas') > 0) {   // Make sure target is a canvas...
+        _this.getManifest(targetManifest).done(function(manifest) {
+          _this.goToPage(manifest, targetObject, where);
+        });
+      }
     },
 
     /**
      * @param manifest {object} manifest object
      * @param page {string} page/canvas ID
      */
-    goToPage: function(manifest, page) {
+    goToPage: function(manifest, page, where) {
       var windowConfig = {
+        'slotAddress': this.state.getSlotAddress(this.windowId),
         'manifest': manifest,
         'canvasID': page,
-        'viewType': this.state.getStateProperty('windowSettings').viewType
+        'viewType': this.state.getWindowObjectById(this.windowId).viewType
       };
-      this.eventEmitter.publish('ADD_WINDOW', windowConfig);
+
+      if (!where) {
+        where = "here";
+      }
+
+      switch(where) {
+        case "above":
+          this.eventEmitter.publish('SPLIT_UP_FROM_WINDOW', {id: this.windowId, windowConfig: windowConfig});
+          break;
+        case "below":
+          this.eventEmitter.publish('SPLIT_DOWN_FROM_WINDOW', {id: this.windowId, windowConfig: windowConfig});
+          break;
+        case "left":
+          this.eventEmitter.publish('SPLIT_LEFT_FROM_WINDOW', {id: this.windowId, windowConfig: windowConfig});
+          break;
+        case "right":
+          this.eventEmitter.publish('SPLIT_RIGHT_FROM_WINDOW', {id: this.windowId, windowConfig: windowConfig});
+          break;
+        case "here":
+          if (manifest.getId() == this.manifest.getId()) {
+            this.eventEmitter.publish('SET_CURRENT_CANVAS_ID.' + this.windowId, page);
+          } else {
+            this.eventEmitter.publish('ADD_WINDOW', windowConfig);
+          }
+          break;
+        default:
+          break;
+      }
     },
 
     /**
@@ -265,7 +337,7 @@
 
       if (reader) {
         var header = this.element.find('h2');
-        header.append(" (" + reader + ")");
+        header.append(" (Reader: " + reader + ")");
         header.addClass(reader);
       }
 
