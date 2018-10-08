@@ -169,7 +169,7 @@
        * }
        */
       this.eventEmitter.subscribe("INIT_SEARCH_TAB." + this.windowId, function (event, data) {
-        jQuery.extend(true, _this.context, data.context);
+        jQuery.extend(true, _this.context, data);
         _this.initFromContext();
       });
     },
@@ -643,7 +643,8 @@
         "maxPerPage": maxPerPage,
         "resumeToken": resumeToken,
         "sortOrder": sortOrder,
-        "facets": facets
+        "facets": facets,
+        "ui": this.context.ui
       });
 
       this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);

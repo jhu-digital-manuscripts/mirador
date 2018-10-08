@@ -1,7 +1,10 @@
 (function ($) {
   $.HistoryController = function(options) {
     jQuery.extend(true, this, {
-      eventEmitter: null
+      eventEmitter: null,
+      urlSlicer: null,
+      historyList: [] // TODO Potentially use browser's local storage to hold history list so viewer state
+                      // can be recreated when the browser buttons are used to navigate history?
     }, options);
 
     this.init();
@@ -20,7 +23,8 @@
        * is a boolean value describing the panel's visibility (true = visible)
        */
       _this.eventEmitter.subscribe('manifestsPanelVisible.set', function(event, manifestPanelVisible) {
-        
+        // console.log(' >> manifestsPanelVisible.set');
+        // console.log(manifestPanelVisible);
       });
 
       /**
@@ -140,6 +144,32 @@
         
       });
 
+      /**
+       * In terms of the UI context, the 'advanced' property always takes precedence over 'basic.'
+       * When 'advanced' is defined, always show the advanced search widget, no matter the value 
+       * of 'basic.'
+       * 
+       * @param data {
+       *    origin: '', // window ID for source. NULL or UNDEFINED if source is manifests panel
+       *    query: '', // search query executed
+       *    maxPerPage: -1, // (OPTIONAL) Integer, page size. 
+       *    offset: -1, // (OPTIONAL) Integer, start index for results
+       *    sortOrder: (OPTIONAL) ('relevance'|'index'), 
+       *    service: '', // URI of search service
+       *    ui: {
+       *      advanced: {
+       *        rows: [{
+       *          row: 0, // index (redundant)
+       *          category: '', // search category, must be found in search service config
+       *          operation: 'and'|'or', 
+       *          term: '', // The search term
+       *          type: 'input'|'select', // UI element type - freeform text input, or enumerated dropdown
+       *        }]
+       *      },
+       *      basic: '', // A basic search term
+       *    }
+       * }
+       */
       _this.eventEmitter.subscribe('SEARCH', function (event, data) {
         
       });
@@ -169,6 +199,17 @@
       _this.eventEmitter.subscribe('TAB_SELECTED', function (event, data) { 
         
       });
+    },
+
+    addHistory: function(event) {
+
+    },
+
+    /**
+     * @param {string} url
+     */
+    handleUrls: function (url) {
+      // TODO respond to changes in browser location such as browser back button
     }
   };
 }(Mirador));
