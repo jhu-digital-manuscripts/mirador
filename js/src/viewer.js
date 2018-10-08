@@ -209,6 +209,18 @@
         }
       });
 
+      _this.eventEmitter.subscribe('manifestReferenced', function(event, reference) {
+        // Check if a reference is in the initial windowConfig (see 'manifestReceived' handler above)
+        if (_this.state.getStateProperty('windowObjects')) {
+          var check = jQuery.grep(_this.state.getStateProperty('windowObjects'), function(obj, index) {
+            return obj.loadedManifest === reference['@id'];
+          });
+          jQuery.each(check, function(index, config) {
+            _this.addManifestFromUrl(config.loadedManifest);
+          });
+        }
+      });
+
       _this.eventEmitter.subscribe('TOGGLE_WORKSPACE_PANEL', function(event) {
         _this.toggleWorkspacePanel();
       });
@@ -410,7 +422,8 @@
       var _this = this,
         manifest;
 
-      if (!_this.state.getStateProperty('manifests')[url]) {
+      var savedManifest = _this.state.getStateProperty('manifests')[url];
+      if (!savedManifest || !savedManifest.jsonLd) {
         manifest = new $.Manifest(url, location, content);
         _this.eventEmitter.publish('manifestQueued', manifest, location);
         manifest.request.done(function() {

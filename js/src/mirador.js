@@ -34,6 +34,10 @@
             'state': this.saveController,
             'eventEmitter': this.eventEmitter
         });
+
+        this.historyController = new Mirador.HistoryController({
+          eventEmitter: this.eventEmitter
+        });
         return this;
     } else {
         return new Mirador(config);

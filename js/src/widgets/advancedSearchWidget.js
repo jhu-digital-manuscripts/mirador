@@ -94,6 +94,11 @@
       this.element = null;
     },
 
+    setContext: function(context) {
+      this.context = context;
+      this.initFromContext();
+    },
+
     hasQuery: function() {
       var result = false;
 

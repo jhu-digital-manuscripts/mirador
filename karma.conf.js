@@ -43,9 +43,12 @@ module.exports = function(config) {
       'js/src/workspaces/*.js',
       'js/src/widgets/*.js',
       'js/src/utils/*.js',
+      'js/src/history/*.js',
       // spec
-      'spec/**/*.stub.js',
-      'spec/**/*.js',
+      // 'spec/**/*.stub.js',
+      // 'spec/**/*.js',
+      'spec/utils/jhInitUrlSlicer.test.js',
+      'spec/utils/searchController.test.js',
       {pattern: 'spec/data/*', watched: true, served: true, included: false},
       {pattern: 'spec/locales/**', watched: true, served: true, included: false},
       {pattern: 'spec/fixtures/*json', watched: true, served: true, included: false},
@@ -62,7 +65,7 @@ module.exports = function(config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'js/src/**/*.js': ['coverage']
+      // 'js/src/**/*.js': ['coverage']
     },
 
     proxies: {
@@ -72,12 +75,13 @@ module.exports = function(config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress', 'coverage', 'coveralls'],
+    // reporters: ['progress', 'coverage', 'coveralls'],
+    reporters: ['progress'],
 
-    coverageReporter: {
-      type: 'lcov', // lcov or lcovonly are required for generating lcov.info files
-      dir: 'coverage/'
-    },
+    // coverageReporter: {
+    //   type: 'lcov', // lcov or lcovonly are required for generating lcov.info files
+    //   dir: 'coverage/'
+    // },
 
     // web server port
     port: 9876,

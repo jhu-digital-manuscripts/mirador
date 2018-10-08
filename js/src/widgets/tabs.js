@@ -67,7 +67,14 @@
       var _this = this;
 
       this.element.find('.tab').on('click', function(event) {
-        _this.eventEmitter.publish('tabSelected.' + _this.windowId, jQuery( this ).index());
+        var el = jQuery(this);
+
+        _this.eventEmitter.publish('tabSelected.' + _this.windowId, el.index());
+        _this.eventEmitter.publish('TAB_SELECTED', {
+          windowId: _this.windowId,
+          tabId: el.data('tabid'),
+          tabIndex: el.index()
+        });
       });
     },
     render: function(renderingData) {

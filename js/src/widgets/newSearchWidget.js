@@ -114,7 +114,6 @@
       // As those services are discovered, request info.json configs
       // Populate search dropdowns (done in event handler in #bindEvents)
       if (this.baseObject) {
-        console.log("[SW] Getting services related to [" + (this.baseObject["@id"]) + "]");
         this.eventEmitter.publish("GET_RELATED_SEARCH_SERVICES", {
           "origin": _this.windowId,
           "baseObject": _this.baseObject
@@ -162,6 +161,16 @@
         } else {
           _this.element.hide();
         }
+      });
+
+      /**
+       * data: {
+       *    context: {} // See this.context
+       * }
+       */
+      this.eventEmitter.subscribe("INIT_SEARCH_TAB." + this.windowId, function (event, data) {
+        jQuery.extend(true, _this.context, data);
+        _this.initFromContext();
       });
     },
 
@@ -634,7 +643,8 @@
         "maxPerPage": maxPerPage,
         "resumeToken": resumeToken,
         "sortOrder": sortOrder,
-        "facets": facets
+        "facets": facets,
+        "ui": this.context.ui
       });
 
       this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
@@ -826,6 +836,9 @@
       }
       if (this.context.ui.advanced) {
         this.showAdvancedSearch();
+        if (this.advancedSearch) {
+          this.advancedSearch.setContext(this.context);
+        }
       } else {
         this.element.find(".js-query").val(this.context.ui.basic);
       }
