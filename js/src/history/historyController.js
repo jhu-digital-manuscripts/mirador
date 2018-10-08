@@ -3,9 +3,12 @@
     jQuery.extend(true, this, {
       eventEmitter: null,
       urlSlicer: null,
-      historyList: [] // TODO Potentially use browser's local storage to hold history list so viewer state
+      saveController: null,
+      historyList: [] // TODO Potentially use browser's session storage to hold history list so viewer state
                       // can be recreated when the browser buttons are used to navigate history?
     }, options);
+
+    this.urlSlicer = new $.JHUrlSlicer();
 
     this.init();
   };
@@ -19,12 +22,27 @@
       var _this = this;
 
       /**
+       * This event fires when the user selects a collection to focus on from the ManifestsPanel
+       * "Choose Collection" dropdown. This cannot entirely be used to change the collection 
+       * history, but is used to change the specific collection in the history.
+       * 
+       * Since this comes from a search widget, we need to stip away the search suffix...
+       */
+      _this.eventEmitter.subscribe("BROWSE_COLLECTION", function(event, data) {
+        data = data.substring(0, data.lastIndexOf('/'));
+        _this.triggerCollectionHistory(data);
+      });
+
+      /**
+       * This will generally be used to change the history state to denote when a user is looking
+       * at the collection page. This event cannot tell what collection is being looked at. This
+       * information can be inferred from the last time 'BROWSER_COLLECTION' was encountered.
+       * 
        * Fires when the "manifests panel" (book browser) is shown or hidden. "manifestPanelVisible"
        * is a boolean value describing the panel's visibility (true = visible)
        */
       _this.eventEmitter.subscribe('manifestsPanelVisible.set', function(event, manifestPanelVisible) {
-        // console.log(' >> manifestsPanelVisible.set');
-        // console.log(manifestPanelVisible);
+        // if TRUE, then user opened the Manifest Browser :: is looking at the collection
       });
 
       /**
@@ -201,8 +219,44 @@
       });
     },
 
-    addHistory: function(event) {
+    triggerCollectionHistory: function(collection) {
+      if (!collection) {
+        collection = this.getLastCollection();
+      }
 
+      this.addHistory(new $.HistoryState({
+        type: $.HistoryStateType.collection,
+        data: {
+          collection
+        }
+      }));
+    },
+
+    /**
+     * When a user first flips to the collection panel (ManifestsPanel), the application event does 
+     * not have enough information to determine the collection being looked at. In this case, we must
+     * determine the collection by investigating the application history. If no collection is found
+     * in the history, then we can assume that the initially loaded collection is being looked at.
+     */
+    getLastCollection: function() {
+      let collections = this.historyList.filter(state => state.type === $.HistoryStateType.collection);
+      if (collections.length > 0) {
+        return collections[collections.length - 1];
+      }
+      // Ugh, we have to assume that the input data is the initial collection :(
+      return this.saveController.getStateProperty('data')[0];
+    },
+
+    addHistory: function(event) {
+      let title = this.urlSlicer.stateTitle(event);
+      let url = this.urlSlicer.toUrl(event);
+
+      if (url) {
+        window.history.pushState(event, title, url);
+      } else {
+        window.alert('sad moo');
+        console.log('%c[HistoryController] No URL specified when changing history.', 'color: red');
+      }
     },
 
     /**

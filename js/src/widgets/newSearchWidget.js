@@ -205,12 +205,17 @@
         });
       });
 
+      /**
+       * This handler is only used in the collection picker when this widget is embedded in
+       * the ManifestsPanel.
+       */
       function selectChange() {
         var selected = jQuery(this).val();
         _this.getSearchService(selected).done(function(s) {
           _this.switchSearchServices(s);
           _this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + _this.windowId);
         });
+        _this.eventEmitter.publish("BROWSE_COLLECTION", selected);
       }
       this.element.find(".search-within-object-select").on("change", selectChange);
       if (!this.config.inSidebar) {
