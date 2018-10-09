@@ -36,7 +36,8 @@
         });
 
         this.historyController = new Mirador.HistoryController({
-          eventEmitter: this.eventEmitter
+          eventEmitter: this.eventEmitter,
+          saveController: this.saveController
         });
         return this;
     } else {

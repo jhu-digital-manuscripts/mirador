@@ -1,9 +1,8 @@
 (function($) {
   $.JHUrlSlicer = function (options) {
     jQuery.extend(true, this, {
-      eventEmitter: null,
       baseUrl: null, // Base URL of this viewer
-    });
+    }, options);
   };
 
   $.JHUrlSlicer.prototype = {
@@ -19,7 +18,12 @@
       }
       var uri = new URI(url);
 
-      var hasQuery = !!uri.query() && uri.query().length > 0;
+      // A URI with no path will always load the base collection specified in the
+      // Mirador initial config
+      if (!uri.path() || uri.path() === '' || uri.path() === '/') {
+        return $.HistoryStateType.collection;
+      }
+
       var parts = uri.path().split('/');
 
       if (parts.length === 1) {
@@ -36,7 +40,7 @@
         case 'opening':
           return $.HistoryStateType.opening_view;
         case 'search':
-          if (!hasQuery) {
+          if (!uri.hasQuery('q')) {
             console.log('%c[JHInitUrlSlicer#getUrlType] A search URL has no query', 'color: red');
             return false;
           }
@@ -50,6 +54,65 @@
           console.log('%c[JHInitUrlSlicer#getUrlType] URL type not found (' + url + ')', 'color: red');
           break;
       }
+    },
+
+    parseUrl: function(url) {
+      if (!url) {
+        throw new Error('[JHUrlSlicer#parseUrl] No URL specified');
+      }
+
+      const uri = new URI(url);
+      const frag = uri.fragment().split('/');
+      const query = uri.query(true).q;
+      
+      const type = this.getUrlType(url);
+      let data = {};
+      
+      switch (type) {
+        case $.HistoryStateType.collection_search:
+          data = {
+            collection: frag[0],
+            query
+          };
+          break;
+        case $.HistoryStateType.collection:
+          data = {
+            collection: frag[0]
+          };
+          break;
+        case $.HistoryStateType.manifest_search:
+          data = {
+            collection: frag[0],
+            manifest: frag[1],
+            query
+          };
+          break;
+        case $.HistoryStateType.scroll_view:
+        case $.HistoryStateType.thumb_view:
+          data = {
+            collection: frag[0],
+            manifest: frag[1],
+            viewType: frag[2]
+          };
+          break;
+        case $.HistoryStateType.image_view:
+        case $.HistoryStateType.opening_view:
+          data = {
+            collection: frag[0],
+            manifest: frag[1],
+            canvas: frag[2],
+            viewType: frag[3]
+          };
+          break;
+        default:
+          break;
+      }
+      
+      
+      return new $.HistoryState({
+        type,
+        data
+      });
     },
 
     /**
@@ -84,7 +147,7 @@
       let uri = new URI();
       switch (options.type) {
         case $.HistoryStateType.collection:
-          return uri.path(
+          return uri.fragment(
             this.collectionName(options.data.collection)
           );
         case $.HistoryStateType.collection_search:
@@ -162,6 +225,28 @@
     collectionName: function (collectionUri) {
       let uri = new URI(collectionUri);
       return uri.segment(1);
+    },
+
+    /**
+     * @param {string} uri
+     */
+    collectionFromUri: function (uri) {
+      const frag = new URI(uri).fragment(); // URI-ify the string
+      if (!frag) {
+        return;
+      }
+      return frag.split('/')[0];
+    },
+
+    collectionUri: function (id) {
+      let uri = new URI(this.baseUrl);
+
+      if (id.indexOf(uri.toString()) >= 0) {
+        return id;
+      }
+
+      uri.path(uri.path() + '/' + id + '/collection');
+      return uri.toString();
     }
   };
 }(Mirador));

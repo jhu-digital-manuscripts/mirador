@@ -8,14 +8,27 @@
                       // can be recreated when the browser buttons are used to navigate history?
     }, options);
 
-    this.urlSlicer = new $.JHUrlSlicer();
+    // Since history will be empty at this point, it will default to getting the initially loaded
+    // collection from the Mirador config
+    const initCol = this.getLastCollection();
+    let uri = new URI(initCol);
+    uri.path(uri.path().split('/')[1]);
+
+    this.urlSlicer = new $.JHUrlSlicer({
+      baseUrl: uri.toString()
+    });
 
     this.init();
   };
 
   $.HistoryController.prototype = {
     init: function () {
-      this.bindEvents();
+      let _this = this;
+
+      jQuery(document).ready(function () {
+        _this.handleUrl();
+        _this.bindEvents();
+      });
     },
 
     bindEvents: function() {
@@ -29,6 +42,7 @@
        * Since this comes from a search widget, we need to stip away the search suffix...
        */
       _this.eventEmitter.subscribe("BROWSE_COLLECTION", function(event, data) {
+        console.log(' blah');
         data = data.substring(0, data.lastIndexOf('/'));
         _this.triggerCollectionHistory(data);
       });
@@ -43,6 +57,9 @@
        */
       _this.eventEmitter.subscribe('manifestsPanelVisible.set', function(event, manifestPanelVisible) {
         // if TRUE, then user opened the Manifest Browser :: is looking at the collection
+        if (manifestPanelVisible) {
+          _this.triggerCollectionHistory();
+        }
       });
 
       /**
@@ -64,10 +81,12 @@
             bottomPanelVisible: true|false,
             sidePanelVisible: true|false,
             annotationsAvailable: {}, // Will ignore this...used for annotation authoring
+            annotationState: 'off', // Ignore this as well, used for annotation authoring
           }
        */
       _this.eventEmitter.subscribe('windowUpdated', function(event, options) {
-        
+        // console.log(' >> windowUpdated');
+        // console.log(options);
       });
 
       /**
@@ -241,10 +260,12 @@
     getLastCollection: function() {
       let collections = this.historyList.filter(state => state.type === $.HistoryStateType.collection);
       if (collections.length > 0) {
+        console.log(' @@ Returning {' + collections[collections.length - 1] + '}');
         return collections[collections.length - 1];
       }
       // Ugh, we have to assume that the input data is the initial collection :(
-      return this.saveController.getStateProperty('data')[0];
+      console.log(' @@ Returning (' + this.saveController.getStateProperty('data')[0].collectionUri + ')');
+      return this.saveController.getStateProperty('data')[0].collectionUri;
     },
 
     addHistory: function(event) {
@@ -260,10 +281,53 @@
     },
 
     /**
-     * @param {string} url
+     * Contains handlers to initialize the viewer based on the URL path when the page is 
+     * initially loaded. This should happen whenever the browser navigation buttons are
+     * used, or when a user loads a bookmark.
+     * 
+     * Book thumb view  ::	#COL_ID/BOOK_ID/thumb	            ::  #aor/Douce195/thumb
+     * Book scroll view	::  #COL_ID/BOOK_ID/scroll	          ::  #aor/Douce195/scroll
+     * Single page view	::  #COL_ID/BOOK_ID/IMAGE_ID/image	  ::  #aor/Douce195/001r/image
+     * Opening view	    ::  #COL_ID/BOOK_ID/IMAGE_ID/opening	::  #aor/Douce195/001r/opening
+     * Search in a book	::  #COL_ID/BOOK_ID/search?q=query	  ::  #aor/Douce195/search?q=query
+     * Search across	  ::  #COL_ID/search?q=query	          ::  #aor/search?q=query
+     * 
+     * EVENTS::
+     * 
+     * SET_COLLECTION
+     * 
      */
-    handleUrls: function (url) {
-      // TODO respond to changes in browser location such as browser back button
+    handleUrl: function () {
+      const url = window.location.href;
+      const reqType = this.urlSlicer.getUrlType(url);
+      if (!reqType) {
+        window.alert('Unable to moo this URL: [' + url + ']');
+        return;
+      }
+
+      const collection = this.urlSlicer.collectionFromUri(url);
+      switch (reqType) {
+        case $.HistoryStateType.collection:
+          this.initToCollection(collection);
+          break;
+        default:
+          break;
+      }
+    },
+
+    initToCollection: function (collection) {
+      if (!collection) {
+        console.log('[HistoryController#initToCollection]');
+        collection = this.getLastCollection();
+      }
+      console.log(' >>> MOO ' + collection);
+      // this.eventEmitter.publish('SET_COLLECTION', this.urlSlicer.collectionUri(collection));
+      this.saveController.set(
+        'initialCollection',
+        this.urlSlicer.collectionUri(collection),
+        { parent: 'currentConfig' }
+      );
+      console.log(' >>> MOO ' + this.saveController.getStateProperty('initialCollection'));
     }
   };
 }(Mirador));

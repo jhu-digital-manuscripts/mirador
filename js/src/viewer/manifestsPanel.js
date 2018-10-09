@@ -112,6 +112,21 @@
             _this.eventEmitter.subscribe("SEARCH_SIZE_UPDATED." + this.searcher.windowId, function() {
               _this.setContainerPositions();
             });
+            _this.eventEmitter.subscribe('SET_COLLECTION', function (event, collection) {
+              // _this.getSearchService(selected).done(function(s) {
+              //   _this.switchSearchServices(s);
+              //   _this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + _this.windowId);
+              // });
+              if (!collection.endsWith('/jhsearch')) {
+                collection += '/jhsearch';
+              }
+              _this.searcher.getSearchService(collection).done(function (service) {
+                console.log(' <<< ');
+                console.log(service);
+                _this.searcher.switchSearchServices(service);
+                _this.eventEmitter.publish('SEARCH_SIZE_UPDATED.' + _this.searcher.windowId);
+              });
+            });
           }
         },
 
