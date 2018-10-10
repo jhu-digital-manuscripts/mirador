@@ -42,7 +42,6 @@
        * Since this comes from a search widget, we need to stip away the search suffix...
        */
       _this.eventEmitter.subscribe("BROWSE_COLLECTION", function(event, data) {
-        console.log(' blah');
         data = data.substring(0, data.lastIndexOf('/'));
         _this.triggerCollectionHistory(data);
       });
@@ -85,8 +84,9 @@
           }
        */
       _this.eventEmitter.subscribe('windowUpdated', function(event, options) {
-        // console.log(' >> windowUpdated');
-        // console.log(options);
+        console.log(' >> windowUpdated');
+        console.log(options);
+
       });
 
       /**
@@ -238,7 +238,7 @@
       });
     },
 
-    triggerCollectionHistory: function(collection) {
+    triggerCollectionHistory: function (collection) {
       if (!collection) {
         collection = this.getLastCollection();
       }
@@ -252,23 +252,64 @@
     },
 
     /**
+     * Event notes:
+     * 'id' (windowId) is always present
+     * Seems like whenever 'viewType' is present, the following are also present:
+     *    - canvasID
+     *    - imageMode (what is the difference between this and 'viewType' ???)
+     *    - loadedManifest
+     *    - slotAddress
+     */
+    processWindowUpdated: function (event) {
+      if (!event.viewType) {
+        // Not concerned with events not related to view changes
+        return;
+      }
+
+      const manifest = event.loadedManifest;
+      const canvas = event.canvasID;
+      const windowId = event.id;
+
+      let viewType = null;
+      switch (viewType) {
+        case 'ThumbnailsView':
+          viewType = $.HistoryStateType.thumb_view;
+          break;
+        case 'ImageView':
+          viewType = $.HistoryStateType.image_view;
+          break;
+        case 'BookView':
+          viewType = $.HistoryStateType.opening_view;
+          break;
+        case 'ScrollView':
+          viewType = $.HistoryStateType.scroll_view;
+          break;
+        default: // Bail if no view type found
+          return;
+      }
+
+      
+
+    },
+
+    /**
      * When a user first flips to the collection panel (ManifestsPanel), the application event does 
      * not have enough information to determine the collection being looked at. In this case, we must
      * determine the collection by investigating the application history. If no collection is found
      * in the history, then we can assume that the initially loaded collection is being looked at.
      */
-    getLastCollection: function() {
+    getLastCollection: function () {
       let collections = this.historyList.filter(state => state.type === $.HistoryStateType.collection);
       if (collections.length > 0) {
-        console.log(' @@ Returning {' + collections[collections.length - 1] + '}');
+        // console.log(' @@ Returning {' + collections[collections.length - 1] + '}');
         return collections[collections.length - 1];
       }
       // Ugh, we have to assume that the input data is the initial collection :(
-      console.log(' @@ Returning (' + this.saveController.getStateProperty('data')[0].collectionUri + ')');
+      // console.log(' @@ Returning (' + this.saveController.getStateProperty('data')[0].collectionUri + ')');
       return this.saveController.getStateProperty('data')[0].collectionUri;
     },
 
-    addHistory: function(event) {
+    addHistory: function (event) {
       let title = this.urlSlicer.stateTitle(event);
       let url = this.urlSlicer.toUrl(event);
 
@@ -321,12 +362,12 @@
         collection = this.getLastCollection();
       }
       console.log(' >>> MOO ' + collection);
-      // this.eventEmitter.publish('SET_COLLECTION', this.urlSlicer.collectionUri(collection));
-      this.saveController.set(
-        'initialCollection',
-        this.urlSlicer.collectionUri(collection),
-        { parent: 'currentConfig' }
-      );
+      this.eventEmitter.publish('SET_COLLECTION', this.urlSlicer.collectionUri(collection));
+      // this.saveController.set(
+      //   'initialCollection',
+      //   this.urlSlicer.collectionUri(collection),
+      //   { parent: 'currentConfig' }
+      // );
       console.log(' >>> MOO ' + this.saveController.getStateProperty('initialCollection'));
     }
   };

@@ -121,8 +121,8 @@
                 collection += '/jhsearch';
               }
               _this.searcher.getSearchService(collection).done(function (service) {
-                console.log(' <<< ');
-                console.log(service);
+                // console.log(' <<< ');
+                // console.log(service);
                 _this.searcher.switchSearchServices(service);
                 _this.eventEmitter.publish('SEARCH_SIZE_UPDATED.' + _this.searcher.windowId);
               });
