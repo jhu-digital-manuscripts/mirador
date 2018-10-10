@@ -84,9 +84,9 @@
           }
        */
       _this.eventEmitter.subscribe('windowUpdated', function(event, options) {
-        console.log(' >> windowUpdated');
-        console.log(options);
-
+        // console.log(' >> windowUpdated');
+        // console.log(options);
+        _this.processWindowUpdated(options);
       });
 
       /**
@@ -259,6 +259,8 @@
      *    - imageMode (what is the difference between this and 'viewType' ???)
      *    - loadedManifest
      *    - slotAddress
+     * 
+     * @param event windowUpdated event data
      */
     processWindowUpdated: function (event) {
       if (!event.viewType) {
@@ -270,25 +272,39 @@
       const canvas = event.canvasID;
       const windowId = event.id;
 
+      let eventType = null;
       let viewType = null;
-      switch (viewType) {
+      switch (event.viewType) {
         case 'ThumbnailsView':
-          viewType = $.HistoryStateType.thumb_view;
+          eventType = $.HistoryStateType.thumb_view;
+          viewType = 'thumb';
           break;
         case 'ImageView':
-          viewType = $.HistoryStateType.image_view;
+          eventType = $.HistoryStateType.image_view;
+          viewType = 'image';
           break;
         case 'BookView':
-          viewType = $.HistoryStateType.opening_view;
+          eventType = $.HistoryStateType.opening_view;
+          viewType = 'opening';
           break;
         case 'ScrollView':
-          viewType = $.HistoryStateType.scroll_view;
+          eventType = $.HistoryStateType.scroll_view;
+          viewType = 'scroll';
           break;
         default: // Bail if no view type found
           return;
       }
 
-      
+      this.addHistory(new $.HistoryState({
+        type: eventType,
+        data: {
+          collection: this.urlSlicer.collectionName(manifest),
+          windowId,
+          manifest,
+          canvas,
+          viewType
+        }
+      }));
 
     },
 
@@ -315,6 +331,7 @@
 
       if (url) {
         window.history.pushState(event, title, url);
+        this.historyList.push(event);
       } else {
         window.alert('sad moo');
         console.log('%c[HistoryController] No URL specified when changing history.', 'color: red');
@@ -361,14 +378,14 @@
         console.log('[HistoryController#initToCollection]');
         collection = this.getLastCollection();
       }
-      console.log(' >>> MOO ' + collection);
+      // console.log(' >>> MOO ' + collection);
       this.eventEmitter.publish('SET_COLLECTION', this.urlSlicer.collectionUri(collection));
       // this.saveController.set(
       //   'initialCollection',
       //   this.urlSlicer.collectionUri(collection),
       //   { parent: 'currentConfig' }
       // );
-      console.log(' >>> MOO ' + this.saveController.getStateProperty('initialCollection'));
+      // console.log(' >>> MOO ' + this.saveController.getStateProperty('initialCollection'));
     }
   };
 }(Mirador));

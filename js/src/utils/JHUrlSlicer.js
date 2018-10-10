@@ -134,6 +134,11 @@
      *      viewType: ''
      *    }
      *  }
+     * 
+     * When given 'options' that already specifies a manifest, the collection information
+     * is not easily obtainable from the event. Instead, the event will parse the collection
+     * name from the manifest ID, so for those event types representing a manifest, no
+     * operation is needed for get the collection name.
      */
     toUrl: function (options) {
       if (!options) {
@@ -151,17 +156,25 @@
             this.collectionName(options.data.collection)
           );
         case $.HistoryStateType.collection_search:
-          return 'collection_search:' + options.data.query;
+          // return 'collection_search:' + options.data.query;
         case $.HistoryStateType.manifest_search:
-          return 'manifest_search:' + options.data.query;
+            break;
+          // return 'manifest_search:' + options.data.query;
         case $.HistoryStateType.thumb_view:
-          return 'thumbnail_view:' + options.data.manifest;
-        case $.HistoryStateType.image_view:
-          return 'image_view:' + options.data.manifest;
-        case $.HistoryStateType.opening_view:
-          return 'opening_view:' + opening.data.manifest;
         case $.HistoryStateType.scroll_view:
-          return 'scroll_view:' + opening.data.manifest;
+          return uri.fragment(
+            options.data.collection + '/' +
+            this.manifestName(options.data.manifest) + '/' +
+            options.data.viewType
+          );
+        case $.HistoryStateType.image_view:
+        case $.HistoryStateType.opening_view:
+            return uri.fragment(
+              options.data.collection + '/' +
+              this.manifestName(options.data.manifest) + '/' + 
+              this.canvasName(options.data.canvas) + '/' +
+              options.data.viewType
+            );
         default:
           return undefined;
       }
@@ -211,9 +224,9 @@
         case $.HistoryStateType.image_view:
           return 'image_view:' + options.data.manifest;
         case $.HistoryStateType.opening_view:
-          return 'opening_view:' + opening.data.manifest;
+          return 'opening_view:' + options.data.manifest;
         case $.HistoryStateType.scroll_view:
-          return 'scroll_view:' + opening.data.manifest;
+          return 'scroll_view:' + options.data.manifest;
         default:
           return '';
       }
@@ -225,6 +238,16 @@
     collectionName: function (collectionUri) {
       let uri = new URI(collectionUri);
       return uri.segment(1);
+    },
+
+    manifestName: function (manifestUri) {
+      let uri = new URI(manifestUri);
+      return uri.segment(2);
+    },
+
+    canvasName: function (canvasUri) {
+      let uri = new URI(canvasUri);
+      return uri.segment(3);
     },
 
     /**

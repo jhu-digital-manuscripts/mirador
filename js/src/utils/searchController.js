@@ -221,9 +221,9 @@
       });
 
       if (s.length === 0) {
-        console.log("[SearchController] No search service found for ID: " + id);
+        // console.log("[SearchController] No search service found for ID: " + id);
         // service.resolve(undefined);
-        console.log(' ### ' + id);
+        // console.log(' ### ' + id);
         var newService = { "id": id };
         var config = new $.JhiiifSearchService(newService);
         config.initializer.always(function() {

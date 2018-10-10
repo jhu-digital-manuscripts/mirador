@@ -415,6 +415,10 @@
         _this.set("windowObjects", windowObjects, {parent: "currentConfig"} );
       });
 
+      _this.eventEmitter.subscribe('SET_COLLECTION', function (event, collection) {
+        _this.set('currentCollection', collection, { parent: 'currentConfig' });
+      });
+
       _this.eventEmitter.subscribe('etc...', function(junk) {
         // handle adding the property in the appropriate place
         // in this.currentConfig by passing to the _this.set(),

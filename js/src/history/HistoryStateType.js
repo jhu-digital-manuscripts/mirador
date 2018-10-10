@@ -11,4 +11,19 @@
     'scroll_view': 7
   });
 
+  $.getViewName = function (type) {
+    switch (type) {
+      case this.thumb_view:
+        return 'thumb';
+      case this.image_view:
+        return 'image';
+      case this.opening_view:
+        return 'opening';
+      case this.scroll_view:
+        return 'scroll';
+      default:
+        return '';
+    }
+  };
+
 }(Mirador));
