@@ -317,11 +317,9 @@
     getLastCollection: function () {
       let collections = this.historyList.filter(state => state.type === $.HistoryStateType.collection);
       if (collections.length > 0) {
-        // console.log(' @@ Returning {' + collections[collections.length - 1] + '}');
-        return collections[collections.length - 1];
+        return collections[collections.length - 1].data.collection;
       }
       // Ugh, we have to assume that the input data is the initial collection :(
-      // console.log(' @@ Returning (' + this.saveController.getStateProperty('data')[0].collectionUri + ')');
       return this.saveController.getStateProperty('data')[0].collectionUri;
     },
 
