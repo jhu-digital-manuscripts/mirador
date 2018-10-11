@@ -26,9 +26,16 @@
       let _this = this;
 
       jQuery(document).ready(function () {
-        _this.handleUrl();
         _this.bindEvents();
+        _this.handleUrl();
       });
+
+      // this.onpopstate = _this.handleUrl();
+      window.onpopstate = function (event) {
+        console.log('onpop MOO');
+        console.log(event);
+        _this.handleUrl(event);
+      };
     },
 
     bindEvents: function() {
@@ -84,8 +91,8 @@
           }
        */
       _this.eventEmitter.subscribe('windowUpdated', function(event, options) {
-        // console.log(' >> windowUpdated');
-        // console.log(options);
+        console.log(' >> windowUpdated');
+        console.log(options);
         _this.processWindowUpdated(options);
       });
 
@@ -245,6 +252,7 @@
 
       this.addHistory(new $.HistoryState({
         type: $.HistoryStateType.collection,
+        fragment: window.location.hash,
         data: {
           collection
         }
@@ -297,6 +305,7 @@
 
       this.addHistory(new $.HistoryState({
         type: eventType,
+        fragment: window.location.hash,
         data: {
           collection: this.urlSlicer.collectionName(manifest),
           windowId,
@@ -352,19 +361,77 @@
      * 
      * SET_COLLECTION
      * 
+     * @param event popstate event {
+     *    state: {}, // HistoryState object
+     * }
      */
-    handleUrl: function () {
-      const url = window.location.href;
-      const reqType = this.urlSlicer.getUrlType(url);
-      if (!reqType) {
+    handleUrl: function (event) {
+      const url = window.location.hash;
+      
+
+      const lastHistory = this.historyList[this.historyList.length - 1];
+
+      // If history list is empty, or no event is provided, initialize the viewer to the
+      // state described by the current URL hash
+      if (!event || this.historyList.indexOf(event.state) === -1) {
+        this.applyState(this.urlSlicer.parseUrl(url));
+      }
+
+      // If history list contains this event, pop states off the history list until you 
+      // have popped this event off. Each state should be applied to the viewer in the
+      // order it pops off the list
+
+      
+      
+      
+    },
+
+    applyState: function (state) {
+      const _this = this;
+      const url = state.fragment;
+      if (!state.type) {
         window.alert('Unable to moo this URL: [' + url + ']');
         return;
       }
 
       const collection = this.urlSlicer.collectionFromUri(url);
-      switch (reqType) {
+      let windowConfig;
+
+      switch (state.type) {
         case $.HistoryStateType.collection:
           this.initToCollection(collection);
+          break;
+        case $.HistoryStateType.image_view:
+          this.getCollection(state.data.collection);
+          this.getManifest(state.data.manifest).done(function (manifest) {
+            _this.eventEmitter.publish('ADD_WINDOW', {
+              id: state.data.windowId,
+              manifest,
+              canvasID: state.data.canvas,
+              viewType: 'ImageView'
+            });
+          });
+          break;
+        case $.HistoryStateType.opening_view:
+        this.getCollection(state.data.collection);
+        this.getManifest(state.data.manifest).done(function (manifest) {
+          _this.eventEmitter.publish('ADD_WINDOW', {
+            id: state.data.windowId,
+            manifest,
+            canvasID: state.data.canvas,
+            viewType: 'OpeningView'
+          });
+        });
+          break;
+        case $.HistoryStateType.thumb_view:
+          this.getCollection(state.data.collection);
+          this.getManifest(state.data.manifest).done(manifest => {
+            _this.eventEmitter.publish('ADD_WINDOW', {
+              id: state.data.windowId,
+              manifest,
+              viewType: 'ThumbnailsView'
+            });
+          });
           break;
         default:
           break;
@@ -372,18 +439,59 @@
     },
 
     initToCollection: function (collection) {
-      if (!collection) {
-        console.log('[HistoryController#initToCollection]');
-        collection = this.getLastCollection();
-      }
+      // if (!collection) {
+      //   collection = this.getLastCollection();
+      // }
       // console.log(' >>> MOO ' + collection);
-      this.eventEmitter.publish('SET_COLLECTION', this.urlSlicer.collectionUri(collection));
+      // this.eventEmitter.publish('SET_COLLECTION', this.urlSlicer.collectionUri(collection));
       // this.saveController.set(
       //   'initialCollection',
       //   this.urlSlicer.collectionUri(collection),
       //   { parent: 'currentConfig' }
       // );
       // console.log(' >>> MOO ' + this.saveController.getStateProperty('initialCollection'));
+    },
+
+    getCollection: function (collectionId) {
+      const _this = this;
+      let id = $.genUUID();
+
+      const result = jQuery.Deferred();
+
+      let collectionReturn = (event, data) => {
+        if (data.origin === id) {
+          _this.eventEmitter.unsubscribe('COLLECTION_FOUND', collectionReturn);
+          result.resolve(data.collection);
+        }
+      };
+
+      this.eventEmitter.subscribe('COLLECTION_FOUND', collectionReturn);
+      this.eventEmitter.publish('COLLECTION_REQUESTED', {
+        origin: id,
+        id: collectionId
+      });
+    },
+
+    getManifest: function (manifestId) {
+      const _this = this;
+      let id = $.genUUID();
+
+      const result = jQuery.Deferred();
+
+      let manifestReturn = function (event, data) {
+        if (data.origin === id) {
+          _this.eventEmitter.unsubscribe('MANIFEST_FOUND', manifestReturn);
+          result.resolve(data.manifest);
+        }
+      };
+
+      this.eventEmitter.subscribe('MANIFEST_FOUND', manifestReturn);
+      this.eventEmitter.publish('MANIFEST_REQUESTED', {
+        origin: id,
+        manifestId
+      });
+
+      return result;
     }
   };
 }(Mirador));

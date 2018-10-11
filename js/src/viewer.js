@@ -33,6 +33,7 @@
         'bookmarkPanelVisible': false
       },
       manifests:             [],
+      collections:           [],
       searchController:      null,
       teiUtil: null,
     }, options);
@@ -189,6 +190,37 @@
             _this.eventEmitter.publish("MANIFEST_FOUND", {
               "origin": data.origin,
               "manifest": manifest
+            });
+          });
+        }
+      });
+
+      /**
+       * data: {
+       *    origin: '',
+       *    id: ''
+       * }
+       * 
+       * response: {
+       *    origin: '',
+       *    collection: {}
+       * }
+       */
+      _this.eventEmitter.subscribe('COLLECTION_REQUESTED', (event, data) => {
+        let fromHere = _this.collections.filter(col => col.getId() === data.id);
+        if (fromHere.length > 0) {
+          _this.eventEmitter.publish('COLLECTION_FOUND', {
+            origin: data.origin,
+            collection: fromHere[0]
+          });
+        } else {
+          let col = new $.Collection(data.id);
+          _this.eventEmitter.publish('collectionQueued', col);
+          col.request.done(() => {
+            _this.collections.push(col);
+            _this.eventEmitter.publish('COLLECTION_FOUND', {
+              origin: data.origin,
+              collection: col
             });
           });
         }

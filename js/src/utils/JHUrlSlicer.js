@@ -1,7 +1,7 @@
 (function($) {
   $.JHUrlSlicer = function (options) {
     jQuery.extend(true, this, {
-      baseUrl: null, // Base URL of this viewer
+      baseUrl: null, // Base URL of the IIIF resources
     }, options);
   };
 
@@ -20,11 +20,11 @@
 
       // A URI with no path will always load the base collection specified in the
       // Mirador initial config
-      if (!uri.path() || uri.path() === '' || uri.path() === '/') {
+      if (!uri.hash() || uri.hash() === '' || uri.hash() === '/') {
         return $.HistoryStateType.collection;
       }
 
-      var parts = uri.path().split('/');
+      var parts = uri.hash().split('/');
 
       if (parts.length === 1) {
         return $.HistoryStateType.collection;
@@ -108,9 +108,13 @@
           break;
       }
       
+      data.canvas = this.canvasUri(data.collection, data.manifest, data.canvas);
+      data.manifest = this.manifestUri(data.collection, data.manifest);
+      data.collection = this.collectionUri(data.collection);
       
       return new $.HistoryState({
         type,
+        fragment: url,
         data
       });
     },
@@ -261,14 +265,57 @@
       return frag.split('/')[0];
     },
 
-    collectionUri: function (id) {
-      let uri = new URI(this.baseUrl);
-
-      if (id.indexOf(uri.toString()) >= 0) {
-        return id;
+    /**
+     * @param collection short name of collection
+     */
+    collectionUri: function (collection) {
+      if (!collection) {
+        return;
       }
 
-      uri.path(uri.path() + '/' + id + '/collection');
+      let uri = new URI(this.baseUrl);
+
+      uri.segment(1, collection);
+      uri.segment(2, 'collection');
+
+      return uri.toString();
+    },
+
+    /**
+     * @param collection short name of collection
+     * @param manifest short name of manifest
+     */
+    manifestUri: function (collection, manifest) {
+      if (!manifest) {
+        return;
+      }
+
+      let uri = new URI(this.baseUrl);
+
+      uri.segment(1, collection);
+      uri.segment(2, manifest);
+      uri.segment(3, 'manifest');
+
+      return uri.toString();
+    },
+
+    /**
+     * @param collection short name of collection
+     * @param manifest short name of manifest
+     * @param canvas short name of canvas
+     */
+    canvasUri: function (collection, manifest, canvas) {
+      if (!canvas) {
+        return;
+      }
+
+      let uri = new URI(this.baseUrl);
+
+      uri.segment(1, collection);
+      uri.segment(2, manifest);
+      uri.segment(3, canvas);
+      uri.segment(4, 'canvas');
+
       return uri.toString();
     }
   };

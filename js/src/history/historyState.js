@@ -2,6 +2,7 @@
   $.HistoryState = function (options) {
     jQuery.extend(true, this, {
       type: null, // Must be HistoryStateType
+      fragment: null,
       data: {
         windowId: null,
         collection: null,
