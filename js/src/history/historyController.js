@@ -1,11 +1,11 @@
 (function ($) {
-  $.HistoryController = function(options) {
+  $.HistoryController = function (options) {
     jQuery.extend(true, this, {
       eventEmitter: null,
       urlSlicer: null,
       saveController: null,
       historyList: [] // TODO Potentially use browser's session storage to hold history list so viewer state
-                      // can be recreated when the browser buttons are used to navigate history?
+      // can be recreated when the browser buttons are used to navigate history?
     }, options);
 
     // Since history will be empty at this point, it will default to getting the initially loaded
@@ -38,7 +38,15 @@
       };
     },
 
-    bindEvents: function() {
+    preprocess: function (event, data) {
+      // if (data && data.ignoreHistory) {
+      //   return;
+      // }
+      // console.log('PREPROCESS:::');
+      // console.log(event);
+    },
+
+    bindEvents: function () {
       var _this = this;
 
       /**
@@ -48,7 +56,8 @@
        * 
        * Since this comes from a search widget, we need to stip away the search suffix...
        */
-      _this.eventEmitter.subscribe("BROWSE_COLLECTION", function(event, data) {
+      _this.eventEmitter.subscribe("BROWSE_COLLECTION", function (event, data) {
+        _this.preprocess(event, data);
         data = data.substring(0, data.lastIndexOf('/'));
         _this.triggerCollectionHistory(data);
       });
@@ -61,7 +70,8 @@
        * Fires when the "manifests panel" (book browser) is shown or hidden. "manifestPanelVisible"
        * is a boolean value describing the panel's visibility (true = visible)
        */
-      _this.eventEmitter.subscribe('manifestsPanelVisible.set', function(event, manifestPanelVisible) {
+      _this.eventEmitter.subscribe('manifestsPanelVisible.set', function (event, manifestPanelVisible) {
+        _this.preprocess(event);
         // if TRUE, then user opened the Manifest Browser :: is looking at the collection
         if (manifestPanelVisible) {
           _this.triggerCollectionHistory();
@@ -90,10 +100,11 @@
             annotationState: 'off', // Ignore this as well, used for annotation authoring
           }
        */
-      _this.eventEmitter.subscribe('windowUpdated', function(event, options) {
-        console.log(' >> windowUpdated');
-        console.log(options);
-        _this.processWindowUpdated(options);
+      _this.eventEmitter.subscribe('windowUpdated', function (event, options) {
+        _this.preprocess(event);
+        // console.log(' >> windowUpdated');
+        // console.log(options);
+        _this.processWindowUpdated(event, options);
       });
 
       /**
@@ -128,12 +139,12 @@
        *    element: {}, // the jQuery window element
        *  }
        */
-      _this.eventEmitter.subscribe('WINDOW_ELEMENT_UPDATED', function(event, options) {
-        
+      _this.eventEmitter.subscribe('WINDOW_ELEMENT_UPDATED', function (event, options) {
+
       });
 
-      _this.eventEmitter.subscribe('windowSlotAddressUpdated', function(event, options) {
-        
+      _this.eventEmitter.subscribe('windowSlotAddressUpdated', function (event, options) {
+
       });
 
       // _this.eventEmitter.subscribe('manifestQueued', function(event, manifestObject, repository) {
@@ -155,8 +166,8 @@
        *    ]
        *  }
        */
-      _this.eventEmitter.subscribe("slotsUpdated", function(event, options) {
-        
+      _this.eventEmitter.subscribe("slotsUpdated", function (event, options) {
+
       });
 
       /**
@@ -172,20 +183,20 @@
             "id": "fc06f74b-d2ef-4f2d-9bd2-2c66a0232543"
           }
        */
-      _this.eventEmitter.subscribe("layoutChanged", function(event, layoutDescription) {
-        
+      _this.eventEmitter.subscribe("layoutChanged", function (event, layoutDescription) {
+
       });
 
-      _this.eventEmitter.subscribe("windowSlotAdded", function(event, options) {
-        
+      _this.eventEmitter.subscribe("windowSlotAdded", function (event, options) {
+
       });
 
-      _this.eventEmitter.subscribe("windowsRemoved", function(event) {
-        
+      _this.eventEmitter.subscribe("windowsRemoved", function (event) {
+
       });
 
-      _this.eventEmitter.subscribe("windowRemoved", function(event, windowID) {
-        
+      _this.eventEmitter.subscribe("windowRemoved", function (event, windowID) {
+
       });
 
       /**
@@ -215,11 +226,11 @@
        * }
        */
       _this.eventEmitter.subscribe('SEARCH', function (event, data) {
-        
+
       });
 
       _this.eventEmitter.subscribe('GET_FACETS', function (event, data) {
-        
+
       });
 
       /**
@@ -230,7 +241,7 @@
        *  }
        */
       _this.eventEmitter.subscribe('CANVAS_ID_UPDATED', function (event, data) {
-        
+
       });
 
       /**
@@ -240,8 +251,8 @@
        *    "tabIndex":1
        * }
        */
-      _this.eventEmitter.subscribe('TAB_SELECTED', function (event, data) { 
-        
+      _this.eventEmitter.subscribe('TAB_SELECTED', function (event, data) {
+
       });
     },
 
@@ -268,9 +279,10 @@
      *    - loadedManifest
      *    - slotAddress
      * 
+     * @param e the WindowUpdated event object
      * @param event windowUpdated event data
      */
-    processWindowUpdated: function (event) {
+    processWindowUpdated: function (e, event) {
       if (!event.viewType) {
         // Not concerned with events not related to view changes
         return;
@@ -303,18 +315,22 @@
           return;
       }
 
-      this.addHistory(new $.HistoryState({
+      const freshState = new $.HistoryState({
         type: eventType,
         fragment: window.location.hash,
         data: {
+          ignoreHistory: true,
           collection: this.urlSlicer.collectionName(manifest),
           windowId,
           manifest,
           canvas,
           viewType
         }
-      }));
+      });
 
+      if (!event.ignoreHistory) {
+        this.addHistory(freshState);
+      }
     },
 
     /**
@@ -333,6 +349,9 @@
     },
 
     addHistory: function (event) {
+      console.log(' ### Adding history');
+      console.log(event);
+      console.log('\n');
       let title = this.urlSlicer.stateTitle(event);
       let url = this.urlSlicer.toUrl(event);
 
@@ -367,7 +386,7 @@
      */
     handleUrl: function (event) {
       const url = window.location.hash;
-      
+
 
       const lastHistory = this.historyList[this.historyList.length - 1];
 
@@ -375,15 +394,16 @@
       // state described by the current URL hash
       if (!event || this.historyList.indexOf(event.state) === -1) {
         this.applyState(this.urlSlicer.parseUrl(url));
+        return;
       }
 
       // If history list contains this event, pop states off the history list until you 
       // have popped this event off. Each state should be applied to the viewer in the
       // order it pops off the list
+      console.log(' ### ');
 
-      
-      
-      
+
+
     },
 
     applyState: function (state) {
@@ -408,20 +428,22 @@
               id: state.data.windowId,
               manifest,
               canvasID: state.data.canvas,
-              viewType: 'ImageView'
+              viewType: 'ImageView',
+              ignoreHistory: true
             });
           });
           break;
         case $.HistoryStateType.opening_view:
-        this.getCollection(state.data.collection);
-        this.getManifest(state.data.manifest).done(function (manifest) {
-          _this.eventEmitter.publish('ADD_WINDOW', {
-            id: state.data.windowId,
-            manifest,
-            canvasID: state.data.canvas,
-            viewType: 'OpeningView'
+          this.getCollection(state.data.collection);
+          this.getManifest(state.data.manifest).done(function (manifest) {
+            _this.eventEmitter.publish('ADD_WINDOW', {
+              id: state.data.windowId,
+              manifest,
+              canvasID: state.data.canvas,
+              viewType: 'OpeningView',
+              ignoreHistory: true
+            });
           });
-        });
           break;
         case $.HistoryStateType.thumb_view:
           this.getCollection(state.data.collection);
@@ -429,7 +451,8 @@
             _this.eventEmitter.publish('ADD_WINDOW', {
               id: state.data.windowId,
               manifest,
-              viewType: 'ThumbnailsView'
+              viewType: 'ThumbnailsView',
+              ignoreHistory: true
             });
           });
           break;

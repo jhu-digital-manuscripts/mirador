@@ -253,19 +253,19 @@
       _this.bindNavigation();
       switch(focusState) {
         case 'ThumbnailsView':
-          _this.toggleThumbnails(_this.canvasID);
+          _this.toggleThumbnails(_this.canvasID, _this.ignoreHistory);
           break;
         case 'ImageView':
-          _this.toggleImageView(_this.canvasID);
+          _this.toggleImageView(_this.canvasID, _this.ignoreHistory);
           break;
         case 'BookView':
-          _this.toggleBookView(_this.canvasID);
+          _this.toggleBookView(_this.canvasID, _this.ignoreHistory);
           break;
         case 'ScrollView':
-          _this.toggleScrollView(_this.canvasID);
+          _this.toggleScrollView(_this.canvasID, _this.ignoreHistory);
           break;
         case 'RelatedTextView':
-          _this.toggleRelatedTextView();
+          _this.toggleRelatedTextView(_this.ignoreHistory);
           break;
         default:
           break;
@@ -300,6 +300,8 @@
       if (this.canvasID) {
         _this.eventEmitter.publish(('currentCanvasIDUpdated.' + _this.id), this.canvasID);
       }
+
+      _this.ignoreHistory = false;
     },
 
     destroy:function(){
@@ -730,7 +732,16 @@
       this.togglePanels('overlay', !currentState, 'MetadataView', focusState);
     },
 
-    toggleFocus: function(focusState, imageMode) {
+    /**
+     * 
+     * @param {*} focusState 
+     * @param {*} imageMode 
+     * @param {*} ignoreHistory NOTE:: do not use the value of 'this.ignoreHistory' as we
+     *            DO want to capture any user interactions. This value should only be set
+     *            when these functions are called from the window's #init() when the 
+     *            window is created/modified from history
+     */
+    toggleFocus: function(focusState, imageMode, ignoreHistory) {
       var _this = this;
 
       this.viewType = focusState;
@@ -754,11 +765,12 @@
         canvasID: _this.canvasID,
         imageMode: _this.currentImageMode,
         loadedManifest: _this.manifest.jsonLd['@id'],
-        slotAddress: _this.slotAddress
+        slotAddress: _this.slotAddress,
+        ignoreHistory
       });
     },
 
-    toggleThumbnails: function(canvasID) {
+    toggleThumbnails: function(canvasID, ignoreHistory) {
       this.canvasID = canvasID;
       if (this.focusModules.ThumbnailsView === null) {
         this.focusModules.ThumbnailsView = new $.ThumbnailsView({
@@ -774,10 +786,10 @@
         var view = this.focusModules.ThumbnailsView;
         view.updateImage(canvasID);
       }
-      this.toggleFocus('ThumbnailsView', '');
+      this.toggleFocus('ThumbnailsView', '', ignoreHistory);
     },
 
-    toggleRelatedTextView: function() {
+    toggleRelatedTextView: function(ignoreHistory) {
       if (!this.manifest.jsonLd.related) {
         return;
       }
@@ -794,10 +806,10 @@
         // var view = this.focusModules.RelatedTextView;
         // view.
       }
-      this.toggleFocus('RelatedTextView', '');
+      this.toggleFocus('RelatedTextView', '', ignoreHistory);
     },
 
-    toggleImageView: function(canvasID) {
+    toggleImageView: function(canvasID, ignoreHistory) {
       this.canvasID = canvasID;
       if (this.focusModules.ImageView === null) {
         this.focusModules.ImageView = new $.ImageView({
@@ -820,10 +832,10 @@
         var view = this.focusModules.ImageView;
         view.updateImage(canvasID);
       }
-      this.toggleFocus('ImageView', 'ImageView');
+      this.toggleFocus('ImageView', 'ImageView', ignoreHistory);
     },
 
-    toggleBookView: function(canvasID) {
+    toggleBookView: function(canvasID, ignoreHistory) {
       this.canvasID = canvasID;
       if (this.focusModules.BookView === null) {
         this.focusModules.BookView = new $.BookView({
@@ -841,10 +853,10 @@
         var view = this.focusModules.BookView;
         view.updateImage(canvasID);
       }
-      this.toggleFocus('BookView', 'BookView');
+      this.toggleFocus('BookView', 'BookView', ignoreHistory);
     },
 
-    toggleScrollView: function(canvasID) {
+    toggleScrollView: function(canvasID, ignoreHistory) {
       this.canvasID = canvasID;
       if (this.focusModules.ScrollView === null) {
         var containerHeight = this.element.find('.view-container').height();
@@ -862,7 +874,7 @@
         var view = this.focusModules.ScrollView;
         view.updateImage(canvasID);
       }
-      this.toggleFocus('ScrollView', '');
+      this.toggleFocus('ScrollView', '', ignoreHistory);
     },
 
     updateFocusImages: function(imageList) {
@@ -870,7 +882,7 @@
       if (this.bottomPanel) { this.bottomPanel.updateFocusImages(this.focusImages); }
     },
 
-    setCurrentCanvasID: function(canvasID) {
+    setCurrentCanvasID: function(canvasID, ignoreHistory) {
       var _this = this;
       this.canvasID = canvasID;
       _this.eventEmitter.publish('removeTooltips.' + _this.id);
