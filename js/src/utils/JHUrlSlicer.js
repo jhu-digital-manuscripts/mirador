@@ -56,6 +56,7 @@
       }
     },
 
+    // TODO : query not parsed yet
     parseUrl: function(url) {
       if (!url) {
         throw new Error('[JHUrlSlicer#parseUrl] No URL specified');
@@ -160,10 +161,32 @@
             this.collectionName(options.data.collection)
           );
         case $.HistoryStateType.collection_search:
-          // return 'collection_search:' + options.data.query;
+          let searcher = this.processSearchObj(options.data.search);
+
+          return uri.fragment(
+            this.collectionName(options.data.collection)
+          ).query({
+            q: searcher.query,
+            o: searcher.offset,
+            m: searcher.maxPerPage,
+            s: searcher.sortOrder,
+            type: searcher.type
+            // TODO how to encode advanced search rows???
+          });
         case $.HistoryStateType.manifest_search:
-            break;
-          // return 'manifest_search:' + options.data.query;
+          let searcher2 = this.processSearchObj(options.data.search);
+
+          return uri.fragment(
+            this.collectionName(options.data.manifeset) + '/' + 
+            this.manifestName(options.data.manifest)
+          ).query({
+            q: searcher2.query,
+            o: searcher2.offset,
+            m: searcher2.maxPerPage,
+            s: searcher2.sortOrder,
+            type: searcher2.type
+            // TODO how to encode advanced search rows???
+          });
         case $.HistoryStateType.thumb_view:
         case $.HistoryStateType.scroll_view:
           return uri.fragment(
@@ -182,6 +205,20 @@
         default:
           return undefined;
       }
+    },
+
+    processSearchObj: function (searcher) {
+      if (!searcher.offset) {
+        delete searcher.offset;
+      }
+      if (!searcher.maxPerPage) {
+        delete searcher.maxPerPage;
+      }
+      if (!searcher.sortOrder) {
+        delete searcher.sortOrder;
+      }
+
+      return searcher;
     },
 
     /**

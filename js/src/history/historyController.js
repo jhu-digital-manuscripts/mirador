@@ -1,4 +1,7 @@
 (function ($) {
+  /*
+   *
+   */
   $.HistoryController = function (options) {
     jQuery.extend(true, this, {
       eventEmitter: null,
@@ -30,7 +33,6 @@
         _this.handleUrl();
       });
 
-      // this.onpopstate = _this.handleUrl();
       window.onpopstate = function (event) {
         console.log('onpop MOO');
         console.log(event);
@@ -39,11 +41,7 @@
     },
 
     preprocess: function (event, data) {
-      // if (data && data.ignoreHistory) {
-      //   return;
-      // }
-      // console.log('PREPROCESS:::');
-      // console.log(event);
+
     },
 
     bindEvents: function () {
@@ -57,7 +55,6 @@
        * Since this comes from a search widget, we need to stip away the search suffix...
        */
       _this.eventEmitter.subscribe("BROWSE_COLLECTION", function (event, data) {
-        _this.preprocess(event, data);
         data = data.substring(0, data.lastIndexOf('/'));
         _this.triggerCollectionHistory(data);
       });
@@ -71,7 +68,6 @@
        * is a boolean value describing the panel's visibility (true = visible)
        */
       _this.eventEmitter.subscribe('manifestsPanelVisible.set', function (event, manifestPanelVisible) {
-        _this.preprocess(event);
         // if TRUE, then user opened the Manifest Browser :: is looking at the collection
         if (manifestPanelVisible) {
           _this.triggerCollectionHistory();
@@ -101,7 +97,6 @@
           }
        */
       _this.eventEmitter.subscribe('windowUpdated', function (event, options) {
-        _this.preprocess(event);
         // console.log(' >> windowUpdated');
         // console.log(options);
         _this.processWindowUpdated(event, options);
@@ -226,7 +221,22 @@
        * }
        */
       _this.eventEmitter.subscribe('SEARCH', function (event, data) {
-
+        /*
+         * In order to initialize a search, we will first need to WAIT for the UI to init
+         * and settle. Likely we can wait for SEARCH_SERVICE_FOUND event for the search
+         * service that matches the service of the current URL fragment.
+         * 
+         * We will need to know the state to leave the viewer panel (image view, book view, thumbnails, etc).
+         * Can we do this simply by inspecting the 'historyList' - looking backwards for the last event
+         * that involved the particular collection, manifest, and canvas? I think that a history state would
+         * _always_ be found, as a user must do something in the viewer to initiate a search.
+         * 
+         * In the case of a collection search, we will need to determine the ID used by the search widget
+         * for search events. This is a UUID generated when the collection search widget is created
+         */
+        console.log(' ### SEARCH');
+        console.log(data);
+        _this.processSearch(data);
       });
 
       _this.eventEmitter.subscribe('GET_FACETS', function (event, data) {
@@ -349,9 +359,6 @@
     },
 
     addHistory: function (event) {
-      console.log(' ### Adding history');
-      console.log(event);
-      console.log('\n');
       let title = this.urlSlicer.stateTitle(event);
       let url = this.urlSlicer.toUrl(event);
 
@@ -515,6 +522,34 @@
       });
 
       return result;
+    },
+
+    processSearch: function(data) {
+      if (data.ignoreHistory) {
+        return;
+      }
+
+      const searchedObject = data.service.substring(0, data.service.length - 9);
+      const searchManifest = searchedObject.includes('manifest');
+      const isBasic = !data.ui.advanced;
+
+      this.addHistory(new $.HistoryState({
+        type: searchManifest ? $.HistoryStateType.manifest_search : $.HistoryStateType.collection_search,
+        fragment: window.location.hash,
+        data: {
+          windowId: data.origin,
+          collection: !searchManifest ? searchedObject : 'moo',
+          manifest: searchManifest ? searchedObject : undefined,
+          search: {
+            query: isBasic ? data.ui.basic : data.query,
+            offset: data.offset,
+            maxPerPage: data.maxPerPage,
+            sortOrder: data.sortOrder,
+            type: isBasic ? 'basic' : 'advanced',
+            rows: data.ui.advanced ? data.ui.advanced.rows : undefined
+          }
+        }
+      }));
     }
   };
 }(Mirador));
