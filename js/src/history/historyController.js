@@ -394,6 +394,10 @@
     handleUrl: function (event) {
       const url = window.location.hash;
 
+      if (!url || url === '') {
+        this.triggerCollectionHistory();
+        return;
+      }
 
       const lastHistory = this.historyList[this.historyList.length - 1];
 
