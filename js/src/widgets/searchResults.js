@@ -145,8 +145,7 @@
         var windowConfig = _this.queuedAction.windowConfig;
         windowConfig.manifest = data.manifest;
         windowConfig.searchContext = _this.context;
-console.log(' MOOING ');
-console.log(windowConfig);
+
         switch (_this.queuedAction.target) {
           case "above":
             _this.eventEmitter.publish(

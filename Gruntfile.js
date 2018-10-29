@@ -57,7 +57,8 @@ module.exports = function(grunt) {
     'js/src/workspaces/*.js',
     'js/src/widgets/*.js',
     'js/src/utils/*.js',
-    'js/src/history/*.js'
+    'js/src/history/*.js',
+    'js/src/jhcomponents/*.js'
   ];
 
   // ----------

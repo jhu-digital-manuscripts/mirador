@@ -833,7 +833,7 @@
       };
     },
 
-    initFromContext: function() {console.log('[SW#initFromContext]');
+    initFromContext: function() {
       // this.element.find(".search-within-object-select").val(this.context.search.searchService);
 
       if (this.context.search.sortOrder) {

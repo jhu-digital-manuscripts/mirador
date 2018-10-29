@@ -32,23 +32,35 @@
       this.registerPartials();
 
       this.element = jQuery(Handlebars.compile("{{> advancedSearch}}")({
-        "search": _this.searchService
+        "search": _this.context.searchService
       })).appendTo(this.appendTo);
-
-      this.element.tooltip({
-        items: ".search-description-icon",
-        content: Handlebars.compile("{{> searchDescription}}")(this.searchService.config.search.settings.fields),
-        position: { my: "left+20 top", at: "right top-50" }
-      });
 
       if (this.context && this.context.ui && this.context.ui.advanced) {
         this.initFromContext();
       }
 
+      // this.setTooltip(this.searchService);
       this.bindEvents();
       this.listenForActions();
-      this.addAdvancedSearchLine();
+
+      // if (this.context && this.context.searchService) {
+      //   this.addAdvancedSearchLine();
+      // }
     },
+
+    setTooltip: function (searchService) {
+      this.element.tooltip({
+        items: ".search-description-icon",
+        content: Handlebars.compile("{{> searchDescription}}")(searchService.config.search.settings.fields),
+        position: { my: "left+20 top", at: "right top-50" }
+      });
+    },
+
+    // setSearchService: function (searchService) {
+    //   this.searchService = searchService;
+    //   this.setTooltip(searchService);
+    //   this.addAdvancedSearchLine();
+    // },
 
     bindEvents: function() {
       var _this = this;
@@ -94,9 +106,16 @@
       this.element = null;
     },
 
-    setContext: function(context) {
+    /**
+     * 
+     * @param context the new context
+     * @param {boolean} refresh should this context change rerender the widget?
+     */
+    setContext: function(context, refresh) {
       this.context = context;
-      this.initFromContext();
+      if (refresh) {
+        this.initFromContext();
+      }
     },
 
     hasQuery: function() {
@@ -132,16 +151,19 @@
           child = jQuery(child);
 
           parts.push({
-            op: _this.searchService.config.query.delimiters[operation],
+            op: _this.context.searchService.config.query.delimiters[operation],
             category: child.data('query'),
             term: child.val()
           });
         });
       });
 
-      return $.generateQuery(parts, this.searchService.config.query.delimiters.field);
+      return $.generateQuery(parts, this.context.searchService.config.query.delimiters.field);
     },
 
+    /**
+     * @returns array of rows active in the widget
+     */
     searchState: function() {
       var adv = [];
       this.element.find(".advanced-search-line").each(function(row, line) {
@@ -171,29 +193,36 @@
 
     initFromContext: function() {
       var _this = this;
-      var ui = this.context.ui.advanced;
 
-      var rowNums = [];
-      this.context.ui.advanced.rows.forEach(function(input, index, arr) {
-        if (rowNums.indexOf(input.row) < 0) {   // Add new line if needed
-          _this.addAdvancedSearchLine();
-          rowNums.push(input.row);
-        }
+      if (this.context.ui && this.context.ui.advanced) {
+        var rowNums = [];
+        this.context.ui.advanced.rows.forEach(function(input, index, arr) {
+          if (rowNums.indexOf(input.row) < 0) {   // Add new line if needed
+            _this.addAdvancedSearchLine();
+            rowNums.push(input.row);
+          }
 
-        var theRow = _this.element.find(".advanced-search-line").last();
-        var user_inputs = theRow.find('.advanced-search-inputs');
-        var inputClass = ".advanced-search-" + input.category;
+          var theRow = _this.element.find(".advanced-search-line").last();
+          var user_inputs = theRow.find('.advanced-search-inputs');
+          var inputClass = ".advanced-search-" + input.category;
 
-        theRow.find(".advanced-search-operators").val(input.operation);
-        theRow.find(".advanced-search-categories").val(input.category);
-        theRow.find(input.type + inputClass).val(input.term);
+          theRow.find(".advanced-search-operators").val(input.operation);
+          theRow.find(".advanced-search-categories").val(input.category);
+          theRow.find(input.type + inputClass).val(input.term);
 
-        // Hide all input/select fields
-        user_inputs.children().hide();
-        user_inputs
-            .find(_this.classNamesToSelector(_this.searchService.config.getField(input.category).class))
-            .show();
-      });
+          // Hide all input/select fields
+          user_inputs.children().hide();
+          user_inputs
+              .find(_this.classNamesToSelector(_this.context.searchService.config.getField(input.category).class))
+              .show();
+        });
+      } else if (this.context.searchService && this.context.searchService.config) {
+        this.addAdvancedSearchLine();
+      }
+    },
+
+    clearRows: function () {
+      this.element.find('.advanced-search-line').remove();
     },
 
     /**
@@ -204,8 +233,8 @@
       var template = Handlebars.compile('{{> advancedSearchLine }}');
 
       var templateData = {
-        'search': this.searchService.config.search,
-        'query': this.searchService.config.query
+        'search': this.context.searchService.config.search,
+        'query': this.context.searchService.config.query
       };
       // templateData.search.categories.choices = this.searchService.query.fields;
 
@@ -223,7 +252,7 @@
 
       // Hide all inputs except for the Default choice
       // Makes sure ENTER key presses activate advanced search
-      this.searchService.config.search.settings.fields.forEach(function (field) {
+      this.context.searchService.config.search.settings.fields.forEach(function (field) {
         var element = line.find(_this.classNamesToSelector(field.class));
 
         element.keypress(function(event) {
@@ -259,7 +288,7 @@
         // Hide all input/select fields
         user_inputs.children().hide();
         user_inputs
-            .find(_this.classNamesToSelector(_this.searchService.config.getField(jSelector.val()).class))
+            .find(_this.classNamesToSelector(_this.context.searchService.config.getField(jSelector.val()).class))
             .show();
 
         _this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + _this.windowId);
