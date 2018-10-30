@@ -1095,6 +1095,7 @@
       });
 
       this.element.find('.mirador-icon-home').on('click', function() {
+        console.log('MOO');
         if (!_this.pinned)
           _this.eventEmitter.publish("ADD_ITEM_FROM_WINDOW", _this.id);
       });

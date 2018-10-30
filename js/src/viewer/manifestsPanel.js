@@ -99,7 +99,7 @@
 
       // handle subscribed events
       _this.eventEmitter.subscribe('manifestsPanelVisible.set', function (_, data) {
-        _this.onPanelVisible(_, data.visible);
+        _this.onPanelVisible(_, data);
       });
 
       _this.eventEmitter.subscribe('manifestReceived', function (event, newManifest) {

@@ -135,11 +135,21 @@
        * 
        * Fires when the "manifests panel" (book browser) is shown or hidden. "manifestPanelVisible"
        * is a boolean value describing the panel's visibility (true = visible)
+       * 
+       * The 'data' param can take two forms, normally, this event sourced from the viewer itself
+       * will set data to a boolean value. If this event is published from this controller, it will
+       * be set to an object: {
+       *    visible: {boolean},
+       *    ignoreHistory: {boolean}
+       * }
        */
       _this.eventEmitter.subscribe('manifestsPanelVisible.set', function (event, data) {
         // if TRUE, then user opened the Manifest Browser :: is looking at the collection
         // console.log('manifestsPanelVisible.set (' + manifestPanelVisible + ')');
-        if (data.visible && !data.ignoreHistory) {
+        if (data.ignoreHistory) {
+          return;
+        }
+        if (data === true) {
           _this.triggerCollectionHistory();
         }
       });
