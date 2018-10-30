@@ -136,10 +136,10 @@
        * Fires when the "manifests panel" (book browser) is shown or hidden. "manifestPanelVisible"
        * is a boolean value describing the panel's visibility (true = visible)
        */
-      _this.eventEmitter.subscribe('manifestsPanelVisible.set', function (event, manifestPanelVisible) {
+      _this.eventEmitter.subscribe('manifestsPanelVisible.set', function (event, data) {
         // if TRUE, then user opened the Manifest Browser :: is looking at the collection
         // console.log('manifestsPanelVisible.set (' + manifestPanelVisible + ')');
-        if (manifestPanelVisible) {
+        if (data.visible && !data.ignoreHistory) {
           _this.triggerCollectionHistory();
         }
       });
@@ -552,7 +552,10 @@
       this.eventEmitter.publish('PICK_SEARCH_SERVICE', {
         service
       });
-      // this.eventEmitter.publish('manifestsPanelVisible.set', true);
+      this.eventEmitter.publish('manifestsPanelVisible.set', {
+        visible: true,
+        ignoreHistory: true
+      });
     },
 
     getCollection: function (collectionId) {

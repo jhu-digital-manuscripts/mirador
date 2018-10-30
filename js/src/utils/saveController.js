@@ -251,8 +251,8 @@
       // available data to update the appropriate
       // field in the stored config.
 
-      _this.eventEmitter.subscribe('manifestsPanelVisible.set', function(event, manifestPanelVisible) {
-        _this.set("manifestPanelVisible", manifestPanelVisible, {parent: "currentConfig"} );
+      _this.eventEmitter.subscribe('manifestsPanelVisible.set', function(event, data) {
+        _this.set("manifestPanelVisible", data.visible, {parent: "currentConfig"} );
       });
 
       _this.eventEmitter.subscribe('windowUpdated', function(event, options) {
