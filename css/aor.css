@@ -317,7 +317,7 @@
   width: 100%;
   margin-bottom: 12px;
 }
-.searchResults  {
+.search-container  {
   overflow: auto;
   width: 310px;
   padding: 10px;
