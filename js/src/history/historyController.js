@@ -1,6 +1,16 @@
 (function ($) {
-  /*
-   *
+  /**
+   * EVENTS
+   * subscriptions
+   *  > SWITCH_SEARCH_SERVICE
+   *  > manifestsPanelVisible.set
+   *  > windowUpdated
+   *  > search
+   * 
+   * publish
+   *  > SWITCH_SEARCH_SERVICE (changes search context to use a particular search service)
+   *  > PICK_SEARCH_SERVICE (tells the search picker to select a collection in the UI)
+   *  > ADD_WINDOW (spawns window of a known configuration, such as to a particular page in a book)
    */
   $.HistoryController = function (options) {
     jQuery.extend(true, this, {
@@ -13,8 +23,8 @@
 
     // Since history will be empty at this point, it will default to getting the initially loaded
     // collection from the Mirador config
-    const initCol = this.getLastCollection();
-    let uri = new URI(initCol);
+    this.initialCollection = this.getLastCollection();
+    let uri = new URI(this.initialCollection);
     uri.path(uri.path().split('/')[1]);
 
     this.urlSlicer = new $.JHUrlSlicer({
@@ -28,36 +38,95 @@
     init: function () {
       let _this = this;
 
-      jQuery(document).ready(function () {
+      this.listenForStart().then(() => {
         _this.bindEvents();
         _this.handleUrl();
       });
 
-      window.onpopstate = function (event) {
-        console.log('onpop MOO');
-        console.log(event);
+      window.onpopstate = (event) => {
         _this.handleUrl(event);
       };
     },
 
-    preprocess: function (event, data) {
+    // preprocess: function (event, data) {
 
+    // },
+
+    /*
+     * One issue to address is when to start this history controller. We can't simply start listening 
+     * for history events when Mirador is initially rendered. Instead, we have to wait until we know
+     * data is loaded, so that various context changes can be applied to the UI correctly.
+     * 
+     * We have access to the list of data that Mirador was initially configured to load. This controller
+     * can then listen for 'manifestReceived' and 'collectionReceived' events until all of the
+     * initially configured data has been fulfilled. At that point, the controller can start listening
+     * for events.
+     */
+    listenForStart: function () {
+      const _this = this;
+      const initCol = window.location.hash ? 
+          this.urlSlicer.parseUrl(window.location.hash).data.collection :
+          this.initialCollection;
+      
+      let data = this.saveController.get('data', 'originalConfig');
+      return new Promise((resolve, reject) => {
+        const colHandler = (event, collection) => {
+          // console.log('   >>> ' + collection.getId());
+          const index = data.findIndex(el => el.collectionUri === collection.getId());
+          if (index !== -1) {
+            data.splice(index, 1);
+            // if (data.length === 0) {
+            //   resolve();
+            // }
+          }
+          if (data.length === 0 && collection.getId() === initCol) {
+            resolve();
+          }
+        };
+        // const manHandler = (event, manifest) => {
+        //   const index = data.findIndex(el => el.manifestUri === manifest.getId());
+        //   if (index !== -1) {
+        //     data.splice(index, 1);
+        //     if (data.length === 0) {
+        //       resolve();
+        //     }
+        //   }
+        // };
+
+        _this.eventEmitter.subscribe('collectionReceived', colHandler);
+        // _this.eventEmitter.subscribe('manifestHandler', manHandler);
+      });
     },
 
     bindEvents: function () {
       var _this = this;
 
-      /**
-       * This event fires when the user selects a collection to focus on from the ManifestsPanel
-       * "Choose Collection" dropdown. This cannot entirely be used to change the collection 
-       * history, but is used to change the specific collection in the history.
-       * 
-       * Since this comes from a search widget, we need to stip away the search suffix...
-       */
-      _this.eventEmitter.subscribe("BROWSE_COLLECTION", function (event, data) {
-        data = data.substring(0, data.lastIndexOf('/'));
-        _this.triggerCollectionHistory(data);
+      _this.eventEmitter.subscribe('SWITCH_SEARCH_SERVICE', (event, data) => {
+        if (!data.origin && !data.ignoreHistory) { // undefined origin equates to collection search
+          // if (!_this.initialized) {
+          //   _this.initialized = true;
+          //   return;
+          // }
+          // console.log('History Controller ### switch search service :: ' + data.service.id);
+          // 'data.service' is the search service ID, strip out the search part of the URL to get the collection
+          let url = typeof data.service === 'string' ? data.service : data.service.id;
+          
+          _this.triggerCollectionHistory(url.substring(0, url.lastIndexOf('/')));
+        }
       });
+
+      // /**
+      //  * This event fires when the user selects a collection to focus on from the ManifestsPanel
+      //  * "Choose Collection" dropdown. This cannot entirely be used to change the collection 
+      //  * history, but is used to change the specific collection in the history.
+      //  * 
+      //  * Since this comes from a search widget, we need to stip away the search suffix...
+      //  */
+      // _this.eventEmitter.subscribe("BROWSE_COLLECTION", function (event, data) {
+      //   data = data.substring(0, data.lastIndexOf('/'));
+      //   console.log('BROWSE_COLLECTION :: ' + data);
+      //   // _this.triggerCollectionHistory(data);
+      // });
 
       /**
        * This will generally be used to change the history state to denote when a user is looking
@@ -69,6 +138,7 @@
        */
       _this.eventEmitter.subscribe('manifestsPanelVisible.set', function (event, manifestPanelVisible) {
         // if TRUE, then user opened the Manifest Browser :: is looking at the collection
+        // console.log('manifestsPanelVisible.set (' + manifestPanelVisible + ')');
         if (manifestPanelVisible) {
           _this.triggerCollectionHistory();
         }
@@ -234,8 +304,8 @@
          * In the case of a collection search, we will need to determine the ID used by the search widget
          * for search events. This is a UUID generated when the collection search widget is created
          */
-        console.log(' ### SEARCH');
-        console.log(data);
+        // console.log(' ### SEARCH');
+        // console.log(data);
         _this.processSearch(data);
       });
 
@@ -270,7 +340,7 @@
       if (!collection) {
         collection = this.getLastCollection();
       }
-
+      // console.log('Trigger collection history :: ' + collection);
       this.addHistory(new $.HistoryState({
         type: $.HistoryStateType.collection,
         fragment: window.location.hash,
@@ -363,6 +433,7 @@
       let url = this.urlSlicer.toUrl(event);
 
       if (url) {
+        // console.log('Adding history :: ' + url);
         window.history.pushState(event, title, url);
         this.historyList.push(event);
       } else {
@@ -393,7 +464,7 @@
      */
     handleUrl: function (event) {
       const url = window.location.hash;
-
+      // console.log('Handle URL :: ' + url);
       if (!url || url === '') {
         this.triggerCollectionHistory();
         return;
@@ -473,17 +544,15 @@
     },
 
     initToCollection: function (collection) {
-      // if (!collection) {
-      //   collection = this.getLastCollection();
-      // }
-      // console.log(' >>> MOO ' + collection);
-      // this.eventEmitter.publish('SET_COLLECTION', this.urlSlicer.collectionUri(collection));
-      // this.saveController.set(
-      //   'initialCollection',
-      //   this.urlSlicer.collectionUri(collection),
-      //   { parent: 'currentConfig' }
-      // );
-      // console.log(' >>> MOO ' + this.saveController.getStateProperty('initialCollection'));
+      const service = this.urlSlicer.collectionUri(collection) + '/jhsearch';
+      this.eventEmitter.publish('SWITCH_SEARCH_SERVICE', {
+        service,
+        ignoreHistory: true
+      });
+      this.eventEmitter.publish('PICK_SEARCH_SERVICE', {
+        service
+      });
+      // this.eventEmitter.publish('manifestsPanelVisible.set', true);
     },
 
     getCollection: function (collectionId) {

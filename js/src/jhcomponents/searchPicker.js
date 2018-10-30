@@ -19,6 +19,8 @@
 
       searchController: null,
       selected: null,
+
+      dataInitialized: false
     }, options);
 
     this.init();
@@ -38,14 +40,18 @@
     bindEvents: function () {
       const _this = this;
 
-      this.eventEmitter.subscribe("RELATED_SEARCH_SERVICES_FOUND." + this.windowId, function(event, data) {
+      this.eventEmitter.subscribe("RELATED_SEARCH_SERVICES_FOUND." + this.windowId, function (event, data) {
         /*
          * Add search service ID to list.
          * Fetch info.json only when that service is selected for the first time.
          */
-        data.services.forEach(function(service) {
-          _this.addSearchService(service);
-        });
+        data.services.forEach(service => _this.addSearchService(service));
+      });
+
+      this.eventEmitter.subscribe('PICK_SEARCH_SERVICE', (event, data) => {
+        if (data.origin === _this.windowId) {
+          
+        }
       });
     },
 
@@ -68,10 +74,11 @@
       }
     },
 
-    switchSearchServices: function (service) {
+    switchSearchServices: function (service, ignoreHistory) {
       this.eventEmitter.publish('SWITCH_SEARCH_SERVICE', {
         origin: this.windowId,
-        service
+        service,
+        ignoreHistory
       });
       // this.element.find('.search-within-object-select').val(service.id);
     },
@@ -110,7 +117,7 @@
       if ((this.context && this.context.searchService === id) || !this.advancedSearchSet) {
         // When adding a search service, if the ID of the service matches the ID of the initialization value, 
         // switch to it.
-        this.switchSearchServices(service);
+        this.switchSearchServices(service, true);
         if (!this.advancedSearchSet) {
           this.listenForActions();
         }
