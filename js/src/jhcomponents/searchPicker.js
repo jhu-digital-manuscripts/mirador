@@ -50,7 +50,7 @@
 
       this.eventEmitter.subscribe('PICK_SEARCH_SERVICE', (event, data) => {
         if (data.origin === _this.windowId) {
-          
+          _this.selectInUI(data.service);
         }
       });
     },
@@ -72,6 +72,12 @@
           change: selectChange
         });
       }
+    },
+
+    selectInUI: function (service) {
+      const selectEl = this.element.find('.search-within-object-select');
+      selectEl.val(service);
+      selectEl.iconselectmenu('refresh');
     },
 
     switchSearchServices: function (service, ignoreHistory) {

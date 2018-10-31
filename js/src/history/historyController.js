@@ -560,6 +560,7 @@
         ignoreHistory: true
       });
       this.eventEmitter.publish('PICK_SEARCH_SERVICE', {
+        origin: undefined,    // Make this relationship explicit
         service
       });
       this.eventEmitter.publish('manifestsPanelVisible.set', {
