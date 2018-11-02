@@ -148,6 +148,8 @@
       }
 
       let uri = new URI();
+      uri.query('');
+
       switch (options.type) {
         case $.HistoryStateType.collection:
           return uri.fragment(
