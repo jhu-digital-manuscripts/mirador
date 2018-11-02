@@ -407,6 +407,9 @@
             });
           });
           break;
+        case $.HistoryStateType.collection_search:
+          console.log('!!');
+          break;
         default:
           break;
       }

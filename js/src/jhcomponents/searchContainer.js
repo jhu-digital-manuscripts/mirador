@@ -281,7 +281,7 @@
         sortOrder: context.search.sortOrder,
         facets: context.search.facetQuery,
         context
-      };
+      };console.log(searchRequest);
       this.eventEmitter.publish('SEARCH', searchRequest);
       this.searchController.doSearch(searchRequest).done((data) => {
         _this.handleSearchResults(data);
