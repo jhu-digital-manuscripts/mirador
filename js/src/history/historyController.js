@@ -471,8 +471,6 @@
     },
 
     processSearch: function(data) {
-      console.log('HistoryController ## Process Search');
-      console.log(data);
       if (data.ignoreHistory) {
         return;
       }
@@ -480,8 +478,8 @@
 
       const searchedObject = context.searchService.id.substring(0, context.searchService.id.length - 9);
       const searchManifest = searchedObject.includes('manifest');
-      const isBasic = !context.search.isBasic;
-console.log('     >> is basic search? (' + isBasic + ')');
+      const isBasic = context.search.isBasic;
+
       this.addHistory(new $.HistoryState({
         type: searchManifest ? $.HistoryStateType.manifest_search : $.HistoryStateType.collection_search,
         fragment: window.location.hash,

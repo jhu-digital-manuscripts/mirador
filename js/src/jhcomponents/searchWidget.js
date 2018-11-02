@@ -168,11 +168,11 @@
 
       // if (this.searchService.config.search.settings.fields.length > 0) {
       this.element.find(".search-disclose-btn-more").on("click", function() {
-        _this.showAdvancedSearch();
+        _this.showAdvancedSearch(false);
       });
 
       this.element.find(".search-disclose-btn-less").on("click", function() {
-        _this.hideAdvancedSearch();
+        _this.hideAdvancedSearch(false);
       });
     },
 
@@ -253,9 +253,6 @@
     changeContext: function (context, init, suppressEvent) {
       if (context.searchService && this.context.searchService && 
           context.searchService.id !== this.context.searchService.id) {
-        console.log('     >> switching search service');
-        console.log(context.searchService);
-        console.log(this.context.searchService);
         // Search service change!
         this.advancedSearch.clearRows();
         this.advancedSearch.setContext(context, init);
@@ -287,15 +284,9 @@
           this.advancedSearch.setContext(this.context, true);
         }
       } else {
+        this.hideAdvancedSearch(true);
         const basic = this.context.ui.basic || '';
         this.element.find(".js-query").val(basic);
-      }
-
-      if (this.context.searchService && this.context.search.query) {
-        // this.addSearchService(this.context.searchService);
-        if (this.context.search.results) {
-          // this.handleSearchResults(this.context.search.results);
-        }
       }
     },
 
@@ -309,7 +300,6 @@
     },
 
     showAdvancedSearch: function(suppressEvent) {
-      // this.advancedSearchActive = true;
       this.changeContext({
         search: {
           isBasic: false
@@ -323,7 +313,6 @@
     },
 
     hideAdvancedSearch: function(suppressEvent) {
-      // this.advancedSearchActive = false;
       this.changeContext({
         search: {
           isBasic: true

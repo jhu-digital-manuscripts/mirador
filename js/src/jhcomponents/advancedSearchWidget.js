@@ -49,7 +49,6 @@
     },
 
     setTooltip: function (searchService) {
-      console.log('       >> set tooltip');
       this.element.tooltip({
         items: ".search-description-icon",
         content: Handlebars.compile("{{> searchDescription}}")(searchService.config.search.settings.fields),
@@ -113,7 +112,6 @@
      * @param {boolean} refresh should this context change rerender the widget?
      */
     setContext: function(context, refresh) {
-      console.log('Advanced Search Widget :: set context (' + refresh + ')');
       this.context = context;
       if (context.searchService) {
         this.setTooltip(context.searchService);
@@ -198,7 +196,7 @@
 
     initFromContext: function() {
       var _this = this;
-console.log('       >> init from context');
+
       if (this.context.ui && this.context.ui.advanced) {
         this.clearRows();
         var rowNums = [];

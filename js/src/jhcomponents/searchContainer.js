@@ -169,7 +169,6 @@
         if (data.origin !== _this.windowId) {
           return;
         }
-        console.log('Search Container :: search requested');
         _this.doSearch();
       });
 
@@ -291,7 +290,6 @@
     },
 
     handleSearchResults: function (data) {
-      console.log('Search Container :: handle search results');
       this.changeContext({
         search: {
           results: data
