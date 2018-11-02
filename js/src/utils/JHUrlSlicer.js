@@ -129,21 +129,14 @@
      * - Query can be specified any time
      * - ViewType can be specified only when manifest is present
      * 
-     *  options: {
-     *    type: $.HistoryStateType,
-     *    data: {
-     *      collection: '',
-     *      manifest: '',
-     *      canvas: '',
-     *      query: '',
-     *      viewType: ''
-     *    }
-     *  }
-     * 
      * When given 'options' that already specifies a manifest, the collection information
      * is not easily obtainable from the event. Instead, the event will parse the collection
      * name from the manifest ID, so for those event types representing a manifest, no
      * operation is needed for get the collection name.
+     * 
+     * Always clear URL query first. The URL query will be re-applied for URLs related to searches.
+     * 
+     * @param {HistoryState} options
      */
     toUrl: function (options) {
       if (!options) {

@@ -120,15 +120,15 @@
        *            "results": {object}   // Search results, see https://github.com/jhu-digital-manuscripts/rosa2/wiki/JHIIIF-Search#search-result
        *          }
        */
-      this.eventEmitter.subscribe("SEARCH", function(event, searchReq) {
-        // Do async search, when complete, publish SEARCH_COMPLETE event
-        _this.doSearch(searchReq).done(function(data) {
-          _this.eventEmitter.publish("SEARCH_COMPLETE." + searchReq.origin, {
-            "origin": searchReq.origin,
-            "results" : data
-          });
-        });
-      });
+      // this.eventEmitter.subscribe("SEARCH", function(event, searchReq) {
+      //   // Do async search, when complete, publish SEARCH_COMPLETE event
+      //   _this.doSearch(searchReq).done(function(data) {
+      //     _this.eventEmitter.publish("SEARCH_COMPLETE." + searchReq.origin, {
+      //       "origin": searchReq.origin,
+      //       "results" : data
+      //     });
+      //   });
+      // });
 
       /**
        * data:  {

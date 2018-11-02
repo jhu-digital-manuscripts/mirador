@@ -18,7 +18,7 @@
       urlSlicer: null,
       saveController: null,
       historyList: [] // TODO Potentially use browser's session storage to hold history list so viewer state
-      // can be recreated when the browser buttons are used to navigate history?
+                      // can be recreated when the browser buttons are used to navigate history?
     }, options);
 
     // Since history will be empty at this point, it will default to getting the initially loaded
@@ -47,10 +47,6 @@
         _this.handleUrl(event);
       };
     },
-
-    // preprocess: function (event, data) {
-
-    // },
 
     /*
      * One issue to address is when to start this history controller. We can't simply start listening 
@@ -103,35 +99,15 @@
 
       _this.eventEmitter.subscribe('SWITCH_SEARCH_SERVICE', (event, data) => {
         if (!data.origin && !data.ignoreHistory) { // undefined origin equates to collection search
-          // if (!_this.initialized) {
-          //   _this.initialized = true;
-          //   return;
-          // }
-          // console.log('History Controller ### switch search service :: ' + data.service.id);
           // 'data.service' is the search service ID, strip out the search part of the URL to get the collection
           let url = typeof data.service === 'string' ? data.service : data.service.id;
-          
           _this.triggerCollectionHistory(url.substring(0, url.lastIndexOf('/')));
         }
       });
 
-      // /**
-      //  * This event fires when the user selects a collection to focus on from the ManifestsPanel
-      //  * "Choose Collection" dropdown. This cannot entirely be used to change the collection 
-      //  * history, but is used to change the specific collection in the history.
-      //  * 
-      //  * Since this comes from a search widget, we need to stip away the search suffix...
-      //  */
-      // _this.eventEmitter.subscribe("BROWSE_COLLECTION", function (event, data) {
-      //   data = data.substring(0, data.lastIndexOf('/'));
-      //   console.log('BROWSE_COLLECTION :: ' + data);
-      //   // _this.triggerCollectionHistory(data);
-      // });
-
       /**
        * This will generally be used to change the history state to denote when a user is looking
-       * at the collection page. This event cannot tell what collection is being looked at. This
-       * information can be inferred from the last time 'BROWSER_COLLECTION' was encountered.
+       * at the collection page. This event cannot tell what collection is being looked at. 
        * 
        * Fires when the "manifests panel" (book browser) is shown or hidden. "manifestPanelVisible"
        * is a boolean value describing the panel's visibility (true = visible)
@@ -145,7 +121,6 @@
        */
       _this.eventEmitter.subscribe('manifestsPanelVisible.set', function (event, data) {
         // if TRUE, then user opened the Manifest Browser :: is looking at the collection
-        // console.log('manifestsPanelVisible.set (' + manifestPanelVisible + ')');
         if (data.ignoreHistory) {
           return;
         }
@@ -177,101 +152,7 @@
           }
        */
       _this.eventEmitter.subscribe('windowUpdated', function (event, options) {
-        // console.log(' >> windowUpdated');
-        // console.log(options);
         _this.processWindowUpdated(event, options);
-      });
-
-      /**
-       * Does not seem to be used in general. Better to use 'slotsUpdated'.
-       * This event is used to spawn a new window.
-       * 
-       *  options: {
-       *    appendTo: {}, // the Slot jQuery element that the window is attached
-       *    canvasID: "", // If available
-       *    eventEmitter: {}, // Why does it include the event emitter ...?
-       *    id: "", // New window's ID
-       *    manifest: {}, // The manifest object
-       *    viewType: "", // ThumbnailsView, ImageView, BookView
-       *  }
-       */
-      // _this.eventEmitter.subscribe('ADD_WINDOW', function (event, options) {
-      //   console.log(' >> HISTORY ADD_WINDOW');
-      //   moo6 = options;
-      // });
-
-      // _this.eventEmitter.subscribe("imageBoundsUpdated", function(event, options) {
-      //   console.log(' >> HISTORY imageBoundsUpdated');
-      // });
-
-      // _this.eventEmitter.subscribe('ANNOTATIONS_LIST_UPDATED', function(event, options) {
-      //   console.log(' >> HISTORY ANNOTATIONS_LIST_UPDATED');
-      // });
-
-      /**
-       *  options: {
-       *    windowId: "", // ID of window
-       *    element: {}, // the jQuery window element
-       *  }
-       */
-      _this.eventEmitter.subscribe('WINDOW_ELEMENT_UPDATED', function (event, options) {
-
-      });
-
-      _this.eventEmitter.subscribe('windowSlotAddressUpdated', function (event, options) {
-
-      });
-
-      // _this.eventEmitter.subscribe('manifestQueued', function(event, manifestObject, repository) {
-      //   console.log(' >> HISTORY manifestQueued');
-      // });
-
-      // _this.eventEmitter.subscribe("manifestReferenced", function(event, manifestObject, repository) {
-      //   console.log(' >> HISTORY manifestReferenced');
-      // });
-
-      // _this.eventEmitter.subscribe("collectionQueued", function(event, colObj, location) {
-      //   console.log(' >> HISTORY collectionQueued');
-      // });
-
-      /**
-       *  options: {
-       *    "slots": [
-       *      {}, // $.Slot
-       *    ]
-       *  }
-       */
-      _this.eventEmitter.subscribe("slotsUpdated", function (event, options) {
-
-      });
-
-      /**
-       *  layoutDescription: 
-            "type": "row",
-            "depth": 0,
-            "value": 0,
-            "x": 3,
-            "y": 3,
-            "dx": 2481,
-            "dy": 873,
-            "address": "row1",
-            "id": "fc06f74b-d2ef-4f2d-9bd2-2c66a0232543"
-          }
-       */
-      _this.eventEmitter.subscribe("layoutChanged", function (event, layoutDescription) {
-
-      });
-
-      _this.eventEmitter.subscribe("windowSlotAdded", function (event, options) {
-
-      });
-
-      _this.eventEmitter.subscribe("windowsRemoved", function (event) {
-
-      });
-
-      _this.eventEmitter.subscribe("windowRemoved", function (event, windowID) {
-
       });
 
       /**
@@ -320,28 +201,6 @@
       });
 
       _this.eventEmitter.subscribe('GET_FACETS', function (event, data) {
-
-      });
-
-      /**
-       *  data: {
-       *    "origin": "id of originating component",
-       *    "canvasId": "IIIF-canvas-URI",
-       *    "manifest": {} // Manifest object
-       *  }
-       */
-      _this.eventEmitter.subscribe('CANVAS_ID_UPDATED', function (event, data) {
-
-      });
-
-      /**
-       * data: {
-       *    "windowId":"f51774c0-97ec-4881-8d87-2362756155aa",
-       *    "tabId":"searchTab",
-       *    "tabIndex":1
-       * }
-       */
-      _this.eventEmitter.subscribe('TAB_SELECTED', function (event, data) {
 
       });
     },
@@ -612,28 +471,31 @@
     },
 
     processSearch: function(data) {
+      console.log('HistoryController ## Process Search');
+      console.log(data);
       if (data.ignoreHistory) {
         return;
       }
+      const context = data.context;
 
-      const searchedObject = data.service.substring(0, data.service.length - 9);
+      const searchedObject = context.searchService.id.substring(0, context.searchService.id.length - 9);
       const searchManifest = searchedObject.includes('manifest');
-      const isBasic = !data.ui.advanced;
-
+      const isBasic = !context.search.isBasic;
+console.log('     >> is basic search? (' + isBasic + ')');
       this.addHistory(new $.HistoryState({
         type: searchManifest ? $.HistoryStateType.manifest_search : $.HistoryStateType.collection_search,
         fragment: window.location.hash,
         data: {
-          windowId: data.origin,
+          windowId: context.origin,
           collection: !searchManifest ? searchedObject : 'moo',
           manifest: searchManifest ? searchedObject : undefined,
           search: {
-            query: isBasic ? data.ui.basic : data.query,
-            offset: data.offset,
-            maxPerPage: data.maxPerPage,
-            sortOrder: data.sortOrder,
+            query: isBasic ? context.ui.basic : context.search.query,
+            offset: context.search.offset,
+            maxPerPage: context.search.maxPerPage,
+            sortOrder: context.search.sortOrder,
             type: isBasic ? 'basic' : 'advanced',
-            rows: data.ui.advanced ? data.ui.advanced.rows : undefined
+            rows: context.ui.advanced ? context.ui.advanced.rows : undefined
           }
         }
       }));

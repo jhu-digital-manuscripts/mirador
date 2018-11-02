@@ -30,6 +30,7 @@
    */
   $.SearchWidget = function (options) {
     jQuery.extend(true, this, {
+      id: $.genUUID(),
       windowId: undefined,
       tabId: null,
       parent: null,
@@ -56,6 +57,7 @@
        *      }
        *    },
        *    search: {
+       *      isBasic: true|false
        *      query: '',
        *      offset: -1, 
        *      maxPerPage: -1,
@@ -83,6 +85,7 @@
       context: {
         searchService: null,
         search: {
+          isBasic: true,
           offset: 0,        // Default
           maxPerPage: 30    // Default
         },
@@ -219,13 +222,13 @@
      * @param resumeToken : (OPTIONAL) string token possibly used by a search service
      */
     doSearch: function(searchService, query, sortOrder, facets, offset, maxPerPage, resumeToken) {
-      let context = {
-        search: {
-          query,
-          sortOrder
-        },
-        ui: this.getUIState()
+      let context = this.context;
+      
+      context.search = {
+        query,
+        sortOrder
       };
+      context.ui = this.getUIState();
 
       this.changeContext(context, false);
 
@@ -248,7 +251,11 @@
      *                                  change comes from this widget and has already been applied
      */
     changeContext: function (context, init, suppressEvent) {
-      if (context.searchService !== this.context.searchService) {
+      if (context.searchService && this.context.searchService && 
+          context.searchService.id !== this.context.searchService.id) {
+        console.log('     >> switching search service');
+        console.log(context.searchService);
+        console.log(this.context.searchService);
         // Search service change!
         this.advancedSearch.clearRows();
         this.advancedSearch.setContext(context, init);
@@ -274,8 +281,8 @@
       if (this.context.search.sortOrder) {
         this.element.find(".search-results-sorter select").val(this.context.search.sortOrder);
       }
-      if (this.context.ui.advanced) {
-        this.showAdvancedSearch();
+      if (!this.context.search.isBasic) {
+        this.showAdvancedSearch(true);
         if (this.advancedSearch) {
           this.advancedSearch.setContext(this.context, true);
         }
@@ -296,12 +303,18 @@
       const showAdvanced = this.element.find('.search-disclose-btn-more').css('dislpay') == 'none';
       return {
         basic: this.element.find('.js-query').val(),
-        advanced: showAdvanced ? this.advancedSearch.searchState() : undefined
+        // advanced: showAdvanced ? this.advancedSearch.searchState() : undefined
+        advanced: this.advancedSearch.searchState()
       };
     },
 
-    showAdvancedSearch: function() {
-      this.advancedSearchActive = true;
+    showAdvancedSearch: function(suppressEvent) {
+      // this.advancedSearchActive = true;
+      this.changeContext({
+        search: {
+          isBasic: false
+        }
+      }, false, suppressEvent);
       this.element.find("#search-form").hide(this.config.showHideAnimation);
       this.element.find(".search-disclose").show(this.config.showHideAnimation);
       this.element.find(".search-disclose-btn-more").hide();
@@ -309,8 +322,13 @@
       this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
     },
 
-    hideAdvancedSearch: function() {
-      this.advancedSearchActive = false;
+    hideAdvancedSearch: function(suppressEvent) {
+      // this.advancedSearchActive = false;
+      this.changeContext({
+        search: {
+          isBasic: true
+        }
+      }, false, suppressEvent);
       this.element.find("#search-form").show(this.config.showHideAnimation);
       this.element.find(".search-disclose").hide(this.config.showHideAnimation);
       this.element.find(".search-disclose-btn-less").hide();
