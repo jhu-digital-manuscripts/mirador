@@ -35,17 +35,12 @@
         "search": _this.context.searchService
       })).appendTo(this.appendTo);
 
-      if (this.context && this.context.ui && this.context.ui.advanced) {
-        this.initFromContext();
-      }
-
-      // this.setTooltip(this.searchService);
       this.bindEvents();
       this.listenForActions();
 
-      // if (this.context && this.context.searchService) {
-      //   this.addAdvancedSearchLine();
-      // }
+      if (this.context && this.context.ui && this.context.ui.advanced) {
+        this.initFromContext();
+      }
     },
 
     setTooltip: function (searchService) {
@@ -55,12 +50,6 @@
         position: { my: "left+20 top", at: "right top-50" }
       });
     },
-
-    // setSearchService: function (searchService) {
-    //   this.searchService = searchService;
-    //   this.setTooltip(searchService);
-    //   this.addAdvancedSearchLine();
-    // },
 
     bindEvents: function() {
       var _this = this;
@@ -196,11 +185,12 @@
 
     initFromContext: function() {
       var _this = this;
+      this.clearRows();
+      const ui = this.context.ui;
 
-      if (this.context.ui && this.context.ui.advanced) {
-        this.clearRows();
+      if (ui && ui.advanced && ui.advanced.rows &&ui.advanced.rows.length > 0) {
         var rowNums = [];
-        this.context.ui.advanced.rows.forEach(function(input, index, arr) {
+        ui.advanced.rows.forEach(function(input, index, arr) {
           if (rowNums.indexOf(input.row) < 0) {   // Add new line if needed
             _this.addAdvancedSearchLine();
             rowNums.push(input.row);
