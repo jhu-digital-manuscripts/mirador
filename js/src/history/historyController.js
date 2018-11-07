@@ -310,7 +310,7 @@
       let url = this.urlSlicer.toUrl(event);
 
       const alreadyCurrent = event.equals(this.historyList[this.historyList.length - 1]);
-console.log(event);
+
       if (url && !alreadyCurrent) {
         window.history.pushState(event, title, url);
         this.historyList.push(event);
@@ -385,8 +385,10 @@ console.log(event);
           this.initToCollection(collection);
           break;
         case $.HistoryStateType.image_view:
-          this.getCollection(state.data.collection);
-          this.getManifest(state.data.manifest).done(function (manifest) {
+          jQuery.when(
+            this.getCollection(state.data.collection),
+            this.getManifest(state.data.manifest)
+          ).done(function (collection, manifest) {
             _this.eventEmitter.publish('ADD_WINDOW', {
               id: state.data.windowId,
               manifest,
@@ -397,8 +399,10 @@ console.log(event);
           });
           break;
         case $.HistoryStateType.opening_view:
-          this.getCollection(state.data.collection);
-          this.getManifest(state.data.manifest).done(function (manifest) {
+          jQuery.when(
+            this.getCollection(state.data.collection),
+            this.getManifest(state.data.manifest)
+          ).done((collection, manifest) => {
             _this.eventEmitter.publish('ADD_WINDOW', {
               id: state.data.windowId,
               manifest,
@@ -409,8 +413,10 @@ console.log(event);
           });
           break;
         case $.HistoryStateType.thumb_view:
-          this.getCollection(state.data.collection);
-          this.getManifest(state.data.manifest).done(manifest => {
+          jQuery.when(
+            this.getCollection(state.data.collection),
+            this.getManifest(state.data.manifest)
+          ).done((collection, manifest) => {
             _this.eventEmitter.publish('ADD_WINDOW', {
               id: state.data.windowId,
               manifest,
