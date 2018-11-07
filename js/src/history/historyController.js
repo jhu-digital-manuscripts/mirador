@@ -6,6 +6,7 @@
    *  > manifestsPanelVisible.set
    *  > windowUpdated
    *  > search
+   *  > SEARCH_RESULTS_CLOSED
    * 
    * publish
    *  > SWITCH_SEARCH_SERVICE (changes search context to use a particular search service)
@@ -103,6 +104,12 @@
           // 'data.service' is the search service ID, strip out the search part of the URL to get the collection
           let url = typeof data.service === 'string' ? data.service : data.service.id;
           _this.triggerCollectionHistory(url.substring(0, url.lastIndexOf('/')));
+        }
+      });
+
+      _this.eventEmitter.subscribe('SEARCH_RESULTS_CLOSED', (event, data) => {
+        if (!data.origin) {
+          _this.triggerCollectionHistory();
         }
       });
 
@@ -301,7 +308,7 @@
     addHistory: function (event) {
       let title = this.urlSlicer.stateTitle(event);
       let url = this.urlSlicer.toUrl(event);
-console.log(url);
+
       const alreadyCurrent = event.equals(this.historyList[this.historyList.length - 1]);
 
       if (url && !alreadyCurrent) {
@@ -423,6 +430,9 @@ console.log(url);
 
     initToCollection: function (collection) {
       const service = this.urlSlicer.uriToSearchUri(this.urlSlicer.collectionUri(collection));
+      this.eventEmitter.publish('CLOSE_SEARCH_RESULTS', {
+        origin: undefined
+      });
       this.eventEmitter.publish('SWITCH_SEARCH_SERVICE', {
         service,
         ignoreHistory: true

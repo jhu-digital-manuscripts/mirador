@@ -29,11 +29,18 @@
         context: this.context
       });
 
+      this.listenForActions();
       this.bindEvents();
     },
 
     listenForActions: function () {
+      const _this = this;
 
+      this.eventEmitter.subscribe('CLOSE_SEARCH_RESULTS', (event, data) => {
+        if (_this.windowId === data.origin) {
+          _this.element.slideUp(160);
+        }
+      });
     },
 
     bindEvents: function () {
@@ -41,6 +48,9 @@
 
       this.element.find('.search-results-close').on("click", () => {
         _this.element.slideUp(160);
+        _this.eventEmitter.publish('SEARCH_RESULTS_CLOSED', {
+          origin: _this.windowId
+        });
       });
     },
 
