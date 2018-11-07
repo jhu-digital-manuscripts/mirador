@@ -16,6 +16,7 @@
           maxPerPage: null,
           sortOrder: null,
           type: null,   // basic|advanced
+          facetQuery: null,
           rows: null    // Array of advanced search rows. Only present if search was an Advanced Search
         }
       }

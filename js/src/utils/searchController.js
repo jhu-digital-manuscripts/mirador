@@ -464,7 +464,7 @@
         data.c = searchReq.facets || "";
       }
 
-      var queryUrl = URI(serviceUrl).query(data);   // .query() function automatically encodes stuff
+      var queryUrl = new URI(serviceUrl).query(data).toString();   // .query() function automatically encodes stuff
 
       // Can cache search results here
       var cached = _this.cache(queryUrl);

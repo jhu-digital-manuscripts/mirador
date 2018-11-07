@@ -60,8 +60,9 @@
      */
     listenForStart: function () {
       const _this = this;
+      const url = this.urlSlicer.url(window.location.hash, window.location.search);
       const initCol = window.location.hash ? 
-          this.urlSlicer.parseUrl(window.location.hash).data.collection :
+          this.urlSlicer.parseUrl(url).data.collection : 
           this.initialCollection;
       
       let data = this.saveController.get('data', 'originalConfig');
@@ -300,14 +301,16 @@
     addHistory: function (event) {
       let title = this.urlSlicer.stateTitle(event);
       let url = this.urlSlicer.toUrl(event);
+console.log(url);
+      const alreadyCurrent = event.equals(this.historyList[this.historyList.length - 1]);
 
-      if (url) {
-        // console.log('Adding history :: ' + url);
+      if (url && !alreadyCurrent) {
         window.history.pushState(event, title, url);
         this.historyList.push(event);
       } else {
         window.alert('sad moo');
         console.log('%c[HistoryController] No URL specified when changing history.', 'color: red');
+        console.log(event);
       }
     },
 
@@ -332,8 +335,7 @@
      * }
      */
     handleUrl: function (event) {
-      const url = window.location.hash;
-      // console.log('Handle URL :: ' + url);
+      const url = this.urlSlicer.url(window.location.hash, window.location.search);
       if (!url || url === '') {
         this.triggerCollectionHistory();
         return;
@@ -366,8 +368,11 @@
       }
 
       const collection = this.urlSlicer.collectionFromUri(url);
-      let windowConfig;
-
+      // let windowConfig = {
+      //   id: state.data.windowId,
+      //   canavsID: state.data.canvas,
+      //   ignoreHistory: true
+      // };
       switch (state.type) {
         case $.HistoryStateType.collection:
           this.initToCollection(collection);
@@ -408,7 +413,8 @@
           });
           break;
         case $.HistoryStateType.collection_search:
-          console.log('!!');
+          this.initToCollection(collection);
+          this.collectionSearch(state, collection);
           break;
         default:
           break;
@@ -416,7 +422,7 @@
     },
 
     initToCollection: function (collection) {
-      const service = this.urlSlicer.collectionUri(collection) + '/jhsearch';
+      const service = this.urlSlicer.uriToSearchUri(this.urlSlicer.collectionUri(collection));
       this.eventEmitter.publish('SWITCH_SEARCH_SERVICE', {
         service,
         ignoreHistory: true
@@ -429,6 +435,63 @@
         visible: true,
         ignoreHistory: true
       });
+    },
+
+    /**
+     * 1) Update search context for relevant UI component
+     *   > Are we sure that the search service has already been loaded?
+     *   > context.search is equivalent to historyState.search
+     *   > context.ui must be derived from historyState.search
+     *     - historyState.search.type === basic ? 
+     *       * ui.basic = historyState.search.query
+     *       * historyState.search.query must be adjusted now :|
+     *     - historyState.search.type === advanced ?
+     *       * ui.advanced must be derived from historyState.search.query
+     * 2) Request search for that component
+     */
+    collectionSearch: function (state, object) {
+      const _this = this;
+      const serviceUrl = this.urlSlicer.uriToSearchUri(this.urlSlicer.collectionUri(object));
+      
+      let context = {
+        searchService: {
+          id: serviceUrl,
+          config: new $.JhiiifSearchService({ id: serviceUrl })
+        },
+        search: state.data.search,
+        ui: {}
+      };
+
+      context.searchService.config.initializer.done(service => {
+        if (state.data.search.type === 'basic') {
+          // Need to modify search context query here
+          context.ui.basic = state.data.search.query;
+          context.search.isBasic = true;
+
+          context.search.query = $.generateBasicQuery(
+            context.ui.basic,
+            context.searchService.config.getDefaultFields(),
+            context.searchService.config.query.delimiters.or
+          );
+          
+        } else {
+          // Need to parse the search query to generate ui.advanced.rows D:
+          context.search.isBasic = false;
+          console.log('ADVANCED SEARCH from URL!! ');
+        }
+  
+        _this.eventEmitter.publish('SEARCH_CONTEXT_UPDATED', {
+          origin: undefined,
+          context
+        });
+  
+        _this.eventEmitter.publish('SEARCH_REQUESTED', {
+          origin: undefined,
+          ignoreHistory: true
+        });
+      });
+      
+      
     },
 
     getCollection: function (collectionId) {

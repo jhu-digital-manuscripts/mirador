@@ -8,6 +8,10 @@
   $.JHUrlSlicer.prototype = {
     init: function() {},
 
+    url: function (hash, query) {
+      return new URI(hash).query(query).toString();
+    },
+
     /**
      * @returns {string} (collection|collection_search|manifest_search|thumb_view|image_view|opening_view)
      */
@@ -64,7 +68,8 @@
 
       const uri = new URI(url);
       const frag = uri.fragment().split('/');
-      const query = uri.query(true).q;
+      // const query = uri.query(true).q;
+      const query = uri.query(true);
       
       const type = this.getUrlType(url);
       let data = {};
@@ -73,7 +78,13 @@
         case $.HistoryStateType.collection_search:
           data = {
             collection: frag[0],
-            query
+            search: {
+              query: query.q,
+              offset: parseInt(query.o) || 0,
+              maxPerPage: parseInt(query.m) || 30,
+              sortOrder: query.s || 'relevance',
+              type: query.type
+            }
           };
           break;
         case $.HistoryStateType.collection:
@@ -85,7 +96,13 @@
           data = {
             collection: frag[0],
             manifest: frag[1],
-            query
+            search: {
+              query: query.q,
+              offset: query.o || 0,
+              maxPerPage: query.m || 30,
+              sortOrder: query.s || 'relevance',
+              type: query.type
+            }
           };
           break;
         case $.HistoryStateType.scroll_view:
@@ -149,17 +166,19 @@
 
       let uri = new URI();
       uri.query('');
-
+console.log('TO URL :: ');
+console.log(options);
       switch (options.type) {
         case $.HistoryStateType.collection:
-          return uri.fragment(
+          uri.fragment(
             this.collectionName(options.data.collection)
           );
+          break;
         case $.HistoryStateType.collection_search:
           let searcher = this.processSearchObj(options.data.search);
 
-          return uri.fragment(
-            this.collectionName(options.data.collection)
+          uri.fragment(
+            this.collectionName(options.data.collection) + '/search'
           ).query({
             q: searcher.query,
             o: searcher.offset,
@@ -168,12 +187,13 @@
             type: searcher.type
             // TODO how to encode advanced search rows???
           });
+          break;
         case $.HistoryStateType.manifest_search:
           let searcher2 = this.processSearchObj(options.data.search);
 
-          return uri.fragment(
+          uri.fragment(
             this.collectionName(options.data.manifeset) + '/' + 
-            this.manifestName(options.data.manifest)
+            this.manifestName(options.data.manifest) + '/search'
           ).query({
             q: searcher2.query,
             o: searcher2.offset,
@@ -182,24 +202,29 @@
             type: searcher2.type
             // TODO how to encode advanced search rows???
           });
+          break;
         case $.HistoryStateType.thumb_view:
         case $.HistoryStateType.scroll_view:
-          return uri.fragment(
+          uri.fragment(
             options.data.collection + '/' +
             this.manifestName(options.data.manifest) + '/' +
             options.data.viewType
           );
+          break;
         case $.HistoryStateType.image_view:
         case $.HistoryStateType.opening_view:
-            return uri.fragment(
-              options.data.collection + '/' +
-              this.manifestName(options.data.manifest) + '/' + 
-              this.canvasName(options.data.canvas) + '/' +
-              options.data.viewType
-            );
+          uri.fragment(
+            options.data.collection + '/' +
+            this.manifestName(options.data.manifest) + '/' + 
+            this.canvasName(options.data.canvas) + '/' +
+            options.data.viewType
+          );
+          break;
         default:
           return undefined;
       }
+
+      return uri.toString();
     },
 
     processSearchObj: function (searcher) {
@@ -349,6 +374,10 @@
       uri.segment(4, 'canvas');
 
       return uri.toString();
+    },
+
+    uriToSearchUri: function (uri) {
+      return uri + '/jhsearch';
     }
   };
 }(Mirador));

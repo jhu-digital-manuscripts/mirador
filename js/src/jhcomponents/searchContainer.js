@@ -71,6 +71,7 @@
        *      }
        *    },
        *    search: {
+       *      isBasic: true|false,
        *      query: '',
        *      offset: -1, 
        *      maxPerPage: -1,
@@ -169,7 +170,7 @@
         if (data.origin !== _this.windowId) {
           return;
         }
-        _this.doSearch();
+        _this.doSearch(data.ignoreHistory);
       });
 
       this.eventEmitter.subscribe('ADD_IIIF_OBJECT', (event, data) => {
@@ -214,7 +215,7 @@
         // }
         jQuery.extend(true, this.context, context);
         this.searchWidget.changeContext(this.context, init, suppressEvent);
-        if (this.faceted) {
+        if (this.faceted && init) {
           this.facetContainer.changeContext(this.context);
         }
         this.searchResults.changeContext(this.context);
@@ -268,10 +269,13 @@
       });
     },
 
-    doSearch: function () {
+    doSearch: function (ignoreHistory) {
       const _this = this;
 
       const context = this.context;
+      if (!context.searchService) {
+        return;
+      }
       const searchRequest = {
         origin: this.windowId,
         query: context.search.query,
@@ -281,8 +285,12 @@
         sortOrder: context.search.sortOrder,
         facets: context.search.facetQuery,
         context
-      };console.log(searchRequest);
-      this.eventEmitter.publish('SEARCH', searchRequest);
+      };
+      // console.log('SEARCHING');
+      // console.log(searchRequest);
+      if (!ignoreHistory) {
+        this.eventEmitter.publish('SEARCH', searchRequest);
+      }
       this.searchController.doSearch(searchRequest).done((data) => {
         _this.handleSearchResults(data);
       });
@@ -299,6 +307,9 @@
     },
 
     getFacets: function (facetQuery) {
+      if (!this.context.searchService) {
+        return;
+      }
       this.eventEmitter.publish('GET_FACETS', {
         origin: this.windowId,
         service: this.context.searchService,

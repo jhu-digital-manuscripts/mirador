@@ -99,7 +99,7 @@
     if (query.charAt(0) !== '(') {
       query = '(' + query + ')';
     }
-console.log(query);
+
     return query;
   };
 
@@ -131,114 +131,235 @@ console.log(query);
     }).join(" ");
   };
 
-  /**
-   * Simplistic and naive parser
-   * row: [
-   *    {row: 0, category: "description", operation: "and", term: "two", type: "input"},
-   *    ...
-   * ]
-   * 
-   * > category : should be matched to searchService.config.search.settings.fields[n].query
-   * > operation : should be matched to searchService.config.query.operators[delimiter]
-   * > type : pseudo-maps from searchService.config.search.settings.fields[n].type
-   *          'text' -> 'input'
-   */
-  $.parseQuery = function (query, searchService) {
-    function getDelimiters (searchService) {
-      var delimiters = searchService.config.query.delimiters;
-      var operators = searchService.config.query.operators;
-  
-      var moo = [];
-      operators.choices.map(function (op) {
-        return op.value;
-      }).forEach(function (op) {
-        var d = delimiters[op];
-        if (d) {
-          moo.push(d);
+  $.parseQuery = function (query) {
+    /** @param {QueryParserInput} input */
+    function parseWord (input) {
+      function isLetter (ch) {
+        return /\w/.test(ch); // TODO not comprehensive.
+      }
+
+      input.skipWhitespace();
+      input.mark();
+
+      do {
+        const c = input.peek();
+        if (isLetter(c) || c === '_' || c === '-') {
+          input.next();
+        } else {
+          break;
         }
-      });
-  
-      return moo;
+      } while (input.more());
+
+      const word = input.marked();
+      if (!word) {
+        throw new Error('Expecting word');
+      }
+
+      return word;
     }
-    function findDelimiter (symbol, delimiters) {
-      for (var key in Object.keys(delimiters)) {
-        if (delimiters[key] === symbol) {
-          return key;
+    /** @param {QueryParserInput} input */
+    function parseString (input) {
+      let str = '';
+
+      if (input.next() !== '\'') {
+        throw new Error('String must start with \'');
+      }
+
+      let escaped = false;
+
+      for (;;) {
+        const c = input.next();
+
+        if (escaped) {
+          str += c;
+          escaped = false;
+        } else if (c === '\\') {
+          escaped = true;
+        } else if (c === '\'') {
+          return str;
+        } else {
+          str += c;
         }
       }
-      return;
     }
-    function parseTerm (term, fieldDelimiter, op) {
-      if (!term || !fieldDelimiter) {
-        return;
+    /** @param {QueryParserInput} input */
+    function parseTerm (input) {
+      const category = parseWord(input);
+
+      if (input.next() !== ':') {
+        throw new Error('Term must have \':\' after field name');
       }
-      var parts = term.split(fieldDelimiter);
-      if (parts.length !== 2) {
-        console.log('Unexpected search term encountered (' + term + ')');
-        return;
-      }
-      // The second part is the term 'value' which will be surrounded by single quotes
-      // Here we strip the single quotes
+
+      const term = parseString(input);
+      
       return {
-        operation: op || '&',
-        category: parts[0],
-        term: parts[0].substring(1, parts[0].length - 1)
+        category,
+        term
       };
     }
-    function getTermListFromQuery (query, delimiters) {
-      var termList = [];
-  
-      var start = 0;
-  
-      for (var i = 0; i < query.length; i++) {
-        var c = query.charAt(i);
-  
-        if (delimiters.some(c)) { // If this character is a term delimiter
-          termList.push({
-            op: query.charAt(start - 1),
-            parsed: query.substring(start, i)
-          });
-          start = i + 1;
-        }
+    /** @param {QueryParserInput} input */
+    function parseOperation (input) {
+      if (input.next() !== '(') {
+        throw new Error('Operation must start  with \'(\'');
       }
-  
-      return termList;
+
+      let subqueries = [];
+
+      subqueries.push(parseQuery(input));
+
+      for (;;) {
+        input.skipWhitespace();
+
+        if (!input.more()) {
+          throw new Error('Operation must end with \')\'');
+        }
+
+        let operation = null;
+
+        const c = input.next();
+        if (c === '&') {
+          operation = 'and';
+        } else if (c === '|') {
+          operation = 'or';
+        } else if (c === ')') {
+          break;
+        } else {
+          throw new Error('Invalid operation. Must be & or |');
+        }
+
+        let query = parseQuery(input);
+
+        subqueries.push(query);
+      }
+
+      if (subqueries.length === 0) {
+        throw new Error('Invalid operation. Must have at least two terms');
+      }
+
+      return subqueries;
+    }
+    /**
+     * @param {QueryParserInput} input 
+     */
+    function parseQuery (input) {
+      if (input.peek() === '(') {
+        return parseOperation(input);
+      } else {
+        return [ parseTerm ];
+      }
     }
     
-    var config = searchService.config;    // JHIIIFSearchService object
-    var fieldDelimiter = searchService.config.query.delimiters.field;
-
-    var delimiters = getDelimiters(searchService);
-    var termList = getTermListFromQuery(query, delimiters);
-
-    var results = [];
-
-    termList.forEach(function (item, index) {
-      var term = parseTerm(item.parsed, fieldDelimiter, item.op);
-      var field = config.search.settings.fields[term.category];
-
-      if (!field) {
-        return;
-      }
-
-      var type = field.type;
-
-      if (type === 'text') {
-        type = 'input';
-      } else if (type === 'dropdown') {
-        type = 'select';
-      }
-
-      results.push({
-        row: index,
-        operation: findDelimiter(term.operation),
-        category: term.category,
-        term: term.term
-      });
-    });
-    
-    return results;
+    return parseQuery(new $.QueryParserInput(query));
   };
+
+  // /**
+  //  * Simplistic and naive parser
+  //  * row: [
+  //  *    {row: 0, category: "description", operation: "and", term: "two", type: "input"},
+  //  *    ...
+  //  * ]
+  //  * 
+  //  * > category : should be matched to searchService.config.search.settings.fields[n].query
+  //  * > operation : should be matched to searchService.config.query.operators[delimiter]
+  //  * > type : pseudo-maps from searchService.config.search.settings.fields[n].type
+  //  *          'text' -> 'input'
+  //  */
+  // $.parseQuery = function (query, searchService) {
+  //   function getDelimiters (searchService) {
+  //     var delimiters = searchService.config.query.delimiters;
+  //     var operators = searchService.config.query.operators;
+  
+  //     var moo = [];
+  //     operators.choices.map(function (op) {
+  //       return op.value;
+  //     }).forEach(function (op) {
+  //       var d = delimiters[op];
+  //       if (d) {
+  //         moo.push(d);
+  //       }
+  //     });
+  
+  //     return moo;
+  //   }
+  //   function findDelimiter (symbol, delimiters) {
+  //     for (var key in Object.keys(delimiters)) {
+  //       if (delimiters[key] === symbol) {
+  //         return key;
+  //       }
+  //     }
+  //     return;
+  //   }
+  //   function parseTerm (term, fieldDelimiter, op) {
+  //     if (!term || !fieldDelimiter) {
+  //       return;
+  //     }
+  //     var parts = term.split(fieldDelimiter);
+  //     if (parts.length !== 2) {
+  //       console.log('Unexpected search term encountered (' + term + ')');
+  //       return;
+  //     }
+  //     // The second part is the term 'value' which will be surrounded by single quotes
+  //     // Here we strip the single quotes
+  //     return {
+  //       operation: op || '&',
+  //       category: parts[0],
+  //       term: parts[0].substring(1, parts[0].length - 1)
+  //     };
+  //   }
+  //   function getTermListFromQuery (query, delimiters) {
+  //     var termList = [];
+  
+  //     var start = 0;
+  
+  //     for (var i = 0; i < query.length; i++) {
+  //       var c = query.charAt(i);
+  
+  //       if (delimiters.some(c)) { // If this character is a term delimiter
+  //         termList.push({
+  //           op: query.charAt(start - 1),
+  //           parsed: query.substring(start, i)
+  //         });
+  //         start = i + 1;
+  //       }
+  //     }
+  
+  //     return termList;
+  //   }
+    
+  //   var config = searchService.config;    // JHIIIFSearchService object
+  //   var fieldDelimiter = searchService.config.query.delimiters.field;
+
+  //   var delimiters = getDelimiters(searchService);
+  //   var termList = getTermListFromQuery(query, delimiters);
+
+  //   var results = [];
+
+  //   termList.forEach(function (item, index) {
+  //     var term = parseTerm(item.parsed, fieldDelimiter, item.op);
+  //     var field = config.search.settings.fields[term.category];
+
+  //     if (!field) {
+  //       return;
+  //     }
+
+  //     var type = field.type;
+
+  //     if (type === 'text') {
+  //       type = 'input';
+  //     } else if (type === 'dropdown') {
+  //       type = 'select';
+  //     }
+
+  //     results.push({
+  //       row: index,
+  //       operation: findDelimiter(term.operation),
+  //       category: term.category,
+  //       term: term.term
+  //     });
+  //   });
+    
+  //   return results;
+  // };
 
 // -----------------------------------------------------------------------------
 
