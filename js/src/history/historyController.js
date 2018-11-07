@@ -451,6 +451,7 @@
         visible: true,
         ignoreHistory: true
       });
+      this.eventEmitter.publish('SEARCH_SIZE_UPDATED.undefined');
     },
 
     /**
