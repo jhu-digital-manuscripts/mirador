@@ -9,38 +9,38 @@
 
   $.QueryParserInput.prototype = {
     more: function () {
-      return this.current < data.length;
+      return this.current < this.data.length;
     },
 
     next: function () {
-      if (this.current === data.length) {
+      if (this.current === this.data.length) {
         throw new Error('Premature end of input');
       }
-      return data.charAt(this.current++);
+      return this.data.charAt(this.current++);
     },
 
     peek: function () {
-      if (this.current === data.length) {
+      if (this.current === this.data.length) {
         throw new Error('Premature end of input');
       }
-      return input.charAt(this.current);
+      return this.data.charAt(this.current);
     },
     skipWhitespace: function () {
       function isWhitespace (ch) {
         return /\s/.test(ch);
       }
-      while (this.more() && isWhitespace(this.peek)) {
+      while (this.more() && isWhitespace(this.peek())) {
         this.next();
       }
     },
-    mark: function () {
+    markHere: function () {
       this.mark = this.current;
     },
     unmark: function () {
       this.mark = -1;
     },
     marked: function () {
-      return this.data.substring(mark, next);
+      return this.data.substring(this.mark, this.current);
     },
     rewind: function () {
       this.current = this.mark;

@@ -135,11 +135,11 @@
     /** @param {QueryParserInput} input */
     function parseWord (input) {
       function isLetter (ch) {
-        return /\w/.test(ch); // TODO not comprehensive.
+        return /[\wÀ-ÿ]/.test(ch); // TODO not comprehensive.
       }
 
       input.skipWhitespace();
-      input.mark();
+      input.markHere();
 
       do {
         const c = input.peek();
@@ -191,7 +191,7 @@
       }
 
       const term = parseString(input);
-      
+
       return {
         category,
         term
@@ -205,7 +205,7 @@
 
       let subqueries = [];
 
-      subqueries.push(parseQuery(input));
+      parseQuery(input).forEach(q => subqueries.push(q));
 
       for (;;) {
         input.skipWhitespace();
@@ -214,7 +214,7 @@
           throw new Error('Operation must end with \')\'');
         }
 
-        let operation = null;
+        let operation;
 
         const c = input.next();
         if (c === '&') {
@@ -228,8 +228,11 @@
         }
 
         let query = parseQuery(input);
-
-        subqueries.push(query);
+        for (let i = 0; i < query.length; i++) {
+          const q = query[i];
+          q.operation = operation;
+          subqueries.push(q);
+        }
       }
 
       if (subqueries.length === 0) {
@@ -245,7 +248,7 @@
       if (input.peek() === '(') {
         return parseOperation(input);
       } else {
-        return [ parseTerm ];
+        return [ parseTerm(input) ];
       }
     }
     
