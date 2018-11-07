@@ -12,14 +12,24 @@
    *  > SWITCH_SEARCH_SERVICE (changes search context to use a particular search service)
    *  > PICK_SEARCH_SERVICE (tells the search picker to select a collection in the UI)
    *  > ADD_WINDOW (spawns window of a known configuration, such as to a particular page in a book)
+   * 
+   * @param options {
+   *    eventEmitter: {},
+   *    urlSlicer: {},
+   *    saveController: {},
+   *    historyList: [],    // Keeps list of history states the viewer has gone through
+   *    goBackLimit: 1,     // Limit for how far back to look when resetting to old states.
+   *                        // By default, this is set to 1, meaning the user can only go
+   *                        // back by 1 step at a time
+   * }
    */
   $.HistoryController = function (options) {
     jQuery.extend(true, this, {
       eventEmitter: null,
       urlSlicer: null,
       saveController: null,
-      historyList: [] // TODO Potentially use browser's session storage to hold history list so viewer state
-                      // can be recreated when the browser buttons are used to navigate history?
+      historyList: [],
+      goBackLimit: 1,
     }, options);
 
     // Since history will be empty at this point, it will default to getting the initially loaded
@@ -348,22 +358,33 @@
         return;
       }
 
-      const lastHistory = this.historyList[this.historyList.length - 1];
+      // const latest = this.getLatestOccurence(event);
 
       // If history list is empty, or no event is provided, initialize the viewer to the
       // state described by the current URL hash
-      if (!event || this.historyList.indexOf(event.state) === -1) {
-        this.applyState(this.urlSlicer.parseUrl(url));
-        return;
-      }
+      // if (!event || !latest) {
+      this.applyState(this.urlSlicer.parseUrl(url));
+        // return;
+      // }
 
       // If history list contains this event, pop states off the history list until you 
       // have popped this event off. Each state should be applied to the viewer in the
       // order it pops off the list
-      console.log(' ### ');
+      // console.log(' ### ');
+    },
 
-
-
+    /**
+     * Find the most recent history state that matches the given state.
+     * 
+     * @param {HistoryState} state 
+     */
+    getLatestOccurence: function (state) {
+      // if (!event || !event.state) {
+      //   return;
+      // }
+      // Need to create a copy, as .reverse() modifies original array
+      const backHistory = this.historyList.slice(-this.goBackLimit).reverse();
+      return backHistory.find(moo => moo.equals(state));
     },
 
     applyState: function (state) {
@@ -432,6 +453,17 @@
         default:
           break;
       }
+    },
+
+    /** TODO
+     * When navigating through history states, sometimes events occur in different Mirador windows.
+     * When recreating old states, we should maintain the placement of these windows as much as
+     * possible.
+     * 
+     * @param {HistoryState} state 
+     */
+    maybeModifySlotConfig: function (state) {
+
     },
 
     initToCollection: function (collection) {
@@ -590,10 +622,40 @@
         return;
       }
       const context = data.context;
+      console.log(data);
 
       const searchedObject = context.searchService.id.substring(0, context.searchService.id.length - 9);
       const searchManifest = searchedObject.includes('manifest');
       const isBasic = context.search.isBasic;
+
+      /*
+       * New problem:
+       * Navigating to a page in a book, I then do a search across the AOR collection
+       * Older implementation would capture the search service, then render a history
+       * event with hash (#aor/search) then have the relevant search parameters.
+       * 
+       * Now imagine using browser navigation to recreate the search. We have the URL:
+       * ?...#aor/search
+       * 
+       * This URL then opens up the book list and initiates a search across the collection,
+       * even though this is not what actually happened. We do not have enough information
+       * to recreate the actual event. In order to do this, we would need to capture both
+       * the search service used for the search, and the source hash/path.
+       * 
+       * Possibility:
+       * * Include the short name of the search service as a search parameter
+       *      ?...$service=col#col/book/image
+       *      ?...&service=col#col/book/opening
+       * * Investigate the stored list of history states to determine the last state of the viewer
+       *    before the search. This would require only changes to the history controller. This would 
+       *    also mean zero changes to our URL scheme. When fully recreating a state from the research
+       *    finding, we would have to generate two history entries, one to set the book view, one
+       *    to represent the search
+       * * Remove collection searches from the sidebar - Only allowing searching within the specific
+       *    book you are looking at. Wouldn't need a new 'service' query parameter in this case
+       * 
+       * So far, I prefer the first option, as it provides the most flexibility.
+       */
 
       this.addHistory(new $.HistoryState({
         type: searchManifest ? $.HistoryStateType.manifest_search : $.HistoryStateType.collection_search,
