@@ -310,7 +310,7 @@
       let url = this.urlSlicer.toUrl(event);
 
       const alreadyCurrent = event.equals(this.historyList[this.historyList.length - 1]);
-
+console.log(event);
       if (url && !alreadyCurrent) {
         window.history.pushState(event, title, url);
         this.historyList.push(event);
@@ -485,11 +485,43 @@
           );
           
         } else {
+          /*
+            {category: "description", term: "one", row: 0, operation: "and", type: "input"},
+            {category: "title", term: "two", operation: "and", row: 1, type: "input"}
+           */
+          const query = state.data.search.query;
+          let rows = [];
+          $.parseQuery(query).forEach((r, i) => {
+            r.row = i;
+
+            // Find search field from info.json from row.category (should match a field.query)
+            //    - Define row.type
+            //      * If row.term is found in field.values[].value, type === select
+            //      * Else type = field.type
+            const match = context.searchService.config.search.settings.fields
+                .filter(field => field.query === r.category);
+            if (match.length === 0) {
+              return;
+            }
+
+            const field = match[0];
+
+            if (field.values && field.values.some(val => val.value === r.term)) {
+              r.type = 'select';
+            } else {
+              r.type = 'input';
+            }
+
+            rows.push(r);
+          });
+
           // Need to parse the search query to generate ui.advanced.rows D:
           context.search.isBasic = false;
-          console.log('ADVANCED SEARCH from URL!! ');
+          context.ui.advanced = {
+            rows
+          };
         }
-  
+
         _this.eventEmitter.publish('SEARCH_CONTEXT_UPDATED', {
           origin: undefined,
           context

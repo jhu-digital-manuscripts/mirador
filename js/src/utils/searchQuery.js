@@ -228,9 +228,10 @@
         }
 
         let query = parseQuery(input);
+        query[0].operation = operation;
         for (let i = 0; i < query.length; i++) {
           const q = query[i];
-          q.operation = operation;
+          // q.operation = operation;
           subqueries.push(q);
         }
       }
