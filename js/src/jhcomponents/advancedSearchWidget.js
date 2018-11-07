@@ -12,7 +12,7 @@
    */
   $.AdvancedSearchWidget = function(options) {
     jQuery.extend(true, this, {
-      windowId: null,
+      windowId: undefined,
       searchService: null,    // Search service with configs
       appendTo: null,
       element: null,

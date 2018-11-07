@@ -166,8 +166,7 @@
 
       let uri = new URI();
       uri.query('');
-console.log('TO URL :: ');
-console.log(options);
+
       switch (options.type) {
         case $.HistoryStateType.collection:
           uri.fragment(
