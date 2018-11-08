@@ -272,10 +272,15 @@
     doSearch: function (ignoreHistory) {
       const _this = this;
 
-      const context = this.context;
+      // Copy of the search context
+      const context = jQuery.extend({}, this.context);
       if (!context.searchService) {
         return;
       }
+
+      // Add the search 'source' :: the place in the viewer from which the search was initiated
+      context.baseObject = this.baseObject;
+
       const searchRequest = {
         origin: this.windowId,
         query: context.search.query,

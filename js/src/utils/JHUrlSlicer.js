@@ -60,7 +60,6 @@
       }
     },
 
-    // TODO : query not parsed yet
     parseUrl: function(url) {
       if (!url) {
         throw new Error('[JHUrlSlicer#parseUrl] No URL specified');
@@ -176,30 +175,30 @@
         case $.HistoryStateType.collection_search:
           let searcher = this.processSearchObj(options.data.search);
 
-          uri.fragment(
-            this.collectionName(options.data.collection) + '/search'
-          ).query({
+          uri.fragment(this.uriToSearchUri(
+            this.collectionName(options.data.collection) + '/' + options.viewType
+          )).query({
             q: searcher.query,
             o: searcher.offset,
             m: searcher.maxPerPage,
             s: searcher.sortOrder,
-            type: searcher.type
-            // TODO how to encode advanced search rows???
+            type: searcher.type,
+            service: this.collectionName(searcher.service)
           });
           break;
         case $.HistoryStateType.manifest_search:
           let searcher2 = this.processSearchObj(options.data.search);
 
-          uri.fragment(
-            this.collectionName(options.data.manifeset) + '/' + 
-            this.manifestName(options.data.manifest) + '/search'
-          ).query({
+          uri.fragment(this.uriToSearchUri(
+            this.collectionName(options.data.collection) + '/' + 
+            this.manifestName(options.data.manifest) + '/' + options.viewType
+          )).query({
             q: searcher2.query,
             o: searcher2.offset,
             m: searcher2.maxPerPage,
             s: searcher2.sortOrder,
-            type: searcher2.type
-            // TODO how to encode advanced search rows???
+            type: searcher2.type,
+            service: this.collectionName(searcher2.service) + '/' + this.manifestName(searcher2.service)
           });
           break;
         case $.HistoryStateType.thumb_view:
@@ -251,7 +250,7 @@
           return $.HistoryStateType.collection_search;
         }
         return $.HistoryStateType.collection;
-      } else if (!keys.includes('viewType') && keys.includes('query')) {
+      } else if (!options.viewType && keys.includes('query')) {
         return $.HistoryStateType.manifest_search;
       } else if (keys.includes('viewType')) {
         if (options.viewType === 'ImageView') {
@@ -265,6 +264,20 @@
         } else {
           console.log('%c[JHInitUrlSlicer#getStateType] Invalid \'viewType\' found (' + options.viewType + ')', 'color: red');
         }
+      }
+    },
+
+    viewTypeToStateType: function (viewType) {
+      if (viewType === 'ImageView') {
+        return $.HistoryStateType.image_view;
+      } else if (viewType === 'BookView') {
+        return $.HistoryStateType.opening_view;
+      } else if (viewType === 'ThumbnailsView') {
+        return $.HistoryStateType.thumb_view;
+      } else if (viewType === 'ScrollView') {
+        return $.HistoryStateType.scroll_view;
+      } else {
+        console.log('%c[JHInitUrlSlicer#viewTypeToStateType] Invalid \'viewType\' found (' + options.viewType + ')', 'color: red');
       }
     },
 

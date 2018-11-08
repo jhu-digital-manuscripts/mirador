@@ -624,47 +624,43 @@
       const context = data.context;
       console.log(data);
 
-      const searchedObject = context.searchService.id.substring(0, context.searchService.id.length - 9);
-      const searchManifest = searchedObject.includes('manifest');
       const isBasic = context.search.isBasic;
+      const service = data.context.searchService.id;
+      let collection;
+      let manifest;
+      let searchManifest;
+      let viewType;
 
-      /*
-       * New problem:
-       * Navigating to a page in a book, I then do a search across the AOR collection
-       * Older implementation would capture the search service, then render a history
-       * event with hash (#aor/search) then have the relevant search parameters.
-       * 
-       * Now imagine using browser navigation to recreate the search. We have the URL:
-       * ?...#aor/search
-       * 
-       * This URL then opens up the book list and initiates a search across the collection,
-       * even though this is not what actually happened. We do not have enough information
-       * to recreate the actual event. In order to do this, we would need to capture both
-       * the search service used for the search, and the source hash/path.
-       * 
-       * Possibility:
-       * * Include the short name of the search service as a search parameter
-       *      ?...$service=col#col/book/image
-       *      ?...&service=col#col/book/opening
-       * * Investigate the stored list of history states to determine the last state of the viewer
-       *    before the search. This would require only changes to the history controller. This would 
-       *    also mean zero changes to our URL scheme. When fully recreating a state from the research
-       *    finding, we would have to generate two history entries, one to set the book view, one
-       *    to represent the search
-       * * Remove collection searches from the sidebar - Only allowing searching within the specific
-       *    book you are looking at. Wouldn't need a new 'service' query parameter in this case
-       * 
-       * So far, I prefer the first option, as it provides the most flexibility.
-       */
+      // Searches from book list will have origin === undefined
+      if (data.origin) {
+        /*
+        * If the search event comes from a sidepanel, 'data.context.baseObject' will be defined and set
+        * to be the manifest that was being viewed in the particular window. We can use this information
+        * as well as 'data.origin' to recreate the window state in order to generate a complete search
+        * state.
+        */
+        const window = this.saveController.getWindowObjectById(data.origin);
+        const uri = (typeof data.context.baseObject === 'string') ? data.context.baseObject : data.context.baseObject.getId();
+
+        viewType = $.getViewName($.HistoryStateType[this.urlSlicer.viewTypeToStateType(window.viewType)]);
+        collection = data.context.baseObject.jsonLd.within['@id'];
+        manifest = uri;
+        searchManifest = true;
+      } else {
+        collection = context.searchService.id.substring(0, context.searchService.id.length - 9);
+        searchManifest = false;
+      }
 
       this.addHistory(new $.HistoryState({
         type: searchManifest ? $.HistoryStateType.manifest_search : $.HistoryStateType.collection_search,
         fragment: window.location.hash,
+        viewType,
         data: {
           windowId: context.origin,
-          collection: !searchManifest ? searchedObject : 'moo',
-          manifest: searchManifest ? searchedObject : undefined,
+          collection: collection,
+          manifest: manifest,
           search: {
+            service,
             query: isBasic ? context.ui.basic : context.search.query,
             offset: context.search.offset,
             maxPerPage: context.search.maxPerPage,
