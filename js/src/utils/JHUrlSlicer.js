@@ -50,7 +50,7 @@
           }
           if (parts.length === 2) {
             return $.HistoryStateType.collection_search;
-          } else if (parts.length === 3) {
+          } else if (parts.length === 4) {
             return $.HistoryStateType.manifest_search;
           }
           break;
@@ -67,7 +67,6 @@
 
       const uri = new URI(url);
       const frag = uri.fragment().split('/');
-      // const query = uri.query(true).q;
       const query = uri.query(true);
       
       const type = this.getUrlType(url);
@@ -78,6 +77,7 @@
           data = {
             collection: frag[0],
             search: {
+              service: this.uriToSearchUri(this.collectionUri(query.service)),
               query: query.q,
               offset: parseInt(query.o) || 0,
               maxPerPage: parseInt(query.m) || 30,
@@ -92,10 +92,13 @@
           };
           break;
         case $.HistoryStateType.manifest_search:
+          const serviceParts = query.service.split('/');
           data = {
             collection: frag[0],
             manifest: frag[1],
+            viewType: this.stateTypeToViewType(this.getUrlType('#' + frag.slice(0, frag.length - 1).join('/'))),
             search: {
+              service: this.uriToSearchUri(this.manifestUri(serviceParts[0], serviceParts[1])),
               query: query.q,
               offset: query.o || 0,
               maxPerPage: query.m || 30,
@@ -175,9 +178,9 @@
         case $.HistoryStateType.collection_search:
           let searcher = this.processSearchObj(options.data.search);
 
-          uri.fragment(this.uriToSearchUri(
-            this.collectionName(options.data.collection) + '/' + options.viewType
-          )).query({
+          uri.fragment(
+            this.collectionName(options.data.collection) + '/search'
+          ).query({
             q: searcher.query,
             o: searcher.offset,
             m: searcher.maxPerPage,
@@ -189,10 +192,10 @@
         case $.HistoryStateType.manifest_search:
           let searcher2 = this.processSearchObj(options.data.search);
 
-          uri.fragment(this.uriToSearchUri(
+          uri.fragment(
             this.collectionName(options.data.collection) + '/' + 
-            this.manifestName(options.data.manifest) + '/' + options.viewType
-          )).query({
+            this.manifestName(options.data.manifest) + '/' + options.viewType + '/search'
+          ).query({
             q: searcher2.query,
             o: searcher2.offset,
             m: searcher2.maxPerPage,
@@ -278,6 +281,21 @@
         return $.HistoryStateType.scroll_view;
       } else {
         console.log('%c[JHInitUrlSlicer#viewTypeToStateType] Invalid \'viewType\' found (' + options.viewType + ')', 'color: red');
+      }
+    },
+
+    stateTypeToViewType: function (stateType) {
+      switch (stateType) {
+        case $.HistoryStateType.image_view:
+          return 'ImageView';
+        case $.HistoryStateType.opening_view:
+          return 'BookView';
+        case $.HistoryStateType.thumb_view:
+          return 'ThumbnailsView';
+        case $.HistoryStateType.scroll_view:
+          return 'ScrollView';
+        default:
+          return;
       }
     },
 

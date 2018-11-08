@@ -396,43 +396,15 @@
       }
 
       const collection = this.urlSlicer.collectionFromUri(url);
-      // let windowConfig = {
-      //   id: state.data.windowId,
-      //   canavsID: state.data.canvas,
-      //   ignoreHistory: true
-      // };
+      const viewType = this.urlSlicer.stateTypeToViewType(state.type);
+
       switch (state.type) {
         case $.HistoryStateType.collection:
           this.initToCollection(collection);
           break;
+        case $.HistoryStateType.scroll_view:
         case $.HistoryStateType.image_view:
-          jQuery.when(
-            this.getCollection(state.data.collection),
-            this.getManifest(state.data.manifest)
-          ).done(function (collection, manifest) {
-            _this.eventEmitter.publish('ADD_WINDOW', {
-              id: state.data.windowId,
-              manifest,
-              canvasID: state.data.canvas,
-              viewType: 'ImageView',
-              ignoreHistory: true
-            });
-          });
-          break;
         case $.HistoryStateType.opening_view:
-          jQuery.when(
-            this.getCollection(state.data.collection),
-            this.getManifest(state.data.manifest)
-          ).done((collection, manifest) => {
-            _this.eventEmitter.publish('ADD_WINDOW', {
-              id: state.data.windowId,
-              manifest,
-              canvasID: state.data.canvas,
-              viewType: 'OpeningView',
-              ignoreHistory: true
-            });
-          });
-          break;
         case $.HistoryStateType.thumb_view:
           jQuery.when(
             this.getCollection(state.data.collection),
@@ -441,7 +413,8 @@
             _this.eventEmitter.publish('ADD_WINDOW', {
               id: state.data.windowId,
               manifest,
-              viewType: 'ThumbnailsView',
+              canvasID: state.data.canvas,
+              viewType,
               ignoreHistory: true
             });
           });
@@ -449,6 +422,22 @@
         case $.HistoryStateType.collection_search:
           this.initToCollection(collection);
           this.collectionSearch(state, collection);
+          break;
+        case $.HistoryStateType.manifest_search:
+          jQuery.when(
+            this.getCollection(state.data.collection),
+            this.getManifest(state.data.manifest)
+          ).done((collection, manifest) => {
+            _this.eventEmitter.publish('ADD_WINDOW', {
+              id: state.data.windowId,
+              manifest,
+              canvasID: state.data.canvas,
+              viewType: state.data.viewType,
+              ignoreHistory: true
+            });
+            _this.manifestSearch(state, manifest);
+            // _this.doSearch(state, this.urlSlicer.uriToSearchUri(manifest.getId()));
+          });
           break;
         default:
           break;
@@ -499,9 +488,39 @@
      * 2) Request search for that component
      */
     collectionSearch: function (state, object) {
-      const _this = this;
       const serviceUrl = this.urlSlicer.uriToSearchUri(this.urlSlicer.collectionUri(object));
-      
+      this.doSearch(state, serviceUrl);
+    },
+
+    manifestSearch: function (state, manifest) {
+      // Need to find windowId by matching manifest ID and matching canvas ID if possible
+      // TODO: what if more than one window is open to the same book and page? Current behavior is to pick the first match...
+      const match = this.saveController.getStateProperty('windowObjects').filter(window =>
+        window.loadedManifest === manifest.getId() && 
+          (state.data.canvas ? window.canvasID === state.data.canvas : true)
+      );
+
+      if (match.length === 0) {
+        console.log('#c[HistoryController#manifestSearch] Failed to find window for this manifest (' +
+            manifest.getId() + ')', 'color:red;');
+        return;
+      }
+
+      const windowId = match[0].id;
+      // Now that we know the windowId, we can open the search tab of the sidepanel!
+      // const tabIndex = match[0].element.find('.tabGroup .tab[data-tabid=searchTab]').index();
+      // TODO: hard coded way to "get" tab index. To do it for real, you will need to get the Slot object element,
+      //        then find '.tabGroup .tab[data-tabid=searchTab]'
+      const tabIndex = 1;
+      this.eventEmitter.publish('tabSelected.' + windowId, tabIndex);
+
+      const serviceUrl = this.urlSlicer.uriToSearchUri(manifest.getId());
+      this.doSearch(state, serviceUrl, windowId);
+    },
+
+    doSearch: function (state, serviceUrl, windowId) {
+      const _this = this;
+
       let context = {
         searchService: {
           id: serviceUrl,
@@ -524,10 +543,6 @@
           );
           
         } else {
-          /*
-            {category: "description", term: "one", row: 0, operation: "and", type: "input"},
-            {category: "title", term: "two", operation: "and", row: 1, type: "input"}
-           */
           const query = state.data.search.query;
           let rows = [];
           $.parseQuery(query).forEach((r, i) => {
@@ -562,17 +577,15 @@
         }
 
         _this.eventEmitter.publish('SEARCH_CONTEXT_UPDATED', {
-          origin: undefined,
+          origin: windowId,
           context
         });
   
         _this.eventEmitter.publish('SEARCH_REQUESTED', {
-          origin: undefined,
+          origin: windowId,
           ignoreHistory: true
         });
       });
-      
-      
     },
 
     getCollection: function (collectionId) {
