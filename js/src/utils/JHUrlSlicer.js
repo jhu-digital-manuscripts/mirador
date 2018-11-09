@@ -179,7 +179,7 @@
           let searcher = this.processSearchObj(options.data.search);
 
           uri.fragment(
-            this.collectionName(options.data.collection) + '/search'
+            this.addSearchToPath(this.collectionName(options.data.collection))
           ).query({
             q: searcher.query,
             o: searcher.offset,
@@ -193,32 +193,41 @@
           let searcher2 = this.processSearchObj(options.data.search);
 
           uri.fragment(
-            this.collectionName(options.data.collection) + '/' + 
-            this.manifestName(options.data.manifest) + '/' + options.viewType + '/search'
+            this.addSearchToPath(
+              this.addViewToPath(
+                this.canvasPathFromUri(options.data.collection, options.data.manifest, options.data.canvas),
+                options.data.viewType
+              )
+            )
           ).query({
             q: searcher2.query,
             o: searcher2.offset,
             m: searcher2.maxPerPage,
             s: searcher2.sortOrder,
             type: searcher2.type,
-            service: this.collectionName(searcher2.service) + '/' + this.manifestName(searcher2.service)
+            service: this.manifestPathFromUri(searcher2.service, searcher2.service)
           });
           break;
         case $.HistoryStateType.thumb_view:
         case $.HistoryStateType.scroll_view:
           uri.fragment(
-            options.data.collection + '/' +
-            this.manifestName(options.data.manifest) + '/' +
-            options.data.viewType
+            this.addViewToPath(
+              this.manifestPath(options.data.collection, this.manifestName(options.data.manifest)),
+              options.data.viewType
+            )
           );
           break;
         case $.HistoryStateType.image_view:
         case $.HistoryStateType.opening_view:
           uri.fragment(
-            options.data.collection + '/' +
-            this.manifestName(options.data.manifest) + '/' + 
-            this.canvasName(options.data.canvas) + '/' +
-            options.data.viewType
+            this.addViewToPath(
+              this.canvasPath(
+                options.data.collection,
+                this.manifestName(options.data.manifest),
+                this.canvasName(options.data.canvas)
+              ),
+              options.data.viewType
+            )
           );
           break;
         default:
@@ -329,6 +338,37 @@
     canvasName: function (canvasUri) {
       let uri = new URI(canvasUri);
       return uri.segment(3);
+    },
+
+    manifestPath: function (collectionName, manifestName) {
+      return collectionName + '/' + manifestName;
+    },
+
+    manifestPathFromUri: function (collectionUri, manifestUri) {
+      return this.manifestPath(
+        this.collectionName(collectionUri),
+        this.manifestName(manifestUri)
+      );
+    },
+
+    canvasPath: function (collectionName, manifestName, canvasName) {
+      return this.manifestPath(collectionName, manifestName) + '/' + canvasName;
+    },
+
+    canvasPathFromUri: function (collectionUri, manifestUri, canvasUri) {
+      return this.canvasPath(
+        this.collectionName(collectionUri),
+        this.manifestName(manifestUri),
+        this.canvasName(canvasUri)
+      );
+    },
+
+    addViewToPath: function (path, viewName) {
+      return path + '/' + viewName;
+    },
+
+    addSearchToPath: function (path) {
+      return path + '/search';
     },
 
     /**

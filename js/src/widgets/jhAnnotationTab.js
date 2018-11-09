@@ -170,7 +170,8 @@
           search: {
             isBasic: false,
             query,
-            offset: 0
+            offset: 0,
+            sortOrder: 'relevance'
           },
           ui: {
             advanced: {

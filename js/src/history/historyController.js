@@ -213,8 +213,6 @@
          * In the case of a collection search, we will need to determine the ID used by the search widget
          * for search events. This is a UUID generated when the collection search widget is created
          */
-        // console.log(' ### SEARCH');
-        // console.log(data);
         _this.processSearch(data);
       });
 
@@ -317,7 +315,7 @@
     addHistory: function (event) {
       let title = this.urlSlicer.stateTitle(event);
       let url = this.urlSlicer.toUrl(event);
-// console.log(event);
+
       const alreadyCurrent = event.equals(this.historyList[this.historyList.length - 1]);
 
       if (url && !alreadyCurrent) {
@@ -409,13 +407,14 @@
             this.getCollection(state.data.collection),
             this.getManifest(state.data.manifest)
           ).done((collection, manifest) => {
-            _this.eventEmitter.publish('ADD_WINDOW', {
+            const config = {
               id: state.data.windowId,
               manifest,
               canvasID: state.data.canvas,
               viewType,
               ignoreHistory: true
-            });
+            };
+            _this.eventEmitter.publish('ADD_WINDOW', config);
           });
           break;
         case $.HistoryStateType.collection_search:
@@ -427,13 +426,14 @@
             this.getCollection(state.data.collection),
             this.getManifest(state.data.manifest)
           ).done((collection, manifest) => {
-            _this.eventEmitter.publish('ADD_WINDOW', {
+            const config = {
               id: state.data.windowId,
               manifest,
               canvasID: state.data.canvas,
               viewType: state.data.viewType,
               ignoreHistory: true
-            });
+            };
+            _this.eventEmitter.publish('ADD_WINDOW', config);
             _this.manifestSearch(state, manifest);
             // _this.doSearch(state, this.urlSlicer.uriToSearchUri(manifest.getId()));
           });
@@ -639,6 +639,7 @@
 
       let collection;
       let manifest;
+      let canvas;
       let searchManifest;
       let viewType;
 
@@ -652,17 +653,11 @@
         */
         const window = this.saveController.getWindowObjectById(data.origin);
         const uri = (typeof data.context.baseObject === 'string') ? data.context.baseObject : data.context.baseObject.getId();
-// console.log('Process Search :::::::::::::::;;;');
-// console.log(data);
-// console.log(window);
-// console.log(window.viewType);
-// console.log(this.urlSlicer.viewTypeToStateType(window.viewType));
-// console.log($.HistoryStateType[this.urlSlicer.viewTypeToStateType(window.viewType)]);
-// console.log($.getViewName(this.urlSlicer.viewTypeToStateType(window.viewType)));
-        // viewType = $.getViewName($.HistoryStateType[this.urlSlicer.viewTypeToStateType(window.viewType)]);
+
         viewType = $.getViewName(this.urlSlicer.viewTypeToStateType(window.viewType));
         collection = data.context.baseObject.jsonLd.within['@id'];
         manifest = uri;
+        canvas = window.canvasID;
         searchManifest = true;
       } else {
         collection = context.searchService.id.substring(0, context.searchService.id.length - 9);
@@ -672,11 +667,12 @@
       this.addHistory(new $.HistoryState({
         type: searchManifest ? $.HistoryStateType.manifest_search : $.HistoryStateType.collection_search,
         fragment: window.location.hash,
-        viewType,
         data: {
-          windowId: context.origin,
-          collection: collection,
-          manifest: manifest,
+          windowId: data.origin,
+          viewType,
+          collection,
+          manifest,
+          canvas,
           search: {
             service,
             query: isBasic ? context.ui.basic : context.search.query,
