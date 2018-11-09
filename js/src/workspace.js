@@ -323,6 +323,7 @@
       if (windowConfig) {
         windowConfig.slotAddress = this.getAvailableSlot().layoutAddress;
         this.eventEmitter.publish("ADD_WINDOW", windowConfig);
+        this.eventEmitter.publish('slotAdded', windowConfig);
       }
     },
 
@@ -333,6 +334,7 @@
       if (windowConfig) {
         windowConfig.slotAddress = this.getAvailableSlot().layoutAddress;
         this.eventEmitter.publish("ADD_WINDOW", windowConfig);
+        this.eventEmitter.publish('slotAdded', windowConfig);
       }
     },
 
@@ -343,6 +345,7 @@
       if (windowConfig) {
         windowConfig.slotAddress = this.getAvailableSlot().layoutAddress;
         this.eventEmitter.publish("ADD_WINDOW", windowConfig);
+        this.eventEmitter.publish('slotAdded', windowConfig);
       }
     },
 
@@ -353,6 +356,7 @@
       if (windowConfig) {
         windowConfig.slotAddress = this.getAvailableSlot().layoutAddress;
         this.eventEmitter.publish("ADD_WINDOW", windowConfig);
+        this.eventEmitter.publish('slotAdded', windowConfig);
       }
     },
 

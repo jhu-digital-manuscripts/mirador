@@ -137,7 +137,7 @@
        *    ignoreHistory: {boolean}
        * }
        */
-      _this.eventEmitter.subscribe('manifestsPanelVisible.set', function (event, data) {
+      this.eventEmitter.subscribe('manifestsPanelVisible.set', (event, data) => {
         // if TRUE, then user opened the Manifest Browser :: is looking at the collection
         if (data.ignoreHistory) {
           return;
@@ -169,7 +169,7 @@
             annotationState: 'off', // Ignore this as well, used for annotation authoring
           }
        */
-      _this.eventEmitter.subscribe('windowUpdated', function (event, options) {
+      this.eventEmitter.subscribe('windowUpdated', (event, options) => {
         _this.processWindowUpdated(event, options);
       });
 
@@ -199,7 +199,7 @@
        *    }
        * }
        */
-      _this.eventEmitter.subscribe('SEARCH', function (event, data) {
+      this.eventEmitter.subscribe('SEARCH', (event, data) => {
         /*
          * In order to initialize a search, we will first need to WAIT for the UI to init
          * and settle. Likely we can wait for SEARCH_SERVICE_FOUND event for the search
@@ -216,8 +216,31 @@
         _this.processSearch(data);
       });
 
-      _this.eventEmitter.subscribe('GET_FACETS', function (event, data) {
+      this.eventEmitter.subscribe('GET_FACETS', (event, data) => {
+        // TODO: possibly needed for DLMM, but not AOR
+      });
 
+      this.eventEmitter.subscribe('RESET_WORKSPACE_LAYOUT', (event, data) => {
+        console.log('RESET_WORKSPACE_LAYOUT');
+        console.log(data);
+      });
+
+      /**
+       * This event is fired when the user closes a window.
+       */
+      this.eventEmitter.subscribe('slotRemoved', (event, data) => {
+        console.log('slotRemoved');
+        console.log(data);
+      });
+
+      /**
+       * This event fires when a single slot is added to the workspace by means of "splitting"
+       * from a panel. This happens when a user selects options such as "Add slot right" or
+       * right clicks a search result and "Open in slot above"
+       */
+      this.eventEmitter.subscribe('slotAdded', (event, data) => {
+        console.log('slotAdded');
+        console.log(data);
       });
     },
 
