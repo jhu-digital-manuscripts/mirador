@@ -256,17 +256,7 @@
       } else if (!options.viewType && keys.includes('query')) {
         return $.HistoryStateType.manifest_search;
       } else if (keys.includes('viewType')) {
-        if (options.viewType === 'ImageView') {
-          return $.HistoryStateType.image_view;
-        } else if (options.viewType === 'BookView') {
-          return $.HistoryStateType.opening_view;
-        } else if (options.viewType === 'ThumbnailsView') {
-          return $.HistoryStateType.thumb_view;
-        } else if (options.viewType === 'ScrollView') {
-          return $.HistoryStateType.scroll_view;
-        } else {
-          console.log('%c[JHInitUrlSlicer#getStateType] Invalid \'viewType\' found (' + options.viewType + ')', 'color: red');
-        }
+        return this.viewTypetoStateType(options.viewType);
       }
     },
 

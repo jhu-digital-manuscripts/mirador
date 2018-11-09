@@ -3,23 +3,23 @@
   $.HistoryStateType = Object.freeze({
     collection: 1,
     // manifest: 2, // Remember, no strick 'manifest' view. instead, it is broken up into different views
-    'collection_search': 2,
-    'manifest_search': 3,
-    'thumb_view': 4,
-    'image_view': 5,
-    'opening_view': 6,
-    'scroll_view': 7
+    collection_search: 2,
+    manifest_search: 3,
+    thumb_view: 4,
+    image_view: 5,
+    opening_view: 6,
+    scroll_view: 7
   });
 
   $.getViewName = function (type) {
     switch (type) {
-      case this.thumb_view:
+      case $.HistoryStateType.thumb_view:
         return 'thumb';
-      case this.image_view:
+      case $.HistoryStateType.image_view:
         return 'image';
-      case this.opening_view:
+      case $.HistoryStateType.opening_view:
         return 'opening';
-      case this.scroll_view:
+      case $.HistoryStateType.scroll_view:
         return 'scroll';
       default:
         return '';

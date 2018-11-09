@@ -227,7 +227,6 @@
       if (!collection) {
         collection = this.getLastCollection();
       }
-      // console.log('Trigger collection history :: ' + collection);
       this.addHistory(new $.HistoryState({
         type: $.HistoryStateType.collection,
         fragment: window.location.hash,
@@ -318,7 +317,7 @@
     addHistory: function (event) {
       let title = this.urlSlicer.stateTitle(event);
       let url = this.urlSlicer.toUrl(event);
-
+// console.log(event);
       const alreadyCurrent = event.equals(this.historyList[this.historyList.length - 1]);
 
       if (url && !alreadyCurrent) {
@@ -635,10 +634,9 @@
         return;
       }
       const context = data.context;
-      console.log(data);
-
       const isBasic = context.search.isBasic;
       const service = data.context.searchService.id;
+
       let collection;
       let manifest;
       let searchManifest;
@@ -654,8 +652,15 @@
         */
         const window = this.saveController.getWindowObjectById(data.origin);
         const uri = (typeof data.context.baseObject === 'string') ? data.context.baseObject : data.context.baseObject.getId();
-
-        viewType = $.getViewName($.HistoryStateType[this.urlSlicer.viewTypeToStateType(window.viewType)]);
+// console.log('Process Search :::::::::::::::;;;');
+// console.log(data);
+// console.log(window);
+// console.log(window.viewType);
+// console.log(this.urlSlicer.viewTypeToStateType(window.viewType));
+// console.log($.HistoryStateType[this.urlSlicer.viewTypeToStateType(window.viewType)]);
+// console.log($.getViewName(this.urlSlicer.viewTypeToStateType(window.viewType)));
+        // viewType = $.getViewName($.HistoryStateType[this.urlSlicer.viewTypeToStateType(window.viewType)]);
+        viewType = $.getViewName(this.urlSlicer.viewTypeToStateType(window.viewType));
         collection = data.context.baseObject.jsonLd.within['@id'];
         manifest = uri;
         searchManifest = true;
