@@ -146,11 +146,47 @@
         searchWithin += (searchWithin.charAt(searchWithin.length - 1) === '/' ? '' : '/') + 'jhsearch';
       }
 
-      var request = {
-        service: searchWithin,
-        query: $.generateBasicQuery('"' + term + '"', Array.of(field), '&')
-      };
-      this.eventEmitter.publish('REQUEST_SEARCH.' + this.windowId, request);
+      if (term.startsWith(', ')) {
+        term = term.substring(2);
+      }
+
+      let query;
+
+      if (field) {
+        query = $.generateQuery([{op: 'and', category: field, term}], ':');
+      } else {
+        query = $.generateBasicQuery('"' + term + '"', Array.of(field), '&');
+      }
+
+      this.eventEmitter.publish('SWITCH_SEARCH_SERVICE', {
+        origin: this.windowId,
+        service: searchWithin
+      });
+
+      this.eventEmitter.publish('SEARCH_CONTEXT_UPDATED', {
+        origin: this.windowId,
+        context: {
+          searchService: { id: searchWithin },
+          search: {
+            isBasic: false,
+            query,
+            offset: 0
+          },
+          ui: {
+            advanced: {
+              rows: [
+                {
+                  category: field,
+                  term,
+                  type: 'input'
+                }
+              ]
+            }
+          }
+        }
+      });
+      this.eventEmitter.publish('tabSelected.' + this.windowId, 1);
+      this.eventEmitter.publish('SEARCH_REQUESTED', { origin: this.windowId });
     },
 
     listenForInternalRefs: function() {
