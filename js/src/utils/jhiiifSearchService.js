@@ -23,7 +23,7 @@ $.JhiiifSearchService = function(options) {
     },
     search : {
       'collection': { // TODO get this information from 'collectionUri' property in initial Mirador config!
-        'id': 'http://jdm.library.jhu.edu/iiif-pres/collection/aorcollection',
+        'id': 'https://jdm.library.jhu.edu/iiif-pres/collection/aorcollection',
         'label': 'Archaeology of Reading collection'
       },
       'settings': {
