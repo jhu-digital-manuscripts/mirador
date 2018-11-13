@@ -68,7 +68,11 @@
       });
 
       _this.eventEmitter.subscribe('REMOVE_NODE', function(event, node){
-        _this.removeNode(node);
+        if (node.ignoreHistory) {
+          _this.removeNode(node.node, node.ignoreHistory);
+        } else {
+          _this.removeNode(node);
+        }
       });
 
       _this.eventEmitter.subscribe('ADD_SLOT_ITEM', function(event, slot){
@@ -320,10 +324,15 @@
       var _this = this;
       _this.split(targetSlot, 'r');
 
+      const newSlot = this.getAvailableSlot();
+      this.eventEmitter.publish('slotAdded', {
+        slot: newSlot,
+        target: targetSlot
+      });
+
       if (windowConfig) {
-        windowConfig.slotAddress = this.getAvailableSlot().layoutAddress;
+        windowConfig.slotAddress = newSlot.layoutAddress;
         this.eventEmitter.publish("ADD_WINDOW", windowConfig);
-        this.eventEmitter.publish('slotAdded', windowConfig);
       }
     },
 
@@ -331,10 +340,15 @@
       var _this = this;
       _this.split(targetSlot, 'l');
 
+      const newSlot = this.getAvailableSlot();
+      this.eventEmitter.publish('slotAdded', {
+        slot: newSlot,
+        target: targetSlot
+      });
+
       if (windowConfig) {
-        windowConfig.slotAddress = this.getAvailableSlot().layoutAddress;
+        windowConfig.slotAddress = newSlot.layoutAddress;
         this.eventEmitter.publish("ADD_WINDOW", windowConfig);
-        this.eventEmitter.publish('slotAdded', windowConfig);
       }
     },
 
@@ -342,10 +356,15 @@
       var _this = this;
       _this.split(targetSlot, 'u');
 
+      const newSlot = this.getAvailableSlot();
+      this.eventEmitter.publish('slotAdded', {
+        slot: newSlot,
+        target: targetSlot
+      });
+
       if (windowConfig) {
-        windowConfig.slotAddress = this.getAvailableSlot().layoutAddress;
+        windowConfig.slotAddress = newSlot.layoutAddress;
         this.eventEmitter.publish("ADD_WINDOW", windowConfig);
-        this.eventEmitter.publish('slotAdded', windowConfig);
       }
     },
 
@@ -353,14 +372,19 @@
       var _this = this;
       _this.split(targetSlot, 'd');
 
+      const newSlot = this.getAvailableSlot();
+      this.eventEmitter.publish('slotAdded', {
+        slot: newSlot,
+        target: targetSlot
+      });
+
       if (windowConfig) {
-        windowConfig.slotAddress = this.getAvailableSlot().layoutAddress;
-        this.eventEmitter.publish("ADD_WINDOW", windowConfig);
-        this.eventEmitter.publish('slotAdded', windowConfig);
+        windowConfig.slotAddress = newSlot.layoutAddress;
+        this.eventEmitter.publish("ADD_WINDOW", targetSlot);
       }
     },
 
-    removeNode: function(targetSlot) {
+    removeNode: function(targetSlot, ignoreHistory) {
       // de-mutate the tree structure.
       var _this = this,
           node = jQuery.grep(_this.layout, function(node) { return node.id === targetSlot.slotID; })[0],
@@ -390,7 +414,7 @@
       //delete targetSlot;
       _this.layoutDescription = root;
       _this.calculateLayout();
-      _this.eventEmitter.publish('slotRemoved',targetSlot);
+      _this.eventEmitter.publish('slotRemoved', { slot: targetSlot, ignoreHistory });
     },
 
     newNode: function(type, parent) {

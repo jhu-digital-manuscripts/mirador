@@ -29,7 +29,7 @@
       urlSlicer: null,
       saveController: null,
       historyList: [],
-      goBackLimit: 1,
+      goBackLimit: 3,
     }, options);
 
     // Since history will be empty at this point, it will default to getting the initially loaded
@@ -227,20 +227,53 @@
 
       /**
        * This event is fired when the user closes a window.
+       * 
+       * @param data {
+       *    ignoreHistory: true|false, 
+       *    slot: {}, slot object, of which we can get the slotID and layoutAddress
+       * }
        */
       this.eventEmitter.subscribe('slotRemoved', (event, data) => {
-        console.log('slotRemoved');
-        console.log(data);
+        if (data.ignoreHistory) {
+          return;
+        }
+
+        _this.addHistory(new $.HistoryState({
+          type: $.HistoryStateType.slot_change,
+          data: {
+            slot: {
+              id: data.slot.slotID
+            },
+            modType: $.SlotChangeType.remove
+          }
+        }));
       });
 
       /**
        * This event fires when a single slot is added to the workspace by means of "splitting"
        * from a panel. This happens when a user selects options such as "Add slot right" or
        * right clicks a search result and "Open in slot above"
+       * 
+       * @param data {
+       *    ignoreHistory: true|false, 
+       *    slot: {}, // the new slot that was created by this operation
+       *    target: {}, 
+       * }
        */
       this.eventEmitter.subscribe('slotAdded', (event, data) => {
-        console.log('slotAdded');
-        console.log(data);
+        if (data.ignoreHistory) {
+          return;
+        }
+
+        _this.addHistory(new $.HistoryState({
+          type: $.HistoryStateType.slot_change,
+          data: {
+            slot: {
+              id: data.slot.slotID
+            },
+            modType: $.SlotChangeType.add
+          }
+        }));
       });
     },
 
@@ -336,16 +369,25 @@
     },
 
     addHistory: function (event) {
+      const alreadyCurrent = event.equals(this.historyList[this.historyList.length - 1]);
+
+      if (alreadyCurrent) {
+        return;
+      } else if (event.type === $.HistoryStateType.slot_change) {
+        // Modifications to slot layouts should be recorded, but do not effect the viewer URL
+        this.historyList.push(event);
+        console.log(this.historyList);
+        return;
+      }
+
       let title = this.urlSlicer.stateTitle(event);
       let url = this.urlSlicer.toUrl(event);
 
-      const alreadyCurrent = event.equals(this.historyList[this.historyList.length - 1]);
-
-      if (url && !alreadyCurrent) {
+      if (url) {
         window.history.pushState(event, title, url);
         this.historyList.push(event);
+        console.log(this.historyList);
       } else {
-        window.alert('sad moo');
         console.log('%c[HistoryController] No URL specified when changing history.', 'color: red');
         console.log(event);
       }
@@ -372,46 +414,112 @@
      * }
      */
     handleUrl: function (event) {
+      const _this = this;
+
       const url = this.urlSlicer.url(window.location.hash, window.location.search);
       if (!url || url === '') {
         this.triggerCollectionHistory();
         return;
       }
-
-      // const latest = this.getLatestOccurence(event);
-
+console.log(event);
       // If history list is empty, or no event is provided, initialize the viewer to the
       // state described by the current URL hash
-      // if (!event || !latest) {
-      this.applyState(this.urlSlicer.parseUrl(url));
-        // return;
-      // }
+      if (event && event.state) {
+        // If history list contains this event, pop states off the history list until you 
+        // have popped this event off. Each state should be applied to the viewer in the
+        // order it pops off the list
+        const backHistory = this.historyList.slice().reverse();
+        const lastIndex = backHistory.findIndex(hist => hist.equals(event.state));
 
-      // If history list contains this event, pop states off the history list until you 
-      // have popped this event off. Each state should be applied to the viewer in the
-      // order it pops off the list
-      // console.log(' ### ');
+        if (lastIndex >= 0 /* && lastIndex < this.goBackLimit */) {
+          let last;
+          do {
+            last = this.historyList.pop();
+            console.log('   #### ');
+            console.log(last);
+            if (last.type === $.HistoryStateType.slot_change) {
+              switch (last.data.modType) {
+                case $.SlotChangeType.add:
+                  this.removeSlot(last);  
+                  break;
+                case $.SlotChangeType.remove:
+                  console.log('   <<< Remove Slot! ');
+                  break;
+                default:
+                  break;
+              }
+            } else {
+              this.applyState(last);
+            }
+          } while (last && last.equals(event.state));
+        } else {
+          // TODO: what if the specified event is not found in historyList???
+          console.log('State not found :: MOO');
+          this.applyState(this.urlSlicer.parseUrl(url));
+        }
+      } else {
+        this.applyState(this.urlSlicer.parseUrl(url));
+      }
+    },
+
+    addSlot: function (state) {
+
+    },
+
+    removeSlot: function (state) {
+      console.log('   >>> Added Slot, must now REMOVE a slot!');
+      console.log(state);
+      const node = state.data.slot;
+      this.eventEmitter.publish('REMOVE_NODE', {
+        node,
+        ignoreHistory: true
+      });
     },
 
     /**
-     * Find the most recent history state that matches the given state.
+     * Get an array of last event that changed the URL plus any possible modifications to the
+     * workspace layout. If a state is provided, an array is returned that contains all actions
+     * since the given action was performed. If given state is not found in the history list,
+     * simply return an array containing actions since the last URL change.
      * 
-     * @param {HistoryState} state 
+     * If the history list is empty (viewer was just loaded), then an empty list _should_ be returned.
+     * 
+     * The primary purpose of this function is to return any mutations to the workspace layout that
+     * may have occured between URL changes.
+     * 
+     * @param {HistoryState} state desired history state
+     * @returns {array} list of historyStates
      */
-    getLatestOccurence: function (state) {
-      // if (!event || !event.state) {
-      //   return;
-      // }
-      // Need to create a copy, as .reverse() modifies original array
-      const backHistory = this.historyList.slice(-this.goBackLimit).reverse();
-      return backHistory.find(moo => moo.equals(state));
-    },
+    // getLastEvent: function (state) {
+    //   const _this = this;
+
+    //   // Need to create a copy, as .reverse() modifies original array
+    //   const backHistory = this.historyList.slice().reverse();
+    //   // const backHistory = this.historyList.slice(-this.goBackLimit).reverse();
+
+    //   if (state) {
+    //     const index = backHistory.findIndex(hist => hist.equals(state));
+    //     if (index >= 0) {
+    //       return backHistory.slice(0, index);
+    //     }
+    //   }
+
+    //   const index = backHistory.findIndex(hist => !!_this.urlSlicer.toUrl(hist));
+      
+    //   if (index >= 0) {
+    //     return backHistory.slice(0, index);
+    //   } else if (this.historyList.length === 0) {
+    //     return [];
+    //   } else {
+    //     return backHistory[0];
+    //   }
+    // },
 
     applyState: function (state) {
       const _this = this;
       const url = state.fragment;
       if (!state.type) {
-        window.alert('Unable to moo this URL: [' + url + ']');
+        console.log('%cUnable to moo this URL: [' + url + ']', 'color: red;');
         return;
       }
 
@@ -610,6 +718,17 @@
       });
     },
 
+    /**
+     * Get a Deferred object that contains a collection object when the data request returns.
+     * To use, chain this function call with a callback.
+     * 
+     *    getCollection('col').done(collection => { ... })
+     *    getCollection('col').then(collection => { ... })
+     * 
+     * @param {string} collectionId URI of a collection
+     * @returns {Deferred} a jQuery.Deferred object that resolves when the collection
+     *          data is returned
+     */
     getCollection: function (collectionId) {
       const _this = this;
       let id = $.genUUID();
@@ -630,6 +749,17 @@
       });
     },
 
+    /**
+     * Get a Deferred object that contains a manifest object when the data request returns.
+     * To use, chain this function call with a callback.
+     * 
+     *    getManifest('mani').done(manifest => { ... })
+     *    getManifest('mani').then(manifest => { ... })
+     * 
+     * @param {string} manifestId URI of a manifest
+     * @returns {Deferred} a jQuery.Deferred object that resolves when the manifest data
+     *          is returned
+     */
     getManifest: function (manifestId) {
       const _this = this;
       let id = $.genUUID();

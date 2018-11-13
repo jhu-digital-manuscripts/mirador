@@ -18,6 +18,11 @@
           type: null,   // basic|advanced
           facetQuery: null,
           rows: null    // Array of advanced search rows. Only present if search was an Advanced Search
+        },
+        modType: null,    // Must be SlotChangeType
+        slot: {
+          id: null,
+          target: null
         }
       }
     }, options);
@@ -52,6 +57,8 @@
         } else if (this.data.viewType !== obj.data.viewType) {
           return false;
         } else if (this.data.query !== obj.data.query) {
+          return false;
+        } else if (this.data.modType !== obj.data.modType) {
           return false;
         }
       }
