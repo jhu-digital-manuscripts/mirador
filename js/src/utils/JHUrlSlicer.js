@@ -50,7 +50,7 @@
           }
           if (parts.length === 2) {
             return $.HistoryStateType.collection_search;
-          } else if (parts.length === 4) {
+          } else if (parts.length === 5) {
             return $.HistoryStateType.manifest_search;
           }
           break;
@@ -58,6 +58,7 @@
           console.log('%c[JHInitUrlSlicer#getUrlType] URL type not found (' + url + ')', 'color: red');
           break;
       }
+      console.log(':( :( :( :(');
     },
 
     parseUrl: function(url) {

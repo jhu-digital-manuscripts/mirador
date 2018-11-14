@@ -2,6 +2,7 @@
   $.HistoryState = function (options) {
     jQuery.extend(true, this, {
       id: $.genUUID(),
+      index: -1,  // Index of the state within the tracked history
       type: null, // Must be HistoryStateType
       fragment: null,
       data: {

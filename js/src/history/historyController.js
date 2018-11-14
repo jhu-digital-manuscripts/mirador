@@ -17,7 +17,7 @@
    *    eventEmitter: {},
    *    urlSlicer: {},
    *    saveController: {},
-   *    historyList: [],    // Keeps list of history states the viewer has gone through
+   *    history: [],        // Keeps list of history states the viewer has gone through
    *    goBackLimit: 1,     // Limit for how far back to look when resetting to old states.
    *                        // By default, this is set to 1, meaning the user can only go
    *                        // back by 1 step at a time
@@ -28,8 +28,7 @@
       eventEmitter: null,
       urlSlicer: null,
       saveController: null,
-      historyList: [],
-      goBackLimit: 3,
+      history: new $.History(),
     }, options);
 
     // Since history will be empty at this point, it will default to getting the initially loaded
@@ -360,23 +359,26 @@
      * in the history, then we can assume that the initially loaded collection is being looked at.
      */
     getLastCollection: function () {
-      let collections = this.historyList.filter(state => state.type === $.HistoryStateType.collection);
-      if (collections.length > 0) {
-        return collections[collections.length - 1].data.collection;
+      for (let i = 0; i < this.history.length(); i++) {
+        const state = this.history.peekBack(i);
+        if (state && state.type === $.HistoryStateType.collection) {
+          return state.data.collection;
+        }
       }
       // Ugh, we have to assume that the input data is the initial collection :(
       return this.saveController.getStateProperty('data')[0].collectionUri;
     },
 
     addHistory: function (event) {
-      const alreadyCurrent = event.equals(this.historyList[this.historyList.length - 1]);
+      const alreadyCurrent = event.equals(this.history.current());
+
+      event.index = this.history.length();
 
       if (alreadyCurrent) {
         return;
       } else if (event.type === $.HistoryStateType.slot_change) {
         // Modifications to slot layouts should be recorded, but do not effect the viewer URL
-        this.historyList.push(event);
-        console.log(this.historyList);
+        this.history.add(event);
         return;
       }
 
@@ -384,9 +386,8 @@
       let url = this.urlSlicer.toUrl(event);
 
       if (url) {
+        this.history.add(event);
         window.history.pushState(event, title, url);
-        this.historyList.push(event);
-        console.log(this.historyList);
       } else {
         console.log('%c[HistoryController] No URL specified when changing history.', 'color: red');
         console.log(event);
@@ -428,35 +429,25 @@ console.log(event);
         // If history list contains this event, pop states off the history list until you 
         // have popped this event off. Each state should be applied to the viewer in the
         // order it pops off the list
-        const backHistory = this.historyList.slice().reverse();
-        const lastIndex = backHistory.findIndex(hist => hist.equals(event.state));
+        // const backHistory = this.historyList.slice().reverse();
+        // const lastIndex = backHistory.findIndex(hist => hist.equals(event.state));
 
-        if (lastIndex >= 0 /* && lastIndex < this.goBackLimit */) {
-          let last;
-          do {
-            last = this.historyList.pop();
-            console.log('   #### ');
-            console.log(last);
-            if (last.type === $.HistoryStateType.slot_change) {
-              switch (last.data.modType) {
-                case $.SlotChangeType.add:
-                  this.removeSlot(last);  
-                  break;
-                case $.SlotChangeType.remove:
-                  console.log('   <<< Remove Slot! ');
-                  break;
-                default:
-                  break;
-              }
-            } else {
-              this.applyState(last);
-            }
-          } while (last && last.equals(event.state));
-        } else {
-          // TODO: what if the specified event is not found in historyList???
-          console.log('State not found :: MOO');
-          this.applyState(this.urlSlicer.parseUrl(url));
-        }
+        // if (lastIndex >= 0 /* && lastIndex < this.goBackLimit */) {
+        //   let last;
+        //   do {
+        //     // last = this.historyList.pop();
+        //     last = this.previousState();
+        //     this.maybeModifySlotConfig(last);
+        //   } while (last && last.equals(event.state));
+        // } else {
+        //   // TODO: what if the specified event is not found in historyList???
+        //   console.log('State not found :: MOO');
+        //   this.applyState(this.urlSlicer.parseUrl(url));
+        // }
+
+
+        // this.applyState(event.state);
+        this.applyState(this.urlSlicer.parseUrl(url));
       } else {
         this.applyState(this.urlSlicer.parseUrl(url));
       }
@@ -475,45 +466,6 @@ console.log(event);
         ignoreHistory: true
       });
     },
-
-    /**
-     * Get an array of last event that changed the URL plus any possible modifications to the
-     * workspace layout. If a state is provided, an array is returned that contains all actions
-     * since the given action was performed. If given state is not found in the history list,
-     * simply return an array containing actions since the last URL change.
-     * 
-     * If the history list is empty (viewer was just loaded), then an empty list _should_ be returned.
-     * 
-     * The primary purpose of this function is to return any mutations to the workspace layout that
-     * may have occured between URL changes.
-     * 
-     * @param {HistoryState} state desired history state
-     * @returns {array} list of historyStates
-     */
-    // getLastEvent: function (state) {
-    //   const _this = this;
-
-    //   // Need to create a copy, as .reverse() modifies original array
-    //   const backHistory = this.historyList.slice().reverse();
-    //   // const backHistory = this.historyList.slice(-this.goBackLimit).reverse();
-
-    //   if (state) {
-    //     const index = backHistory.findIndex(hist => hist.equals(state));
-    //     if (index >= 0) {
-    //       return backHistory.slice(0, index);
-    //     }
-    //   }
-
-    //   const index = backHistory.findIndex(hist => !!_this.urlSlicer.toUrl(hist));
-      
-    //   if (index >= 0) {
-    //     return backHistory.slice(0, index);
-    //   } else if (this.historyList.length === 0) {
-    //     return [];
-    //   } else {
-    //     return backHistory[0];
-    //   }
-    // },
 
     applyState: function (state) {
       const _this = this;
@@ -564,6 +516,8 @@ console.log(event);
               viewType: state.data.viewType,
               ignoreHistory: true
             };
+            console.log('   >> Adding window: ');
+            console.log(config);
             _this.eventEmitter.publish('ADD_WINDOW', config);
             _this.manifestSearch(state, manifest);
             // _this.doSearch(state, this.urlSlicer.uriToSearchUri(manifest.getId()));
@@ -582,7 +536,22 @@ console.log(event);
      * @param {HistoryState} state 
      */
     maybeModifySlotConfig: function (state) {
-
+      console.log('   #### ');
+      console.log(state);
+      if (state.type === $.HistoryStateType.slot_change) {
+        switch (state.data.modType) {
+          case $.SlotChangeType.add:
+            this.removeSlot(state);  
+            break;
+          case $.SlotChangeType.remove:
+            console.log('   <<< Remove Slot! ');
+            break;
+          default:
+            break;
+        }
+      } else {
+        this.applyState(state);
+      }
     },
 
     initToCollection: function (collection) {
@@ -631,7 +600,7 @@ console.log(event);
       );
 
       if (match.length === 0) {
-        console.log('#c[HistoryController#manifestSearch] Failed to find window for this manifest (' +
+        console.log('%c[HistoryController#manifestSearch] Failed to find window for this manifest (' +
             manifest.getId() + ')', 'color:red;');
         return;
       }
@@ -644,7 +613,8 @@ console.log(event);
       const tabIndex = 1;
       this.eventEmitter.publish('tabSelected.' + windowId, tabIndex);
 
-      const serviceUrl = this.urlSlicer.uriToSearchUri(manifest.getId());
+      // const serviceUrl = this.urlSlicer.uriToSearchUri(manifest.getId());
+      const serviceUrl = this.urlSlicer.uriToSearchUri(state.data.search.service);
       this.doSearch(state, serviceUrl, windowId);
     },
 
