@@ -58,7 +58,6 @@
           console.log('%c[JHInitUrlSlicer#getUrlType] URL type not found (' + url + ')', 'color: red');
           break;
       }
-      console.log(':( :( :( :(');
     },
 
     parseUrl: function(url) {
@@ -94,12 +93,21 @@
           break;
         case $.HistoryStateType.manifest_search:
           const serviceParts = query.service.split('/');
+
+          let service;
+          if (serviceParts[1] === 'collection') {
+            service = this.uriToSearchUri(this.collectionUri(serviceParts[0]));
+          } else {
+            service = this.uriToSearchUri(this.manifestUri(serviceParts[0], serviceParts[1]));
+          }
+
           data = {
             collection: frag[0],
             manifest: frag[1],
+            canvas: frag[2],
             viewType: this.stateTypeToViewType(this.getUrlType('#' + frag.slice(0, frag.length - 1).join('/'))),
             search: {
-              service: this.uriToSearchUri(this.manifestUri(serviceParts[0], serviceParts[1])),
+              service,
               query: query.q,
               offset: query.o || 0,
               maxPerPage: query.m || 30,
@@ -438,7 +446,11 @@
     },
 
     uriToSearchUri: function (uri) {
-      return uri + '/jhsearch';
+      const searchSuffix = '/jhsearch';
+      if (uri.includes(searchSuffix)) {
+        return uri;
+      }
+      return uri + searchSuffix;
     }
   };
 }(Mirador));

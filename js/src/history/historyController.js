@@ -422,7 +422,7 @@
         this.triggerCollectionHistory();
         return;
       }
-console.log(event);
+
       // If history list is empty, or no event is provided, initialize the viewer to the
       // state described by the current URL hash
       if (event && event.state) {
@@ -458,8 +458,8 @@ console.log(event);
     },
 
     removeSlot: function (state) {
-      console.log('   >>> Added Slot, must now REMOVE a slot!');
-      console.log(state);
+      // console.log('   >>> Added Slot, must now REMOVE a slot!');
+      // console.log(state);
       const node = state.data.slot;
       this.eventEmitter.publish('REMOVE_NODE', {
         node,
@@ -516,11 +516,8 @@ console.log(event);
               viewType: state.data.viewType,
               ignoreHistory: true
             };
-            console.log('   >> Adding window: ');
-            console.log(config);
             _this.eventEmitter.publish('ADD_WINDOW', config);
             _this.manifestSearch(state, manifest);
-            // _this.doSearch(state, this.urlSlicer.uriToSearchUri(manifest.getId()));
           });
           break;
         default:
@@ -536,8 +533,8 @@ console.log(event);
      * @param {HistoryState} state 
      */
     maybeModifySlotConfig: function (state) {
-      console.log('   #### ');
-      console.log(state);
+      // console.log('   #### ');
+      // console.log(state);
       if (state.type === $.HistoryStateType.slot_change) {
         switch (state.data.modType) {
           case $.SlotChangeType.add:
@@ -613,7 +610,6 @@ console.log(event);
       const tabIndex = 1;
       this.eventEmitter.publish('tabSelected.' + windowId, tabIndex);
 
-      // const serviceUrl = this.urlSlicer.uriToSearchUri(manifest.getId());
       const serviceUrl = this.urlSlicer.uriToSearchUri(state.data.search.service);
       this.doSearch(state, serviceUrl, windowId);
     },
@@ -680,7 +676,7 @@ console.log(event);
           origin: windowId,
           context
         });
-  
+
         _this.eventEmitter.publish('SEARCH_REQUESTED', {
           origin: windowId,
           ignoreHistory: true

@@ -16,6 +16,9 @@
         inSidebar: false,
         showCollectionPicker: true
       },
+      context: {
+        searchService: {}
+      },
 
       searchController: null,
       selected: null,
@@ -74,10 +77,19 @@
       }
     },
 
+    changeContext: function (service) {
+      if (service && service !== this.context.searchService) {
+        this.context.searchService = service;
+        this.selectInUI(service);
+      }
+    },
+
     selectInUI: function (service) {
       const selectEl = this.element.find('.search-within-object-select');
       selectEl.val(service);
-      selectEl.iconselectmenu('refresh');
+      if (!this.config.inSidebar) {
+        selectEl.iconselectmenu('refresh');
+      }
     },
 
     switchSearchServices: function (service, ignoreHistory) {
@@ -120,7 +132,7 @@
       // Initialize advanced search with first encountered search service.
       // For subsequent services, if the service is supposed to be selected
       // according to a previous context, switch to it.
-      if ((this.context && this.context.searchService === id) || !this.advancedSearchSet) {
+      if ((this.context && this.context.searchService.id === id) || !this.advancedSearchSet) {
         // When adding a search service, if the ID of the service matches the ID of the initialization value, 
         // switch to it.
         this.switchSearchServices(service, true);

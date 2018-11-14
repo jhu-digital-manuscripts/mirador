@@ -215,6 +215,7 @@
         // }
         jQuery.extend(true, this.context, context);
         this.searchWidget.changeContext(this.context, init, suppressEvent);
+        this.searchPicker.changeContext(this.context.searchService.id, suppressEvent);
         if (this.faceted && init) {
           this.facetContainer.changeContext(this.context);
         }
