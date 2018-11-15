@@ -389,8 +389,6 @@
       let url = this.urlSlicer.toUrl(event);
 
       if (url) {
-        console.log('%cAdding history', 'color:green');
-        console.log(event);
         this.history.add(event);
         window.history.pushState(event, title, url);
       } else {
@@ -455,16 +453,18 @@
         if (!historyMatch) {
           console.log('%c   >> Not found in history', 'color:lightblue;');
           console.log(event.state);
+          // this.addHistory(event.state);
           this.applyState(event.state);
           return;
         }
 
 
-        // this.applyState(event.state);
-        this.applyState(this.urlSlicer.parseUrl(url));
+        this.applyState(event.state);
       } else {
         console.log('%cnon-Evented URL', 'color:brown;');
-        this.applyState(this.urlSlicer.parseUrl(url));
+        const state = this.urlSlicer.parseUrl(url);
+        this.addHistory(state);
+        this.applyState(state);
       }
     },
 
@@ -528,7 +528,7 @@
               id: state.data.windowId,
               manifest,
               canvasID: state.data.canvas,
-              viewType: state.data.viewType,
+              viewType,
               ignoreHistory: true
             };
             _this.eventEmitter.publish('ADD_WINDOW', config);
@@ -567,7 +567,6 @@
     },
 
     initToCollection: function (collection) {
-      console.log('     >>> ' + collection);
       const service = this.urlSlicer.uriToSearchUri(this.urlSlicer.collectionUri(collection));
       this.eventEmitter.publish('CLOSE_SEARCH_RESULTS', {
         origin: undefined
@@ -608,6 +607,7 @@
       // Need to find windowId by matching manifest ID and matching canvas ID if possible
       // TODO: what if more than one window is open to the same book and page? Current behavior is to pick the first match...
       const match = this.saveController.getStateProperty('windowObjects').filter(window =>
+        (state.data.windowId && state.data.windowId === window.id) ||
         window.loadedManifest === manifest.getId() && 
           (state.data.canvas ? window.canvasID === state.data.canvas : true)
       );

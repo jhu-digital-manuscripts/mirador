@@ -28,8 +28,9 @@
      * @param {HistoryState} state 
      */
     add: function (state) {
-      // Splice will truncate the historyList, then add the new state
-      this.historyList.splice(++this.currentIndex, state);
+      // Splice will truncate the historyList
+      this.historyList.splice(++this.currentIndex);
+      this.historyList.push(state);
     },
 
     length: function () {
@@ -158,8 +159,8 @@
     /**
      * Get the closest distance to a given state. Positive numbers indicate that the 
      * @param {HistoryState} state 
-     * @returns {integer} +/- delta to find the given state, or 'undefined' if state
-     *                    was not found in the history
+     * @returns {integer} +/- delta to find the given state, always greater than zero; 
+     *                    or 'undefined' if state was not found in the history
      */
     search: function (state) {
       let delta = 0;
@@ -167,7 +168,7 @@
       let noneForward = false;
       let noneBack = false;
 
-      do {
+      while ((!noneForward || !noneBack) && delta < this.length()) {
         delta++;
 
         if (!noneForward) {
@@ -187,7 +188,7 @@
             return -delta;
           }
         }
-      } while ((!noneForward || !noneBack) && delta < this.length());
+      }
     }
   };
 }(Mirador));

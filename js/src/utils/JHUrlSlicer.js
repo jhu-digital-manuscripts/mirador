@@ -105,7 +105,7 @@
             collection: frag[0],
             manifest: frag[1],
             canvas: frag[2],
-            viewType: this.stateTypeToViewType(this.getUrlType('#' + frag.slice(0, frag.length - 1).join('/'))),
+            viewType: $.getViewName(this.getUrlType('#' + frag.slice(0, frag.length - 1).join('/'))),
             search: {
               service,
               query: query.q,
@@ -221,7 +221,10 @@
         case $.HistoryStateType.scroll_view:
           uri.fragment(
             this.addViewToPath(
-              this.manifestPath(options.data.collection, this.manifestName(options.data.manifest)),
+              this.manifestPath(
+                this.collectionName(options.data.collection),
+                this.manifestName(options.data.manifest)
+              ),
               options.data.viewType
             )
           );
@@ -231,7 +234,7 @@
           uri.fragment(
             this.addViewToPath(
               this.canvasPath(
-                options.data.collection,
+                this.collectionName(options.data.collection),
                 this.manifestName(options.data.manifest),
                 this.canvasName(options.data.canvas)
               ),
@@ -335,6 +338,9 @@
      * Hack to get the collection name from its ID - only works because we have control of the ID!!
      */
     collectionName: function (collectionUri) {
+      if (!collectionUri.includes('/')) {
+        return collectionUri;
+      }
       let uri = new URI(collectionUri);
       return uri.segment(1);
     },

@@ -61,6 +61,17 @@
           return false;
         } else if (this.data.modType !== obj.data.modType) {
           return false;
+        } else if (this.slot) {
+          if (!obj.slot || this.slot.id !== obj.slot.id || this.slot.target !== obj.slot.target) {
+            return false;
+          }
+        } else if (this.data.search) {
+          const s1 = this.data.search;
+          const s2 = obj.data.search;
+          if (!s2 || s1.query !== s2.query || s1.offset !== s2.offset || s1.maxPerPage !== s2.maxPerPage ||
+              s1.sortOrder !== s2.sortOrder || s1.type !== s2.type || s1.facetQuery !== s2.facetQuery) {
+            return false;
+          }
         }
       }
 
