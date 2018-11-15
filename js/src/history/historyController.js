@@ -280,9 +280,12 @@
       if (!collection) {
         collection = this.getLastCollection();
       }
+
+      const fragment = window.location.hash || this.urlSlicer.collectionName(collection);
+
       this.addHistory(new $.HistoryState({
         type: $.HistoryStateType.collection,
-        fragment: window.location.hash,
+        fragment,
         data: {
           collection
         }
@@ -386,6 +389,8 @@
       let url = this.urlSlicer.toUrl(event);
 
       if (url) {
+        console.log('%cAdding history', 'color:green');
+        console.log(event);
         this.history.add(event);
         window.history.pushState(event, title, url);
       } else {
@@ -426,6 +431,7 @@
       // If history list is empty, or no event is provided, initialize the viewer to the
       // state described by the current URL hash
       if (event && event.state) {
+        console.log('%cEvented URL', 'color:blue;');
         // If history list contains this event, pop states off the history list until you 
         // have popped this event off. Each state should be applied to the viewer in the
         // order it pops off the list
@@ -445,10 +451,19 @@
         //   this.applyState(this.urlSlicer.parseUrl(url));
         // }
 
+        const historyMatch = this.history.search(event.state);
+        if (!historyMatch) {
+          console.log('%c   >> Not found in history', 'color:lightblue;');
+          console.log(event.state);
+          this.applyState(event.state);
+          return;
+        }
+
 
         // this.applyState(event.state);
         this.applyState(this.urlSlicer.parseUrl(url));
       } else {
+        console.log('%cnon-Evented URL', 'color:brown;');
         this.applyState(this.urlSlicer.parseUrl(url));
       }
     },
@@ -475,7 +490,7 @@
         return;
       }
 
-      const collection = this.urlSlicer.collectionFromUri(url);
+      const collection = this.urlSlicer.collectionFromUri(state.collection);
       const viewType = this.urlSlicer.stateTypeToViewType(state.type);
 
       switch (state.type) {
@@ -552,6 +567,7 @@
     },
 
     initToCollection: function (collection) {
+      console.log('     >>> ' + collection);
       const service = this.urlSlicer.uriToSearchUri(this.urlSlicer.collectionUri(collection));
       this.eventEmitter.publish('CLOSE_SEARCH_RESULTS', {
         origin: undefined
