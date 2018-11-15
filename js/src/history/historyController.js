@@ -458,8 +458,26 @@
           return;
         }
 
+        console.log('%c   >> Found in history (' + historyMatch + ')', 'color:green;');
+        const isBack = historyMatch < 0;
+        for (let i = 0; i < Math.abs(historyMatch); i++) {
+          let state;
+          
+          if (isBack) {
+            state = this.history.previousState();
+          } else {
+            state = this.history.nextState();
+          }
 
-        this.applyState(event.state);
+          console.log(i);
+          console.log(state);
+
+          if (state) {
+            this.modifySlotOrApplyState(state);
+          }
+          // this.applyState(event.state);
+        }
+        
       } else {
         console.log('%cnon-Evented URL', 'color:brown;');
         const state = this.urlSlicer.parseUrl(url);
@@ -476,6 +494,7 @@
       // console.log('   >>> Added Slot, must now REMOVE a slot!');
       // console.log(state);
       const node = state.data.slot;
+      node.slotID = node.id;
       this.eventEmitter.publish('REMOVE_NODE', {
         node,
         ignoreHistory: true
@@ -547,16 +566,17 @@
      * 
      * @param {HistoryState} state 
      */
-    maybeModifySlotConfig: function (state) {
+    modifySlotOrApplyState: function (state) {
       // console.log('   #### ');
       // console.log(state);
       if (state.type === $.HistoryStateType.slot_change) {
         switch (state.data.modType) {
           case $.SlotChangeType.add:
+            console.log('   >>> Add slot event');
             this.removeSlot(state);  
             break;
           case $.SlotChangeType.remove:
-            console.log('   <<< Remove Slot! ');
+            console.log('   <<< Remove Slot event ');
             break;
           default:
             break;
