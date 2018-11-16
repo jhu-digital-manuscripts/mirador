@@ -150,12 +150,14 @@
         term = term.substring(2);
       }
 
+      term = '"' + term.trim() + '"';
+
       let query;
 
       if (field) {
         query = $.generateQuery([{op: 'and', category: field, term}], ':');
       } else {
-        query = $.generateBasicQuery('"' + term + '"', Array.of(field), '&');
+        query = $.generateBasicQuery(term, Array.of(field), '&');
       }
 
       this.eventEmitter.publish('SWITCH_SEARCH_SERVICE', {

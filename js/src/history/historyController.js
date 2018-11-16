@@ -433,50 +433,36 @@
         // If history list contains this event, pop states off the history list until you 
         // have popped this event off. Each state should be applied to the viewer in the
         // order it pops off the list
-        // const backHistory = this.historyList.slice().reverse();
-        // const lastIndex = backHistory.findIndex(hist => hist.equals(event.state));
 
-        // if (lastIndex >= 0 /* && lastIndex < this.goBackLimit */) {
-        //   let last;
-        //   do {
-        //     // last = this.historyList.pop();
-        //     last = this.previousState();
-        //     this.maybeModifySlotConfig(last);
-        //   } while (last && last.equals(event.state));
-        // } else {
-        //   // TODO: what if the specified event is not found in historyList???
-        //   console.log('State not found :: MOO');
-        //   this.applyState(this.urlSlicer.parseUrl(url));
+        // const historyMatch = this.history.search(event.state);
+        // if (!historyMatch) {
+        //   console.log('%c   >> Not found in history', 'color:lightblue;');
+        //   console.log(event.state);
+        //   // this.addHistory(event.state);
+        //   this.applyState(event.state);
+        //   return;
         // }
 
-        const historyMatch = this.history.search(event.state);
-        if (!historyMatch) {
-          console.log('%c   >> Not found in history', 'color:lightblue;');
-          console.log(event.state);
-          // this.addHistory(event.state);
-          this.applyState(event.state);
-          return;
-        }
-
-        console.log('%c   >> Found in history (' + historyMatch + ')', 'color:green;');
-        const isBack = historyMatch < 0;
-        for (let i = 0; i < Math.abs(historyMatch); i++) {
-          let state;
+        // console.log('%c   >> Found in history (' + historyMatch + ')', 'color:green;');
+        // const isBack = historyMatch < 0;
+        // for (let i = 0; i < Math.abs(historyMatch); i++) {
+        //   let state;
           
-          if (isBack) {
-            state = this.history.previousState();
-          } else {
-            state = this.history.nextState();
-          }
+        //   if (isBack) {
+        //     state = this.history.previousState();
+        //   } else {
+        //     state = this.history.nextState();
+        //   }
 
-          console.log(i);
-          console.log(state);
+        //   console.log(i);
+        //   console.log(state);
 
-          if (state) {
-            this.modifySlotOrApplyState(state);
-          }
-          // this.applyState(event.state);
-        }
+        //   if (state) {
+        //     this.modifySlotOrApplyState(state);
+        //   }
+        //   // this.applyState(event.state);
+        // }
+        this.applyState(event.state);
         
       } else {
         console.log('%cnon-Evented URL', 'color:brown;');
