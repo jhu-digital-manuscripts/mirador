@@ -153,7 +153,7 @@
       var _this = this;
       var stylized = !this.config.inSidebar;  // Should do setup for fancy dropdown?
       var col = this.state.getObjFromSearchService(id);
-      if (!col) {
+      if (!col || !col.jsonLd) {
         return false;
       }
 

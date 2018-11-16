@@ -735,6 +735,10 @@
       const _this = this;
       let id = $.genUUID();
 
+      if (!this.urlSlicer.isUri(collectionId)) {
+        collectionId = this.urlSlicer.collectionUri(collectionId);
+      }
+
       const result = jQuery.Deferred();
 
       let collectionReturn = (event, data) => {

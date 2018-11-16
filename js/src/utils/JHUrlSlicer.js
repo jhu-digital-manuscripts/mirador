@@ -457,6 +457,10 @@
         return uri;
       }
       return uri + searchSuffix;
+    },
+
+    isUri: function (str) {
+      return str.startsWith('http');
     }
   };
 }(Mirador));
