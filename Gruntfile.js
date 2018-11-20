@@ -46,7 +46,8 @@ module.exports = function(grunt) {
     'js/lib/sanitize-html.min.js',
     'node_modules/lazysizes/lazysizes.min.js',
     'node_modules/jstree/dist/jstree.min.js',
-    'node_modules/bootstrap/dist/js/bootstrap.min.js'
+    'node_modules/popper.js/dist/umd/*.min.js',
+    'node_modules/bootstrap/dist/js/bootstrap.min.js',
   ],
 
   // source files
