@@ -24,7 +24,7 @@
 
 .browser-search-container {}
 
-.browser-search .searchResults {
+.browser-search .search-container {
   background-color: white;
   width: inherit;
   height: inherit;
@@ -32,7 +32,7 @@
   overflow-x: hidden;
 }
 
-.searchResults h2 {
+.search-container h2 {
   margin: 6px 0;
 }
 

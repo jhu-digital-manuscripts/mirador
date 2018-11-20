@@ -151,6 +151,9 @@
     getId: function() {
       return this.jsonLd["@id"];
     },
+    getLabel: function () {
+      return this.jsonLd.label;
+    },
     /**
      * Check if a IIIF ID is within this collection.
      */
@@ -179,6 +182,29 @@
     },
     toString: function() {
       return "[Collection (" + this.uri + ")]";
+    },
+
+    getSearchService: function () {
+      const _this = this;
+      const services = this.jsonLd.service;
+
+      let search = null;
+      if (Array.isArray(services)) {
+        services.filter(s => s['@context'] === 'http://manuscriptlib.org/jhiff/search/context.json')
+            .forEach(s => {
+              search = s;
+              search.label = _this.jsonLd.label;
+            });
+      } else if (services['@context'] === 'http://manuscriptlib.org/jhiff/search/context.json') {
+        search = services;
+        search.label = this.jsonLd.label;
+      }
+
+      return search;
+    },
+
+    getSearchInfoUrl: function () {
+      return new URI(this.getSearchService()).filename('info.json').toString();
     }
   };
 

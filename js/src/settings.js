@@ -234,6 +234,14 @@
     'lockController' : {
       'lockProfile' : 'lazyZoom',
       'notifyMaxMin' : true
+    },
+
+    researchFinding: {
+      enable: true,
+      export: {
+        rmap: true,
+        html: true
+      }
     }
   };
 

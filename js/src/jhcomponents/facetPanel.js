@@ -30,7 +30,7 @@
     var _this = this;
 
     jQuery.extend(true, this, {
-      parentId: null,
+      parentId: undefined,
       facetSelected: null,
       eventEmitter: null,
       state: null,          // Application state

@@ -4,7 +4,7 @@
 
     jQuery.extend(true, this, {
       currentConfig: null,
-      originalConfig: null, // Don't know if we really need this.
+      originalConfig: config,
       shareEndpoint: null, // the place where POST requests for new saved sessions will go
       historySize: null, // wishful thinking for later.
       sessionID: null,
@@ -251,8 +251,8 @@
       // available data to update the appropriate
       // field in the stored config.
 
-      _this.eventEmitter.subscribe('manifestsPanelVisible.set', function(event, manifestPanelVisible) {
-        _this.set("manifestPanelVisible", manifestPanelVisible, {parent: "currentConfig"} );
+      _this.eventEmitter.subscribe('manifestsPanelVisible.set', function(event, data) {
+        _this.set("manifestPanelVisible", data.visible, {parent: "currentConfig"} );
       });
 
       _this.eventEmitter.subscribe('windowUpdated', function(event, options) {
@@ -413,6 +413,10 @@
           return window.loadedManifest !== options.loadedManifest || window.id;
         });
         _this.set("windowObjects", windowObjects, {parent: "currentConfig"} );
+      });
+
+      _this.eventEmitter.subscribe('SET_COLLECTION', function (event, collection) {
+        _this.set('currentCollection', collection, { parent: 'currentConfig' });
       });
 
       _this.eventEmitter.subscribe('etc...', function(junk) {

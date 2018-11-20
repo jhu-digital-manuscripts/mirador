@@ -9,78 +9,78 @@
    * result in a new SearchResults widget being spawned and added to the UI.
    */
   $.NewSearchWidget = function(options) {
-    jQuery.extend(true, this, {
-      startHidden: false,
-      tabId: null,
-      windowId: null,
-      state: null,
-      slotAddress: null,
-      eventEmitter: null,
-      baseObject: null,
-      searchService: null,    // Current search service displayed in UI
-      searchServices: [],     // SearchServices object, used to cache search services
-      element: null,            // Base jQuery object for this widget
-      appendTo: null,           // jQuery object in base Mirador that this widget lives
-      advancedSearch: null,     // Advanced search widget
-      advancedSearchSet: false,        // has the advanced search UI been created?
-      searchResults: null,            // UI holding search results
-      context: {
-        /*
-          {
-            "searchService": { ... },   // Search service object that includes info.json configs
-            "search": {
-              "query": "",              // String query
-              "offset": "",             // Results offset for paging
-              "maxPerPage": "",         // Number of results per page
-              "resumeToken": "",        // String token for resuming a search
-              "sortOrder": "",          // Sort order value
-              "selected": -1,           // Index of the search result that is selected
-            }
-          }
-         */
-        search: {
-          "offset": 0,
-          "maxPerPage": 30
-        },
-        ui: {}
-      },
-      config: {                       // Will hold config information for the search UI
-        pinned: false,  // Is this search widget pinned to the UI? Only matters if widget is part of a window
-        advancedSearchActive: false,
-        animated: false,
-        hasContextMenu: true,
-        allowFacets: true,
-        searchBooks: false,     // Will individual books be searchable? Or search only through collections
-        inSidebar: false,
-        showDescription: true,  // Will display a description if present. Value of FALSE will never show description
-        showCollectionPicker: true,     // Show the dropdown to switch to another collection?
-      },
-      facetPanel: null,
-      /**
-       * Callback function to be executed when a facet is selected that
-       * allows the parent object to interact with facets.
-       *
-       * @param selected - array of facet objects
-       *        {
-       *          "dim": "facet category id",
-       *          "path": ["facet", "values"],
-       *          "ui_id": "string ID of the facet UI element"
-       *        }
-       * Function (selected)
-       */
-      onFacetSelect: null,
-      selectedFacets: {},
-      showHideAnimation: "fast"
-    }, options);
-    if (!this.context) {
-      this.context = { search: {"offset": 0, "maxPerPage": 30}, ui: {}};
-    }
+    // jQuery.extend(true, this, {
+    //   startHidden: false,
+    //   tabId: null,
+    //   windowId: null,
+    //   state: null,
+    //   slotAddress: null,
+    //   eventEmitter: null,
+    //   baseObject: null,
+    //   searchService: null,    // Current search service displayed in UI
+    //   searchServices: [],     // SearchServices object, used to cache search services
+    //   element: null,            // Base jQuery object for this widget
+    //   appendTo: null,           // jQuery object in base Mirador that this widget lives
+    //   advancedSearch: null,     // Advanced search widget
+    //   advancedSearchSet: false,        // has the advanced search UI been created?
+    //   searchResults: null,            // UI holding search results
+    //   context: {
+    //     /*
+    //       {
+    //         "searchService": { ... },   // Search service object that includes info.json configs
+    //         "search": {
+    //           "query": "",              // String query
+    //           "offset": "",             // Results offset for paging
+    //           "maxPerPage": "",         // Number of results per page
+    //           "resumeToken": "",        // String token for resuming a search
+    //           "sortOrder": "",          // Sort order value
+    //           "selected": -1,           // Index of the search result that is selected
+    //         }
+    //       }
+    //      */
+    //     search: {
+    //       "offset": 0,
+    //       "maxPerPage": 30
+    //     },
+    //     ui: {}
+    //   },
+    //   config: {                       // Will hold config information for the search UI
+    //     pinned: false,  // Is this search widget pinned to the UI? Only matters if widget is part of a window
+    //     advancedSearchActive: false,
+    //     animated: false,
+    //     hasContextMenu: true,
+    //     allowFacets: true,
+    //     searchBooks: false,     // Will individual books be searchable? Or search only through collections
+    //     inSidebar: false,
+    //     showDescription: true,  // Will display a description if present. Value of FALSE will never show description
+    //     showCollectionPicker: true,     // Show the dropdown to switch to another collection?
+    //   },
+    //   facetPanel: null,
+    //   /**
+    //    * Callback function to be executed when a facet is selected that
+    //    * allows the parent object to interact with facets.
+    //    *
+    //    * @param selected - array of facet objects
+    //    *        {
+    //    *          "dim": "facet category id",
+    //    *          "path": ["facet", "values"],
+    //    *          "ui_id": "string ID of the facet UI element"
+    //    *        }
+    //    * Function (selected)
+    //    */
+    //   onFacetSelect: null,
+    //   selectedFacets: {},
+    //   showHideAnimation: "fast"
+    // }, options);
+    // if (!this.context) {
+    //   this.context = { search: {"offset": 0, "maxPerPage": 30}, ui: {}};
+    // }
 
-    this.messages = {
-      "no-term": "<span class=\"error\">No search term was found.</span>",
-      "no-defaults": "<span class=\"error\">No fields defined for basic search.</span>",
-    };
-    this.init();
+    // this.messages = {
+    //   "no-term": "<span class=\"error\">No search term was found.</span>",
+    //   "no-defaults": "<span class=\"error\">No fields defined for basic search.</span>",
+    // };
+    // this.init();
   };
 
   $.NewSearchWidget.prototype = {
@@ -205,12 +205,17 @@
         });
       });
 
+      /**
+       * This handler is only used in the collection picker when this widget is embedded in
+       * the ManifestsPanel.
+       */
       function selectChange() {
         var selected = jQuery(this).val();
         _this.getSearchService(selected).done(function(s) {
           _this.switchSearchServices(s);
           _this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + _this.windowId);
         });
+        _this.eventEmitter.publish("BROWSE_COLLECTION", selected);
       }
       this.element.find(".search-within-object-select").on("change", selectChange);
       if (!this.config.inSidebar) {

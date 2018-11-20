@@ -45,7 +45,8 @@ module.exports = function(grunt) {
     'bower_components/jQuery-contextMenu/dist/*.js',
     'js/lib/sanitize-html.min.js',
     'node_modules/lazysizes/lazysizes.min.js',
-    'node_modules/jstree/dist/jstree.min.js'
+    'node_modules/jstree/dist/jstree.min.js',
+    'node_modules/bootstrap/dist/js/bootstrap.min.js'
   ],
 
   // source files
@@ -57,7 +58,8 @@ module.exports = function(grunt) {
     'js/src/workspaces/*.js',
     'js/src/widgets/*.js',
     'js/src/utils/*.js',
-    'js/src/history/*.js'
+    'js/src/history/*.js',
+    'js/src/jhcomponents/*.js'
   ];
 
   // ----------
@@ -86,6 +88,10 @@ module.exports = function(grunt) {
       },
       css: {
         src: [
+          'bower_components/simplePagination.js/simplePagination.css',
+          'bower_components/jQuery-contextMenu/dist/*.css',
+          'node_modules/jstree/dist/themes/default/style.min.css',
+          'node_modules/bootstrap/dist/css/bootstrap.min.css',
           'css/bootstrap.modals.css',
           'css/normalize.css',
           'css/font-awesome.min.css',
@@ -95,13 +101,7 @@ module.exports = function(grunt) {
           'css/spectrum.css',
           'css/mirador.css',
           'css/material-icons.css',
-          'bower_components/simplePagination.js/simplePagination.css',
-          'bower_components/jQuery-contextMenu/dist/*.css',
-          'node_modules/jstree/dist/themes/default/style.min.css',
-          'css/aor.css',
-          'css/browser-search.css',
-          'css/search-facets.css',
-          'css/tei.css'
+          'css/aor/*.css',
         ],
         dest: 'build/mirador/css/mirador-combined.css'
       }

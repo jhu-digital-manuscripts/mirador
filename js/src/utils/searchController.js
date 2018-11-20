@@ -120,15 +120,15 @@
        *            "results": {object}   // Search results, see https://github.com/jhu-digital-manuscripts/rosa2/wiki/JHIIIF-Search#search-result
        *          }
        */
-      this.eventEmitter.subscribe("SEARCH", function(event, searchReq) {
-        // Do async search, when complete, publish SEARCH_COMPLETE event
-        _this.doSearch(searchReq).done(function(data) {
-          _this.eventEmitter.publish("SEARCH_COMPLETE." + searchReq.origin, {
-            "origin": searchReq.origin,
-            "results" : data
-          });
-        });
-      });
+      // this.eventEmitter.subscribe("SEARCH", function(event, searchReq) {
+      //   // Do async search, when complete, publish SEARCH_COMPLETE event
+      //   _this.doSearch(searchReq).done(function(data) {
+      //     _this.eventEmitter.publish("SEARCH_COMPLETE." + searchReq.origin, {
+      //       "origin": searchReq.origin,
+      //       "results" : data
+      //     });
+      //   });
+      // });
 
       /**
        * data:  {
@@ -223,8 +223,9 @@
       if (s.length === 0) {
         // console.log("[SearchController] No search service found for ID: " + id);
         // service.resolve(undefined);
+        // console.log(' ### ' + id);
         var newService = { "id": id };
-        var config = new $JhiiifSearchService(newService);
+        var config = new $.JhiiifSearchService(newService);
         config.initializer.always(function() {
           newService.config = config;
           _this._addSearchService(id, config);
@@ -463,7 +464,7 @@
         data.c = searchReq.facets || "";
       }
 
-      var queryUrl = URI(serviceUrl).query(data);   // .query() function automatically encodes stuff
+      var queryUrl = new URI(serviceUrl).query(data).toString();   // .query() function automatically encodes stuff
 
       // Can cache search results here
       var cached = _this.cache(queryUrl);

@@ -45,7 +45,8 @@
                 showOptions: this.state.getStateProperty('mainMenuSettings').buttons.options,
                 showFullScreenViewer : this.state.getStateProperty('mainMenuSettings').buttons.fullScreenViewer,
                 userButtons: this.state.getStateProperty('mainMenuSettings').userButtons,
-                userLogo:    this.state.getStateProperty('mainMenuSettings').userLogo
+                userLogo:    this.state.getStateProperty('mainMenuSettings').userLogo,
+                showResearchFinding: this.state.getStateProperty('researchFinding').enable
             }));
 
             this.element.find('.mainmenu-button').each(function() {
@@ -110,6 +111,18 @@
             this.element.find('.fullscreen-viewer').on('click', function() {
               _this.eventEmitter.publish('TOGGLE_FULLSCREEN');
             });
+
+            this.element.find('.btn-research-finding').click(function () {
+              _this.eventEmitter.publish('TOGGLE_RESEARCH_FINDING_VIEW');
+              _this.element.find('.btn-research-finding').hide();
+              _this.element.find('.btn-research-finding-hide').show();
+            });
+
+            this.element.find('.btn-research-finding-hide').click(function () {
+              _this.eventEmitter.publish('TOGGLE_RESEARCH_FINDING_VIEW');
+              _this.element.find('.btn-research-finding').show();
+              _this.element.find('.btn-research-finding-hide').hide();
+            });
         },
 
         template: Handlebars.compile([
@@ -150,6 +163,22 @@
         '</ul>',
         '{{#if userButtons}}',
           '{{userbtns userButtons}}',
+        '{{/if}}',
+        '{{#if showResearchFinding}}',
+          '<ul class="mirador-main-menu">',
+            '<li>',
+              '<a href="javascript:;" class="btn-research-finding mainmenu-button" title="Show current activity" aria-label="Show current activity">',
+                '<span class="fa fa-lg fa-fw fa-flask"></span> ',
+                'Review current research',
+              '</a>',
+            '</li>',
+            '<li>',
+              '<a href="javascript:;" class="btn-research-finding-hide mainmenu-button" title="Hide activity list" aria-label="Hide activity list" style="display:none;">',
+                '<span class="fa fa-lg fa-fw fa-inverse fa-caret-square-o-left"></span> ',
+                'Back to viewer',
+              '</a>',
+            '</li>',
+          '</ul>',
         '{{/if}}'
         ].join(''))
     };

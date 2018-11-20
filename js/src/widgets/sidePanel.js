@@ -136,21 +136,26 @@
       }
 
       if (_this.searchTabAvailable) {
-        this.searchTab = new $.NewSearchWidget({
+        this.searchTab = new $.SearchContainer({
           startHidden: true,
           windowId: this.windowId,
-          appendTo: this.element.find(".tabContentArea"),
+          appendTo: this.element.find('.tabContentArea'),
           eventEmitter: this.eventEmitter,
-          tabId: "searchTab",
-          baseObject: this.manifest.jsonLd,
+          tabId: 'searchTab',
+          baseObject: this.manifest,
           pinned: this.pinned,
-          context: this.searchContext,
+          context: this.searchContext || {
+            // searchService: this.manifest.getSearchWithinService()
+          },
           state: this.state,
           config: {
             allowFacets: false,
             searchBooks: true,
             inSidebar: true
-          }
+          },
+          searchController: new $.SearchController({
+            eventEmitter: this.eventEmitter
+          })
         });
       }
     },
