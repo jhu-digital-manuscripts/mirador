@@ -338,7 +338,7 @@
 
     template: Handlebars.compile([
       '<div id="manifest-select-menu">',
-        '<div class="container">',
+        '<div class="container-fluid">',
           '<div class="manifest-panel-controls">',
             '<a class="remove-object-option"><i class="fa fa-times fa-lg fa-fw"></i>{{t "close"}}</a>',
             '<div id="load-controls">',

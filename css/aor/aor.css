@@ -212,6 +212,7 @@
   margin: 1px;
   border-radius: 3px;
   border: 2px solid black;
+  box-sizing: initial;
 }
 .side-left {
   border-left: 6px solid black;
@@ -260,6 +261,12 @@
   height: 25px;
   width: 25px;
   margin-right: 8px;
+}
+
+.aor-icon-container,
+.aor-icon-container::after,
+.aor-icon-container::before {
+  box-sizing: initial;
 }
 
 .aor-icon-container .orientation {

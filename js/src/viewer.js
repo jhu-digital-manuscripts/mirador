@@ -36,6 +36,7 @@
       collections:           [],
       searchController:      null,
       teiUtil: null,
+      researchFinding: null
     }, options);
 
     this.id = this.state.getStateProperty('id');
@@ -156,6 +157,12 @@
       if (this.state.getStateProperty('windowObjects').length === 0 && this.state.getStateProperty('openManifestsPage')) {
         this.workspace.slots[0].addItem();
       }
+
+      this.researchFinding = new $.ResearchFindingView({
+        eventEmitter: this.eventEmitter,
+        appendTo: this.element.find('.mirador-viewer'),
+        state: this.state
+      });
     },
 
     listenForActions: function() {

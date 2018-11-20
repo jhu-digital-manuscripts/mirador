@@ -274,6 +274,10 @@
           }
         }));
       });
+
+      this.eventEmitter.subscribe('REQUEST_HISTORY', () => {
+        _this.eventEmitter.publish('HERE_IS_HISTORY', { history: _this.history.asList() });
+      });
     },
 
     triggerCollectionHistory: function (collection) {

@@ -151,6 +151,9 @@
     getId: function() {
       return this.jsonLd["@id"];
     },
+    getLabel: function () {
+      return this.jsonLd.label;
+    },
     /**
      * Check if a IIIF ID is within this collection.
      */

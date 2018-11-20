@@ -13,6 +13,10 @@
   };
 
   $.History.prototype = {
+    asList: function () {
+      return this.historyList.slice();
+    },
+
     current: function () {
       return this.historyList[this.currentIndex];
     },

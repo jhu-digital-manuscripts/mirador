@@ -47,6 +47,7 @@
     "travis": "./node_modules/grunt-cli/bin/grunt ci --verbose --force & npm run test"
   },
   "dependencies": {
+    "bootstrap": "^4.1.3",
     "jstree": "^3.3.5",
     "lazysizes": "^4.0.0-rc3",
     "urijs": "^1.19.1"
