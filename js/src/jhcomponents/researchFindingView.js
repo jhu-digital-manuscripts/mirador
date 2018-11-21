@@ -31,7 +31,7 @@
       this.bindEvents();
       this.listenForActions();
 
-      this.element.outerHeight(this.appendTo.innerHeight());
+      // this.element.outerHeight(this.appendTo.innerHeight());
     },
 
     listenForActions: function () {
@@ -45,10 +45,13 @@
     },
 
     listenForItemActions: function (item, row) {
-      row.find('.edit-history').click(() => this.startRowEdit(item, row));
-      row.find('.remove-history').click(() => {
-        console.log('>> Request remove histrory');
-      });
+      const match = this.viewData.findIndex(entry => entry.item.id === item.id);
+      if (match >= 0) {
+        row.find('.edit-history').click(() => this.startRowEdit(this.viewData[match], row));
+        row.find('.remove-history').click(() => {
+          console.log('>> Request remove histrory');
+        });
+      }
     },
 
     setEditDialog: function () {
@@ -67,9 +70,7 @@
         }
 
         const newDesc = _this.editDialog.find('textarea#edit-entry-description').val();
-        if (newDesc && newDesc.length > 0) {
-          _this.edit.row.find('.item-description').html(newDesc);
-        }
+        _this.edit.row.find('.item-description').html(newDesc);
 
         updateViewData(_this.edit.item, newTitle, newDesc);
         closeRowEdit(); 
@@ -79,12 +80,11 @@
         const match = _this.viewData.findIndex(data => data.item.id === item.id);
         if (match >= 0) {
           let edit = {};
+
           if (label && label.length > 0) {
             edit.label = label;
           }
-          if (description && description.length > 0) {
-            edit.description = description;
-          }
+          edit.description = description;
 
           jQuery.extend(_this.viewData[match], edit);
         }
@@ -151,11 +151,14 @@
       }
     },
 
-    startRowEdit: function (item, row) {
+    startRowEdit: function (entry, row) {
       this.edit = {
-        item,
+        item: entry.item,
+        entry,
         row
       };
+      this.editDialog.find('input#edit-entry-title').val(entry.label);
+      this.editDialog.find('textarea#edit-entry-description').val(entry.description);
       this.editDialog.dialog('open');
     },
 
@@ -175,7 +178,7 @@
      * }
      */
     rowTemplate: Handlebars.compile([
-      '<div class="row border border-dark rounded mx-4 py-2 d-flex align-items-center">',
+      '<div class="row border border-dark rounded mx-4 my-2 py-2 d-flex align-items-center">',
         '<div class="col-1">',
           '<h2>{{index}}</h2>',
         '</div>',
@@ -195,10 +198,10 @@
     ].join('')),
 
     containerTemplate: Handlebars.compile([
-      '<div class="research-finding-container container-fluid p-2" style="display: none;">',
+      '<div class="research-finding-container container-fluid p-2 h-100" style="display: none;">',
       // '<div class="research-finding-container container-fluid p-2">',
-        '<div class="row">',
-          '<div class="col-9">',
+        '<div class="row h-100">',
+          '<div class="col-9 h-100 history-col">',
             '<p>',
               'Review actions you took while navigating the Archaeology of Reading. You can add descriptions or remove any steps shown.',
             '</p>',
@@ -207,9 +210,9 @@
           '<div class="col">',
             '<div class="form-group">',
               '<label for="research-finding-description">Enter a description of what you found</label>',
-              '<textarea class="form-control" id="research-finding-description" rows="8"></textarea>',
+              '<textarea class="form-control" id="research-finding-description" rows="5"></textarea>',
             '</div>',
-            '<div class="form-group border border-warning rounded" style="height:250px;border-style:dashed !important">',
+            '<div class="form-group border border-warning rounded" style="my-auto border-style:dashed !important">',
             '</div>',
             '<div class="form-group">',
               '{{#if enableHtml}}',
@@ -230,18 +233,30 @@
           '</div>',
         '</div>',
         // Popup to edit a row
-        '<div id="history-list-edit-row" title="Edit entry">',
-          '<form>',
-            '<fieldset>',
-              '<label for="edit-entry-title">Title:</label>',
-              '<input type="text" id="edit-entry-title" name="edit-entry-title>',
-              '<label for="edit-entry-description">Description:</label>',
-              '<textarea id="edit-entry-description" name="edit-entry-description" rows="5"></textarea>',
-              // Allow form submission with keyboard without duplicating the dialog button
-              '<input type="submit" tabindex="-1" style="position:absolute; top:-1000px"></input>',
-            '</fieldset>',
-          '</form>',
+        '<div id="history-list-edit-row" title="Edit entry" class="p-0">',
+          '<div class="card border-0">',
+            '<div class="card-header">',
+              'Edit',
+            '</div>',
+            '<div class="card-body">',
+              '<form>',
+                '<div class="form-group">',
+                  '<label for="edit-entry-title">Title:</label>',
+                  '<input type="text" id="edit-entry-title" name="edit-entry-title" class="form-control">',
+                '</div>',
+                '<div class="form-group">',
+                  '<label for="edit-entry-description">Description:</label>',
+                  '<textarea id="edit-entry-description" name="edit-entry-description" rows="5" class="form-control">',
+                  '</textarea>',
+                '</div>',
+                // Allow form submission with keyboard without duplicating the dialog button
+                '<input type="submit" tabindex="-1" style="position:absolute; top:-1000px"></input>',
+              '</form>',
+            '</div>',
+          '</div>',
         '</div>',
+
+
       '</div>'
     ].join(''))
   };

@@ -3,3 +3,15 @@
   background-color: rgba(239,239,239);
   z-index: 18001;
 }
+.research-finding-container .item-title {
+  font-size: 18px;
+}
+.research-finding-container .item-description {
+  font-size: 12px;
+}
+.research-finding-container h2 {
+  font-size: 26px;
+}
+.research-finding-container .history-col {
+  overflow-y: auto;
+}
