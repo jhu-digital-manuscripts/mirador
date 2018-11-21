@@ -7,6 +7,11 @@
       appendTo: null,
       viewData: [],
       utils: null,
+      editDialog: null,
+      editing: {
+        item: null,
+        row: null
+      }
     }, options);
     this.init();
   };
@@ -21,6 +26,8 @@
         this.containerTemplateData()
       )).appendTo(this.appendTo);
 
+      this.setEditDialog();
+
       this.bindEvents();
       this.listenForActions();
 
@@ -28,12 +35,76 @@
     },
 
     listenForActions: function () {
-
+      this.element.find('.export-html').click(() => this.exportToHtml());
+      this.element.find('.export-rmap').click(() => this.exportToRmap());
     },
 
     bindEvents: function () {
       this.eventEmitter.subscribe('TOGGLE_RESEARCH_FINDING_VIEW', () => this.toggle());
       this.eventEmitter.subscribe('HERE_IS_HISTORY', (event, data) => this.updateHistoryList(data));
+    },
+
+    listenForItemActions: function (item, row) {
+      row.find('.edit-history').click(() => this.startRowEdit(item, row));
+      row.find('.remove-history').click(() => {
+        console.log('>> Request remove histrory');
+      });
+    },
+
+    setEditDialog: function () {
+      const _this = this;
+
+      function closeRowEdit() {
+        _this.editDialog.dialog('close');
+        _this.editDialog.find('form')[0].reset();
+        _this.edit = undefined;
+      }
+
+      function doRowEdit() {
+        const newTitle = _this.editDialog.find('input#edit-entry-title').val();
+        if (newTitle && newTitle.length > 0) {
+          _this.edit.row.find('.item-title').html(newTitle);
+        }
+
+        const newDesc = _this.editDialog.find('textarea#edit-entry-description').val();
+        if (newDesc && newDesc.length > 0) {
+          _this.edit.row.find('.item-description').html(newDesc);
+        }
+
+        updateViewData(_this.edit.item, newTitle, newDesc);
+        closeRowEdit(); 
+      }
+
+      function updateViewData(item, label, description) {
+        const match = _this.viewData.findIndex(data => data.item.id === item.id);
+        if (match >= 0) {
+          let edit = {};
+          if (label && label.length > 0) {
+            edit.label = label;
+          }
+          if (description && description.length > 0) {
+            edit.description = description;
+          }
+
+          jQuery.extend(_this.viewData[match], edit);
+        }
+      }
+
+      this.editDialog = this.element.find('#history-list-edit-row').dialog({
+        autoOpen: false,
+        height: 400,
+        width: 400,
+        modal: true,
+        buttons: {
+          'Done': doRowEdit,
+          'Cancel': closeRowEdit
+        }
+      });
+
+      this.editDialog.find('form').submit((event) => {
+        event.preventDefault();
+        doRowEdit();
+      });
     },
 
     updateHistoryList: function (list) {
@@ -47,6 +118,7 @@
 
       const moo = jQuery(this.rowTemplate(templateData));
       this.element.find('.history-list').append(moo);
+      this.listenForItemActions(item, moo);
     },
 
     /**
@@ -77,6 +149,22 @@
         this.element.find('.history-list').empty();
         this.eventEmitter.publish('REQUEST_HISTORY');
       }
+    },
+
+    startRowEdit: function (item, row) {
+      this.edit = {
+        item,
+        row
+      };
+      this.editDialog.dialog('open');
+    },
+
+    exportToHtml: function () {
+      console.log('Request export as HTML');
+    },
+
+    exportToRmap: function () {
+      console.log('Request export to RMap');
     },
 
     /**
@@ -125,7 +213,7 @@
             '</div>',
             '<div class="form-group">',
               '{{#if enableHtml}}',
-                '<button type="button" class="w-100 btn btn-primary">',
+                '<button type="button" class="w-100 btn btn-primary export-html">',
                   '<i class="fa fa-lg fa-download"></i>',
                   ' Export as HTML',
                 '</button>',
@@ -133,13 +221,26 @@
             '</div>',
             '<div class="form-group">',
               '{{#if enableRMap}}',
-                '<button type="button" class="w-100 btn btn-success">',
+                '<button type="button" class="w-100 btn btn-success export-rmap">',
                   '<i class="fa fa-lg fa-external-link"></i>',
                   ' Send to RMap',
                 '</button>',
               '{{/if}}',
             '</div>',
           '</div>',
+        '</div>',
+        // Popup to edit a row
+        '<div id="history-list-edit-row" title="Edit entry">',
+          '<form>',
+            '<fieldset>',
+              '<label for="edit-entry-title">Title:</label>',
+              '<input type="text" id="edit-entry-title" name="edit-entry-title>',
+              '<label for="edit-entry-description">Description:</label>',
+              '<textarea id="edit-entry-description" name="edit-entry-description" rows="5"></textarea>',
+              // Allow form submission with keyboard without duplicating the dialog button
+              '<input type="submit" tabindex="-1" style="position:absolute; top:-1000px"></input>',
+            '</fieldset>',
+          '</form>',
         '</div>',
       '</div>'
     ].join(''))

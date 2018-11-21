@@ -15,10 +15,12 @@
   
       switch (state.type) {
         case $.HistoryStateType.collection_search:
-          label = 'Searched \'' + state.data.search.query + '\' in ' + state.data.collection;
+          label = 'Searched \'' + state.data.search.query + '\' in ' + 
+              this.collectionLabel(state.data.collection);
           break;
         case $.HistoryStateType.manifest_search:
-          label = 'Searched \'' + state.data.search.query + '\' in ' + state.data.manifest;
+          label = 'Searched \'' + state.data.search.query + '\' in ' + 
+              this.manifestLabel(state.data.manifest);
           break;
         case $.HistoryStateType.collection:
           label = 'Viewed ' + this.collectionLabel(state.data.collection);
