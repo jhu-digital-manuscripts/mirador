@@ -8,6 +8,10 @@
   color: white;
 }
 
+h2 {
+  font-size: 18px;
+}
+
 .mirador-icon-close {
   float: left;
   background: none;

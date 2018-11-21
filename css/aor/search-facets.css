@@ -37,6 +37,7 @@
 }
 .facet-container-scrollable h2 {
   margin-left: 10px;
+  font-weight: bold;
 }
 
 .jstree-container-ul > .jstree-node > div.jstree-wholerow.jstree-wholerow-clicked {
