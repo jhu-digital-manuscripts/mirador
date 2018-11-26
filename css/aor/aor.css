@@ -601,3 +601,7 @@ a.external-link:after {
   height: 31px;
   margin: 2px -5px 2px 10px;
 }
+
+a:not([href]):not([tabindex]) {
+  color: white;
+}
