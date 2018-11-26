@@ -2,7 +2,8 @@
 
   $.ResearchFindingUtils = function (options) {
     jQuery.extend(this, {
-      saveController: null
+      saveController: null,
+      eventEmitter: null,
     }, options);
   };
 

@@ -12,6 +12,7 @@
    *  > SWITCH_SEARCH_SERVICE (changes search context to use a particular search service)
    *  > PICK_SEARCH_SERVICE (tells the search picker to select a collection in the UI)
    *  > ADD_WINDOW (spawns window of a known configuration, such as to a particular page in a book)
+   *  > ADDED_HISTORY
    * 
    * @param options {
    *    eventEmitter: {},
@@ -386,6 +387,7 @@
       } else if (event.type === $.HistoryStateType.slot_change) {
         // Modifications to slot layouts should be recorded, but do not effect the viewer URL
         this.history.add(event);
+        this.eventEmitter.publish('ADDED_HISTORY', { event });
         return;
       }
 
@@ -395,6 +397,7 @@
       if (url) {
         this.history.add(event);
         window.history.pushState(event, title, url);
+        this.eventEmitter.publish('ADDED_HISTORY', { event });
       } else {
         console.log('%c[HistoryController] No URL specified when changing history.', 'color: red');
         console.log(event);

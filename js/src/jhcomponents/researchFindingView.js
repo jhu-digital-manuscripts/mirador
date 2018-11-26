@@ -5,6 +5,15 @@
       state: null,
       element: null,
       appendTo: null,
+      historyList: [],
+      /*
+       * viewData element: {
+       *    index: 0,
+       *    item: {},   // HistoryState
+       *    label: '',
+       *    description: ''
+       * }
+       */
       viewData: [],
       utils: null,
       editDialog: null,
@@ -19,7 +28,8 @@
   $.ResearchFindingView.prototype = {
     init: function () {
       this.utils = new $.ResearchFindingUtils({
-        saveController: this.state
+        saveController: this.state,
+        eventEmitter: this.eventEmitter
       });
 
       this.element = jQuery(this.containerTemplate(
@@ -30,9 +40,6 @@
 
       this.bindEvents();
       this.listenForActions();
-
-      // this.element.find('[data-toggle="popover"]').popover();
-      // this.element.outerHeight(this.appendTo.innerHeight());
     },
 
     listenForActions: function () {
@@ -42,7 +49,7 @@
 
     bindEvents: function () {
       this.eventEmitter.subscribe('TOGGLE_RESEARCH_FINDING_VIEW', () => this.toggle());
-      this.eventEmitter.subscribe('HERE_IS_HISTORY', (event, data) => this.updateHistoryList(data));
+      this.eventEmitter.subscribe('ADDED_HISTORY', (event, data) => this.addHistoryItem(data.event));
     },
 
     listenForItemActions: function (item, row) {
@@ -102,6 +109,10 @@
       this.editDialog.find('.edit-entry-save').click(doRowEdit);
     },
 
+    addHistoryItem: function (item) {
+      this.historyList.push(item);
+    },
+
     updateHistoryList: function (list) {
       this.historyList = list.history;
       this.historyList.forEach((item, index) => this.addRowData(item, index));
@@ -138,12 +149,16 @@
     },
 
     toggle: function () {
+      const _this = this;
+
       this.element.toggle();
-      if (this.element.is(':visible')) {
-        // Ask for current history
-        this.element.find('.history-list').empty();
-        this.eventEmitter.publish('REQUEST_HISTORY');
-      }
+      // Generate templates for those items that do not already have templates
+      // Generate templates on toggle to better ensure that data has already been loaded correctly
+      this.historyList.forEach((item, index) => {
+        if (!_this.viewData.find(d => item.equals(d.item))) {
+          _this.addRowData(item, index);
+        }
+      });
     },
 
     startRowEdit: function (entry, row) {
@@ -164,6 +179,14 @@
       }
       // TODO: Should remove from history list?
       row.remove();
+      this.redoIndexes();
+    },
+
+    redoIndexes: function () {
+      this.viewData.forEach((d, i) => d.index = i + 1);
+      this.element.find('.history-list').children().each(function (i) {
+        jQuery(this).find('.item-index').html(i + 1);
+      });
     },
 
     exportToHtml: function () {
@@ -184,7 +207,7 @@
     rowTemplate: Handlebars.compile([
       '<div class="row border border-dark rounded mx-4 my-2 py-2 d-flex align-items-center">',
         '<div class="col-1">',
-          '<h2>{{index}}</h2>',
+          '<h2 class="item-index">{{index}}</h2>',
         '</div>',
         '<div class="col">',
           '<div class="row item-title">{{label}}</div>',
