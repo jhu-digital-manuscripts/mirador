@@ -32,6 +32,8 @@
         eventEmitter: this.eventEmitter
       });
 
+      this.registerHandlebarsUtils();
+
       this.element = jQuery(this.containerTemplate(
         this.containerTemplateData()
       )).appendTo(this.appendTo);
@@ -197,11 +199,28 @@
       console.log('Request export to RMap');
     },
 
+    registerHandlebarsUtils: function () {
+      /**
+       * Expects template: {}   // HistoryState
+       */
+      Handlebars.registerPartial('historyState', [
+        '<span class="invisible item-data" ',
+            'data-fragment="fragment" ',
+            'data-windowid="{{data.windowId}}" ',
+            'data-collection="{{data.collection}}" ',
+            'data-manifest="{{data.manifest}}" ',
+            'data-canvas="{{data.canvas}}" ',
+            'data-viewtype="{{data.viewType}}">',
+        '</span>',
+      ].join(''));
+    },
+
     /**
      * Template: {
      *    index: -1,          // integer, step number
      *    label: '',          // History step label
      *    description: '',    // Description for step, will come from the user
+     *    item: {}            // HistoryState
      * }
      */
     rowTemplate: Handlebars.compile([
@@ -223,6 +242,7 @@
             '<i class="fa fa-lg fa-times"></i>',
           '</button>',
         '</div>',
+        '{{> historyState item}}',
       '</div>'
     ].join('')),
 
