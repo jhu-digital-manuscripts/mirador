@@ -31,6 +31,7 @@
       this.bindEvents();
       this.listenForActions();
 
+      // this.element.find('[data-toggle="popover"]').popover();
       // this.element.outerHeight(this.appendTo.innerHeight());
     },
 
@@ -49,6 +50,7 @@
       if (match >= 0) {
         row.find('.edit-history').click(() => this.startRowEdit(this.viewData[match], row));
         row.find('.remove-history').click(() => {
+          // jQuery(this).popover();
           console.log('>> Request remove histrory');
         });
       }
@@ -58,7 +60,8 @@
       const _this = this;
 
       function closeRowEdit() {
-        _this.editDialog.dialog('close');
+        // _this.editDialog.dialog('close');
+        _this.editDialog.modal('toggle');
         _this.editDialog.find('form')[0].reset();
         _this.edit = undefined;
       }
@@ -90,21 +93,15 @@
         }
       }
 
-      this.editDialog = this.element.find('#history-list-edit-row').dialog({
-        autoOpen: false,
-        height: 400,
-        width: 400,
-        modal: true,
-        buttons: {
-          'Done': doRowEdit,
-          'Cancel': closeRowEdit
-        }
+      this.editDialog = this.element.find('#history-list-edit-row').modal({
+        backdrop: false,
+        show: false
       });
-
       this.editDialog.find('form').submit((event) => {
         event.preventDefault();
         doRowEdit();
       });
+      this.editDialog.find('.edit-entry-save').click(doRowEdit);
     },
 
     updateHistoryList: function (list) {
@@ -159,7 +156,8 @@
       };
       this.editDialog.find('input#edit-entry-title').val(entry.label);
       this.editDialog.find('textarea#edit-entry-description').val(entry.description);
-      this.editDialog.dialog('open');
+      // this.editDialog.dialog('open');
+      this.editDialog.modal('toggle');
     },
 
     exportToHtml: function () {
@@ -187,10 +185,12 @@
           '<div class="row item-description">Description: {{description}}</div>',
         '</div>',
         '<div class="col-2 d-flex justify-content-end">',
+          // '<button type="button" class="edit-history btn btn-info rounded-circle mx-2" data-toggle="modal" data-target="history-list-edit-row">',
           '<button type="button" class="edit-history btn btn-info rounded-circle mx-2">',
             '<i class="fa fa-lg fa-pencil"></i>',
           '</button>',
-          '<button type="button" class="remove-history btn btn-danger rounded-circle">',
+          '<button type="button" class="remove-history btn btn-danger rounded-circle" ',
+              'data-toggle="popover" data-trigger="focus" title="Not implemented yet">',
             '<i class="fa fa-lg fa-times"></i>',
           '</button>',
         '</div>',
@@ -233,29 +233,37 @@
           '</div>',
         '</div>',
         // Popup to edit a row
-        '<div id="history-list-edit-row" title="Edit entry" class="p-0">',
-          '<div class="card border-0">',
-            '<div class="card-header">',
-              'Edit',
-            '</div>',
-            '<div class="card-body">',
-              '<form>',
-                '<div class="form-group">',
-                  '<label for="edit-entry-title">Title:</label>',
-                  '<input type="text" id="edit-entry-title" name="edit-entry-title" class="form-control">',
-                '</div>',
-                '<div class="form-group">',
-                  '<label for="edit-entry-description">Description:</label>',
-                  '<textarea id="edit-entry-description" name="edit-entry-description" rows="5" class="form-control">',
-                  '</textarea>',
-                '</div>',
-                // Allow form submission with keyboard without duplicating the dialog button
-                '<input type="submit" tabindex="-1" style="position:absolute; top:-1000px"></input>',
-              '</form>',
+        '<div id="history-list-edit-row" class="modal" tabindex="-1" role="dialog" data-background=false>',
+          '<div class="modal-dialog" role="document">',
+            '<div class="modal-content">',
+              '<div class="modal-header">',
+                '<h5>Edit</h5>',
+                '<button type="button" class="close" data-dismiss="modal" aria-label="Close">',
+                  '<span aria-hidden="true">&times;</span>',
+                '</button>',
+              '</div>',
+              '<div class="modal-body">',
+                '<form>',
+                  '<div class="form-group">',
+                    '<label for="edit-entry-title">Title:</label>',
+                    '<input type="text" id="edit-entry-title" name="edit-entry-title" class="form-control">',
+                  '</div>',
+                  '<div class="form-group">',
+                    '<label for="edit-entry-description">Description:</label>',
+                    '<textarea id="edit-entry-description" name="edit-entry-description" rows="5" class="form-control">',
+                    '</textarea>',
+                  '</div>',
+                  // Allow form submission with keyboard without duplicating the dialog button
+                  // '<input type="submit" tabindex="-1" style="position:absolute; top:-1000px"></input>',
+                '</form>',
+              '</div>',
+              '<div class="modal-footer">',
+                '<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>',
+                '<button type="button" class="btn btn-primary edit-entry-save">Save</button>',
+              '</div>',
             '</div>',
           '</div>',
         '</div>',
-
 
       '</div>'
     ].join(''))

@@ -47,7 +47,7 @@ module.exports = function(grunt) {
     'node_modules/lazysizes/lazysizes.min.js',
     'node_modules/jstree/dist/jstree.min.js',
     'node_modules/popper.js/dist/umd/*.min.js',
-    'node_modules/bootstrap/dist/js/bootstrap.min.js',
+    'node_modules/bootstrap/dist/js/bootstrap.bundle.min.js',
   ],
 
   // source files
