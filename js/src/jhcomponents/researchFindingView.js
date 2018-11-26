@@ -8,7 +8,7 @@
       viewData: [],
       utils: null,
       editDialog: null,
-      editing: {
+      edit: {
         item: null,
         row: null
       }
@@ -46,13 +46,12 @@
     },
 
     listenForItemActions: function (item, row) {
+      const _this = this;
+
       const match = this.viewData.findIndex(entry => entry.item.id === item.id);
       if (match >= 0) {
         row.find('.edit-history').click(() => this.startRowEdit(this.viewData[match], row));
-        row.find('.remove-history').click(() => {
-          // jQuery(this).popover();
-          console.log('>> Request remove histrory');
-        });
+        row.find('.remove-history').click(() => this.removeSelectedRow(this.viewData[match], row));
       }
     },
 
@@ -60,7 +59,6 @@
       const _this = this;
 
       function closeRowEdit() {
-        // _this.editDialog.dialog('close');
         _this.editDialog.modal('toggle');
         _this.editDialog.find('form')[0].reset();
         _this.edit = undefined;
@@ -160,6 +158,14 @@
       this.editDialog.modal('toggle');
     },
 
+    removeSelectedRow: function (entry, row) {
+      if (!entry || !row) {
+        return;
+      }
+      // TODO: Should remove from history list?
+      row.remove();
+    },
+
     exportToHtml: function () {
       console.log('Request export as HTML');
     },
@@ -253,8 +259,6 @@
                     '<textarea id="edit-entry-description" name="edit-entry-description" rows="5" class="form-control">',
                     '</textarea>',
                   '</div>',
-                  // Allow form submission with keyboard without duplicating the dialog button
-                  // '<input type="submit" tabindex="-1" style="position:absolute; top:-1000px"></input>',
                 '</form>',
               '</div>',
               '<div class="modal-footer">',
