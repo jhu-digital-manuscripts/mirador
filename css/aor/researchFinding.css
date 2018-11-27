@@ -15,3 +15,6 @@
 .research-finding-container .history-col {
   overflow-y: auto;
 }
+.research-finding-container #dialog-export-html .modal-body {
+  overflow-y: auto;
+}
