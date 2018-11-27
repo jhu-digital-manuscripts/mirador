@@ -102,7 +102,11 @@ module.exports = function(grunt) {
           'css/spectrum.css',
           'css/mirador.css',
           'css/material-icons.css',
-          'css/aor/*.css',
+          'css/aor/aor.css',
+          'css/aor/browser-search.css',
+          'css/aor/search-facets.css',
+          'css/aor/researchFindings.css',
+          'css/aor/tei.css',
         ],
         dest: 'build/mirador/css/mirador-combined.css'
       }
