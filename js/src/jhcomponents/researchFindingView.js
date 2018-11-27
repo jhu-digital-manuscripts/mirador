@@ -65,8 +65,6 @@
     },
 
     listenForItemActions: function (item, row) {
-      const _this = this;
-
       const match = this.viewData.findIndex(entry => entry.item.id === item.id);
       if (match >= 0) {
         row.find('.edit-history').click(() => this.startRowEdit(this.viewData[match], row));
@@ -132,6 +130,7 @@
 
     addRowData: function (item, index) {
       const templateData = this.rowTemplateData(item, index);
+      // const templateData = this.rowTemplateData(item, this.viewData.length);
       this.viewData.push(templateData);
 
       const moo = jQuery(this.rowTemplate(templateData));
@@ -193,6 +192,16 @@
       }
       // TODO: Should remove from history list?
       row.remove();
+      
+      const viewIndex = this.viewData.findIndex(item => entry.id === item.item.id);
+      if (viewIndex >= 0) {
+        this.viewData.splice(viewIndex, 1);
+      }
+      const historyIndex = this.historyList.findIndex(item => item.id === entry.id);
+      if (historyIndex >= 0) {
+        this.historyList.splice(historyIndex, 1);
+      }
+
       this.redoIndexes();
     },
 
@@ -256,7 +265,7 @@
             // '{{#if url}}<a href="{{url}}">{{label}}</a>{{else}}{{label}}{{/if}}',
             '<a href="{{url}}">{{label}}</a>',
           '</div>',
-          '<div class="row item-description">Description: {{description}}</div>',
+          '<div class="row item-description">{{description}}</div>',
         '</div>',
         '<div class="col-2 d-flex justify-content-end">',
           // '<button type="button" class="edit-history btn btn-info rounded-circle mx-2" data-toggle="modal" data-target="history-list-edit-row">',
