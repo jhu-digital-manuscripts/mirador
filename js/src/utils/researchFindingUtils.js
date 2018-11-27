@@ -80,6 +80,19 @@
         return;
       }
       return col.getLabel();
+    },
+
+    /**
+     * @param {vararg} arguments standard JS object passed with function calls
+     *        list of jQuery elements to be concatenated and stringified
+     */
+    htmlToString: function () {
+      const wrapper = jQuery('<div></div>');
+      // 'arguments' is not actually an array >:(
+      for (let i = 0; i < arguments.length; i++) {
+        wrapper.append(arguments[i]);
+      }
+      return wrapper[0].outerHTML;
     }
   };
 } (Mirador));

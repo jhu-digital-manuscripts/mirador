@@ -192,7 +192,13 @@
     },
 
     exportToHtml: function () {
-      console.log('Request export as HTML');
+      const description = this.element.find('#research-finding-description').val();
+      const stringified = this.utils.htmlToString(
+        jQuery('<p>' + description + '</p>'),
+        this.element.find('.history-list').clone()
+      );
+
+      console.log(stringified);
     },
 
     exportToRmap: function () {
