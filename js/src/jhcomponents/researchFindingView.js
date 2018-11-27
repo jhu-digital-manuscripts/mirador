@@ -20,7 +20,8 @@
       edit: {
         item: null,
         row: null
-      }
+      },
+      htmlExport: null,     // Html Export Modal
     }, options);
     this.init();
   };
@@ -42,6 +43,10 @@
 
       this.bindEvents();
       this.listenForActions();
+
+      this.htmlExport = new $.HtmlExportModal({
+        appendTo: this.element
+      });
     },
 
     listenForActions: function () {
@@ -193,12 +198,17 @@
 
     exportToHtml: function () {
       const description = this.element.find('#research-finding-description').val();
+      const list = this.element.find('.history-col .history-list').clone();
+
+      list.find('button').remove();
+
       const stringified = this.utils.htmlToString(
         jQuery('<p>' + description + '</p>'),
-        this.element.find('.history-list').clone()
+        list
       );
 
-      console.log(stringified);
+      this.htmlExport.setContent(stringified);
+      this.htmlExport.open();
     },
 
     exportToRmap: function () {
@@ -317,7 +327,6 @@
             '</div>',
           '</div>',
         '</div>',
-
       '</div>'
     ].join(''))
   };
