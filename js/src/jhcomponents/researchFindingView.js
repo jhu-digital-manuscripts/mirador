@@ -22,6 +22,8 @@
         row: null
       },
       htmlExport: null,     // Html Export Modal
+      // baseUrl: null,
+      urlSlicer: null,
     }, options);
     this.init();
   };
@@ -43,6 +45,9 @@
 
       this.bindEvents();
       this.listenForActions();
+
+      this.urlSlicer = new $.JHUrlSlicer();
+      // this.baseUrl = new URI().query('').fragment('').toString();
 
       this.htmlExport = new $.HtmlExportModal({
         appendTo: this.element
@@ -81,7 +86,7 @@
       function doRowEdit() {
         const newTitle = _this.editDialog.find('input#edit-entry-title').val();
         if (newTitle && newTitle.length > 0) {
-          _this.edit.row.find('.item-title').html(newTitle);
+          _this.edit.row.find('.item-title a').html(newTitle);
         }
 
         const newDesc = _this.editDialog.find('textarea#edit-entry-description').val();
@@ -139,11 +144,13 @@
      */
     rowTemplateData: function (item, index) {
       index++;    // 1 based index, instead of 0 based index
+      const url = this.urlSlicer.toUrl(item);
       return {
         index,
         item,
         label: this.utils.historyStateLabel(item),
-        description: undefined
+        description: undefined,
+        url
       };
     },
 
@@ -221,7 +228,7 @@
        */
       Handlebars.registerPartial('historyState', [
         '<span class="invisible item-data" ',
-            'data-fragment="fragment" ',
+            'data-fragment="{{fragment}}" ',
             'data-windowid="{{data.windowId}}" ',
             'data-collection="{{data.collection}}" ',
             'data-manifest="{{data.manifest}}" ',
@@ -245,7 +252,10 @@
           '<h2 class="item-index">{{index}}</h2>',
         '</div>',
         '<div class="col">',
-          '<div class="row item-title">{{label}}</div>',
+          '<div class="row item-title">',
+            // '{{#if url}}<a href="{{url}}">{{label}}</a>{{else}}{{label}}{{/if}}',
+            '<a href="{{url}}">{{label}}</a>',
+          '</div>',
           '<div class="row item-description">Description: {{description}}</div>',
         '</div>',
         '<div class="col-2 d-flex justify-content-end">',
