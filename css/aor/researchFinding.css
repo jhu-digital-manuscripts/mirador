@@ -18,3 +18,7 @@
 .research-finding-container #dialog-export-html .modal-body {
   overflow-y: auto;
 }
+
+.research-finding-container .history-list {
+  list-style: none;
+}
