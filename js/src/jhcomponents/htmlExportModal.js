@@ -50,9 +50,11 @@
         name += '.html';
       }
 
-      const button = this.element.find('button.btn-export a');
+      const button = this.element.find('#download-anchor');
       button.attr('href', this.url);
       button.attr('download', name);
+
+      button[0].click();
     },
 
     unsetDownload: function () {
@@ -60,6 +62,7 @@
         return;
       }
       URL.revokeObjectURL(this.url);
+      this.element.find('#download-anchor').attr('href', '#');
     },
 
     validateFilename: function () {
@@ -72,9 +75,11 @@
           input.addClass('is-invalid');
           button.addClass('disabled');
         }
+        return false;
       } else {
         input.removeClass('is-invalid');
         button.removeClass('disabled');
+        return true;
       }
     },
 
@@ -86,8 +91,13 @@
         _this.doDownload(event);
       });
 
-      this.element.find('input.export-filename').keyup(function () {
-        _this.validateFilename();
+      this.element.find('input.export-filename').keyup(function (event) {
+        if (!_this.validateFilename()) {
+          return;
+        }
+        if (event.keyCode === 13) {
+          _this.doDownload(event);
+        }
       });
     },
 
@@ -116,8 +126,9 @@
                 '<input class="form-control export-filename" aria-label="Enter filename">',
                 '<div class="input-group-append">',
                   '<button type="button" class="btn btn-primary btn-export" aria-label="Save file">',
-                    '<a href="#" target="_blank">Save</a>',
+                    'Save',
                   '</button>',
+                  '<a href="#" target="_blank" class="invisible" id="download-anchor">Save</a>',
                 '</div>',
               '</div>',
             '</div>',
