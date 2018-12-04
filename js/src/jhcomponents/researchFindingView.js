@@ -6,15 +6,7 @@
       element: null,
       appendTo: null,
       historyList: [],
-      /*
-       * viewData element: {
-       *    index: 0,
-       *    item: {},   // HistoryState
-       *    label: '',
-       *    description: ''
-       * }
-       */
-      viewData: [],
+      viewData: [],   // [ {ViewStep}, ... ]
       utils: null,
       editDialog: null,
       edit: {
@@ -144,13 +136,14 @@
     rowTemplateData: function (item, index) {
       index++;    // 1 based index, instead of 0 based index
       const url = this.urlSlicer.toUrl(item);
-      return {
+
+      return new $.ViewStep({
         index,
         item,
         label: this.utils.historyStateLabel(item),
         description: undefined,
         url
-      };
+      });
     },
 
     containerTemplateData: function () {

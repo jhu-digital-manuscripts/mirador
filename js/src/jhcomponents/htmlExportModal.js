@@ -55,6 +55,8 @@
       button.attr('download', name);
 
       button[0].click();
+
+      this.element.modal('hide');
     },
 
     unsetDownload: function () {
