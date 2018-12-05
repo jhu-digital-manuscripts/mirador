@@ -44,6 +44,11 @@
       this.htmlExport = new $.HtmlExportModal({
         appendTo: this.element
       });
+
+      this.rmapExport = new $.RmapExportModal({
+        appendTo: this.element,
+        utils: this.utils
+      });
     },
 
     listenForActions: function () {
@@ -221,7 +226,11 @@
     },
 
     exportToRmap: function () {
-      console.log('Request export to RMap');
+      this.rmapExport.setContent({
+        description: this.element.find('#research-finding-description').val(),
+        steps: this.viewData
+      });
+      this.rmapExport.open();
     },
 
     registerHandlebarsUtils: function () {
@@ -305,7 +314,7 @@
               '{{#if enableRMap}}',
                 '<button type="button" class="w-100 btn btn-success export-rmap">',
                   '<i class="fa fa-lg fa-external-link"></i>',
-                  ' Send to RMap',
+                  ' Export to RMap',
                 '</button>',
               '{{/if}}',
             '</div>',
