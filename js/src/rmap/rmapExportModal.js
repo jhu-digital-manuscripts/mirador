@@ -4,7 +4,8 @@
       element: null,
       appendTo: null,
       utils: null,
-      rmapUrl: null
+      rmapUrl: 'https://test.rmap-hub.org/',
+      content: null
     }, options);
 
     this.rmapTransformer = new $.RmapTransformer({
@@ -50,9 +51,7 @@
     },
 
     setContent: function (content) {
-      console.log('Moo');
-      const result = this.rmapTransformer.transform(content);
-      console.log(result);
+      this.content = content;
     },
 
     open: function () {
@@ -60,6 +59,10 @@
     },
 
     validate: function () {
+      if (!this.content) {
+        return false;
+      }
+
       const button = this.element.find('button.btn-export');
       const input = this.element.find('input#input-api-key');
       const val = input.val().trim();
@@ -78,10 +81,34 @@
     },
 
     doExport: function () {
+      const data = this.rmapTransformer.transform(this.content);
       const key = this.element.find('input#input-api-key').val().trim();
       console.log('%cShould export to RMap now! (' + key + ')', 'color:green;');
-      this.element.modal('hide');
+      
+      const button = this.element.find('button.btn-export');
+      const messages = this.element.find('#rmap-modal-messages');
+      
+      button.addClass('disabled');
+      messages.html(jQuery(this.loadingMsg));
+      // jQuery.post({
+      //   url: this.rmapUrl,
+      //   data,
+      //   dataType: 'application/ld+json',
+      //   headers: {
+      //     'Authorization': 'Basic ' + btoa(key)
+      //   }
+      // }).done(result => {
+
+      // }).fail(error => {
+
+      // }).always(() => {
+
+      // });
+
+      // this.element.modal('hide');
     },
+
+    loadingMsg: '<p><i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i> Sending data to RMap</p>',
 
     template: Handlebars.compile([
       '<div id="dialog-export-html" class="modal" tabindex="-1" role="dialog">',
@@ -96,9 +123,8 @@
             '<div class="modal-body h-75">',
               // Body content
               '<p>',
-                'By clicking \"Export\" your research finding will be converted to a DiSCO and sent to ',
-                '<a href="{{rmapUrl}}">RMap</a>. You can login using your Google credentials by clicking ',
-                '"Sign in with Google" option in RMap. In order to proceed, you need an RMap API key associated ',
+                'When you click \"Export\" your research finding will be converted to a Distributed Scholarly Compound Object (DiSCO) and sent to ',
+                '<a class="text-primary" href="{{rmapUrl}}" target="_blank">RMap</a>. In order to proceed, you need an RMap API key associated ',
                 'with your RMap account. ',
               '</p>',
               '<div class="form-group row">',
@@ -114,7 +140,10 @@
               '</div>',
               '<div class="collapse mx-4 my-2" id="rmap-api-key-info">',
                 '<ul class="list-group">',
-                  '<li class="list-group-item">Login to RMap</li>',
+                  '<li class="list-group-item">',
+                    'Login to <a class="text-primary" href="{{rmapUrl}}" target="_blank">RMap</a>. ',
+                    'If you do not have an RMap account, you can create one using a Google or Twitter account.',
+                  '</li>',
                   '<li class="list-group-item">Hover over your user name to bring up a menu and click on "Manage API keys"</li>',
                   '<li class="list-group-item">If you already have an API key, you can copy the key to your clipboard here. ',
                       'Otherwise, you can click "Create new key" to get a key.</li>',
@@ -122,10 +151,15 @@
               '</div>',
             '</div>',
             '<div class="modal-footer">',
-              '<button type="button" class="btn btn-secondary btn-close" aria-label="Cancel">Cancel</button>',
-              '<button type="button" class="btn btn-primary btn-export disabled" aria-label="Export to RMap">',
-                'Export',
-              '</button>',
+              '<div id="rmap-modal-messages" class="row mx-4">',
+
+              '</div>',
+              '<div class="row mx-4">',
+                '<button type="button" class="btn btn-secondary btn-close" aria-label="Cancel">Cancel</button>',
+                '<button type="button" class="btn btn-primary btn-export disabled" aria-label="Export to RMap">',
+                  'Export',
+                '</button>',
+              '</div>',
             '</div>',
           '</div>',
         '</div>',
