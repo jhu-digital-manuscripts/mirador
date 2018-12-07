@@ -45,9 +45,12 @@
         appendTo: this.element
       });
 
+      const rfConfig = this.state.getStateProperty('researchFinding');
       this.rmapExport = new $.RmapExportModal({
         appendTo: this.element,
-        utils: this.utils
+        utils: this.utils,
+        rmapUrl: rfConfig.rmap.url,
+        rmapApi: rfConfig.rmap.url + rfConfig.rmap.api
       });
     },
 

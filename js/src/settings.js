@@ -241,6 +241,10 @@
       export: {
         rmap: true,
         html: true
+      },
+      rmap: {
+        url: 'https://rmap-hub.org',
+        api: '/api/discos'
       }
     }
   };
