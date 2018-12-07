@@ -4,14 +4,20 @@
       element: null,
       appendTo: null,
       utils: null,
-      rmapUrl: 'https://test.rmap-hub.org/',
+      rmapUrl: null,
+      rmapApi: null,
+      context: null,
+      resolver: null,
       content: null
     }, options);
 
     this.rmapTransformer = new $.RmapTransformer({
-      utils: this.utils
+      utils: this.utils,
+      contextUri: this.context
     });
-
+console.log('MOOO');
+console.log(this.rmapUrl);
+console.log(this.rmapApi);
     this.init();
   };
 
@@ -55,6 +61,7 @@
     },
 
     open: function () {
+      this.element.find('#rmap-modal-messages').empty();
       this.element.modal('show');
     },
 
@@ -83,32 +90,55 @@
     doExport: function () {
       const data = this.rmapTransformer.transform(this.content);
       const key = this.element.find('input#input-api-key').val().trim();
-      console.log('%cShould export to RMap now! (' + key + ')', 'color:green;');
-      
+
       const button = this.element.find('button.btn-export');
       const messages = this.element.find('#rmap-modal-messages');
       
       button.addClass('disabled');
       messages.html(jQuery(this.loadingMsg));
-      // jQuery.post({
-      //   url: this.rmapUrl,
-      //   data,
-      //   dataType: 'application/ld+json',
-      //   headers: {
-      //     'Authorization': 'Basic ' + btoa(key)
-      //   }
-      // }).done(result => {
 
-      // }).fail(error => {
-
-      // }).always(() => {
-
-      // });
-
-      // this.element.modal('hide');
+      jQuery.post({
+        url: this.rmapApi,
+        data: JSON.stringify(data),
+        headers: {
+          'Authorization': 'Basic ' + btoa(key),
+          'Content-Type': 'application/ld+json; charset=utf-8'
+        }
+      }).done(result => {
+        const url = this.rmapUrl + this.resolver + encodeURIComponent(result);
+        messages.html(this.rmapSucceed(url));
+      }).fail(error => {
+        messages.html(
+          jQuery(this.failureTemplate({
+            message: error.statusText
+          }))
+        );
+        button.removeClass('disabled');
+      }).always(() => {
+        // button.removeClass('disabled');
+      });
     },
 
     loadingMsg: '<p><i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i> Sending data to RMap</p>',
+    
+    rmapSucceed: Handlebars.compile([
+      '<p class="text-success w-100 text-left">',
+        '<i class="fa fa-smile-o fa-2x fa-fw"></i> ',
+        'Successfully sent your research finding to RMap. Please copy this link for your records: ',
+      '</p>',
+      '<p class="text-primary w-100 text-left">',
+        '<a href="{{this}}" target="_blank">{{this}}</a>',
+      '</p>'
+    ].join('')),
+
+    failureTemplate: Handlebars.compile([
+      '<p class="text-danger w-100 text-left">',
+        '<i class="fa fa-frown-o fa-2x fa-fw"></i> Failed to send research finding to RMap.',
+      '</p>',
+      '<p class="text-danger w-100 text-left">',
+        '{{message}}',
+      '</p>'
+    ].join('')),
 
     template: Handlebars.compile([
       '<div id="dialog-export-html" class="modal" tabindex="-1" role="dialog">',
@@ -127,34 +157,31 @@
                 '<a class="text-primary" href="{{rmapUrl}}" target="_blank">RMap</a>. In order to proceed, you need an RMap API key associated ',
                 'with your RMap account. ',
               '</p>',
-              '<div class="form-group row">',
+              '<p>To access your RMap API key:</p>',
+              '<ul class="">',
+                '<li class="">',
+                  'Login to <a class="text-primary" href="{{rmapUrl}}" target="_blank">RMap</a>. ',
+                  'If you do not have an RMap account, you can create one using a Google or Twitter account.',
+                '</li>',
+                '<li class="">Hover over your user name to bring up a menu and click on "Manage API keys"</li>',
+                '<li class="">If you already have an API key, you can copy the key to your clipboard here. ',
+                    'Otherwise, you can click "Create new key" to get a key.</li>',
+                '<li>You must ensure that you enable the "Synchronize RMap:Agent" in your user settings ',
+                    'in order to create a new DiSCO.</li>',
+              '</ul>',
+
+              '<div class="form-group row pt-3 border-top">',
                 '<label for="input-api-key" class="col-sm-2 col-form-label">RMap API Key</label>',
                 '<div class="col">',
                   '<input id="input-api-key" class="form-control is-invalid export-data">',
                 '</div>',
               '</div>',
-              '<div class="row">',
-                '<a class="ml-4 btn btn-info" data-toggle="collapse" href="#rmap-api-key-info" role="button" aria-expanded="false" aria-controls="rmap-api-key-info">',
-                  'Get your RMap API key',
-                '</a>',
-              '</div>',
-              '<div class="collapse mx-4 my-2" id="rmap-api-key-info">',
-                '<ul class="list-group">',
-                  '<li class="list-group-item">',
-                    'Login to <a class="text-primary" href="{{rmapUrl}}" target="_blank">RMap</a>. ',
-                    'If you do not have an RMap account, you can create one using a Google or Twitter account.',
-                  '</li>',
-                  '<li class="list-group-item">Hover over your user name to bring up a menu and click on "Manage API keys"</li>',
-                  '<li class="list-group-item">If you already have an API key, you can copy the key to your clipboard here. ',
-                      'Otherwise, you can click "Create new key" to get a key.</li>',
-                '</ul>',
-              '</div>',
             '</div>',
-            '<div class="modal-footer">',
+            '<div class="d-block modal-footer">',
               '<div id="rmap-modal-messages" class="row mx-4">',
 
               '</div>',
-              '<div class="row mx-4">',
+              '<div class="row mx-4 float-right">',
                 '<button type="button" class="btn btn-secondary btn-close" aria-label="Cancel">Cancel</button>',
                 '<button type="button" class="btn btn-primary btn-export disabled" aria-label="Export to RMap">',
                   'Export',

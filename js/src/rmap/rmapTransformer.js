@@ -2,11 +2,10 @@
   $.RmapTransformer = function (options) {
     jQuery.extend(this, {
       utils: null,      // ResearchFindingUtils
+      contextUri: null,
     }, options);
 
-    let context = new URI().fragment('').query('')
-        .path('/build/mirador/aor_rmap_context.json');
-    jQuery.getJSON(context.toString()).done(data => this.context = data);
+    jQuery.getJSON(this.contextUri).done(data => this.context = data);
   };
 
   /**
@@ -27,6 +26,10 @@
 
     stepId: function (index) {
       return '_:step' + index;
+    },
+
+    hasIdAndType: function (obj) {
+      return obj['@id'] && obj['@type'];
     },
 
     /**
@@ -53,13 +56,13 @@
         aggregates.push(tStep.used);
         
         const bookView = this.transformBookView(step);
-        if (!graph.includes(bookView)) {
+        if (this.hasIdAndType(bookView) && !graph.includes(bookView)) {
           graph.push(bookView);
         }
 
         if (step.item.data.manifest) {
           const book = this.transformBook(step.item.data.manifest);
-          if (!graph.includes(book)) {
+          if (this.hasIdAndType(book) && !graph.includes(book)) {
             graph.push(book);
           }
         }

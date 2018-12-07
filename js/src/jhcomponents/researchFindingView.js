@@ -50,7 +50,9 @@
         appendTo: this.element,
         utils: this.utils,
         rmapUrl: rfConfig.rmap.url,
-        rmapApi: rfConfig.rmap.url + rfConfig.rmap.api
+        rmapApi: rfConfig.rmap.url + rfConfig.rmap.api,
+        context: rfConfig.rmap.context,
+        resolver: rfConfig.rmap.resolver
       });
     },
 
