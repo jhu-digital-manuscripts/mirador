@@ -105,9 +105,13 @@
 
       if (searchConfig.isBasic) {
         const full = searchConfig.query;
-        let guess = full.substring(full.indexOf(':\'') + 2, full.indexOf('\'|'));
-        return guess;
-        // return uiConfig.basic;
+
+        if (!uiConfig) {
+          let guess = full.substring(full.indexOf(':\'') + 2, full.indexOf('\'|'));
+          return guess;
+        } else {
+          return uiConfig.basic;
+        }
       } else {
         return searchConfig.query;
       }
