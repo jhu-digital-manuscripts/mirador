@@ -188,13 +188,20 @@
         }
       }
       
+      var toShow = this.state.getStateProperty('manifestList').showMetadata;
+      var secondaryData = [];
+
+      toShow.forEach(function (key) {
+        if (key !== 'Repository') {
+          secondaryData.push(_this.refMetadata(key));
+        }
+      });
+
       this.tplData = {
         showLogo: this.showLogo,
         label: ref.label,
-        secondaryData: [
-          title,
-        ],
-        repository: this.refMetadata("Repository"),
+        secondaryData: secondaryData,
+        repository: toShow.includes("Repository") ? this.refMetadata("Repository") : undefined,
         canvasCount: this.refMetadata("pageCount"),
         images: [],
         index: _this.state.getManifestIndex(ref["@id"]),
@@ -467,7 +474,7 @@
               '<div class="repo-label">{{repository}}</div>',
             '{{/if}}',
             '{{#if canvasCount}}',
-              '<div class="canvas-count">{{canvasCount}} {{pluralize canvasCount (t "item") (t "items")}}</div>',
+              '<div class="canvas-count">{{canvasCount}} {{pluralize canvasCount (t "image") (t "images")}}</div>',
             '{{/if}}',
           '</div>',
         '</div>',

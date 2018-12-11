@@ -51,7 +51,8 @@
       'search': {
         'showCollectionPicker': true,   // Show the dropdown to select other collections
         'showDescription': true,    // Display collection description if available
-      }
+      },
+      'showMetadata': []    // Metadata keys to display for each book
     },
     
     //default window settings, but can be changed in Mirador configuration on initialization
