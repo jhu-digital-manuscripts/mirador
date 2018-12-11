@@ -104,7 +104,10 @@
       const uiConfig = state.data.ui;
 
       if (searchConfig.isBasic) {
-        return uiConfig.basic;
+        const full = searchConfig.query;
+        let guess = full.substring(full.indexOf(':\'') + 2, full.indexOf('\'|'));
+        return guess;
+        // return uiConfig.basic;
       } else {
         return searchConfig.query;
       }
