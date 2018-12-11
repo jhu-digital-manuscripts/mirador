@@ -77,6 +77,8 @@
       }
       this.bindEvents();
       this.listenForActions();
+
+      this.element.find('.preview-thumb').width((this.maxThumbs * 110) + 'px');
     },
 
     fetchTplData: function(id) {
@@ -209,16 +211,13 @@
             return ref.logo['@id'];
         }
 
-        var annotator = _this.refMetadata('Reader');
+        var annotator = _this.refMetadata('Reader 1');
         var logoPrefix = _this.state.getStateProperty('buildPath') + _this.state.getStateProperty('imagesPath') + 'aor/';
 
-        switch (annotator) {
-          case "John Dee":
-            return logoPrefix + 'dee.jpg';
-          case "Gabriel Harvey":
-            return logoPrefix + 'harvey.jpg';
-          default:
-            break;
+        if (annotator.includes('John Dee')) {
+          return logoPrefix + 'dee.jpg';
+        } else if (annotator.includes('Gabriel Harvey')) {
+          return logoPrefix + 'harvey.jpg';
         }
 
         if (_this.state.getStateProperty("repoImages")) {
