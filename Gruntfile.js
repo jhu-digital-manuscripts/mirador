@@ -60,7 +60,8 @@ module.exports = function(grunt) {
     'js/src/widgets/*.js',
     'js/src/utils/*.js',
     'js/src/history/*.js',
-    'js/src/jhcomponents/*.js'
+    'js/src/jhcomponents/*.js',
+    'js/src/rmap/*.js'
   ];
 
   // ----------
@@ -183,7 +184,11 @@ module.exports = function(grunt) {
           flatten: true,
           src: 'images/jquery-ui/*',
           dest: 'build/mirador/css/images/'
-        }]
+        }, {
+          src: 'aor_rmap_context.json',
+          dest: 'build/mirador/aor_rmap_context.json'
+        }
+      ]
       }
     },
 
@@ -232,7 +237,9 @@ module.exports = function(grunt) {
           'locales/*/*.json',
           'images/*',
           'css/*.css',
-          'index.html'
+          'css/aor/*.css',
+          'index.html',
+          'aor_rmap_context.json'
         ],
         tasks: 'dev_build'
       }

@@ -1,0 +1,49 @@
+{
+  "foaf": "http://xmlns.com/foaf/0.1/",
+  "dcmitype": "http://purl.org/dc/dcmitype/",
+  "dcterms": "http://purl.org/dc/terms/",
+  "prov": "http://www.w3.org/ns/prov#",
+  "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+  "xs": "http://www.w3.org/2001/XMLSchema#",
+  "iana": "http://www.iana.org/assignments/relation/",
+  "ore": "http://www.openarchives.org/ore/terms/",
+  "rmap": "http://purl.org/ontology/rmap#",
+  "isni": "http://isni.org/isni/",
+  "next": {
+    "@id": "iana:next",
+    "@type": "@id"
+  },
+  "previous": {
+    "@id": "iana:previous",
+    "@type": "@id"
+  },
+  "description": {
+    "@id": "dcterms:description"
+  },
+  "label": {
+    "@id": "rdfs:label"
+  },
+  "used": {
+    "@id": "prov:used",
+    "@type": "@id"
+  },
+  "name": {
+    "@id": "foaf:name"
+  },
+  "title": {
+    "@id": "dcterms:title"
+  },
+  "published": {
+    "@id": "dcterms:published"
+  },
+  "isPartOf": {
+    "@id": "dcterms:isPartOf",
+    "@type": "@id"
+  },
+  "aggregates": {
+    "@id": "ore:aggregates",
+    "@type": "@id",
+    "@container": "@set"
+  },
+  "creator" : { "@id": "dcterms:creator", "@type": "@id"}
+}

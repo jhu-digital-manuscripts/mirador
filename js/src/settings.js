@@ -241,6 +241,12 @@
       export: {
         rmap: true,
         html: true
+      },
+      rmap: {
+        context: 'http://localhost:8000',
+        url: 'https://rmap-hub.org',
+        api: '/api/discos',
+        resolver: '/app/discos/'
       }
     }
   };
