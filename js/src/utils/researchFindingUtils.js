@@ -82,6 +82,25 @@
       return col.getLabel();
     },
 
+    manifestMetadata: function (manifestId, key) {
+      const manifest = this.getManifest(manifestId);
+      if (!manifest || !key) {
+        return;
+      }
+      return manifest.metadata(key);
+    },
+
+    manifestProp: function (manifestId, prop) {
+      const manifest = this.getManifest(manifestId);
+      if (!manifest || !prop) {
+        return;
+      } else if (!manifest.jsonLd) {
+        console.log('%cManifest returned with no JSON-LD.', 'color: red;');
+        return;
+      }
+      return manifest.jsonLd[prop];
+    },
+
     /**
      * @param {vararg} arguments standard JS object passed with function calls
      *        list of jQuery elements to be concatenated and stringified
