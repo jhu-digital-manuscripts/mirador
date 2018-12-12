@@ -22,3 +22,11 @@
 .research-finding-container .history-list {
   list-style: none;
 }
+
+.research-finding-link.export-link {
+  cursor: text;
+}
+.research-finding-link.export-link:hover {
+  color: unset;
+  text-decoration: unset;
+}

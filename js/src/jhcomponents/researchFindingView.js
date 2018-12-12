@@ -71,6 +71,7 @@
       if (match >= 0) {
         row.find('.edit-history').click(() => this.startRowEdit(this.viewData[match], row));
         row.find('.remove-history').click(() => this.removeSelectedRow(this.viewData[match], row));
+        row.find('a.export-link').click((event) => event.preventDefault());
       }
     },
 
@@ -271,7 +272,8 @@
           '<div class="col">',
             '<div class="row item-title">',
               // '{{#if url}}<a href="{{url}}">{{label}}</a>{{else}}{{label}}{{/if}}',
-              '<a href="{{url}}">{{label}}</a>',
+              // '<div class="research-finding-link view-link">{{label}}</div>',
+              '<a class="research-finding-link export-link" href="{{url}}">{{label}}</a>',
             '</div>',
             '<div class="row item-description">{{description}}</div>',
           '</div>',

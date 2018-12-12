@@ -12,11 +12,20 @@
 .aor-red {
   color: rgb(144, 25, 40);
 }
+.aor-background-red {
+  background-color: rgb(144, 25, 40);
+}
 .aor-gold {
   color: rgb(199,152,84);
 }
+.aor-background-gold {
+  background-color: rgb(199,152,84);
+}
 .aor-grey {
   color: rgb(70, 67, 68);
+}
+.aor-background-grey {
+  background-color: rgb(70, 67, 68);
 }
 .aor-shade {
   color: rgb(244, 242, 239);
