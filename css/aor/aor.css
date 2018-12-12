@@ -33,6 +33,9 @@
   background-repeat: repeat-x;
   height: 50px;
 }
+#viewer {
+  height: calc(100% - 60px);  /* calc window height less height of banner */
+}
 
 /* Modifying base Mirador junk */
 
