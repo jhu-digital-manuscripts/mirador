@@ -43,7 +43,7 @@
   height: 50px;
 }
 #viewer {
-  height: calc(100% - 60px);  /* calc window height less height of banner */
+  height: calc(100% - 50px);  /* calc window height less height of banner */
 }
 
 /* Modifying base Mirador junk */
