@@ -91,6 +91,6 @@
     "prevPageTooltip": "Go to previous page",
     "relatedTextView": "Description",
     "noDescription": "No description available",
-    "image": "Image",
-    "images": "Images"
+    "image": "image",
+    "images": "images"
 }
