@@ -472,7 +472,7 @@
         this.applyState(event.state);
         
       } else {
-        console.log('%cnon-Evented URL', 'color:brown;');
+        // console.log('%cnon-Evented URL', 'color:brown;');
         const state = this.urlSlicer.parseUrl(url);
         this.addHistory(state);
         this.applyState(state);
@@ -565,11 +565,11 @@
       if (state.type === $.HistoryStateType.slot_change) {
         switch (state.data.modType) {
           case $.SlotChangeType.add:
-            console.log('   >>> Add slot event');
+            // console.log('   >>> Add slot event');
             this.removeSlot(state);  
             break;
           case $.SlotChangeType.remove:
-            console.log('   <<< Remove Slot event ');
+            // console.log('   <<< Remove Slot event ');
             break;
           default:
             break;

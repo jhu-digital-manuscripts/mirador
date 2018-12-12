@@ -35,8 +35,8 @@
       // Splice will truncate the historyList
       this.historyList.splice(++this.currentIndex);
       this.historyList.push(state);
-      console.log('%cAdding state', 'color:green;');
-      console.log(this.historyList);
+      // console.log('%cAdding state', 'color:green;');
+      // console.log(this.historyList);
     },
 
     length: function () {

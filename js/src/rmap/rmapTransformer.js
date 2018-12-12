@@ -48,7 +48,7 @@
       let aggregates = [];
 
       data.steps.forEach((step, index) => {
-        const hasNext = index < data.steps.length;
+        const hasNext = index + 1 < data.steps.length;
         const hasPrev = index > 0;
 
         const tStep = this.transformStep(step, hasPrev, hasNext);
@@ -65,6 +65,22 @@
           if (this.hasIdAndType(book) && !graph.includes(book)) {
             graph.push(book);
           }
+
+          const author = this.utils.manifestMetadata(step.item.data.manifest, 'author');
+          if (author) {
+            const rdfPerson = this.transformPerson(author);
+            if (this.hasIdAndType(rdfPerson) && !graph.includes(rdfPerson)) {
+              graph.push(rdfPerson);
+            }
+          }
+
+          // const reader = this.utils.manifestMetadata(step.item.data.manifest, 'reader');
+          // if (reader) {
+          //   const rdfReader = this.transformPerson(reader);
+          //   if (this.hasIdAndType(rdfReader) && !graph.includes(rdfReader)) {
+          //     graph.push(rdfReader);
+          //   }
+          // }
         }
 
         // TODO: should transform people, locations, books, etc
@@ -81,12 +97,14 @@
     makeDisco: function (aggregates, description) {
       console.assert(Array.isArray(aggregates), 'steps must be an array');
       let result = {
-        description,
         aggregates
       };
 
       result['@id'] = '_:root';
       result['@type'] = 'rmap:DiSCO';
+      if (description && description.length > 0) {
+        result.description = description;
+      }
 
       return result;
     },
@@ -94,16 +112,20 @@
     transformStep: function (viewData, hasPrev, hasNext) {
       const label = this.step(viewData.index) + (viewData.description ? ': ' + viewData.description : '');
 
-      const previous = hasPrev ? this.stepId(viewData.index - 1) : undefined;
-      const next = hasNext ? this.stepId(viewData.index + 1) : undefined;
-
       let result = {
         used: viewData.url,
-        description: viewData.description,
-        label,
-        previous,
-        next
+        label
       };
+
+      if (hasPrev) {
+        result.previous = this.stepId(viewData.index - 1);
+      }
+      if (hasNext) {
+        result.next = this.stepId(viewData.index + 1);
+      }
+      if (viewData.description && viewData.description.length > 0) {
+        result.description = viewData.description;
+      }
 
       result['@id'] = this.stepId(viewData.index);
       result['@type'] = 'prov:Activity';
@@ -116,6 +138,7 @@
     transformBookView: function (viewData) {
       let result = {
         title: this.bookViewTitle(viewData),
+        isPartOf: this.extractHref(this.utils.manifestMetadata(viewData.item.data.manifest, 'AORWebsite'))
         // isPartOf: this.utils.manifestData(viewData.item.data.manifest, 'mooRL')
       };
 
@@ -136,10 +159,38 @@
         // creator: moo
       };
 
-      result['@id'] = this.utils.manifestMetadata(manifest, 'mooRL');
+      result['@id'] = this.extractHref(this.utils.manifestMetadata(manifest, 'AORWebsite'));
       result['@type'] = 'dcmitype:Text';
+      result.published = this.utils.manifestMetadata(manifest, 'date');
+
+      const author = this.utils.manifestMetadata(manifest, 'author');
+      if (author) {
+        result.creator = this.transformPerson(author)['@id'];
+      }
 
       return result;
+    },
+
+    transformPerson: function (person) {
+      if (!person) {
+        return;
+      }
+
+      let result = {
+        name: jQuery(person).text()
+      };
+
+      result['@id'] = this.extractHref(person);
+      result['@type'] = 'foaf:Person';
+
+      return result;
+    },
+
+    extractHref: function (el) {
+      if (!el) {
+        return;
+      }
+      return jQuery(el).attr('href');
     },
 
     bookViewTitle: function (viewData) {

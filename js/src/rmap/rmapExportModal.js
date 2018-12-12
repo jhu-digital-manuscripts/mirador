@@ -15,9 +15,7 @@
       utils: this.utils,
       contextUri: this.context
     });
-console.log('MOOO');
-console.log(this.rmapUrl);
-console.log(this.rmapApi);
+
     this.init();
   };
 
