@@ -90,5 +90,7 @@
     "nextPageTooltip": "Go to next page",
     "prevPageTooltip": "Go to previous page",
     "relatedTextView": "Description",
-    "noDescription": "No description available"
+    "noDescription": "No description available",
+    "image": "image",
+    "images": "images"
 }

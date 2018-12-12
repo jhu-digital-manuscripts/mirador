@@ -77,6 +77,8 @@
       }
       this.bindEvents();
       this.listenForActions();
+
+      this.element.find('.preview-thumb').width((this.maxThumbs * 110) + 'px');
     },
 
     fetchTplData: function(id) {
@@ -186,13 +188,20 @@
         }
       }
       
+      var toShow = this.state.getStateProperty('manifestList').showMetadata;
+      var secondaryData = [];
+
+      toShow.forEach(function (key) {
+        if (key !== 'Repository') {
+          secondaryData.push(_this.refMetadata(key));
+        }
+      });
+
       this.tplData = {
         showLogo: this.showLogo,
         label: ref.label,
-        secondaryData: [
-          title,
-        ],
-        repository: this.refMetadata("Repository"),
+        secondaryData: secondaryData,
+        repository: toShow.includes("Repository") ? this.refMetadata("Repository") : undefined,
         canvasCount: this.refMetadata("pageCount"),
         images: [],
         index: _this.state.getManifestIndex(ref["@id"]),
@@ -209,16 +218,15 @@
             return ref.logo['@id'];
         }
 
-        var annotator = _this.refMetadata('Reader');
+        var annotator = _this.refMetadata('Reader 1');
         var logoPrefix = _this.state.getStateProperty('buildPath') + _this.state.getStateProperty('imagesPath') + 'aor/';
 
-        switch (annotator) {
-          case "John Dee":
+        if (annotator) {
+          if (annotator.includes('John Dee')) {
             return logoPrefix + 'dee.jpg';
-          case "Gabriel Harvey":
+          } else if (annotator.includes('Gabriel Harvey')) {
             return logoPrefix + 'harvey.jpg';
-          default:
-            break;
+          }
         }
 
         if (_this.state.getStateProperty("repoImages")) {
@@ -462,20 +470,20 @@
         '</div>',
       '{{/if}}',
       '<div class="select-metadata">',
-        '<div class="item-info">',
-          '<div class="item-info-row">',
-            '{{#if repository}}',
-              '<div class="repo-label">{{repository}}</div>',
-            '{{/if}}',
-            '{{#if canvasCount}}',
-              '<div class="canvas-count">{{canvasCount}} {{pluralize canvasCount (t "item") (t "items")}}</div>',
-            '{{/if}}',
+        '{{#if repository}}',
+          '<div class="item-info">',
+            '<div class="item-info-row">',
+                '<div class="repo-label">{{repository}}</div>',
+            '</div>',
           '</div>',
-        '</div>',
-        '<div class="manifest-title">',
+        '{{/if}}',
+        '<div class="manifest-title aor-red">',
           '<div>{{{label}}}</div>',
         '</div>',
         '<div class="item-info">',
+          '{{#if canvasCount}}',
+            '<div class="canvas-count">{{canvasCount}} {{pluralize canvasCount (t "image") (t "images")}}</div>',
+          '{{/if}}',
           '{{#each secondaryData}}',
             '<div class="item-info-row">{{this}}</div>',
           '{{/each}}',

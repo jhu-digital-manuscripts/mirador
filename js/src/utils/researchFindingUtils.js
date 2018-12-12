@@ -16,11 +16,11 @@
   
       switch (state.type) {
         case $.HistoryStateType.collection_search:
-          label = 'Searched \'' + state.data.search.query + '\' in ' + 
+          label = 'Searched \'' + this.queryToString(state) + '\' in ' + 
               this.collectionLabel(state.data.collection);
           break;
         case $.HistoryStateType.manifest_search:
-          label = 'Searched \'' + state.data.search.query + '\' in ' + 
+          label = 'Searched \'' + this.queryToString(state) + '\' in ' + 
               this.manifestLabel(state.data.manifest);
           break;
         case $.HistoryStateType.collection:
@@ -112,6 +112,28 @@
         wrapper.append(arguments[i]);
       }
       return wrapper[0].outerHTML;
+    },
+
+    queryToString: function (state) {
+      if (!state.data.search.query) {
+        return '';
+      }
+
+      const searchConfig = state.data.search;
+      const uiConfig = state.data.ui;
+
+      if (searchConfig.isBasic) {
+        const full = searchConfig.query;
+
+        if (!uiConfig) {
+          let guess = full.substring(full.indexOf(':\'') + 2, full.indexOf('\'|'));
+          return guess;
+        } else {
+          return uiConfig.basic;
+        }
+      } else {
+        return searchConfig.query;
+      }
     }
   };
 } (Mirador));

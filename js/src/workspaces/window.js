@@ -176,15 +176,10 @@
       if (aor_reader) {
         templateData.titleDecoration = { alt: aor_reader };
         var imgPrefix = _this.state.getStateProperty('buildPath') + _this.state.getStateProperty('imagesPath') + 'aor/';
-        switch (aor_reader) {
-          case 'John Dee':
-            templateData.titleDecoration.img = imgPrefix + 'dee.jpg';
-            break;
-          case 'Gabriel Harvey':
-            templateData.titleDecoration.img = imgPrefix + 'harvey.jpg';
-            break;
-          default:
-            break;
+        if (aor_reader.includes('John Dee')) {
+          templateData.titleDecoration.img = imgPrefix + 'dee.jpg';
+        } else if (aor_reader.includes('Gabriel Harvey')) {
+          templateData.titleDecoration.img = imgPrefix + 'harvey.jpg';
         }
       }
       

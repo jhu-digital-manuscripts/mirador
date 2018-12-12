@@ -1,4 +1,55 @@
+/*
+  COLORS 
+  Red: rgb(144, 25, 40) #901928
+  Gold: rgb(199,152,84) #c79854
+  Grey/Black: rgb(70, 67, 68) #464344
+  shading: rgb(244, 242, 239)
+
+  FONT
+  Georgia is the serif font used throughout the AOR site.
+ */
+
+.aor-red {
+  color: rgb(144, 25, 40);
+}
+.aor-gold {
+  color: rgb(199,152,84);
+}
+.aor-grey {
+  color: rgb(70, 67, 68);
+}
+.aor-shade {
+  color: rgb(244, 242, 239);
+}
+
+/* body {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+} */
+.mirador-viewer, .mirador-main-menu-bar, .mirador-status-bar {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+#top-banner {
+  background-image: url('../images/aor/AOR_Viewer_TopBorder.jpg');
+  background-repeat: repeat-x;
+  height: 50px;
+}
+
 /* Modifying base Mirador junk */
+
+.mirador-main-menu-bar {
+  background-color: rgb(70, 67, 68);
+}
+.mirador-main-menu a {
+  color: rgb(199,152,84);
+}
+
+.user-logo {
+  padding-top: 4px;
+}
+.user-logo #logo-title {
+  font-size: 18px;
+  letter-spacing: 6px;
+}
 
 /* 'Add Item' screen */
 .slot h1 {
@@ -48,6 +99,9 @@ h2 {
 .items-listing .repo-image-container {
   width: 50px;
   height: 50px;
+}
+.repo-image {
+  opacity: 0.75;
 }
 .repo-image-container .repo-image {
   width: 50px;
