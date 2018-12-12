@@ -232,6 +232,7 @@ module.exports = function(grunt) {
           'locales/*/*.json',
           'images/*',
           'css/*.css',
+          'css/aor/*.css',
           'index.html'
         ],
         tasks: 'dev_build'

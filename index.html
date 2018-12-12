@@ -17,6 +17,7 @@
     </style>
   </head>
   <body>
+    <div id="top-banner"></div>
     <div id="viewer"></div>
 
     <script src="build/mirador/mirador.js"></script>
@@ -40,25 +41,25 @@
           "layout": "1x1",
           "data": [
           // {"collectionUri": "http://localhost:8080/iiif-pres/aor/collection"}
-            {"collectionUri": "http://localhost:8080/iiif-pres/top/collection"}
+            {"collectionUri": "https://rosetest.library.jhu.edu/iiif-pres-aor/aor/collection"}
             // {"collectionUri": "http://localhost:8080/iiif-pres/dlmm/collection"}
           ],
           "mainMenuSettings": {
             "userLogo": {
-              "label": "Digital Scholarly Library Viewer",
-              "attributes": { "id": "logo-title", "href": "http://dlmm.sharedblogs.library.jhu.edu/", "target": "_blank" }
+              "label": "THE ARCHAEOLOGY OF READING",
+              "attributes": { "id": "logo-title", "href": "javascript:;", "target": "_blank" }
             },
-            "userButtons": [
-              {
-                "label": "About the Viewer",
-                "iconClass": "fa fa-fw fa-lg fa-book",
-                "attributes": {
-                  "href": "http://dlmm.sharedblogs.library.jhu.edu/en/digital-library-of-medieval-manuscripts/the-iiif-viewer/",
-                  "title": "Background about the viewer and how to use it.",
-                  "target": "_blank"
-                },
-              }
-            ]
+            // "userButtons": [
+            //   {
+            //     "label": "About the Viewer",
+            //     "iconClass": "fa fa-fw fa-lg fa-book",
+            //     "attributes": {
+            //       "href": "http://dlmm.sharedblogs.library.jhu.edu/en/digital-library-of-medieval-manuscripts/the-iiif-viewer/",
+            //       "title": "Background about the viewer and how to use it.",
+            //       "target": "_blank"
+            //     },
+            //   }
+            // ]
           },
           // "windowObjects": [],
           // "windowObjects": [{
@@ -93,14 +94,15 @@
             }
           },
           "manifestList": {
-            "maxThumbs": 3,
+            "maxThumbs": 5,
             "enableSearch": true,
-            "enableFacets": true,
+            "enableFacets": false,
             // "showLogos": false,
             "search": {
-              "showCollectionPicker": true,
+              "showCollectionPicker": false,
               "showDescription": false
-            }
+            },
+            // "showMetadata": ["Repository", "Title"]
           }
         };
 
