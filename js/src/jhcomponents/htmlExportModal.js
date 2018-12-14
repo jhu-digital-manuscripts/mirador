@@ -34,8 +34,7 @@
       // Also change the download link
       this.unsetDownload();
 
-      // const data = new Blob([cnt], { type: 'text/html' });
-      const data = new Blob([cnt], { type: 'octet/stream' });
+      const data = new Blob([cnt], { type: 'text/html' });
       this.url = URL.createObjectURL(data);
     },
 

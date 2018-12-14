@@ -292,8 +292,7 @@
         facets: context.search.facetQuery,
         context
       };
-      // console.log('SEARCHING');
-      // console.log(searchRequest);
+
       if (!ignoreHistory) {
         this.eventEmitter.publish('SEARCH', searchRequest);
       }
@@ -304,6 +303,7 @@
     },
 
     handleSearchResults: function (data) {
+      this.context.search.results = undefined;
       this.changeContext({
         search: {
           results: data

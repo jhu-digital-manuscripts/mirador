@@ -27,12 +27,12 @@
 
     show: function () {
       this.pagerVisible = true;
-      this.element.find('.results-pager-container').show();
+      this.element.show();
     },
 
     hide: function () {
       this.pagerVisible = false;
-      this.element.find('.results-pager-container').hide();
+      this.element.hide();
     },
 
     getTop: function () {

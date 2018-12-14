@@ -160,7 +160,7 @@
 
         const query = _this.getSearchQuery();
         if (query && query.length > 0) {
-          _this.doSearch(searchService, query, _this.getSortOrder());
+          _this.doSearch(searchService, query, _this.getSortOrder(), undefined, 0);
         } else {
           _this.messages['no-term'].appendTo(messages);
         }
@@ -226,7 +226,8 @@
       
       context.search = {
         query,
-        sortOrder
+        sortOrder,
+        offset
       };
       context.ui = this.getUIState();
 
@@ -236,6 +237,7 @@
         origin: this.windowId,
         query,
         sortOrder,
+        offset,
         ui: context.ui
       });
 
