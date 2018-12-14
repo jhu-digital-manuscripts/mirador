@@ -30,16 +30,16 @@
           label = 'Viewed book ' + this.manifestLabel(state.data.manifest);
           break;
         case $.HistoryStateType.image_view:
-          label = 'Viewed page ' + this.manifestLabel(state.data.manifest) + ' : ' +
-              this.canvasLabel(state.data.manifest, state.data.canvas);
+          label = 'Viewed page ' + this.canvasLabel(state.data.manifest, state.data.canvas) + 
+              ' in ' + this.manifestLabel(state.data.manifest);
           break;
         case $.HistoryStateType.opening_view:
-          label = 'Viewed opening ' + this.manifestLabel(state.data.manifest) + ' : ' +
-              this.canvasLabel(state.data.manifest, state.data.canvas);
+          label = 'Viewed opening at page ' + this.canvasLabel(state.data.manifest, state.data.canvas) + 
+              ' in ' + this.manifestLabel(state.data.manifest);
           break;
         case $.HistoryStateType.scroll_view:
-          label = 'Scroll view at ' + this.manifestLabel(state.data.manifest) + ' : ' +
-              this.canvasLabel(state.data.manifest, state.data.canvas);
+          label = 'Scroll view at page ' + this.canvasLabel(state.data.manifest, state.data.canvas) + 
+              ' in ' + this.manifestLabel(state.data.manifest);
           break;
         default:
           break;

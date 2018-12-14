@@ -53,6 +53,10 @@
 }
 .mirador-main-menu a {
   color: rgb(199,152,84);
+  opacity: 1;
+}
+.mirador-main-menu a:hover {
+  
 }
 
 .user-logo {
@@ -62,6 +66,7 @@
   font-size: 18px;
   letter-spacing: 6px;
 }
+.user-logo #logo-title:hover {}
 
 /* 'Add Item' screen */
 .slot h1 {
@@ -195,6 +200,7 @@ h2 {
 
 .overlay {
   background-color: rgba(239,239,239,0.99);
+  background-color: rgb(239, 239, 239);
 }
 
 .sidePanel {
