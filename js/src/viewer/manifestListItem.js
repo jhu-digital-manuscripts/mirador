@@ -339,8 +339,8 @@
       });
 
       this.element.on('click', function() {
-        var viewType = "ThumbnailsView";
-
+        var viewType = _this.state.getStateProperty('manifestList').event.manifestClick;
+console.log(viewType);
         if (_this.manifest) {
           _this.addWindow(_this.manifest, viewType);
         } else if (_this.manifestRef) {
@@ -379,11 +379,12 @@
     },
     
     doImageClick: function(canvasID) {
+      var viewType = this.state.getStateProperty('manifestList').event.imageClick;
       if (canvasID) {
         var windowConfig = {
           manifest: this.manifest,
           canvasID: canvasID,
-          viewType: this.state.getStateProperty('windowSettings').viewType //get the view type from settings rather than always defaulting to ImageView
+          viewType: viewType
         };
         this.eventEmitter.publish('ADD_WINDOW', windowConfig);
       } else {

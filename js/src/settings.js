@@ -52,7 +52,11 @@
         'showCollectionPicker': true,   // Show the dropdown to select other collections
         'showDescription': true,    // Display collection description if available
       },
-      'showMetadata': []    // Metadata keys to display for each book
+      'showMetadata': [],    // Metadata keys to display for each book
+      'event': {
+        'manifestClick': 'ThumbnailsView',   // Go to this view when a user clicks on a book (but not a thumbnail)
+        'imageClick': 'ImageView'   // Go to this view when a user clicks on a thumbnail
+      }
     },
     
     //default window settings, but can be changed in Mirador configuration on initialization
