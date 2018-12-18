@@ -340,7 +340,7 @@
 
       this.element.on('click', function() {
         var viewType = _this.state.getStateProperty('manifestList').event.manifestClick;
-console.log(viewType);
+
         if (_this.manifest) {
           _this.addWindow(_this.manifest, viewType);
         } else if (_this.manifestRef) {

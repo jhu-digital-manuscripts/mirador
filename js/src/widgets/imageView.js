@@ -371,6 +371,17 @@
         });
       }
 
+      function setSlider(selector, value) {
+        const el = _this.element.find(selector);
+
+        try {
+          el.slider('option', 'value', value);
+          el.find('.percent').text(value + '%');
+        } catch (e) {
+          console.log('%cFailed to set slider value (' + selector + ', ' + value + ')', 'color:red;');
+        }
+      }
+
       function resetImageManipulationControls() {
         //reset rotation
         if (_this.osd) {
@@ -379,18 +390,15 @@
 
         //reset brightness
         filterValues.brightness = "brightness(100%)";
-        _this.element.find('.mirador-osd-brightness-slider').slider('option','value',100);
-        _this.element.find('.mirador-osd-brightness-slider').find('.percent').text(100 + '%');
+        setSlider('.mirador-osd-brightness-slider', 100);
 
         //reset contrast
         filterValues.contrast = "contrast(100%)";
-        _this.element.find('.mirador-osd-contrast-slider').slider('option','value',100);
-        _this.element.find('.mirador-osd-contrast-slider').find('.percent').text(100 + '%');
+        setSlider('.mirador-osd-contrast-slider', 100);
 
         //reset saturation
         filterValues.saturate = "saturate(100%)";
-        _this.element.find('.mirador-osd-saturation-slider').slider('option','value',100);
-        _this.element.find('.mirador-osd-saturation-slider').find('.percent').text(100 + '%');
+        setSlider('.mirador-osd-saturation-slider', 100);
 
         //reset grayscale
         filterValues.grayscale = "grayscale(0%)";
