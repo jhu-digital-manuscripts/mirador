@@ -399,13 +399,10 @@ h2 {
  * ##############################
  */
 .search-within-object-select {
-  /* width: 100%;
-  margin-bottom: 12px; */
+
 }
 .search-container  {
-  /* overflow: auto;
-  width: 310px;
-  padding: 10px; */
+
 }
 .search-results-list .query {
   font-style: italic;
@@ -431,14 +428,10 @@ a.search-title {
   color: black;
 }
 .js-close-search-within {
-  /* margin-top: 0;
-  background: none;
-  color: rgb( 146, 145, 145 );
-  box-sizing: border-box; */
+
 }
 .search-disclose {
-  /* margin-top: 10px;
-  margin-bottom: 10px; */
+
 }
 .search-disclose-container {}
 .search-disclose-btn-more.selected,
@@ -447,36 +440,28 @@ a.search-title {
   font-size: 1.4em;
 }
 .search-results-sorter {
-  /* margin-bottom: 10px; */
+
 }
 .search-container .js-query {
   height: 29px;
 }
 .advanced-search-lines table td {
-  /* padding: 4px 0; */
+
 }
 .advanced-search-lines input {
-  /* padding: 2px 0;
-  width: 150px;
-  border-radius: 0;
-  height: 16px; */
+
 }
 .advanced-search-lines select {
-  /* padding: 2px;
-  height: 24px; */
+
 }
 .advanced-search-inputs select {
-  /* width: 154px;
-  padding: 0;
-  border-radius: 0; */
+
 }
 .advanced-search-line button {
-  /* margin-left: -1px;
-  height: 24px;
-  border-radius: 0; */
+
 }
 .advanced-search-line {
-  border-bottom: 1px solid rgb( 146, 145, 145 );
+
 }
 .search-results-list .result-wrapper .result-paragraph .highlight {
   background-color: rgb(255, 255, 0);
@@ -487,34 +472,23 @@ a.search-title {
   background-color: #D8D8D8;
 }
 .advanced-search-line table {
-  border-collapse: collapse;
-  border-spacing: 0;
+
 }
 .advanced-search-line table td {
-  padding: 5px 0;
-  margin: 0;
-  float: left;
+
 }
 .advanced-search-selector {
   width: 120px;
 }
 .advanced-search-operators {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  width: 36px;
-  margin-right: -1px;
-  border-radius: 3px 0 0 3px;
-  cursor: pointer;
+
 }
 /* Get rid of dropdown arrow in IE */
 .advanced-search-operators::-ms-espand {
   display: none;
 }
 .advanced-search-categories {
-  float:right;
-  width: 85px;
-  border-radius: 0;
-  cursor: pointer;
+
 }
 .search-results-context-menu ul {
   position: absolute;
@@ -536,7 +510,7 @@ a.search-title {
   border-bottom: 0;
 }
 .advanced-search-btn-container {
-  margin: 10px 0;
+  /* margin: 10px 0; */
 }
 
 

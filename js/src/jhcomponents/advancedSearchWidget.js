@@ -232,11 +232,9 @@
       };
       // templateData.search.categories.choices = this.searchService.query.fields;
 
-      var line = template(templateData);
+      var line = jQuery(template(templateData));
 
-      line = jQuery(line).insertAfter(
-        this.element.find('.advanced-search-lines table tbody').children().last()
-      );
+      this.element.find('.advanced-search-lines').append(line);
 
       // For only the first line, hide the boolean operator
       var num_lines = this.element.find('.advanced-search-line').length;
@@ -305,45 +303,54 @@
 
     registerPartials: function() {
       Handlebars.registerPartial('advancedSearch', [
-        '<div class="advanced-search">',
+        '<div class="advanced-search container-fluid">',
           '<i class="fa fa-2x fa-question-circle search-description-icon" title="Moo"></i>',
           '<form id="advanced-search-form" class="perform-advanced-search">',
-            '<div class="advanced-search-lines">',
-              '<table><tbody>',
-                '<tr></tr>',
-              '</tbody></table>',
+            '<div class="advanced-search-lines row"></div>',
+
+            '<div class="advanced-search-btn-container row mb-2">',
+              '<button class="btn advanced-search-add-btn" value="add">Add Term</button>',
+              '<button class="btn advanced-search-reset-btn">Reset</button>',
+              '<input class="btn" type="submit" value="Search"/>',
             '</div>',
-            '<div class="advanced-search-btn-container">',
-              '<button class="advanced-search-add-btn" value="add">Add Term</button>',
-              '<button class="advanced-search-reset-btn">Reset</button>',
-            '</div>',
-            '<input type="submit" value="Search"/>',
+
+            // '<div class="row mb-2">',
+              
+            // '</div>',
           '</form>',
         '</div>'
       ].join(''));
 
       Handlebars.registerPartial('advancedSearchLine', [
         // Select search category
-        '<tr class="advanced-search-line"><td>',
-          '<div class="advanced-search-selector">',
-            '{{> searchDropDown query.operators}}',
-            '{{> searchDropDown search.categories }}',
+
+        '<div class="col-3 advanced-search-line border-right mb-2">',
+          '<div class="input-group">',
+
+            '<div class="input-group-prepend col-5 p-0">',
+              '{{> searchDropDown query.operators}}',
+              '{{> searchDropDown search.categories}}',
+            '</div>',
+
+            '<div class="advanced-search-inputs col p-0">',
+              '{{#each search.settings.fields}}',
+                '{{#ifCond type "===" "dropdown"}}',
+                  '{{> categoryDropdown this}}',
+                  '<input type="text" class="{{class}} col-6" placeholder="{{placeholder}}" aria-label="{{#if name}}Search {{name}}" ',
+                    'data-query="{{name}}"{{else}}"Search {{placeholder}}"{{/if}}/>',
+                '{{else}}',
+                  '<input type="text" class="{{class}} col" placeholder="{{placeholder}}" aria-label="{{#if name}}Search {{name}}" ',
+                    'data-query="{{name}}"{{else}}"Search {{placeholder}}"{{/if}}/>',
+                '{{/ifCond}}',
+              '{{/each}}',
+            '</div>',
+
+            '<div class="input-group-append col-1 p-0">',
+              '<button class="advanced-search-remove" type="button" aria-label="Remove row"><i class="fa fa-times"></i></button>',
+            '</div>',
+
           '</div>',
-        '</td>',
-        '<td>',
-          '<div class="advanced-search-inputs">',
-          '{{#each search.settings.fields}}',
-            '{{#ifCond type "===" "dropdown"}}',
-              '{{> searchDropDown this}}',
-            '{{/ifCond}}',
-            '<input type="text" class="{{class}}" placeholder="{{placeholder}}" aria-label="{{#if name}}Search {{name}}" ',
-                'data-query="{{name}}"{{else}}"Search {{placeholder}}"{{/if}}/>',
-          '{{/each}}',
-          '</div>',
-        '</td>',
-        '<td>',
-          '<button class="advanced-search-remove" type="button" aria-label="Remove row"><i class="fa fa-times"></i></button>',
-        '</td></tr>',
+        '</div>',
       ].join(''));
 
       /**
@@ -357,7 +364,6 @@
        * }
        */
       Handlebars.registerPartial('searchDropDown', [
-        // '<select class="{{class}}" title="{{placeholder}}" aria-label="{{#if name}}Pick a specific {{name}}" data-query="{{name}}"{{else}}{{placeholder}}" {{/if}}>',
         '<select class="{{class}}" aria-label="{{#if name}}Pick a specific {{name}}" data-query="{{name}}"{{else}}{{placeholder}}" {{/if}}>',
           '{{#if addBlank}}',
             '<option></option>',
@@ -369,6 +375,19 @@
           '{{/each}}',
         '</select>'
       ].join(''));
+
+      Handlebars.registerPartial('categoryDropdown', [
+        '<select class="{{class}} col-6" aria-label="{{#if name}}Pick a specific {{name}}" data-query="{{name}}"{{else}}{{placeholder}}" {{/if}}>',
+          '{{#if addBlank}}',
+            '<option></option>',
+          '{{/if}}',
+          '{{#each choices}}',
+            '<option value="{{#if value}}{{value}}{{else}}{{value}}{{/if}}" {{#if description}}title="{{description}}"{{/if}}>',
+              '{{label}}',
+            '</option>',
+          '{{/each}}',
+        '</select>'
+      ].join('')),
 
       Handlebars.registerPartial('searchDescription', [
         '<p>',

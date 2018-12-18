@@ -341,15 +341,6 @@
         '</div>',
 
         '<div class="row">',
-          '<form id="search-form" class="search-within-form mr-4">',
-            '<div class="input-group mb-2">',
-              '<input class="js-query form-control" type="text" aria-label="Enter search query:" placeholder="search"/>',
-              '<div class="input-group-append">',
-                '<input type="submit" value="Search"/>',
-              '</div>',
-            '</div>',
-          '</form>',
-
           '<div class="search-results-sorter">',
             '<label>Sort results by: ',
               '<select>',
@@ -358,6 +349,16 @@
               '</select>',
             '</label>',
           '</div>',
+
+          '<form id="search-form" class="search-within-form ml-4">',
+            '<div class="input-group mb-2">',
+              '<input class="js-query form-control" type="text" aria-label="Enter search query:" placeholder="search"/>',
+              '<div class="input-group-append">',
+                '<input type="submit" value="Search"/>',
+              '</div>',
+            '</div>',
+          '</form>',
+
         '</div>',
         
         '<div class="search-disclose-container">',
