@@ -10,6 +10,9 @@
   padding: 1px 12px;
   color: black;
 }
+#load-controls .js-query {
+  height: unset;
+}
 
 .select-results {
   position: absolute;

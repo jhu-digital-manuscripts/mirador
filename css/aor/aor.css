@@ -399,13 +399,13 @@ h2 {
  * ##############################
  */
 .search-within-object-select {
-  width: 100%;
-  margin-bottom: 12px;
+  /* width: 100%;
+  margin-bottom: 12px; */
 }
 .search-container  {
-  overflow: auto;
+  /* overflow: auto;
   width: 310px;
-  padding: 10px;
+  padding: 10px; */
 }
 .search-results-list .query {
   font-style: italic;
@@ -431,51 +431,49 @@ a.search-title {
   color: black;
 }
 .js-close-search-within {
-  margin-top: 0;
+  /* margin-top: 0;
   background: none;
   color: rgb( 146, 145, 145 );
-  box-sizing: border-box;
+  box-sizing: border-box; */
 }
 .search-disclose {
-  margin-top: 10px;
-  margin-bottom: 10px;
+  /* margin-top: 10px;
+  margin-bottom: 10px; */
 }
 .search-disclose-container {}
-.search-disclose-btn-more,
-.search-disclose-btn-less {
-  text-decoration: underline;
-  margin-bottom: 10px;
-  cursor: pointer;
-  width: 100%;
+.search-disclose-btn-more.selected,
+.search-disclose-btn-less.selected {
+  font-weight: bold;
+  font-size: 1.4em;
 }
 .search-results-sorter {
-  margin-bottom: 10px;
+  /* margin-bottom: 10px; */
 }
-.searchResults .js-query {
-  width: 225px;
+.search-container .js-query {
+  height: 29px;
 }
 .advanced-search-lines table td {
-  padding: 4px 0;
+  /* padding: 4px 0; */
 }
 .advanced-search-lines input {
-  padding: 2px 0;
+  /* padding: 2px 0;
   width: 150px;
   border-radius: 0;
-  height: 16px;
+  height: 16px; */
 }
 .advanced-search-lines select {
-  padding: 2px;
-  height: 24px;
+  /* padding: 2px;
+  height: 24px; */
 }
 .advanced-search-inputs select {
-  width: 154px;
+  /* width: 154px;
   padding: 0;
-  border-radius: 0;
+  border-radius: 0; */
 }
 .advanced-search-line button {
-  margin-left: -1px;
+  /* margin-left: -1px;
   height: 24px;
-  border-radius: 0;
+  border-radius: 0; */
 }
 .advanced-search-line {
   border-bottom: 1px solid rgb( 146, 145, 145 );
