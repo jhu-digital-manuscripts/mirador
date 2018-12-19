@@ -145,6 +145,9 @@
         this.config.showHideAnimation.progress = function() {
           _this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + _this.windowId);
         };
+        this.config.showHideAnimation.complete = function () {
+          _this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + _this.windowId);
+        };
       }
 
       this.element.find(".search-within-form").on("submit", function (event) {
@@ -354,7 +357,7 @@
             '<div class="input-group mb-2">',
               '<input class="js-query form-control" type="text" aria-label="Enter search query:" placeholder="search"/>',
               '<div class="input-group-append">',
-                '<button type="submit">',
+                '<button type="submit" class="btn btn-outline-dark">',
                   'Search',
                 '</button>',
               '</div>',

@@ -446,6 +446,9 @@ a.search-title {
 .search-container .js-query {
   height: 29px;
 }
+.search-container .search-form button {
+  border: 1px solid;
+}
 .advanced-search-lines table td {
 
 }
