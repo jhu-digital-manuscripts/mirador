@@ -335,7 +335,7 @@
 
     template: Handlebars.compile([
       '<div class="search-widget ml-4">',
-        '<div class="row">',
+        '<div class="row mb-2">',
           '<a class="btn search-disclose-btn-less selected">Basic Search</a>',
           '<a class="btn search-disclose-btn-more">Advanced Search</a>',  
         '</div>',
@@ -354,7 +354,9 @@
             '<div class="input-group mb-2">',
               '<input class="js-query form-control" type="text" aria-label="Enter search query:" placeholder="search"/>',
               '<div class="input-group-append">',
-                '<input type="submit" value="Search"/>',
+                '<button type="submit">',
+                  'Search',
+                '</button>',
               '</div>',
             '</div>',
           '</form>',

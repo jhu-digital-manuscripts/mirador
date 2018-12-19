@@ -309,14 +309,17 @@
             '<div class="advanced-search-lines row"></div>',
 
             '<div class="advanced-search-btn-container row mb-2">',
-              '<button class="btn advanced-search-add-btn" value="add">Add Term</button>',
-              '<button class="btn advanced-search-reset-btn">Reset</button>',
-              '<input class="btn" type="submit" value="Search"/>',
+              '<button class="btn advanced-search-add-btn mx-2" value="add" aria-label="Add advanced search term">',
+                '<i class="fa fa-fw fa-plus"></i> Add Term',
+              '</button>',
+              '<button class="btn advanced-search-reset-btn mx-2" aria-label="Reset advanced search form">',
+                '<i class="fa fa-fw fa-ban"></i> Reset',
+              '</button>',
+              '<button class="btn mx-2" type="submit" aria-label="Do the search">',
+                '<i class="fa fa-fw fa-search"></i> Search',
+              '</button>',
             '</div>',
 
-            // '<div class="row mb-2">',
-              
-            // '</div>',
           '</form>',
         '</div>'
       ].join(''));
@@ -324,7 +327,7 @@
       Handlebars.registerPartial('advancedSearchLine', [
         // Select search category
 
-        '<div class="col-3 advanced-search-line border-right mb-2">',
+        '<div class="col-xl-3 advanced-search-line border-right mb-2">',
           '<div class="input-group">',
 
             '<div class="input-group-prepend col-5 p-0">',
@@ -336,7 +339,7 @@
               '{{#each search.settings.fields}}',
                 '{{#ifCond type "===" "dropdown"}}',
                   '{{> categoryDropdown this}}',
-                  '<input type="text" class="{{class}} col-6" placeholder="{{placeholder}}" aria-label="{{#if name}}Search {{name}}" ',
+                  '<input type="text" class="{{class}} col-6" placeholder="{{placeholder}} (optional)" aria-label="{{#if name}}Search {{name}}" ',
                     'data-query="{{name}}"{{else}}"Search {{placeholder}}"{{/if}}/>',
                 '{{else}}',
                   '<input type="text" class="{{class}} col" placeholder="{{placeholder}}" aria-label="{{#if name}}Search {{name}}" ',
@@ -346,7 +349,9 @@
             '</div>',
 
             '<div class="input-group-append col-1 p-0">',
-              '<button class="advanced-search-remove" type="button" aria-label="Remove row"><i class="fa fa-times"></i></button>',
+              '<button class="advanced-search-remove btn btn-outline-danger" type="button" aria-label="Remove row">',
+                '<i class="fa fa-times"></i>',
+              '</button>',
             '</div>',
 
           '</div>',

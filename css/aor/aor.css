@@ -438,6 +438,7 @@ a.search-title {
 .search-disclose-btn-less.selected {
   font-weight: bold;
   font-size: 1.4em;
+  background-color: rgb(244, 242, 239);
 }
 .search-results-sorter {
 

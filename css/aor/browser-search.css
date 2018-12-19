@@ -57,18 +57,17 @@
 }
 
 .browser-search-container button {
-  background: white;
-  border: 1px solid #d3d3d3;
   height: 29px;
   padding: 0 9px;
+  border: 1px solid;
 }
 
 .browser-search-container button:hover {
-  border: 1px solid black;
+  color: white;
 }
 
 .browser-search-container button:active {
-  background: #f7f7f7;
+
 }
 
 /* Remove box shadow for pager */
@@ -94,7 +93,7 @@
   display: none;
   cursor: pointer;
   padding: 6px;
-  background-color: #e5e5e5;
+  background-color: rgb(244, 242, 239);
 }
 .search-results-close:hover {
   background-color: #d3d3d3;
