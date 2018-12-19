@@ -227,6 +227,7 @@
       var template = Handlebars.compile('{{> advancedSearchLine }}');
 
       var templateData = {
+        'classes': this.lineClasses(),
         'search': this.context.searchService.config.search,
         'query': this.context.searchService.config.query
       };
@@ -301,12 +302,24 @@
       return selector;
     },
 
+    lineClasses: function () {
+      if (this.config.inSidebar) {
+        return {
+          line: 'w-100'
+        };
+      } else {
+        return {
+          line: 'col-xl-3 border-right'
+        };
+      }
+    },
+
     registerPartials: function() {
       Handlebars.registerPartial('advancedSearch', [
-        '<div class="advanced-search container-fluid">',
+        '<div class="advanced-search container-fluid p-0">',
           '<i class="fa fa-2x fa-question-circle search-description-icon" title="Moo"></i>',
           '<form id="advanced-search-form" class="perform-advanced-search">',
-            '<div class="advanced-search-lines row"></div>',
+            '<div class="advanced-search-lines row mr-0"></div>',
 
             '<div class="advanced-search-btn-container row mb-2">',
               '<button class="btn advanced-search-add-btn mx-2" value="add" aria-label="Add advanced search term">',
@@ -327,7 +340,7 @@
       Handlebars.registerPartial('advancedSearchLine', [
         // Select search category
 
-        '<div class="col-xl-3 advanced-search-line border-right mb-2">',
+        '<div class="advanced-search-line mb-2 {{classes.line}}">',
           '<div class="input-group">',
 
             '<div class="input-group-prepend col-5 p-0">',

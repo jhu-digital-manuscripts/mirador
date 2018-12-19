@@ -105,7 +105,7 @@
     init: function () {
       const _this = this;
 
-      this.element = jQuery(this.template()).appendTo(this.appendTo);
+      this.element = jQuery(this.template(this.templateData())).appendTo(this.appendTo);
       this.bindEvents();
       this.listenForActions();
 
@@ -115,6 +115,7 @@
         appendTo: this.element.find('.search-disclose'),
         clearMessages: () => { _this.element.find('.pre-search-message').empty(); },
         context: this.context,
+        config: this.config,
         performAdvancedSearch: () => {
           const query = _this.advancedSearch.getQuery();
           if (query) {
@@ -338,13 +339,13 @@
 
     template: Handlebars.compile([
       '<div class="search-widget ml-4">',
-        '<div class="row mb-2">',
+        '<div class="row mb-2 {{classes.tabContainer}}">',
           '<a class="btn search-disclose-btn-less selected">Basic Search</a>',
           '<a class="btn search-disclose-btn-more">Advanced Search</a>',  
         '</div>',
 
         '<div class="row">',
-          '<div class="search-results-sorter">',
+          '<div class="search-results-sorter {{classes.sorterContainer}}">',
             '<label>Sort results by: ',
               '<select>',
                 '<option value="relevance">Relevance</option>',
@@ -353,7 +354,7 @@
             '</label>',
           '</div>',
 
-          '<form id="search-form" class="search-within-form ml-4">',
+          '<form id="search-form" class="search-within-form {{classes.basicForm}}">',
             '<div class="input-group mb-2">',
               '<input class="js-query form-control" type="text" aria-label="Enter search query:" placeholder="search"/>',
               '<div class="input-group-append">',
@@ -371,5 +372,23 @@
         '</div>',
       '</div>'
     ].join('')),
+
+    templateData: function () {
+      if (this.config.inSidebar) {
+        return {
+          classes: {
+            // tabContainer: 'col',
+            sorterContainer: 'w-100',
+            basicForm: ''
+          }
+        };
+      } else {
+        return {
+          classes: {
+            basicForm: 'ml-4'
+          }
+        };
+      }
+    },
   };
 }(Mirador));
