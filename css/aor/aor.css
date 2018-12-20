@@ -454,7 +454,9 @@ a.search-title {
 .search-container .advanced-search-inputs input {
   height: 29px !important;
 }
-
+.advanced-search-btn-container button {
+  border: 1px solid;
+}
 .search-disclose-btn-more.selected,
 .search-disclose-btn-less.selected {
   font-weight: bold;
