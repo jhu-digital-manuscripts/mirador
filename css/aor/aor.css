@@ -449,7 +449,7 @@ a.search-title {
   color: white;
 }
 .search-container .search-within-form input[type="text"] {
-  width: 313px;
+  width: 250px;
 }
 .search-container .advanced-search-inputs input {
   height: 29px !important;
@@ -511,7 +511,9 @@ a.search-title {
 .search-description-icon {
   position: absolute;
   left: 15px;
-  color: gray;
+  float: left;
+  color: gray !important;
+  cursor: pointer;
 }
 
 .search-description-icon:hover {

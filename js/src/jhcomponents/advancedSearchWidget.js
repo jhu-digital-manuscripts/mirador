@@ -21,6 +21,7 @@
       performAdvancedSearch: null,
       clearMessages: null,
       context: null,
+      descriptionId: 'description-' + $.genUUID()
     }, options);
 
     this.init();
@@ -32,11 +33,28 @@
       this.registerPartials();
 
       this.element = jQuery(Handlebars.compile("{{> advancedSearch}}")({
+        'notInSidebar': !this.config.inSidebar,
+        "descriptionId": this.descriptionId,
         "search": _this.context.searchService
       })).appendTo(this.appendTo);
 
       this.bindEvents();
       this.listenForActions();
+
+      this.element.find('a[title]').each(function () {
+        jQuery(this).qtip({
+          content: {
+            text: jQuery(this).attr('title'),
+          },
+          position: {
+            my: 'top left',
+            at: 'bottom center'
+          },
+          style: {
+            classes: 'qtip-dark qtip-shadow qtip-rounded'
+          },
+        });
+      });
 
       if (this.context && this.context.ui && this.context.ui.advanced) {
         this.initFromContext();
@@ -44,11 +62,16 @@
     },
 
     setTooltip: function (searchService) {
-      this.element.tooltip({
-        items: ".search-description-icon",
-        content: Handlebars.compile("{{> searchDescription}}")(searchService.config.search.settings.fields),
-        position: { my: "left+20 top", at: "right top-50" }
+      const content = Handlebars.compile("{{> searchDescription}}")(searchService.config.search.settings.fields);
+      const ttEl = this.element.find('#' + this.descriptionId);
+
+      this.tooltipGo = true;
+
+      ttEl.modal({
+        backdrop: false,
+        show: false
       });
+      ttEl.find('.modal-body').html(content);
     },
 
     bindEvents: function() {
@@ -85,6 +108,12 @@
       this.element.find(".perform-advanced-search").on("submit", function(event) {
         event.preventDefault();
         _this.performAdvancedSearch(_this);
+      });
+
+      this.element.find('.search-description-toggle').click(() => {
+        if (this.tooltipGo) {
+          this.element.find('#' + this.descriptionId).modal('show');
+        }
       });
     },
 
@@ -317,9 +346,14 @@
     registerPartials: function() {
       Handlebars.registerPartial('advancedSearch', [
         '<div class="advanced-search container-fluid p-0">',
-          '<i class="fa fa-2x fa-question-circle search-description-icon" title="Moo"></i>',
+          '{{#if notInSidebar}}',
+            '<a class="float-left fa fa-2x fa-question-circle search-description-toggle search-description-icon" ',
+                'data-toggle="modal" data-target="#{{descriptionId}}" title="Show help text">',
+            '</a>',
+            '{{> descriptionModal descriptionId}}',
+          '{{/if}}',
           '<form id="advanced-search-form" class="perform-advanced-search">',
-            '<div class="advanced-search-lines row mr-0"></div>',
+            '<div class="advanced-search-lines row mx-0"></div>',
 
             '<div class="advanced-search-btn-container row mb-2">',
               '<button class="btn advanced-search-add-btn mx-2" value="add" aria-label="Add advanced search term">',
@@ -432,6 +466,27 @@
           '{{/each}}',
           '</ul>',
         '</p>'
+      ].join(''));
+
+      Handlebars.registerPartial('descriptionModal', [
+        '<div id="{{this}}" class="modal" tabindex="-1" role="dialog">',
+          '<div class="modal-dialog modal-lg" role="document">',
+            '<div class="modal-content">',
+
+              '<div class="modal-header">',
+                // '<i class="fa fa-fw fa-2x fa-question-circle-o" aria-hidden="true"></i> ',
+                '<h1 class="modal-title">Advanced Search</h1>',
+              '</div>',
+
+              '<div class="modal-body"><p>No description at this time.</p></div>',
+
+              '<div class="modal-footer">',
+                '<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>',
+              '</div>',
+
+            '</div>',
+          '</div>',
+        '</div>'
       ].join(''));
 
       $.registerHandlebarsHelpers();
