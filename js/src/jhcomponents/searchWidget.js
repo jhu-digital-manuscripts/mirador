@@ -344,7 +344,7 @@
           '<a class="btn search-disclose-btn-more">Advanced Search</a>',  
         '</div>',
 
-        '<div class="row">',
+        '<div class="row mb-2">',
           '<div class="search-results-sorter {{classes.sorterContainer}}">',
             '<label>Sort results by: ',
               '<select>',
@@ -355,10 +355,10 @@
           '</div>',
 
           '<form id="search-form" class="search-within-form {{classes.basicForm}}">',
-            '<div class="input-group mb-2">',
+            '<div class="input-group">',
               '<input class="js-query form-control" type="text" aria-label="Enter search query:" placeholder="search"/>',
               '<div class="input-group-append">',
-                '<button type="submit" class="btn btn-outline-dark">',
+                '<button type="submit" class="btn btn-outline-dark basic-search-submit">',
                   'Search',
                 '</button>',
               '</div>',

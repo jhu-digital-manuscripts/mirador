@@ -435,10 +435,18 @@ a.search-title {
   border: 1px solid #d3d3d3;
   border-radius: 2px;
 }
+.search-container .manifest-picker-sidebar select {
+  max-width: 300px;
+}
 .search-container button {
   height: 29px;
   padding: 0 9px;
-  /* border: 1px solid; */
+}
+.search-container button.basic-search-submit {
+  border: 1px solid;
+}
+.search-container button.basic-search-submit:hover {
+  color: white;
 }
 .search-container .search-within-form input[type="text"] {
   width: 313px;

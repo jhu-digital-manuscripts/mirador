@@ -48,28 +48,6 @@
   z-index: 3;
 }
 
-/* .browser-search select {
-  background: white;
-  padding: 3px 6px;
-  height: 29px;
-  border: 1px solid #d3d3d3;
-  border-radius: 2px;
-}
-
-.browser-search-container button {
-  height: 29px;
-  padding: 0 9px;
-  border: 1px solid;
-} */
-
-.browser-search-container button:hover {
-  color: white;
-}
-
-/* .browser-search-container button:active {
-
-} */
-
 /* Remove box shadow for pager */
 .browser-search-container .compact-theme a,
 .browser-search-container .compact-theme span {

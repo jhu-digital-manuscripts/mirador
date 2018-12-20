@@ -32,6 +32,7 @@
   $.SearchPicker.prototype = {
     init: function () {
       this.element = jQuery(this.template({
+        id: this.windowId || 'browser-picker',
         inSidebar: this.config.inSidebar,
         showCollectionPicker: this.config.showCollectionPicker
       })).appendTo(this.appendTo);
@@ -241,10 +242,9 @@
 
     template: Handlebars.compile([
       '{{#if showCollectionPicker}}',
-        '<div class="{{#if inSidebar}}manifest-picker-sidebar{{else}}manifest-picker{{/if}}">',
-          '<label>{{#if inSidebar}}Search Within:{{else}}Choose Collection:{{/if}}',
-            '<select class="search-within-object-select"></select>',
-          '</label>',
+        '<div class="row m-2 {{#if inSidebar}}manifest-picker-sidebar{{else}}manifest-picker{{/if}}">',
+          '<label for="{{id}}">{{#if inSidebar}}Search Within:{{else}}Choose Collection:{{/if}}</label>',
+          '<select id="{{id}}" class="search-within-object-select"></select>',
           '<div class="manifest-picker-desc"></div>',
         '</div>',
       '{{/if}}'
