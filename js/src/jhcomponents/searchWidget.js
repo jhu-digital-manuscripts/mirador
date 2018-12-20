@@ -105,7 +105,7 @@
     init: function () {
       const _this = this;
 
-      this.element = jQuery(this.template()).appendTo(this.appendTo);
+      this.element = jQuery(this.template(this.templateData())).appendTo(this.appendTo);
       this.bindEvents();
       this.listenForActions();
 
@@ -115,6 +115,7 @@
         appendTo: this.element.find('.search-disclose'),
         clearMessages: () => { _this.element.find('.pre-search-message').empty(); },
         context: this.context,
+        config: this.config,
         performAdvancedSearch: () => {
           const query = _this.advancedSearch.getQuery();
           if (query) {
@@ -143,6 +144,9 @@
 
       if (typeof this.config.showHideAnimation === "object") {
         this.config.showHideAnimation.progress = function() {
+          _this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + _this.windowId);
+        };
+        this.config.showHideAnimation.complete = function () {
           _this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + _this.windowId);
         };
       }
@@ -309,8 +313,8 @@
       }, false, suppressEvent);
       this.element.find("#search-form").hide(this.config.showHideAnimation);
       this.element.find(".search-disclose").show(this.config.showHideAnimation);
-      this.element.find(".search-disclose-btn-more").hide();
-      this.element.find(".search-disclose-btn-less").show();
+      this.element.find('.search-disclose-btn-more').addClass('selected');
+      this.element.find('.search-disclose-btn-less').removeClass('selected');
       this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
     },
 
@@ -322,8 +326,8 @@
       }, false, suppressEvent);
       this.element.find("#search-form").show(this.config.showHideAnimation);
       this.element.find(".search-disclose").hide(this.config.showHideAnimation);
-      this.element.find(".search-disclose-btn-less").hide();
-      this.element.find(".search-disclose-btn-more").show();
+      this.element.find('.search-disclose-btn-more').removeClass('selected');
+      this.element.find('.search-disclose-btn-less').addClass('selected');
       this.eventEmitter.publish("SEARCH_SIZE_UPDATED." + this.windowId);
     },
 
@@ -334,25 +338,57 @@
     ].join('')),
 
     template: Handlebars.compile([
-      '<div class="search-widget">',
-        '<form id="search-form" class="search-within-form">',
-          '<input class="js-query" type="text" aria-label="Enter search query:" placeholder="search"/>',
-          '<input type="submit" value="Search"/>',
-        '</form>',
-        '<div class="search-disclose-btn-more">Advanced Search</div>',
-        '<div class="search-disclose-btn-less" style="display: none;">Basic Search</div>',
-        '<div class="search-results-sorter">',
-          '<label>Sort results by: ',
-            '<select>',
-              '<option value="relevance">Relevance</option>',
-              '<option value="index">Page Order</option>',
-            '</select>',
-          '</label>',
+      '<div class="search-widget ml-4">',
+        '<div class="row mb-2 {{classes.tabContainer}}">',
+          '<a class="btn search-disclose-btn-less selected">Basic Search</a>',
+          '<a class="btn search-disclose-btn-more">Advanced Search</a>',  
         '</div>',
+
+        '<div class="row mb-2">',
+          '<div class="search-results-sorter {{classes.sorterContainer}}">',
+            '<label>Sort results by: ',
+              '<select>',
+                '<option value="relevance">Relevance</option>',
+                '<option value="index">Page Order</option>',
+              '</select>',
+            '</label>',
+          '</div>',
+
+          '<form id="search-form" class="search-within-form {{classes.basicForm}}">',
+            '<div class="input-group">',
+              '<input class="js-query form-control" type="text" aria-label="Enter search query:" placeholder="search"/>',
+              '<div class="input-group-append">',
+                '<button type="submit" class="btn btn-outline-dark basic-search-submit">',
+                  'Search',
+                '</button>',
+              '</div>',
+            '</div>',
+          '</form>',
+
+        '</div>',
+        
         '<div class="search-disclose-container">',
           '<div class="search-disclose" style="display: none;"></div>',
         '</div>',
       '</div>'
     ].join('')),
+
+    templateData: function () {
+      if (this.config.inSidebar) {
+        return {
+          classes: {
+            // tabContainer: 'col',
+            sorterContainer: 'w-100',
+            basicForm: ''
+          }
+        };
+      } else {
+        return {
+          classes: {
+            basicForm: 'ml-4'
+          }
+        };
+      }
+    },
   };
 }(Mirador));

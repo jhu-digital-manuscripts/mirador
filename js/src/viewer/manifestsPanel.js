@@ -329,7 +329,8 @@
           vals = {
             "top": resizedEl.position().top + resizedEl.outerHeight(true) + "px"
           };
-
+// console.log(resizedEl);
+// console.log('   >> ' + JSON.stringify(vals));
           this.element.find(".select-results").css(vals);
           this.element.find(".search-results-display").css(vals);
         }

@@ -31,7 +31,7 @@ $.JhiiifSearchService = function(options) {
   this.manifest = options.manifest;
   this.query = {
     operators: {
-      'class': 'advanced-search-operators',
+      'class': 'advanced-search-operators col-4',
       'placeholder': 'Select boolean operation',
       'choices': [
         {value: 'and', label: 'AND'},
@@ -98,18 +98,19 @@ $.JhiiifSearchService.prototype = {
     // var _this = this;
     var fields = [];
     var categories = {
-      'class': 'advanced-search-categories',
+      'class': 'advanced-search-categories col',
       'placeholder': 'Choose search field',
       'choices': [],
     };
 
     this.search.settings.fields.forEach(function(field, index) {
-      var fieldInfo = {};
+      var fieldInfo = {
+        class: 'advanced-search-' + field.name,
+        type: field.values ? 'dropdown' : 'text',
+        query: field.name,
+        placeholder: field.label
+      };
 
-      fieldInfo.class = 'advanced-search-' + field.name;
-      fieldInfo.type = field.values ? 'dropdown' : 'text';
-      fieldInfo.query = field.name;
-      fieldInfo.placeholder = field.label;
       if (field.values) {
         fieldInfo.choices = field.values;
       }

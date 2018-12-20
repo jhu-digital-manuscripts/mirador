@@ -10,6 +10,9 @@
   padding: 1px 12px;
   color: black;
 }
+#load-controls .js-query {
+  height: unset;
+}
 
 .select-results {
   position: absolute;
@@ -22,7 +25,7 @@
   border-top: 1px solid #d3d3d3;
 }
 
-.browser-search-container {}
+/* .browser-search-container {} */
 
 .browser-search .search-container {
   background-color: white;
@@ -36,36 +39,13 @@
   margin: 6px 0;
 }
 
-.browser-search .search-within-object-select {}
+/* .browser-search .search-within-object-select {} */
 
 .browser-search-container .close {
   position: absolute;
   top: 0;
   left: 10px;
   z-index: 3;
-}
-
-.browser-search select {
-  background: white;
-  padding: 3px 6px;
-  height: 29px;
-  border: 1px solid #d3d3d3;
-  border-radius: 2px;
-}
-
-.browser-search-container button {
-  background: white;
-  border: 1px solid #d3d3d3;
-  height: 29px;
-  padding: 0 9px;
-}
-
-.browser-search-container button:hover {
-  border: 1px solid black;
-}
-
-.browser-search-container button:active {
-  background: #f7f7f7;
 }
 
 /* Remove box shadow for pager */
@@ -91,7 +71,7 @@
   display: none;
   cursor: pointer;
   padding: 6px;
-  background-color: #e5e5e5;
+  background-color: rgb(244, 242, 239);
 }
 .search-results-close:hover {
   background-color: #d3d3d3;
@@ -120,27 +100,21 @@
 }
 
 /* Search UI inputs tweaks */
-.browser-search-container .search-within-form input[type="text"] {
-  width: 313px;
-}
-.browser-search-container .advanced-search-inputs input {
-  width: calc(100% - 26px);
-}
-.browser-search-container .advanced-search-inputs select {
-  width: 100%;
+/* .browser-search-container .advanced-search-inputs select {
+
 }
 .browser-search-container .advanced-search-inputs {
-  width: 200px;
+
 }
 .browser-search-container .advanced-search-selector {
-  width: 175px;
+
 }
 .browser-search-container .advanced-search-selector .advanced-search-operators {
-  width: 40px;
+
 }
 .browser-search-container .advanced-search-selector .advanced-search-categories {
-  width: calc(100% - 40px);
-}
+
+} */
 
 /* Accommodating longer collection descriptions */
 .manifest-picker {

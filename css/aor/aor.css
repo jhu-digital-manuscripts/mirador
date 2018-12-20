@@ -271,11 +271,11 @@ h2 {
   left: 85px;
   font-size: 33%;
 }
-.mirador-osd-up {}
+/* .mirador-osd-up {}
 .mirador-osd-down {}
 .mirador-osd-right {}
 .mirador-osd-left {}
-.mirador-osd-go-home {}
+.mirador-osd-go-home {} */
 
 
 /*
@@ -307,7 +307,7 @@ h2 {
   height: 8px;
 }
 
-.side-within {}
+/* .side-within {} */
 .side-within .inner {
   float: left;
   margin-top: 2px;
@@ -398,15 +398,12 @@ h2 {
  * Search Panel
  * ##############################
  */
-.search-within-object-select {
-  width: 100%;
-  margin-bottom: 12px;
+/* .search-within-object-select {
+
 }
 .search-container  {
-  overflow: auto;
-  width: 310px;
-  padding: 10px;
-}
+
+} */
 .search-results-list .query {
   font-style: italic;
   color: grey;
@@ -430,55 +427,47 @@ h2 {
 a.search-title {
   color: black;
 }
-.js-close-search-within {
-  margin-top: 0;
-  background: none;
-  color: rgb( 146, 145, 145 );
-  box-sizing: border-box;
+
+.search-container select {
+  background: white;
+  padding: 3px 6px;
+  height: 29px;
+  border: 1px solid #d3d3d3;
+  border-radius: 2px;
 }
-.search-disclose {
-  margin-top: 10px;
-  margin-bottom: 10px;
+.search-container .manifest-picker-sidebar select {
+  max-width: 300px;
 }
-.search-disclose-container {}
-.search-disclose-btn-more,
-.search-disclose-btn-less {
-  text-decoration: underline;
-  margin-bottom: 10px;
-  cursor: pointer;
-  width: 100%;
+.search-container button {
+  height: 29px;
+  padding: 0 9px;
 }
-.search-results-sorter {
-  margin-bottom: 10px;
+.search-container button.basic-search-submit {
+  border: 1px solid;
 }
-.searchResults .js-query {
-  width: 225px;
+.search-container button.basic-search-submit:hover {
+  color: white;
 }
-.advanced-search-lines table td {
-  padding: 4px 0;
+.search-container .search-within-form input[type="text"] {
+  width: 313px;
 }
-.advanced-search-lines input {
-  padding: 2px 0;
-  width: 150px;
-  border-radius: 0;
-  height: 16px;
+.search-container .advanced-search-inputs input {
+  height: 29px !important;
 }
-.advanced-search-lines select {
-  padding: 2px;
-  height: 24px;
+.advanced-search-btn-container button {
+  border: 1px solid;
 }
-.advanced-search-inputs select {
-  width: 154px;
-  padding: 0;
-  border-radius: 0;
+.search-disclose-btn-more.selected,
+.search-disclose-btn-less.selected {
+  font-weight: bold;
+  font-size: 1.4em;
+  background-color: rgb(244, 242, 239);
 }
-.advanced-search-line button {
-  margin-left: -1px;
-  height: 24px;
-  border-radius: 0;
+.search-container .js-query {
+  height: 29px;
 }
-.advanced-search-line {
-  border-bottom: 1px solid rgb( 146, 145, 145 );
+.search-container .search-form button {
+  border: 1px solid;
 }
 .search-results-list .result-wrapper .result-paragraph .highlight {
   background-color: rgb(255, 255, 0);
@@ -488,35 +477,12 @@ a.search-title {
 .search-results-list .selected {
   background-color: #D8D8D8;
 }
-.advanced-search-line table {
-  border-collapse: collapse;
-  border-spacing: 0;
-}
-.advanced-search-line table td {
-  padding: 5px 0;
-  margin: 0;
-  float: left;
-}
 .advanced-search-selector {
   width: 120px;
-}
-.advanced-search-operators {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  width: 36px;
-  margin-right: -1px;
-  border-radius: 3px 0 0 3px;
-  cursor: pointer;
 }
 /* Get rid of dropdown arrow in IE */
 .advanced-search-operators::-ms-espand {
   display: none;
-}
-.advanced-search-categories {
-  float:right;
-  width: 85px;
-  border-radius: 0;
-  cursor: pointer;
 }
 .search-results-context-menu ul {
   position: absolute;
@@ -536,9 +502,6 @@ a.search-title {
 .search-results-context-menu ul li:last-child {
   padding-bottom: 0;
   border-bottom: 0;
-}
-.advanced-search-btn-container {
-  margin: 10px 0;
 }
 
 

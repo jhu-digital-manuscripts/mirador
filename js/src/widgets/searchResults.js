@@ -54,6 +54,8 @@
       if (this.config.hasContextMenu) {
         this.setupContextMenu();
       }
+
+      this.eventEmitter.publish('SEARCH_SIZE_UPDATED.' + this.parentId);
     },
 
     /**
