@@ -349,7 +349,7 @@
         '<div class="advanced-search container-fluid p-0">',
           '{{#if notInSidebar}}',
             '<a class="float-left fa fa-2x fa-question-circle search-description-toggle search-description-icon" ',
-                'data-toggle="modal" data-target="#{{descriptionId}}" title="Show help text">',
+                'data-toggle="modal" data-target="#{{descriptionId}}" title="Click to show advanced search help text">',
             '</a>',
             '{{> descriptionModal descriptionId}}',
           '{{/if}}',
