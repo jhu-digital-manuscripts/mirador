@@ -76,6 +76,7 @@
             "top": (this.searchConfig.showCollectionPicker ? "191px" : "144px")
           });
         } else {
+          this.element.find('.browser-search-container').addClass('faceted');
           this.setContainerPositions();
         }
       } else {

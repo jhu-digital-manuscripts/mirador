@@ -25,7 +25,9 @@
   border-top: 1px solid #d3d3d3;
 }
 
-/* .browser-search-container {} */
+.browser-search-container.faceted {
+  width: 400px;
+}
 
 .browser-search .search-container {
   background-color: white;
@@ -36,6 +38,9 @@
 }
 .browser-search .search-within-form input[type="text"] {
   width: 350px;
+}
+.browser-search-container.faceted .search-within-form input[type="text"] {
+  width: 300px; 
 }
 
 .search-container h2 {

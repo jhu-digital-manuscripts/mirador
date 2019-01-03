@@ -332,7 +332,8 @@
     },
 
     lineClasses: function () {
-      if (this.config.inSidebar) {
+      if (this.config.inSidebar || this.config.allowFacets) {
+        // Full width if search widget is in window sidebar OR if search widget appears WITH facets in manifest browser
         return {
           line: 'w-100'
         };
