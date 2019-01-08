@@ -217,8 +217,6 @@
     redoIndexes: function () {
       this.viewData.forEach((d, i) => d.index = i + 1);
       this.element.find('.history-list').children().each(function (i) {
-        console.log(i);
-        console.log(jQuery(this));
         jQuery(this).find('.item-index').html(i);
       });
     },
