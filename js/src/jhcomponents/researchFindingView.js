@@ -123,6 +123,10 @@
     },
 
     addHistoryItem: function (item) {
+      // We can filter history items here so items such as Add/Remove slot do not appear
+      if (item.type === $.HistoryStateType.slot_change) {
+        return;
+      }
       this.historyList.push(item);
     },
 
@@ -176,6 +180,7 @@
           _this.addRowData(item, index);
         }
       });
+      this.redoIndexes();
     },
 
     startRowEdit: function (entry, row) {
@@ -212,7 +217,7 @@
     redoIndexes: function () {
       this.viewData.forEach((d, i) => d.index = i + 1);
       this.element.find('.history-list').children().each(function (i) {
-        jQuery(this).find('.item-index').html(i + 1);
+        jQuery(this).find('.item-index').html(i);
       });
     },
 
