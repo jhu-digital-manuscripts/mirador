@@ -123,6 +123,10 @@
     },
 
     addHistoryItem: function (item) {
+      // We can filter history items here so items such as Add/Remove slot do not appear
+      if (item.type === $.HistoryStateType.slot_change) {
+        return;
+      }
       this.historyList.push(item);
     },
 
