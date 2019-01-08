@@ -180,6 +180,7 @@
           _this.addRowData(item, index);
         }
       });
+      this.redoIndexes();
     },
 
     startRowEdit: function (entry, row) {
@@ -216,7 +217,9 @@
     redoIndexes: function () {
       this.viewData.forEach((d, i) => d.index = i + 1);
       this.element.find('.history-list').children().each(function (i) {
-        jQuery(this).find('.item-index').html(i + 1);
+        console.log(i);
+        console.log(jQuery(this));
+        jQuery(this).find('.item-index').html(i);
       });
     },
 
