@@ -114,14 +114,24 @@
 
             this.element.find('.btn-research-finding').click(function () {
               _this.eventEmitter.publish('TOGGLE_RESEARCH_FINDING_VIEW');
-              _this.element.find('.btn-research-finding').hide();
-              _this.element.find('.btn-research-finding-hide').show();
+              // _this.element.find('.btn-research-finding').fadeOut('fast');
+              // _this.element.find('.btn-research-finding-hide').fadeIn('fast');
+              _this.element.find('.btn-research-finding').fadeOut({
+                duration: 'fast',
+                complete: function () {
+                  _this.element.find('.btn-research-finding-hide').fadeIn('fast');
+                }
+              });
             });
 
             this.element.find('.btn-research-finding-hide').click(function () {
               _this.eventEmitter.publish('TOGGLE_RESEARCH_FINDING_VIEW');
-              _this.element.find('.btn-research-finding').show();
-              _this.element.find('.btn-research-finding-hide').hide();
+              // _this.element.find('.btn-research-finding-hide').fadeOut('fast');
+              // _this.element.find('.btn-research-finding').fadeIn('fast');
+              _this.element.find('.btn-research-finding-hide').fadeOut({
+                duration: 'fast',
+                complete: () => _this.element.find('.btn-research-finding').fadeIn('fast')
+              });
             });
         },
 
@@ -173,7 +183,7 @@
               '</a>',
             '</li>',
             '<li>',
-              '<a href="javascript:;" class="btn-research-finding-hide mainmenu-button" title="Hide activity list" aria-label="Hide activity list" style="display:none;">',
+              '<a href="javascript:;" class="btn-research-finding-hide mainmenu-button aor-background-gold aor-grey" title="Hide activity list" aria-label="Hide activity list" style="display:none;">',
                 '<span class="fa fa-lg fa-fw fa-caret-square-o-left"></span> ',
                 'Back to viewer',
               '</a>',
