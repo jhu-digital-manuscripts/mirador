@@ -87,7 +87,7 @@
       function doRowEdit() {
         const newTitle = _this.editDialog.find('input#edit-entry-title').val();
         if (newTitle && newTitle.length > 0) {
-          _this.edit.row.find('.item-title a').html(newTitle);
+          _this.edit.row.find('.item-title div').html(newTitle);
         }
 
         const newDesc = _this.editDialog.find('textarea#edit-entry-description').val();
