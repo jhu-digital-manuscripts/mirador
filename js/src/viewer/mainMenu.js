@@ -114,22 +114,16 @@
 
             this.element.find('.btn-research-finding').click(function () {
               _this.eventEmitter.publish('TOGGLE_RESEARCH_FINDING_VIEW');
-              // _this.element.find('.btn-research-finding').fadeOut('fast');
-              // _this.element.find('.btn-research-finding-hide').fadeIn('fast');
               _this.element.find('.btn-research-finding').fadeOut({
-                duration: 'fast',
-                complete: function () {
-                  _this.element.find('.btn-research-finding-hide').fadeIn('fast');
-                }
+                duration: 160,
+                complete: () => _this.element.find('.btn-research-finding-hide').fadeIn('fast')
               });
             });
 
             this.element.find('.btn-research-finding-hide').click(function () {
               _this.eventEmitter.publish('TOGGLE_RESEARCH_FINDING_VIEW');
-              // _this.element.find('.btn-research-finding-hide').fadeOut('fast');
-              // _this.element.find('.btn-research-finding').fadeIn('fast');
               _this.element.find('.btn-research-finding-hide').fadeOut({
-                duration: 'fast',
+                duration: 160,
                 complete: () => _this.element.find('.btn-research-finding').fadeIn('fast')
               });
             });
