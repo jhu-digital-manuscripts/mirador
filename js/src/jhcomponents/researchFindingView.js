@@ -175,7 +175,7 @@
     toggle: function () {
       const _this = this;
 
-      this.element.toggle();
+      this.element.fadeToggle(320);
       // Generate templates for those items that do not already have templates
       // Generate templates on toggle to better ensure that data has already been loaded correctly
       this.historyList.forEach((item, index) => {

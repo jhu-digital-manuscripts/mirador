@@ -38,7 +38,7 @@
 
       this.eventEmitter.subscribe('CLOSE_SEARCH_RESULTS', (event, data) => {
         if (_this.windowId === data.origin) {
-          _this.element.slideUp(160);
+          _this.element.fadeOut(160);
         }
       });
     },
@@ -47,7 +47,7 @@
       const _this = this;
 
       this.element.find('.search-results-close').on("click", () => {
-        _this.element.slideUp(160);
+        _this.element.fadeOut(160);
         _this.eventEmitter.publish('SEARCH_RESULTS_CLOSED', {
           origin: _this.windowId
         });
@@ -90,7 +90,7 @@
         this.searchPager.hide();
       }
 
-      this.appendTo.find('.search-results-display').slideDown(160);
+      this.appendTo.find('.search-results-display').fadeIn(160);
     },
 
     needsPager: function (results) {
