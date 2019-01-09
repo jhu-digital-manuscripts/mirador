@@ -5,7 +5,10 @@
       defaultFilename: 'research-finding.html',
       element: null,
       appendTo: null,
-      url: null
+      url: null,
+      cssUri: null,
+      css: null,
+      utils: null,
     }, options);
 
     this.init();
@@ -13,7 +16,10 @@
 
   $.HtmlExportModal.prototype = {
     init: function () {
-      this.element = jQuery(this.template()).appendTo(this.appendTo);
+      jQuery.get(this.cssUri)
+        .done(css => this.css = css);
+      
+      this.element = jQuery(this.template({css: this.css})).appendTo(this.appendTo);
       this.element.modal({
         backdrop: false,
         show: false
@@ -27,14 +33,18 @@
      * @param {string} cnt stringified HTML
      */
     setContent: function (cnt) {
+      const style = this.utils.htmlToString(this.style(this.css));
       const body = this.element.find('.modal-body');
       body.empty();
-      body.html(jQuery(cnt));
+      // body.append(this.style(this.css));
+      body.append(jQuery(cnt));
 
       // Also change the download link
       this.unsetDownload();
 
-      const data = new Blob([cnt], { type: 'text/html' });
+      // this.utils.htmlToString(jQuery(this.style(this.css)), jQuery(cnt))
+
+      const data = new Blob([style, cnt], { type: 'text/html' });
       this.url = URL.createObjectURL(data);
     },
 
@@ -136,6 +146,8 @@
           '</div>',
         '</div>',
       '</div>',
-    ].join(''))
+    ].join('')),
+
+    style: Handlebars.compile('<style>{{this}}</style>')
   };
 } (Mirador));
