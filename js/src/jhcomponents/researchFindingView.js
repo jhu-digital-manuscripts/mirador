@@ -41,11 +41,14 @@
       this.urlSlicer = new $.JHUrlSlicer();
       // this.baseUrl = new URI().query('').fragment('').toString();
 
+      const rfConfig = this.state.getStateProperty('researchFinding');
+
       this.htmlExport = new $.HtmlExportModal({
-        appendTo: this.element
+        appendTo: this.element,
+        cssUri: rfConfig.html.css,
+        utils: this.utils
       });
 
-      const rfConfig = this.state.getStateProperty('researchFinding');
       this.rmapExport = new $.RmapExportModal({
         appendTo: this.element,
         utils: this.utils,

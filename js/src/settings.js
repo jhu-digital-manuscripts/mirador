@@ -252,6 +252,9 @@
         url: 'https://rmap-hub.org',
         api: '/api/discos',
         resolver: '/app/discos/'
+      },
+      html: {
+        css: 'build/mirador/css/researchFindingExport.css' // Location of CSS bundle for research finding HTML export
       }
     }
   };
