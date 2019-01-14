@@ -34,6 +34,7 @@
       )).appendTo(this.appendTo);
 
       this.setEditDialog();
+      $.setQTips(this.element);
 
       this.bindEvents();
       this.listenForActions();
@@ -145,6 +146,7 @@
 
       const moo = jQuery(this.rowTemplate(templateData));
       this.element.find('.history-list').append(moo);
+      $.setQTips(moo);
       this.listenForItemActions(item, moo);
     },
 
@@ -289,11 +291,12 @@
           '</div>',
           '<div class="col-2 d-flex justify-content-end">',
             // '<button type="button" class="edit-history btn btn-info rounded-circle mx-2" data-toggle="modal" data-target="history-list-edit-row">',
-            '<button type="button" class="edit-history btn btn-info rounded-circle mx-2">',
+            '<button type="button" class="edit-history btn btn-info rounded-circle mx-2" ',
+                'title="Edit label or description of this step">',
               '<i class="fa fa-lg fa-pencil"></i>',
             '</button>',
             '<button type="button" class="remove-history btn btn-danger rounded-circle" ',
-                'data-toggle="popover" data-trigger="focus" title="Not implemented yet">',
+                'data-toggle="popover" data-trigger="focus" title="Remove this step">',
               '<i class="fa fa-lg fa-times"></i>',
             '</button>',
           '</div>',

@@ -333,4 +333,23 @@ $.objectArrayIndexOf = function(myArray, searchTerm, property) {
 
   };
 
+  $.setQTips = function (element) {
+    // Apply to all child elements that have a 'title' attribute
+    element.find('[title]').each(function () {
+      const el = jQuery(this);
+      el.qtip({
+        content: {
+          text: el.attr('title')
+        },
+        position: {
+          my: 'top center',
+          at: 'bottom center'
+        },
+        style: {
+          classes: 'qtip-dark qtip-shadow qtip-rounded'
+        }
+      });
+    });
+  };
+
 }(Mirador));
