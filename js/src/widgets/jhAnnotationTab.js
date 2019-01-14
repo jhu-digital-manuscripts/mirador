@@ -13,7 +13,7 @@
       eventEmitter: null,
       message: {
         error: '<h1 class="error">Failed to load annotation list.</h1>',
-        empty: '<h1 class="empty">No annotations available.</h1>',
+        empty: '<h1 class="empty">No textual or symbolic marginalia on this page</h1>',
         noLists: '<h1 class="empty">No annotations found.</h1>',
       }
     }, options);

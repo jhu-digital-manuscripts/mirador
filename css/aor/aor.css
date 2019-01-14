@@ -648,3 +648,12 @@ a.external-link:after {
 .mirador-main-menu .btn-research-finding-show {
   padding: 7px;
 }
+
+.jhAnnotationTab .empty {
+  margin-top: 1em;
+  color: rgb(70, 67, 68);
+}
+.slot:hover .jhAnnotationTab h1,
+.jhAnnotationTab .empty:hover {
+  color: rgb(70, 67, 68);
+}
