@@ -457,11 +457,14 @@ a.search-title {
 .advanced-search-btn-container button {
   border: 1px solid;
 }
+.search-disclose-btn-more,
+.search-disclose-btn-less {
+  border-color: inherit;
+}
 .search-disclose-btn-more.selected,
 .search-disclose-btn-less.selected {
-  font-weight: bold;
-  font-size: 1.4em;
-  background-color: rgb(244, 242, 239);
+  color: rgb(244, 242, 239);
+  background-color: rgb(70, 67, 68);
 }
 .search-container .js-query {
   height: 29px;

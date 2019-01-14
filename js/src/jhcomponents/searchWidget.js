@@ -340,8 +340,8 @@
     template: Handlebars.compile([
       '<div class="search-widget ml-4">',
         '<div class="row mb-2 {{classes.tabContainer}}">',
-          '<a class="btn search-disclose-btn-less selected">Basic Search</a>',
-          '<a class="btn search-disclose-btn-more">Advanced Search</a>',  
+          '<button class="btn btn-outline-secondary search-disclose-btn-less selected">Basic Search</button>',
+          '<button class="btn btn-outline-secondary search-disclose-btn-more ml-2">Advanced Search</button>',  
         '</div>',
 
         '<div class="row mb-2">',
