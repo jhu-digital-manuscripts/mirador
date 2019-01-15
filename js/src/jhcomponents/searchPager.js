@@ -43,14 +43,14 @@
     },
 
     setPagerText: function (offset, last, total) {
-      const pagerText = this.element.find('.results-pager-text');
+      const el = this.element.find('.results-pager-text');
 
-      pagerText.empty();
-      pagerText.append(jQuery(this.pagerText({
+      el.empty();
+      el.text(this.pagerText({
         offset,
         last,
         total
-      })));
+      }));
     },
 
     setPager: function (results) {
@@ -108,7 +108,7 @@
     template: Handlebars.compile([
       '<div class="results-pager-container">',
         '<div class="results-pager"></div>',
-        '<p class="results-pager-text"></p>',
+        '<p class="results-pager-text ml-3"></p>',
       '</div>'
     ].join('')),
   };

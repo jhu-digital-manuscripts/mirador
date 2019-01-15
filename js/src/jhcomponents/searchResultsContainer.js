@@ -76,7 +76,7 @@
         config: this.config
       });
 
-      let last = parseInt(searchResults.offset) + this.context.search.maxPerPage;
+      let last = parseInt(searchResults.offset) + parseInt(this.context.search.maxPerPage);
       if (last > searchResults.total) {
         last = searchResults.total;
       }
