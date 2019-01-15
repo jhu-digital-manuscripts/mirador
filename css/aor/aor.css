@@ -451,6 +451,9 @@ a.search-title {
 .search-container .search-within-form input[type="text"] {
   width: 250px;
 }
+.sidePanel .search-container .search-within-form input[type="text"] {
+  width: 225px;
+}
 .search-container .advanced-search-inputs input {
   height: 29px !important;
 }
