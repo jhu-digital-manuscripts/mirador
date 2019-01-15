@@ -656,7 +656,8 @@ a.external-link:after {
   margin-top: 1em;
   color: rgb(70, 67, 68);
 }
-.slot:hover .jhAnnotationTab h1,
+.slot h1 { color: inherit; }
+.slot:hover h1,
 .jhAnnotationTab .empty:hover {
   color: rgb(70, 67, 68);
 }
