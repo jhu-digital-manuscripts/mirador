@@ -286,8 +286,8 @@
         origin: this.windowId,
         query: context.search.query,
         service: context.searchService,
-        offset: context.search.offset || 0,
-        maxPerPage: context.search.maxPerPage || 30,
+        offset: parseInt(context.search.offset) || 0,
+        maxPerPage: parseInt(context.search.maxPerPage) || 30,
         sortOrder: context.search.sortOrder,
         facets: context.search.facetQuery,
         context
