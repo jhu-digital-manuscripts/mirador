@@ -126,6 +126,11 @@
                 '<span aria-hidden="true">&times;</span>',
               '</button>',
             '</div>',
+            '<p class="m-2">',
+              'By clicking "Save" your research finding will be converted to and saved as an HTML file as ',
+              'previewed in this screen. The file will be saved in the default downloads directory on your ',
+              'hard drive. The file name can be changed. This file will open in your default web browser.',
+            '</p>',
             '<div class="modal-body h-75">',
               // Body content
             '</div>',

@@ -4,8 +4,8 @@ ul {
 
 /* Select Bootstrap classes */
 .row {
-  display: -ms-flexbox;
-  display: flex;
+  /* display: -ms-flexbox;
+  display: flex; */
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
   margin-right: 15px;
