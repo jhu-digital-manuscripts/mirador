@@ -121,7 +121,7 @@
         '<div class="modal-dialog modal-lg h-75" role="document">',
           '<div class="modal-content h-100">',
             '<div class="modal-header">',
-              '<h5>Export Preview</h5>',
+              '<h5>HTML Export</h5>',
               '<button type="button" class="close btn-close" aria-label="Close">',
                 '<span aria-hidden="true">&times;</span>',
               '</button>',

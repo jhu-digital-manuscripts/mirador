@@ -151,9 +151,10 @@
             '<div class="modal-body h-75">',
               // Body content
               '<p>',
-                'When you click \"Export\" your research finding will be converted to a Distributed Scholarly Compound Object (DiSCO) and sent to ',
-                '<a class="text-primary" href="{{rmapUrl}}" target="_blank">RMap</a>. In order to proceed, you need an RMap API key associated ',
-                'with your RMap account. ',
+                'By clicking "Export" your research finding will be converted to a linked data graph and sent ',
+                'to <a class="text-primary" href="{{rmapUrl}}" target="_blank">RMap</a>. This linked data graph ',
+                'provides a dynamic representation of exactly the same information contained in the HTML export. ',
+                'In order to proceed, you need an RMap API key associated with your RMap account.',
               '</p>',
               '<p>To access your RMap API key:</p>',
               '<ul class="">',
