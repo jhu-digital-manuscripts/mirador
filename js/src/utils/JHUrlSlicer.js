@@ -29,6 +29,12 @@
       }
 
       var parts = uri.hash().split('/');
+      // Remove empty elements at the tail until you reach an element with content
+      let tail = parts[parts.length - 1];
+      while (parts.length > 1 && (!tail || tail === '')) {
+        parts.pop();
+        tail = parts[parts.length - 1];
+      }
 
       if (parts.length === 1) {
         return $.HistoryStateType.collection;
