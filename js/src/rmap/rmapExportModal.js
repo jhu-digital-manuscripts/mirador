@@ -98,6 +98,7 @@
       jQuery.post({
         url: this.rmapApi,
         data: JSON.stringify(data),
+        processData: false,
         headers: {
           'Authorization': 'Basic ' + btoa(key),
           'Content-Type': 'application/ld+json; charset=utf-8'
