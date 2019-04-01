@@ -189,6 +189,7 @@
 
     handleFacets: function(searchResults, append) {
       // Update visibility of manifests
+      // debugger;
       this.bookList = this.getManifestList(searchResults);
       this.eventEmitter.publish('UPDATE_FACET_BOOK_LIST', {
         origin: this.windowId,
@@ -249,6 +250,6 @@
         return m.object["@id"];
       });
     },
-    
+
   };
 }(Mirador));

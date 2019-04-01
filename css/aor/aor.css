@@ -1,5 +1,5 @@
 /*
-  COLORS 
+  COLORS
   Red: rgb(144, 25, 40) #901928
   Gold: rgb(199,152,84) #c79854
   Grey/Black: rgb(70, 67, 68) #464344
@@ -56,7 +56,7 @@
   opacity: 1;
 }
 .mirador-main-menu a:hover {
-  
+
 }
 
 .user-logo {
@@ -663,4 +663,13 @@ a.external-link:after {
 .slot:hover h1,
 .jhAnnotationTab .empty:hover {
   color: rgb(70, 67, 68);
+}
+
+/** Metadata panel */
+
+.overlay .sub-title {
+  font-size: 14px;
+}
+.overlay .metadata-listing {
+  font-size: 12px;
 }

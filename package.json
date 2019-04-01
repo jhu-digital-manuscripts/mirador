@@ -8,8 +8,6 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "gitbook": "^3.2.3",
-    "gitbook-cli": "^2.3.2",
     "gitbook-plugin-search": "2.2.1",
     "grunt": "^1.0.3",
     "grunt-cli": "*",
@@ -19,7 +17,7 @@
     "grunt-contrib-connect": "*",
     "grunt-contrib-copy": "*",
     "grunt-contrib-cssmin": "*",
-    "grunt-contrib-jasmine": "^2.0.2",
+    "grunt-contrib-jasmine": "^2.0.3",
     "grunt-contrib-jshint": "^1.1.0",
     "grunt-contrib-uglify": "*",
     "grunt-contrib-watch": "^1.1.0",

@@ -7,13 +7,13 @@
    *  > windowUpdated
    *  > search
    *  > SEARCH_RESULTS_CLOSED
-   * 
+   *
    * publish
    *  > SWITCH_SEARCH_SERVICE (changes search context to use a particular search service)
    *  > PICK_SEARCH_SERVICE (tells the search picker to select a collection in the UI)
    *  > ADD_WINDOW (spawns window of a known configuration, such as to a particular page in a book)
    *  > ADDED_HISTORY
-   * 
+   *
    * @param options {
    *    eventEmitter: {},
    *    urlSlicer: {},
@@ -60,10 +60,10 @@
     },
 
     /*
-     * One issue to address is when to start this history controller. We can't simply start listening 
+     * One issue to address is when to start this history controller. We can't simply start listening
      * for history events when Mirador is initially rendered. Instead, we have to wait until we know
      * data is loaded, so that various context changes can be applied to the UI correctly.
-     * 
+     *
      * We have access to the list of data that Mirador was initially configured to load. This controller
      * can then listen for 'manifestReceived' and 'collectionReceived' events until all of the
      * initially configured data has been fulfilled. At that point, the controller can start listening
@@ -72,10 +72,10 @@
     listenForStart: function () {
       const _this = this;
       const url = this.urlSlicer.url(window.location.hash, window.location.search);
-      const initCol = window.location.hash ? 
-          this.urlSlicer.parseUrl(url).data.collection : 
+      const initCol = window.location.hash ?
+          this.urlSlicer.parseUrl(url).data.collection :
           this.initialCollection;
-      
+
       let data = this.saveController.get('data', 'originalConfig');
       return new Promise((resolve, reject) => {
         const colHandler = (event, collection) => {
@@ -125,11 +125,11 @@
 
       /**
        * This will generally be used to change the history state to denote when a user is looking
-       * at the collection page. This event cannot tell what collection is being looked at. 
-       * 
+       * at the collection page. This event cannot tell what collection is being looked at.
+       *
        * Fires when the "manifests panel" (book browser) is shown or hidden. "manifestPanelVisible"
        * is a boolean value describing the panel's visibility (true = visible)
-       * 
+       *
        * The 'data' param can take two forms, normally, this event sourced from the viewer itself
        * will set data to a boolean value. If this event is published from this controller, it will
        * be set to an object: {
@@ -151,11 +151,11 @@
        * Fired every time a window changes, including when a new canvas is displayed, when the view
        * type changes (image view to book view for example). This seems to be a "catch-all" event
        * that captures all changes done to windows.
-       * 
+       *
        * The following information _MAY_ be available in this event.
-       * 
+       *
        * [viewType, canvasID, loadedManifest, slotAddress] all seem to be available together
-       * 
+       *
        *  options: {
             id: "5fa67f8e-622c-4a49-b720-bc87ea45bb92",
             viewType: "ThumbnailsView",
@@ -175,22 +175,22 @@
 
       /**
        * In terms of the UI context, the 'advanced' property always takes precedence over 'basic.'
-       * When 'advanced' is defined, always show the advanced search widget, no matter the value 
+       * When 'advanced' is defined, always show the advanced search widget, no matter the value
        * of 'basic.'
-       * 
+       *
        * @param data {
        *    origin: '', // window ID for source. NULL or UNDEFINED if source is manifests panel
        *    query: '', // search query executed
-       *    maxPerPage: -1, // (OPTIONAL) Integer, page size. 
+       *    maxPerPage: -1, // (OPTIONAL) Integer, page size.
        *    offset: -1, // (OPTIONAL) Integer, start index for results
-       *    sortOrder: (OPTIONAL) ('relevance'|'index'), 
+       *    sortOrder: (OPTIONAL) ('relevance'|'index'),
        *    service: '', // URI of search service
        *    ui: {
        *      advanced: {
        *        rows: [{
        *          row: 0, // index (redundant)
        *          category: '', // search category, must be found in search service config
-       *          operation: 'and'|'or', 
+       *          operation: 'and'|'or',
        *          term: '', // The search term
        *          type: 'input'|'select', // UI element type - freeform text input, or enumerated dropdown
        *        }]
@@ -204,20 +204,32 @@
          * In order to initialize a search, we will first need to WAIT for the UI to init
          * and settle. Likely we can wait for SEARCH_SERVICE_FOUND event for the search
          * service that matches the service of the current URL fragment.
-         * 
+         *
          * We will need to know the state to leave the viewer panel (image view, book view, thumbnails, etc).
          * Can we do this simply by inspecting the 'historyList' - looking backwards for the last event
          * that involved the particular collection, manifest, and canvas? I think that a history state would
          * _always_ be found, as a user must do something in the viewer to initiate a search.
-         * 
+         *
          * In the case of a collection search, we will need to determine the ID used by the search widget
          * for search events. This is a UUID generated when the collection search widget is created
          */
+        console.log('SEARCH MOO');
         _this.processSearch(data);
       });
 
       this.eventEmitter.subscribe('GET_FACETS', (event, data) => {
+        if (data.ignoreHistory) {
+          return;
+        }
         // TODO: possibly needed for DLMM, but not AOR
+        console.log('GET_FACETS');
+        console.log(data);
+        if (!data.facets) {
+          // Ignore events that have no facet information
+          return;
+        }
+
+        _this.processFacet(data);
       });
 
       this.eventEmitter.subscribe('RESET_WORKSPACE_LAYOUT', (event, data) => {
@@ -227,9 +239,9 @@
 
       /**
        * This event is fired when the user closes a window.
-       * 
+       *
        * @param data {
-       *    ignoreHistory: true|false, 
+       *    ignoreHistory: true|false,
        *    slot: {}, slot object, of which we can get the slotID and layoutAddress
        * }
        */
@@ -253,11 +265,11 @@
        * This event fires when a single slot is added to the workspace by means of "splitting"
        * from a panel. This happens when a user selects options such as "Add slot right" or
        * right clicks a search result and "Open in slot above"
-       * 
+       *
        * @param data {
-       *    ignoreHistory: true|false, 
+       *    ignoreHistory: true|false,
        *    slot: {}, // the new slot that was created by this operation
-       *    target: {}, 
+       *    target: {},
        * }
        */
       this.eventEmitter.subscribe('slotAdded', (event, data) => {
@@ -305,7 +317,7 @@
      *    - imageMode (what is the difference between this and 'viewType' ???)
      *    - loadedManifest
      *    - slotAddress
-     * 
+     *
      * @param e the WindowUpdated event object
      * @param event windowUpdated event data
      */
@@ -361,7 +373,7 @@
     },
 
     /**
-     * When a user first flips to the collection panel (ManifestsPanel), the application event does 
+     * When a user first flips to the collection panel (ManifestsPanel), the application event does
      * not have enough information to determine the collection being looked at. In this case, we must
      * determine the collection by investigating the application history. If no collection is found
      * in the history, then we can assume that the initially loaded collection is being looked at.
@@ -405,21 +417,21 @@
     },
 
     /**
-     * Contains handlers to initialize the viewer based on the URL path when the page is 
+     * Contains handlers to initialize the viewer based on the URL path when the page is
      * initially loaded. This should happen whenever the browser navigation buttons are
      * used, or when a user loads a bookmark.
-     * 
+     *
      * Book thumb view  ::	#COL_ID/BOOK_ID/thumb	            ::  #aor/Douce195/thumb
      * Book scroll view	::  #COL_ID/BOOK_ID/scroll	          ::  #aor/Douce195/scroll
      * Single page view	::  #COL_ID/BOOK_ID/IMAGE_ID/image	  ::  #aor/Douce195/001r/image
      * Opening view	    ::  #COL_ID/BOOK_ID/IMAGE_ID/opening	::  #aor/Douce195/001r/opening
      * Search in a book	::  #COL_ID/BOOK_ID/search?q=query	  ::  #aor/Douce195/search?q=query
      * Search across	  ::  #COL_ID/search?q=query	          ::  #aor/search?q=query
-     * 
+     *
      * EVENTS::
-     * 
+     *
      * SET_COLLECTION
-     * 
+     *
      * @param event popstate event {
      *    state: {}, // HistoryState object
      * }
@@ -437,7 +449,7 @@
       // state described by the current URL hash
       if (event && event.state) {
         console.log('%cEvented URL', 'color:blue;');
-        // If history list contains this event, pop states off the history list until you 
+        // If history list contains this event, pop states off the history list until you
         // have popped this event off. Each state should be applied to the viewer in the
         // order it pops off the list
 
@@ -454,7 +466,7 @@
         // const isBack = historyMatch < 0;
         // for (let i = 0; i < Math.abs(historyMatch); i++) {
         //   let state;
-          
+
         //   if (isBack) {
         //     state = this.history.previousState();
         //   } else {
@@ -470,7 +482,7 @@
         //   // this.applyState(event.state);
         // }
         this.applyState(event.state);
-        
+
       } else {
         // console.log('%cnon-Evented URL', 'color:brown;');
         const state = this.urlSlicer.parseUrl(url);
@@ -494,6 +506,12 @@
       });
     },
 
+    /**
+     * Do what is needed to push the viewer into the given state. This process should
+     * be done without issuing new history states.
+     *
+     * @param {HistoryState} state a given state of the viewer
+     */
     applyState: function (state) {
       const _this = this;
       const url = state.fragment;
@@ -547,6 +565,16 @@
             _this.manifestSearch(state, manifest);
           });
           break;
+        case $.HistoryStateType.facet_search:
+          jQuery.when(
+            this.getCollection(state.data.collection)
+          ).done(() => {
+            // this.initToCollection(state.data.collection);
+            this.doFacet(state);
+          });
+
+
+          break;
         default:
           break;
       }
@@ -556,8 +584,8 @@
      * When navigating through history states, sometimes events occur in different Mirador windows.
      * When recreating old states, we should maintain the placement of these windows as much as
      * possible.
-     * 
-     * @param {HistoryState} state 
+     *
+     * @param {HistoryState} state
      */
     modifySlotOrApplyState: function (state) {
       // console.log('   #### ');
@@ -566,7 +594,7 @@
         switch (state.data.modType) {
           case $.SlotChangeType.add:
             // console.log('   >>> Add slot event');
-            this.removeSlot(state);  
+            this.removeSlot(state);
             break;
           case $.SlotChangeType.remove:
             // console.log('   <<< Remove Slot event ');
@@ -604,7 +632,7 @@
      *   > Are we sure that the search service has already been loaded?
      *   > context.search is equivalent to historyState.search
      *   > context.ui must be derived from historyState.search
-     *     - historyState.search.type === basic ? 
+     *     - historyState.search.type === basic ?
      *       * ui.basic = historyState.search.query
      *       * historyState.search.query must be adjusted now :|
      *     - historyState.search.type === advanced ?
@@ -621,7 +649,7 @@
       // TODO: what if more than one window is open to the same book and page? Current behavior is to pick the first match...
       const match = this.saveController.getStateProperty('windowObjects').filter(window =>
         (state.data.windowId && state.data.windowId === window.id) ||
-        window.loadedManifest === manifest.getId() && 
+        window.loadedManifest === manifest.getId() &&
           (state.data.canvas ? window.canvasID === state.data.canvas : true)
       );
 
@@ -666,7 +694,7 @@
             context.searchService.config.getDefaultFields(),
             context.searchService.config.query.delimiters.or
           );
-          
+
         } else {
           const query = state.data.search.query;
           let rows = [];
@@ -712,14 +740,47 @@
         });
       });
     },
+    // http://localhost:8000/?q=object_type%3A%27sc%3AManifest%27&m=500&type&service=dlmm&f=facet_transcription%3A%27true%27#dlmm/facet
+    // http://localhost:8000/?q=object_type%3A%27sc%3AManifest%27&m=500&type&service=dlmm&f=facet_transcription%3A%27true%27#dlmm/facet
+    // http://localhost:8000/?q=object_type%3A%27sc%3AManifest%27&m=500&s=relevance&type&service=dlmm&f=facet_transcription%3A%27true%27#dlmm/facet
+    doFacet: function (state) {
+      console.log('#doFacet MOO');
+      console.log(state);
+      const context = {
+        searchService: {
+          id: state.data.search.service,
+          config: new $.JhiiifSearchService({ id: state.data.search.service })
+        }
+      };
+      // debugger;
+      context.searchService.config.initializer.done(service => {
+        this.eventEmitter.publish('SEARCH_CONTEXT_UPDATED', {
+          origin: undefined,
+          context
+        });
+        this.eventEmitter.publish('GET_FACETS', {
+          windowId: undefined,
+          facets: state.data.search.facetQuery,
+          service: context.searchService,
+          ignoreHistory: true
+        });
+      });
+
+      // this.eventEmitter.publish('REQUEST_FACETS', {
+      //   windowId: undefined,
+      //   facets: state.data.search.facetQuery,
+      //   service: state.data.search.service,
+      //   ignoreHistory: true
+      // });
+    },
 
     /**
      * Get a Deferred object that contains a collection object when the data request returns.
      * To use, chain this function call with a callback.
-     * 
+     *
      *    getCollection('col').done(collection => { ... })
      *    getCollection('col').then(collection => { ... })
-     * 
+     *
      * @param {string} collectionId URI of a collection
      * @returns {Deferred} a jQuery.Deferred object that resolves when the collection
      *          data is returned
@@ -751,10 +812,10 @@
     /**
      * Get a Deferred object that contains a manifest object when the data request returns.
      * To use, chain this function call with a callback.
-     * 
+     *
      *    getManifest('mani').done(manifest => { ... })
      *    getManifest('mani').then(manifest => { ... })
-     * 
+     *
      * @param {string} manifestId URI of a manifest
      * @returns {Deferred} a jQuery.Deferred object that resolves when the manifest data
      *          is returned
@@ -836,6 +897,36 @@
           }
         }
       }));
+    },
+
+    /*
+     *  facets: "facet_transcription:'true'"
+        forceFacets: true
+        maxPerPage: 500
+        offset: 0
+        origin: undefined
+        query: "object_type:'sc:Manifest'"
+        service: {id: "http://localhost:8080/iiif/dlmm/collection/jhsearch", service: {…}, config: $.JhiiifSearchService}
+     */
+    processFacet: function(data) {
+      console.log('#processFacet');
+      console.log(data);
+      const historyData = {
+        type: $.HistoryStateType.facet_search,
+        fragment: window.location.hash,
+        data: {
+          collection: data.service.id.substring(0, data.service.id.length - 9),
+          search: {
+            service: { id: data.service.id },
+            query: data.query,
+            offset: data.offset,
+            maxPerPage: data.maxPerPage,
+            facetQuery: data.facets
+          }
+        }
+      };
+      console.log(historyData);
+      this.addHistory(new $.HistoryState(historyData));
     }
   };
 }(Mirador));

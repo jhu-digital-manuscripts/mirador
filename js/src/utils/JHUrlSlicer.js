@@ -60,6 +60,8 @@
             return $.HistoryStateType.manifest_search;
           }
           break;
+        case 'facet':
+          return $.HistoryStateType.facet_search;
         default:
           console.log('%c[JHInitUrlSlicer#getUrlType] URL type not found (' + url + ')', 'color: red');
           break;
@@ -74,10 +76,10 @@
       const uri = new URI(url);
       const frag = uri.fragment().split('/');
       const query = uri.query(true);
-      
+
       const type = this.getUrlType(url);
       let data = {};
-      
+
       switch (type) {
         case $.HistoryStateType.collection_search:
           data = {
@@ -88,7 +90,8 @@
               offset: parseInt(query.o) || 0,
               maxPerPage: parseInt(query.m) || 30,
               sortOrder: query.s || 'relevance',
-              type: query.type
+              type: query.type,
+              facetQuery: query.f
             }
           };
           break;
@@ -122,6 +125,21 @@
             }
           };
           break;
+        case $.HistoryStateType.facet_search:
+          console.log('MOO');
+          data = {
+            collection: frag[0],
+            search: {
+              service: this.uriToSearchUri(this.collectionUri(query.service)),
+              query: query.q,
+              offset: parseInt(query.o) || 0,
+              maxPerPage: parseInt(query.m) || 30,
+              sortOrder: query.s || 'relevance',
+              type: query.type,
+              facetQuery: query.f
+            }
+          };
+          break;
         case $.HistoryStateType.scroll_view:
         case $.HistoryStateType.thumb_view:
           data = {
@@ -142,11 +160,11 @@
         default:
           break;
       }
-      
+
       data.canvas = this.canvasUri(data.collection, data.manifest, data.canvas);
       data.manifest = this.manifestUri(data.collection, data.manifest);
       data.collection = this.collectionUri(data.collection);
-      
+
       return new $.HistoryState({
         type,
         fragment: url,
@@ -156,20 +174,20 @@
 
     /**
      * Return a relative URL matching the given state object.
-     * 
+     *
      * - Collection must always be specified
      * - Manifest can be specified
      * - Canvas can be specified, but only if manifest is present
      * - Query can be specified any time
      * - ViewType can be specified only when manifest is present
-     * 
+     *
      * When given 'options' that already specifies a manifest, the collection information
      * is not easily obtainable from the event. Instead, the event will parse the collection
      * name from the manifest ID, so for those event types representing a manifest, no
      * operation is needed for get the collection name.
-     * 
+     *
      * Always clear URL query first. The URL query will be re-applied for URLs related to searches.
-     * 
+     *
      * @param {HistoryState} options
      */
     toUrl: function (options) {
@@ -201,7 +219,8 @@
             m: searcher.maxPerPage,
             s: searcher.sortOrder,
             type: searcher.type,
-            service: this.collectionName(searcher.service)
+            service: this.collectionName(searcher.service),
+            f: searcher.facetQuery
           });
           break;
         case $.HistoryStateType.manifest_search:
@@ -221,6 +240,22 @@
             s: searcher2.sortOrder,
             type: searcher2.type,
             service: this.manifestPathFromUri(searcher2.service, searcher2.service)
+          });
+          break;
+        case $.HistoryStateType.facet_search:
+          const fSearcher = this.processSearchObj(options.data.search);
+          const collection = this.collectionName(options.data.collection);
+
+          uri.fragment(
+            this.addFacetToPath(collection)
+          ).query({
+            q: fSearcher.query,
+            o: fSearcher.offset,
+            m: fSearcher.maxPerPage,
+            s: fSearcher.sortOrder,
+            type: fSearcher.type,
+            service: this.collectionName(collection),
+            f: fSearcher.facetQuery
           });
           break;
         case $.HistoryStateType.thumb_view:
@@ -335,6 +370,8 @@
           return 'opening_view:' + options.data.manifest;
         case $.HistoryStateType.scroll_view:
           return 'scroll_view:' + options.data.manifest;
+        case $.HistoryStateType.facet_search:
+          return 'facet_search:' + options.data.facetQuery;
         default:
           return '';
       }
@@ -390,6 +427,10 @@
 
     addSearchToPath: function (path) {
       return path + '/search';
+    },
+
+    addFacetToPath: function(path) {
+      return path + '/facet';
     },
 
     /**

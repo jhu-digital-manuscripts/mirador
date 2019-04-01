@@ -142,6 +142,9 @@
         searchReq.maxPerPage = 500;   // TODO look into weird behavior: either not setting this or setting too high will not retrieve all search results
         searchReq.offset = 0;
         searchReq.forceFacets = true;
+        // debugger;
+        console.log('Getting Facets!');
+        console.log(searchReq);
         _this.doSearch(searchReq).done(function(data) {
           _this.eventEmitter.publish("FACETS_COMPLETE." + searchReq.origin, {
             "origin": searchReq.origin,

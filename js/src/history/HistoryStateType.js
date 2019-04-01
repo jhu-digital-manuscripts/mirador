@@ -9,7 +9,8 @@
     image_view: 5,
     opening_view: 6,
     scroll_view: 7,
-    slot_change: 8
+    slot_change: 8,
+    facet_search: 9
   });
 
   $.getViewName = function (type) {
