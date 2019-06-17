@@ -358,9 +358,10 @@
             '<div class="input-group">',
               '<input class="js-query form-control" type="text" aria-label="Enter search query:" placeholder="Search"/>',
               '<div class="input-group-append">',
-                '<button type="submit" class="btn btn-outline-dark basic-search-submit">',
+                /*'<button type="submit" class="btn btn-outline-dark basic-search-submit">',
                   'Search',
-                '</button>',
+                '</button>',*/
+                '<button class="btn" style="border: 1px solid lightgray;"><i class="fa fa-search"></button>',
               '</div>',
             '</div>',
           '</form>',
