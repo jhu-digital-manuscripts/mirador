@@ -21,7 +21,7 @@
     "grunt-contrib-cssmin": "*",
     "grunt-contrib-jasmine": "^2.0.2",
     "grunt-contrib-jshint": "^1.1.0",
-    "grunt-contrib-uglify": "*",
+    "grunt-contrib-uglify": "git://github.com/gruntjs/grunt-contrib-uglify.git#harmony",
     "grunt-contrib-watch": "^1.1.0",
     "grunt-git-describe": "*",
     "grunt-githooks": "^0.6.0",
