@@ -356,7 +356,7 @@
 
           '<form id="search-form" class="search-within-form {{classes.basicForm}}">',
             '<div class="input-group">',
-              '<input class="js-query form-control" type="text" aria-label="Enter search query:" placeholder="search"/>',
+              '<input class="js-query form-control" type="text" aria-label="Enter search query:" placeholder="Search"/>',
               '<div class="input-group-append">',
                 '<button type="submit" class="btn btn-outline-dark basic-search-submit">',
                   'Search',
