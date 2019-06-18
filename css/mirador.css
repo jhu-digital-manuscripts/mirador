@@ -473,9 +473,10 @@ li.highlight {
   transition: border-color 0.3s ease-out;
 }
 #manifest-select-menu .remove-object-option {
+  padding-top: 5px;
   cursor: pointer;
   display: inline-block;
-  font-size: .9em;
+  font-size: 12px;
   font-weight: bold;
   transition: color 0.2s ease-out;
 }
