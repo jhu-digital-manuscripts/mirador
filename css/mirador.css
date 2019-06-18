@@ -469,7 +469,7 @@ li.highlight {
   border:1px solid #d3d3d3;
   color: gray;
   background:none;
-  border-radius: 2px;
+  /*border-radius: 2px;*/
   transition: border-color 0.3s ease-out;
 }
 #manifest-select-menu .remove-object-option {
