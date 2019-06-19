@@ -397,7 +397,7 @@
             '</div>',
 
             '<div class="input-group-append col-1 p-0">',
-              '<button class="advanced-search-remove btn btn-outline-danger" type="button" aria-label="Remove row" style="border: 1px solid lightgrey;">',
+              '<button class="advanced-search-remove btn btn-outline-danger" type="button" aria-label="Remove row" style="margin-left: 5px;border: 1px solid lightgray;">',
                 '<i class="fa fa-times"></i>',
               '</button>',
             '</div>',

@@ -467,9 +467,11 @@ li.highlight {
 #load-controls input {
   height:25px;
   border:1px solid #d3d3d3;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
   color: gray;
   background:none;
-  /*border-radius: 2px;*/
+  margin-left: 5px;
   transition: border-color 0.3s ease-out;
 }
 #manifest-select-menu .remove-object-option {
