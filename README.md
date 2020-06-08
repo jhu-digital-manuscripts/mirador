@@ -23,3 +23,13 @@ For more information, see the [Docs](http://projectmirador.org/docs/docs/getting
 
 ### Project Diagnostics
  [![Coverage Status](https://coveralls.io/repos/github/ProjectMirador/mirador/badge.svg?branch=master&upToDate=true)](https://coveralls.io/github/ProjectMirador/mirador?branch=master&upToDate=true)
+
+-------------------------
+
+## Deployments
+
+This fork has extensive customization on top of the Mirador 2 base viewer to support several digital humanities viewers, most notably the AOR and DLMM viewers. Both viewers use the same build artifacts from this repository, but different host landing pages that have different viewer configuration. In short, when either viewer is deployed, they copy the same build artifacts, but copy different versions of `index.html`.
+
+* [Archaeology of Reading viewer](https://archaeologyofreading.org/viewer/#aor) - uses `aor-index.html`
+* [Digital Library of Medieval Manuscripts viewer](http://dlmm.library.jhu.edu/viewer/) - uses `dlmm-index.html`
+
