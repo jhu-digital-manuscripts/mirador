@@ -57,10 +57,10 @@ The previous step already installed Grunt to the project, so we will use that, i
 
 This will build and package the Mirador viewer. You can find a ZIP artifact in the `build/` directory. Copy this over to the server (rosetest, or msel-wp most likely) and unzip it in the `build/` folder in the deployment directory. You should already have an `index.html` landing page with mirador configuration already at these locations.
 
-* rosetest
-  * Unzip mirador.zip at `/usr/share/tomcat/webapps/dlmm_test/build/`
-  * Config should be at `/usr/share/tomcat/webapps/dlmm_test/index.html`
-* msel-wp
+* test server
+  * Unzip mirador.zip at `<tomcat>/webapps/dlmm_test/build/`
+  * Config should be at `<tomcat>/webapps/dlmm_test/index.html`
+* wp server
   * Unzip mirador.zip at `/opt/dlmm/viewer/build/`
   * Config should be at `/opt/dlmm/viewer/index.html`
 
