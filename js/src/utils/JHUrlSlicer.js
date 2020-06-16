@@ -62,7 +62,7 @@
           break;
         default:
           console.log('%c[JHInitUrlSlicer#getUrlType] URL type not found (' + url + ')', 'color: red');
-          break;
+          return $.HistoryStateType.collection;
       }
     },
 
