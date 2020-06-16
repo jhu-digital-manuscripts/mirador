@@ -87,7 +87,7 @@
             //   resolve();
             // }
           }
-          if (data.length === 0 && collection.getId() === initCol) {
+          if (data.length === 0) {
             resolve();
           }
         };
