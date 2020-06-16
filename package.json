@@ -22,6 +22,7 @@
     "grunt-contrib-jasmine": "^2.0.2",
     "grunt-contrib-jshint": "^1.1.0",
     "grunt-contrib-uglify": "git://github.com/gruntjs/grunt-contrib-uglify.git#harmony",
+    "grunt-contrib-uglify-es": "^3.3.0",
     "grunt-contrib-watch": "^1.1.0",
     "grunt-git-describe": "*",
     "grunt-githooks": "^0.6.0",
@@ -48,7 +49,6 @@
   },
   "dependencies": {
     "bootstrap": "^4.1.3",
-    "grunt-contrib-uglify-es": "^3.3.0",
     "jstree": "^3.3.5",
     "lazysizes": "^4.0.0-rc3",
     "popper.js": "^1.14.5",
