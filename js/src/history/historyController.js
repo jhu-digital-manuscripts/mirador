@@ -426,7 +426,7 @@
      */
     handleUrl: function (event) {
       const _this = this;
-
+      
       const url = this.urlSlicer.url(window.location.hash, window.location.search);
       if (!url || url === '') {
         this.triggerCollectionHistory();
@@ -474,6 +474,18 @@
       } else {
         // console.log('%cnon-Evented URL', 'color:brown;');
         const state = this.urlSlicer.parseUrl(url);
+
+        /**
+         * If there is no collection data or the given collection is not known to the viewer
+         * just force the viewer to load the initial collection :(
+         */
+        const knownCollections = this.saveController.getStateProperty('data')
+          .map(entry => entry.collectionUri);
+        if (!state.data.collection || !knownCollections.includes(state.data.collection)) {
+          this.triggerCollectionHistory();
+          return;
+        }
+
         this.addHistory(state);
         this.applyState(state);
       }
