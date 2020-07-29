@@ -208,24 +208,29 @@
       }
     },
 
+    /**
+     * @param {object} context component data
+     * @param {boolean} init allow context update to re-render the UI
+     * @param {boolean} suppressEvent allow this context update to emit context change events
+     */
     changeContext: function (context, init, suppressEvent) {
-        // On search service switch, clear advanced search rows
-        // if (data.context.hasOwnProperty('searchService')) {
-        //   delete _this.context.ui.advanced;
-        // }
-        jQuery.extend(true, this.context, context);
-        this.searchWidget.changeContext(this.context, init, suppressEvent);
-        this.searchPicker.changeContext(this.context.searchService.id, suppressEvent);
-        if (this.faceted && init) {
-          this.facetContainer.changeContext(this.context);
-        }
-        this.searchResults.changeContext(this.context);
+      // On search service switch, clear advanced search rows
+      // if (data.context.hasOwnProperty('searchService')) {
+      //   delete _this.context.ui.advanced;
+      // }
+      jQuery.extend(true, this.context, context);
+      this.searchWidget.changeContext(this.context, init, suppressEvent);
+      this.searchPicker.changeContext(this.context.searchService.id, suppressEvent);
+      if (this.faceted && init) {
+        this.facetContainer.changeContext(this.context);
+      }
+      this.searchResults.changeContext(this.context);
 
-        if (!suppressEvent) {
-          this.eventEmitter.publish('SEARCH_CONTEXT_UPDATED', {
-            origin: this.windowId
-          });
-        }
+      if (!suppressEvent) {
+        this.eventEmitter.publish('SEARCH_CONTEXT_UPDATED', {
+          origin: this.windowId
+        });
+      }
     },
 
     /**

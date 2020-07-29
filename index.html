@@ -39,33 +39,15 @@
           "id": "viewer",
           "layout": "1x1",
           "data": [
-          // {"collectionUri": "http://localhost:8080/iiif-pres/aor/collection"}
-            {"collectionUri": "https://rosetest.library.jhu.edu/iiif-pres-aor/aor/collection"}
-            // {"collectionUri": "http://localhost:8080/iiif-pres/dlmm/collection"}
+            // {"collectionUri": "https://rosetest.library.jhu.edu/iiif-pres-aor/aor/collection"}
+            {"collectionUri": "https://jdm.library.jhu.edu/iiif-pres-dlmm/dlmm/collection"}
           ],
           "mainMenuSettings": {
             "userLogo": {
-              "label": "THE ARCHAEOLOGY OF READING",
-              "attributes": { "id": "logo-title", "href": "javascript:;", "target": "_blank" }
+              "label": "This is a test viewer",
+              // "attributes": { "id": "logo-title", "href": "javascript:;", "target": "_blank" }
             },
-            // "userButtons": [
-            //   {
-            //     "label": "About the Viewer",
-            //     "iconClass": "fa fa-fw fa-lg fa-book",
-            //     "attributes": {
-            //       "href": "http://dlmm.sharedblogs.library.jhu.edu/en/digital-library-of-medieval-manuscripts/the-iiif-viewer/",
-            //       "title": "Background about the viewer and how to use it.",
-            //       "target": "_blank"
-            //     },
-            //   }
-            // ]
           },
-          // "windowObjects": [],
-          // "windowObjects": [{
-          //   "loadedManifest": "http://localhost:8080/iiif-pres/aor/RCP7997/manifest",
-          //   "canvasID": "http://localhost:8080/iiif-pres/aor/RCP7997/2v/canvas",
-          //   "viewType": "ImageView"
-          // }],
           "openManifestsPage": true,
           "preserveManifestOrder": true,
           "showAddFromURLBox": false,
@@ -95,10 +77,10 @@
           "manifestList": {
             "maxThumbs": 5,
             "enableSearch": true,
-            "enableFacets": false,
+            "enableFacets": true,
             // "showLogos": false,
             "search": {
-              "showCollectionPicker": false,
+              "showCollectionPicker": true,
               "showDescription": false
             },
             // "showMetadata": ["Repository", "Title"],
@@ -114,18 +96,6 @@
             }
           }
         };
-
-        // let loadedCol = getParameterByName("col");
-        // if (loadedCol && loadedCol.length > 0) {
-        //   init.initialCollection = loadedCol;
-        // }
-
-        // let openBook = getParameterByName("book");
-        // if (openBook && openBook.length > 0) {
-        //   init.windowObjects = {
-        //     "loadedManifest": openBook
-        //   };
-        // }
 
         // Called without "let" or "var" so we can play with it in the browser
         myMiradorInstance = Mirador(init);
