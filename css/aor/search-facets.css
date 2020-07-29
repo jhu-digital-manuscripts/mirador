@@ -2,9 +2,9 @@
   margin-top: -1px;
 }
 .facet-container-scrollable {
-  position: absolute;
+  /* position: absolute;
   top: 199px;
-  bottom: 10px;
+  bottom: 10px; */
   height: auto;
   width: 425px;
   margin-top: -1px;
