@@ -87,7 +87,15 @@
             //   resolve();
             // }
           }
-          if (data.length === 0) {
+
+          /*
+           * Resolve if there's no data in the save controller, or the initially configured collection
+           * has resolved.
+           * 
+           * The initially configured collection is a resolved collection from the URL fragment, or if
+           * that is not valid, then the collection found in Mirador's initial configuration
+           */
+          if (data.length === 0 || (!!initCol && collection.getId() === initCol)) {
             resolve();
           }
         };
