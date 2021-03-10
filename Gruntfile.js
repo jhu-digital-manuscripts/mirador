@@ -302,7 +302,7 @@ module.exports = function(grunt) {
   // ----------
   // Dev Build task.
   // Build, but skip the time-consuming and obscurantist minification and uglification.
-  grunt.registerTask('dev_build', [ 'clean:build', 'git-describe', 'jshint', 'concat', 'copy']);
+  grunt.registerTask('dev_build', [ 'clean:build', 'git-describe', 'concat', 'copy']);
 
   // ----------
   // Package task.
