@@ -114,6 +114,10 @@
       //  have a '@id' property. Change this to 'id' for things to work.
       service.id = id;
 
+      if (!service.id.endsWith('jhsearch')) {
+        return;
+      }
+
       // First check search services for duplicates. If service already present
       // with desired ID of this service, update its entry. Otherwise, add it.
       var found = this.searchServices.filter(function(s) {
@@ -154,7 +158,13 @@
       var _this = this;
       var stylized = !this.config.inSidebar;  // Should do setup for fancy dropdown?
       var col = this.state.getObjFromSearchService(id);
-      if (!col || !col.jsonLd) {
+      if (!col || (!col.jsonLd && !col.label)) {
+        if (col.request && col.request.readyState !== 4) {
+          col.request.then((data) => {
+            _this.addServiceToDropdown(id);
+          });
+          return false;
+        }
         return false;
       }
 
@@ -162,7 +172,7 @@
         "objId": id,
         // ID here is a search service ID, so strip off the trailing portion
         "cssClass": $.Iiif.getCollectionName(id.substring(0, id.lastIndexOf("/"))),
-        "label": col.jsonLd.label,
+        "label": col.label || col.jsonLd.label,
         "inSidebar": stylized
       };
 
@@ -202,11 +212,11 @@
         var elId = el.attr("value").substring(0, el.attr("value").lastIndexOf("/"));
         var elObj = _this.state.getObjFromSearchService(el.attr("value"));
 
-        if (col.isWithin(elId)) { // Is the object to add a child of this <option>?
+        if (col.isWithin && col.isWithin(elId)) { // Is the object to add a child of this <option>?
           template.cssClass += " child";
           jQuery(_this.optionTemplate(template)).insertAfter(el);
           if (stylized) moo.iconselectmenu("refresh");
-        } else if (elObj && elObj.isWithin(id.substring(0, id.lastIndexOf('/')))) { // Is the object to add a parent of this <option>?
+        } else if (elObj && elObj.isWithin && elObj.isWithin(id.substring(0, id.lastIndexOf('/')))) { // Is the object to add a parent of this <option>?
           jQuery(_this.optionTemplate(template)).insertBefore(el);
         } else {
           var elCollection = $.Iiif.getCollectionName(elId);
@@ -219,9 +229,10 @@
               return uri === elId;
             }).length : 0);
 
-          if (numChildMatches > 0 && el.attr("class")) {
+          // if (numChildMatches > 0 && el.attr("class")) {
+          if (numChildMatches > 0) {
             // Count # of times 'child' class appears in current <option>
-            var numChilds = (el.attr("class").match(/child/g) || []).length;
+            var numChilds = el.attr('class') ? (el.attr("class").match(/child/g) || []).length : 0;
             if (numChilds > 0) {
               template.cssClass += " child-" + numChilds;
             }

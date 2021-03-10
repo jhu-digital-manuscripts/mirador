@@ -241,7 +241,8 @@
       if (!searchServiceId) {
         return false;
       }
-      var shortened = searchServiceId.substring(0, searchServiceId.lastIndexOf('/'));
+      var shortened = searchServiceId.endsWith('jhsearch') ?
+        searchServiceId.substring(0, searchServiceId.lastIndexOf('/')) : searchServiceId;
       return this.currentConfig.collections[shortened] || this.currentConfig.manifests[shortened];
     },
 

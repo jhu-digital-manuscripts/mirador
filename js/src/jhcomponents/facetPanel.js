@@ -94,10 +94,11 @@
       var _this = this;
 
       this.eventEmitter.subscribe("SEARCH_SIZE_UPDATED." + this.parentId, function() {
-        var parent = _this.appendTo.parent();
-        _this.element.css({
-          "top": parent.position().top + parent.outerHeight(true) - 10 + "px"
-        });
+        _this.reposition();
+      });
+
+      this.eventEmitter.subscribe('manifestsPanelVisible.set', function (_, data) {
+        _this.reposition();
       });
     },
 
@@ -227,6 +228,13 @@
 
     destroy: function() {
       this.appendTo.find(".facet-container-scrollable").remove();
+    },
+
+    reposition: function() {
+      var parent = this.appendTo.parent();
+      this.element.css({
+        'top': parent.position().top + parent.outerHeight(true) - 10 + 'px'
+      });
     },
 
     /**
