@@ -1,0 +1,3511 @@
+{
+  "@context": "http://iiif.io/api/presentation/2/context.json",
+  "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/collection",
+  "@type": "sc:Collection",
+  "label": "Archaeology of Reading",
+  "description": "A unique corpus of curated digitized images of early modern books with significant annotations from contemporary scholars such as Gabriel Harvey. The collection offers users a range of opportunities to explore and mine these notes, compare marginalia across books, and thus reconstruct Early Modern reading strategies.",
+  "service": {
+    "@context": "http://manuscriptlib.org/jhiff/search/context.json",
+    "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/collection/jhsearch",
+    "profile": "http://iiif.io/api/search/0/search",
+    "label": "Archaeology of Reading"
+  },
+  "manifests": [
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP7997/manifest",
+      "@type": "sc:Manifest",
+      "label": "Andreas Alexander, Mathemalogium prime partis (Leipzig, 1504)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": "Leipzig"
+        },
+        {
+          "label": "pageCount",
+          "value": "102"
+        },
+        {
+          "label": "Repository",
+          "value": "Royal College of Physicians Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "London, England"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000122785193\"\u003EJohn Dee\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "Mathemalogium prime partis Andree alexandri Ratisbonensis mathematici super novam et veterem loycam Aristotelis. Hermannus Buschius pasiphilus lectori. Epigrama extemporale"
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Dee-corpus/Alexander\"\u003Ehttps://archaeologyofreading.org/bibliography/Dee-corpus/Alexander\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "7997 D1/48-b-19"
+        },
+        {
+          "label": "Date",
+          "value": "1504"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7997%2fRCP7997.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7997%2fRCP7997.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3180,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP7997/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7997%2fRCP7997.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7997%2fRCP7997.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3289,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP7997/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7997%2fRCP7997.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7997%2fRCP7997.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3180,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP7997/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7997%2fRCP7997.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7997%2fRCP7997.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3289,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP7997/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7997%2fRCP7997.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7997%2fRCP7997.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3180,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP7997/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCPD1266/manifest",
+      "@type": "sc:Manifest",
+      "label": "Mattheus Beroaldus, Chronicum (Geneva, 1575)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": "Geneva"
+        },
+        {
+          "label": "pageCount",
+          "value": "384"
+        },
+        {
+          "label": "Repository",
+          "value": "Royal College of Physicians Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "London, England"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000122785193\"\u003EJohn Dee\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "Chronicum"
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Dee-corpus/Beroaldus\"\u003Ehttps://archaeologyofreading.org/bibliography/Dee-corpus/Beroaldus\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "D126.6, 17e (D1/17-e-8)"
+        },
+        {
+          "label": "Date",
+          "value": "1575"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCPD1266%2fRCPD1266.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCPD1266%2fRCPD1266.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 2992,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCPD1266/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCPD1266%2fRCPD1266.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCPD1266%2fRCPD1266.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3026,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCPD1266/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCPD1266%2fRCPD1266.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCPD1266%2fRCPD1266.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3026,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCPD1266/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCPD1266%2fRCPD1266.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCPD1266%2fRCPD1266.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 2992,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCPD1266/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCPD1266%2fRCPD1266.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCPD1266%2fRCPD1266.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3004,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCPD1266/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonRB16th12/manifest",
+      "@type": "sc:Manifest",
+      "label": "George Buchanan, Ane Detectioun (London, 1571)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": ""
+        },
+        {
+          "label": "pageCount",
+          "value": "188"
+        },
+        {
+          "label": "Repository",
+          "value": "Princeton University Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "Princeton University Library"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000073570531\"\u003EGabriel Harvey\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "Ane detectioun of the duinges of Marie Quene of Scottes : touchand the murder of hir husband, and hir conspiracie, adulterie, and pretensed mariage with the Erle Bothwell, and ane defence of the trew lordis, mainteineris of the kingis graces actioun and authoritie / Translatit out of the Latine quhilke was written by G.B. (London, 1571)"
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Harvey-corpus/Buchanan-Detectioun\"\u003Ehttps://archaeologyofreading.org/bibliography/Harvey-corpus/Buchanan-Detectioun\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "Rare Books: South East (RB) (16th-12 )"
+        },
+        {
+          "label": "Date",
+          "value": "1571"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th12%2fPrincetonRB16th12.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th12%2fPrincetonRB16th12.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5110,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonRB16th12/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th12%2fPrincetonRB16th12.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th12%2fPrincetonRB16th12.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4975,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonRB16th12/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th12%2fPrincetonRB16th12.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th12%2fPrincetonRB16th12.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5113,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonRB16th12/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th12%2fPrincetonRB16th12.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th12%2fPrincetonRB16th12.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4975,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonRB16th12/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th12%2fPrincetonRB16th12.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th12%2fPrincetonRB16th12.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5099,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonRB16th12/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonRB16th11/manifest",
+      "@type": "sc:Manifest",
+      "label": "George Buchanan, De Maria Scotorum Regina (London, 1571?)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": ""
+        },
+        {
+          "label": "pageCount",
+          "value": "146"
+        },
+        {
+          "label": "Repository",
+          "value": "Princeton University Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "Princeton University Library"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000073570531\"\u003EGabriel Harvey\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "De Maria Scotorum regina, totáque eius contra regem coniuratione, fœdo cum Bothuelio adulterio, nefaria in maritum crudelitate & rabie, horrendo insuper & deterrimo eiusdem parricidio: plena, & tragica planè historia (Londoni, 1571?)"
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Harvey-corpus/Buchanan-Scotorum\"\u003Ehttps://archaeologyofreading.org/bibliography/Harvey-corpus/Buchanan-Scotorum\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "Rare Books: South East (RB) (16th-11 )"
+        },
+        {
+          "label": "Date",
+          "value": "1571"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th11%2fPrincetonRB16th11.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th11%2fPrincetonRB16th11.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5067,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonRB16th11/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th11%2fPrincetonRB16th11.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th11%2fPrincetonRB16th11.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5148,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonRB16th11/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th11%2fPrincetonRB16th11.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th11%2fPrincetonRB16th11.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5029,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonRB16th11/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th11%2fPrincetonRB16th11.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th11%2fPrincetonRB16th11.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5146,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonRB16th11/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th11%2fPrincetonRB16th11.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th11%2fPrincetonRB16th11.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5089,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonRB16th11/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP7134/manifest",
+      "@type": "sc:Manifest",
+      "label": "Gerolamo Cardano, Libelli Quinque (Nuremberg, 1547)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": "Nuremberg"
+        },
+        {
+          "label": "pageCount",
+          "value": "646"
+        },
+        {
+          "label": "Repository",
+          "value": "Royal College of Physicians Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "London, England"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000122785193\"\u003EJohn Dee\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "Hieronymi Cardani medici Mediolanensis, Libelli quinq[ue] : quorum duo priores, iam denuo sunt emendati, duo sequentes iam primum in lucem editi, & quintus magna parte auctus est. I. De suppleme[n]to almanach. II. De restitutione temporu[m] & motuum coelestium. III. De iudicijs genituraru[m]. IIII. De reuolutionibus. V. De exemplis centum geniturarum. Additis insuper tabulis ascensionu[m] rectaru[m] & obliquaru[m] eclipticae & stellaru[m] & radiorum, usq[ue] ad latitudinem octo partium. Eiusdem, antea non edita, aphorismorum astronomicorum segmenta VII. opusculum incomparabile..."
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Dee-corpus/Cardano\"\u003Ehttps://archaeologyofreading.org/bibliography/Dee-corpus/Cardano\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "7134 D1/46-b-7"
+        },
+        {
+          "label": "Date",
+          "value": "1547"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7134%2fRCP7134.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7134%2fRCP7134.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3276,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP7134/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7134%2fRCP7134.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7134%2fRCP7134.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3323,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP7134/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7134%2fRCP7134.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7134%2fRCP7134.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3323,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP7134/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7134%2fRCP7134.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7134%2fRCP7134.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3281,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP7134/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7134%2fRCP7134.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7134%2fRCP7134.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3281,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP7134/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/UclCastiglione1541/manifest",
+      "@type": "sc:Manifest",
+      "label": "Baldassare Castiglione, Il cortegiano (Venice, 1541)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": ""
+        },
+        {
+          "label": "pageCount",
+          "value": "428"
+        },
+        {
+          "label": "Repository",
+          "value": "University College London Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "University College London Library"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000073570531\"\u003EGabriel Harvey\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "Il libro del cortegiano (Venice, 1541)"
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Harvey-corpus/Castiglione-Italian\"\u003Ehttps://archaeologyofreading.org/bibliography/Harvey-corpus/Castiglione-Italian\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "Castiglione 1541 (2)"
+        },
+        {
+          "label": "Date",
+          "value": "1541"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fUclCastiglione1541%2fUclCastiglione1541.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fUclCastiglione1541%2fUclCastiglione1541.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3151,
+            "height": 4850
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/UclCastiglione1541/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fUclCastiglione1541%2fUclCastiglione1541.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fUclCastiglione1541%2fUclCastiglione1541.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3184,
+            "height": 4850
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/UclCastiglione1541/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fUclCastiglione1541%2fUclCastiglione1541.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fUclCastiglione1541%2fUclCastiglione1541.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3151,
+            "height": 4850
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/UclCastiglione1541/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fUclCastiglione1541%2fUclCastiglione1541.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fUclCastiglione1541%2fUclCastiglione1541.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3184,
+            "height": 4850
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/UclCastiglione1541/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fUclCastiglione1541%2fUclCastiglione1541.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fUclCastiglione1541%2fUclCastiglione1541.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3158,
+            "height": 4850
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/UclCastiglione1541/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/Newberry27495/manifest",
+      "@type": "sc:Manifest",
+      "label": "Baldassare Castiglione, The covrtyer (London, 1561)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": ""
+        },
+        {
+          "label": "pageCount",
+          "value": "409"
+        },
+        {
+          "label": "Repository",
+          "value": "Newberry Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "Newberry Library"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000073570531\"\u003EGabriel Harvey\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "The covrtyer of Covnt Baldessar Castilio diuided into foure books (London, 1561)"
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Harvey-corpus/Castiglione-English\"\u003Ehttps://archaeologyofreading.org/bibliography/Harvey-corpus/Castiglione-English\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "Case Y 712 .C27495"
+        },
+        {
+          "label": "Date",
+          "value": "1561"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fNewberry27495%2fNewberry27495.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fNewberry27495%2fNewberry27495.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 1793,
+            "height": 2513
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/Newberry27495/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fNewberry27495%2fNewberry27495.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fNewberry27495%2fNewberry27495.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 1826,
+            "height": 2460
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/Newberry27495/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fNewberry27495%2fNewberry27495.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fNewberry27495%2fNewberry27495.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 1793,
+            "height": 2513
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/Newberry27495/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fNewberry27495%2fNewberry27495.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fNewberry27495%2fNewberry27495.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 1826,
+            "height": 2460
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/Newberry27495/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fNewberry27495%2fNewberry27495.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fNewberry27495%2fNewberry27495.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 1793,
+            "height": 2513
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/Newberry27495/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10549-50v1/manifest",
+      "@type": "sc:Manifest",
+      "label": "Marcus Tullius Cicero, Opera (vol. 1, Paris, 1539)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": "Paris"
+        },
+        {
+          "label": "pageCount",
+          "value": "1102"
+        },
+        {
+          "label": "Repository",
+          "value": "Royal College of Physicians Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "London, England"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000122785193\"\u003EJohn Dee\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "M. T. Ciceronis opera. Ex Petri Victorii codicibus maxima ex parte descripta, viri docti et in recensendis authoris huius scriptis cauti & perdiligentis: quem nos industria, quanta potuimus, co[n]sequuti, quasdam orationes redintegratas, tres libros De legibvs multo quàm antea meliores, & reliquias de commentariis que De repvblica inscripti erant, magno labore collectas vndique, descriptásque libris, vobis exhibemus. Eivsdem Victorii explicationes suarum in Ciceronem castigationum. Index rervm et verborvm."
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Dee-corpus/Cicero-I\"\u003Ehttps://archaeologyofreading.org/bibliography/Dee-corpus/Cicero-I\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "10549-50 D1/16-b-5"
+        },
+        {
+          "label": "Date",
+          "value": "1539"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10549-50v1%2fRCP10549-50v1.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10549-50v1%2fRCP10549-50v1.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3251,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10549-50v1/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10549-50v1%2fRCP10549-50v1.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10549-50v1%2fRCP10549-50v1.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3101,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10549-50v1/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10549-50v1%2fRCP10549-50v1.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10549-50v1%2fRCP10549-50v1.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3251,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10549-50v1/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10549-50v1%2fRCP10549-50v1.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10549-50v1%2fRCP10549-50v1.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3122,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10549-50v1/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10549-50v1%2fRCP10549-50v1.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10549-50v1%2fRCP10549-50v1.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3251,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10549-50v1/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10549-50v2/manifest",
+      "@type": "sc:Manifest",
+      "label": "Marcus Tullius Cicero, Opera (vol. 2, Paris, 1539)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": "Paris"
+        },
+        {
+          "label": "pageCount",
+          "value": "1020"
+        },
+        {
+          "label": "Repository",
+          "value": "Royal College of Physicians Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "London, England"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000122785193\"\u003EJohn Dee\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "M. T. Ciceronis opera. Ex Petri Victorii codicibus maxima ex parte descripta, viri docti et in recensendis authoris huius scriptis cauti & perdiligentis: quem nos industria, quanta potuimus, co[n]sequuti, quasdam orationes redintegratas, tres libros De legibvs multo quàm antea meliores, & reliquias de commentariis que De repvblica inscripti erant, magno labore collectas vndique, descriptásque libris, vobis exhibemus. Eivsdem Victorii explicationes suarum in Ciceronem castigationum. Index rervm et verborvm."
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Dee-corpus/Cicero-II\"\u003Ehttps://archaeologyofreading.org/bibliography/Dee-corpus/Cicero-II\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "10549-50 D1/16-b-6"
+        },
+        {
+          "label": "Date",
+          "value": "1539"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10549-50v2%2fRCP10549-50v2.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10549-50v2%2fRCP10549-50v2.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3019,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10549-50v2/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10549-50v2%2fRCP10549-50v2.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10549-50v2%2fRCP10549-50v2.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3155,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10549-50v2/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10549-50v2%2fRCP10549-50v2.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10549-50v2%2fRCP10549-50v2.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3019,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10549-50v2/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10549-50v2%2fRCP10549-50v2.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10549-50v2%2fRCP10549-50v2.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3155,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10549-50v2/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10549-50v2%2fRCP10549-50v2.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10549-50v2%2fRCP10549-50v2.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3019,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10549-50v2/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/BL615d7/manifest",
+      "@type": "sc:Manifest",
+      "label": "Fernando Colon, Historie del S. D. Fernando Colombo (Venice, 1571)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": ""
+        },
+        {
+          "label": "pageCount",
+          "value": "549"
+        },
+        {
+          "label": "Repository",
+          "value": "British Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "London, UK"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000122785193\"\u003EJohn Dee\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "Historie del S. D. Fernando Colombo; nelle quali s'ha particolare, & vera relatione della vita, & de' fatti dell'Ammiraglio D. Christoforo Colombo ... et dello scoprimento, ch'egli fece dell'Indie Occidentali ... nuouamente di lingua Spagnuola tradotte nell'Italiana dal S. Alfonso Vlloa. [Edited by Giuseppe Moleto.]"
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Dee-corpus/Colon\"\u003Ehttps://archaeologyofreading.org/bibliography/Dee-corpus/Colon\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "615.d.7."
+        },
+        {
+          "label": "Date",
+          "value": "1571"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fBL615d7%2fBL615d7.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fBL615d7%2fBL615d7.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4556,
+            "height": 6738
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/BL615d7/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fBL615d7%2fBL615d7.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fBL615d7%2fBL615d7.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4636,
+            "height": 6656
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/BL615d7/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fBL615d7%2fBL615d7.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fBL615d7%2fBL615d7.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4556,
+            "height": 6738
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/BL615d7/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fBL615d7%2fBL615d7.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fBL615d7%2fBL615d7.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4636,
+            "height": 6656
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/BL615d7/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fBL615d7%2fBL615d7.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fBL615d7%2fBL615d7.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4556,
+            "height": 6738
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/BL615d7/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/BL531k6/manifest",
+      "@type": "sc:Manifest",
+      "label": "Paulus Crusius, Doctrina revolutionum solis (Jena, 1567)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": ""
+        },
+        {
+          "label": "pageCount",
+          "value": "88"
+        },
+        {
+          "label": "Repository",
+          "value": "British Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "London, UK"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000122785193\"\u003EJohn Dee\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "Doctrina reuolutionum solis: tam æqualium quam apparentium ... Cum tabulis mediarum conuersionum temporis & motuum solis in annis tropicis & sidereis. His adiecti sunt perpetui canones magnitudinis apparentis anni, pro inueniendis nouo modo veris reuolutionibus. Item: Canones temporarij & generales apparentium reuolutionum ad normam æqualitatis accommodati. Postremo, canon introitus solis in quatuor cardines seu tropica signa Zodiaci ad annos 200."
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Dee-corpus/Crusius\"\u003Ehttps://archaeologyofreading.org/bibliography/Dee-corpus/Crusius\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "531.k.6.(3.)"
+        },
+        {
+          "label": "Date",
+          "value": "1567"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fBL531k6%2fBL531k6.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fBL531k6%2fBL531k6.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4956,
+            "height": 6685
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/BL531k6/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fBL531k6%2fBL531k6.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fBL531k6%2fBL531k6.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4733,
+            "height": 6427
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/BL531k6/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fBL531k6%2fBL531k6.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fBL531k6%2fBL531k6.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4831,
+            "height": 6600
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/BL531k6/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fBL531k6%2fBL531k6.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fBL531k6%2fBL531k6.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4761,
+            "height": 6427
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/BL531k6/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fBL531k6%2fBL531k6.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fBL531k6%2fBL531k6.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4831,
+            "height": 6600
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/BL531k6/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/FolgersHa2/manifest",
+      "@type": "sc:Manifest",
+      "label": " Lodovico Domenichi, Facetie (Venice, 1571) & Lodovico Guicciardini, Detti et Fatti (Venice, 1571)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": ""
+        },
+        {
+          "label": "pageCount",
+          "value": "442"
+        },
+        {
+          "label": "Repository",
+          "value": "Folger Shakespeare Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "Folger Shakespeare Library"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000073570531\"\u003EGabriel Harvey\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "L. Domenichi, Facetie (1571) & L. Guicciardini, Detti et Fatti (1571)"
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Harvey-corpus/Domenichi\"\u003Ehttps://archaeologyofreading.org/bibliography/Harvey-corpus/Domenichi\u003C/a\u003E, \u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Harvey-corpus/Guicciardini\"\u003Ehttps://archaeologyofreading.org/bibliography/Harvey-corpus/Guicciardini\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "H.a.2 (ms. content)"
+        },
+        {
+          "label": "Date",
+          "value": "1571"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fFolgersHa2%2fFolgersHa2.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fFolgersHa2%2fFolgersHa2.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3456,
+            "height": 4593
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/FolgersHa2/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fFolgersHa2%2fFolgersHa2.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fFolgersHa2%2fFolgersHa2.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3471,
+            "height": 4617
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/FolgersHa2/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fFolgersHa2%2fFolgersHa2.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fFolgersHa2%2fFolgersHa2.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3471,
+            "height": 4617
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/FolgersHa2/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fFolgersHa2%2fFolgersHa2.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fFolgersHa2%2fFolgersHa2.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3467,
+            "height": 4610
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/FolgersHa2/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fFolgersHa2%2fFolgersHa2.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fFolgersHa2%2fFolgersHa2.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3467,
+            "height": 4610
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/FolgersHa2/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/NYSLWin86/manifest",
+      "@type": "sc:Manifest",
+      "label": "Gerhard Dorn, Chymisticum artificium (Frankfurt (?), 1568)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": "Frankfurt"
+        },
+        {
+          "label": "pageCount",
+          "value": "169"
+        },
+        {
+          "label": "Repository",
+          "value": "New York Society Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "New York"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000122785193\"\u003EJohn Dee\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "Chymisticum artificium naturæ, theoricum & practicum : cuius summarium versa pagella clariùs indicabit : liber planè philosophicus, in gratiam omnium veræ philosophiæ naturalis studiosorum æditus / per Gerardum Dorn."
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Dee-corpus/Dorn\"\u003Ehttps://archaeologyofreading.org/bibliography/Dee-corpus/Dorn\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "Win 86"
+        },
+        {
+          "label": "Date",
+          "value": "1568"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin86%2fNYSLWin86.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin86%2fNYSLWin86.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4754,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/NYSLWin86/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin86%2fNYSLWin86.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin86%2fNYSLWin86.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4898,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/NYSLWin86/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin86%2fNYSLWin86.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin86%2fNYSLWin86.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4751,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/NYSLWin86/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin86%2fNYSLWin86.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin86%2fNYSLWin86.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4898,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/NYSLWin86/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin86%2fNYSLWin86.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin86%2fNYSLWin86.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4754,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/NYSLWin86/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/BLC122bb35/manifest",
+      "@type": "sc:Manifest",
+      "label": "Euclid, Euclidis elementorum (Paris, 1557)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": ""
+        },
+        {
+          "label": "pageCount",
+          "value": "367"
+        },
+        {
+          "label": "Repository",
+          "value": "British Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "London, UK"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000122785193\"\u003EJohn Dee\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "Euclidis elementorum libri XV. Græce et Latine"
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Dee-corpus/Euclid\"\u003Ehttps://archaeologyofreading.org/bibliography/Dee-corpus/Euclid\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "C.122.bb.35."
+        },
+        {
+          "label": "Date",
+          "value": "1557"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fBLC122bb35%2fBLC122bb35.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fBLC122bb35%2fBLC122bb35.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4478,
+            "height": 6829
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/BLC122bb35/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fBLC122bb35%2fBLC122bb35.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fBLC122bb35%2fBLC122bb35.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4455,
+            "height": 6556
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/BLC122bb35/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fBLC122bb35%2fBLC122bb35.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fBLC122bb35%2fBLC122bb35.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4478,
+            "height": 6829
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/BLC122bb35/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fBLC122bb35%2fBLC122bb35.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fBLC122bb35%2fBLC122bb35.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4455,
+            "height": 6556
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/BLC122bb35/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fBLC122bb35%2fBLC122bb35.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fBLC122bb35%2fBLC122bb35.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4478,
+            "height": 6829
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/BLC122bb35/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonK6233/manifest",
+      "@type": "sc:Manifest",
+      "label": "Johannes Freigius, Paratitla pandectarum (Basel, 1583)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": ""
+        },
+        {
+          "label": "pageCount",
+          "value": "872"
+        },
+        {
+          "label": "Repository",
+          "value": "Princeton University Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "Princeton University Library"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000073570531\"\u003EGabriel Harvey\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "Paratitla…Synopsis pandectarum iuris ciuilis (Basel, 1583)"
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Harvey-corpus/Freigius\"\u003Ehttps://archaeologyofreading.org/bibliography/Harvey-corpus/Freigius\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "K6233 .F745 1583"
+        },
+        {
+          "label": "Date",
+          "value": "1583"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonK6233%2fPrincetonK6233.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonK6233%2fPrincetonK6233.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4517,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonK6233/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonK6233%2fPrincetonK6233.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonK6233%2fPrincetonK6233.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4557,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonK6233/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonK6233%2fPrincetonK6233.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonK6233%2fPrincetonK6233.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4497,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonK6233/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonK6233%2fPrincetonK6233.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonK6233%2fPrincetonK6233.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4693,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonK6233/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonK6233%2fPrincetonK6233.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonK6233%2fPrincetonK6233.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4573,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonK6233/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/HoughtonSTC11402/manifest",
+      "@type": "sc:Manifest",
+      "label": "Sextus Julius Frontinus, Strategemes of warre (London, 1539)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": ""
+        },
+        {
+          "label": "pageCount",
+          "value": "238"
+        },
+        {
+          "label": "Repository",
+          "value": "Houghton Library, Harvard University"
+        },
+        {
+          "label": "Current Location",
+          "value": "Houghton Library, Harvard University"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000073570531\"\u003EGabriel Harvey\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "The strategemes, sleyghtes, and policies of warre (London, 1539)"
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Harvey-corpus/Frontinus\"\u003Ehttps://archaeologyofreading.org/bibliography/Harvey-corpus/Frontinus\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "Houghton STC 11402"
+        },
+        {
+          "label": "Date",
+          "value": "1539"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fHoughtonSTC11402%2fHoughtonSTC11402.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fHoughtonSTC11402%2fHoughtonSTC11402.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 2762,
+            "height": 4087
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/HoughtonSTC11402/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fHoughtonSTC11402%2fHoughtonSTC11402.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fHoughtonSTC11402%2fHoughtonSTC11402.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 2921,
+            "height": 4087
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/HoughtonSTC11402/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fHoughtonSTC11402%2fHoughtonSTC11402.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fHoughtonSTC11402%2fHoughtonSTC11402.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 2776,
+            "height": 4090
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/HoughtonSTC11402/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fHoughtonSTC11402%2fHoughtonSTC11402.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fHoughtonSTC11402%2fHoughtonSTC11402.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 2907,
+            "height": 4087
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/HoughtonSTC11402/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fHoughtonSTC11402%2fHoughtonSTC11402.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fHoughtonSTC11402%2fHoughtonSTC11402.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 2797,
+            "height": 4129
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/HoughtonSTC11402/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonU101/manifest",
+      "@type": "sc:Manifest",
+      "label": "Niccolò Machiavelli, Art of warre (London, 1573)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": ""
+        },
+        {
+          "label": "pageCount",
+          "value": "260"
+        },
+        {
+          "label": "Repository",
+          "value": "Princeton University Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "Princeton University Library"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000073570531\"\u003EGabriel Harvey\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "Art of warre (London, 1573)"
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Harvey-corpus/Machiavelli\"\u003Ehttps://archaeologyofreading.org/bibliography/Harvey-corpus/Machiavelli\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "U101 .M16 1573"
+        },
+        {
+          "label": "Date",
+          "value": "1573"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonU101%2fPrincetonU101.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonU101%2fPrincetonU101.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5144,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonU101/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonU101%2fPrincetonU101.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonU101%2fPrincetonU101.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5318,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonU101/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonU101%2fPrincetonU101.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonU101%2fPrincetonU101.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5152,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonU101/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonU101%2fPrincetonU101.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonU101%2fPrincetonU101.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5338,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonU101/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonU101%2fPrincetonU101.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonU101%2fPrincetonU101.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5129,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonU101/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonDL45/manifest",
+      "@type": "sc:Manifest",
+      "label": "Olaus Magnus, Historia de gentibus (Rome, 1555)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": "Rome"
+        },
+        {
+          "label": "pageCount",
+          "value": "584"
+        },
+        {
+          "label": "Repository",
+          "value": "Princeton University Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "Princeton University Library"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000073570531\"\u003EGabriel Harvey\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "Historia de gentibus septentrionalibus, earumque diuersis statibus, conditionibus (Rome, 1555)"
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Harvey-corpus/Magnus\"\u003Ehttps://archaeologyofreading.org/bibliography/Harvey-corpus/Magnus\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "DL45 .O438 1555q"
+        },
+        {
+          "label": "Date",
+          "value": "1555"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonDL45%2fPrincetonDL45.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonDL45%2fPrincetonDL45.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5276,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonDL45/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonDL45%2fPrincetonDL45.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonDL45%2fPrincetonDL45.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5311,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonDL45/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonDL45%2fPrincetonDL45.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonDL45%2fPrincetonDL45.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5253,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonDL45/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonDL45%2fPrincetonDL45.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonDL45%2fPrincetonDL45.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5397,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonDL45/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonDL45%2fPrincetonDL45.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonDL45%2fPrincetonDL45.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5211,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonDL45/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/UCLOgden/manifest",
+      "@type": "sc:Manifest",
+      "label": "Julius Firmicus Maternus, Astronomicon (Basel, 1533)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": ""
+        },
+        {
+          "label": "pageCount",
+          "value": "534"
+        },
+        {
+          "label": "Repository",
+          "value": "University College London Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "University College London Library"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000122785193\"\u003EJohn Dee\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "Iulii Firmici Materni Iunioris siculi V.C. ad Mavortium Lollianum Astronomicon Lib. VIII. per Nicolaum Prucknerum astrologum nuper ab innumeris mendis vindicati."
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Dee-corpus/Maternus\"\u003Ehttps://archaeologyofreading.org/bibliography/Dee-corpus/Maternus\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "OGDEN A QUARTO 9"
+        },
+        {
+          "label": "Date",
+          "value": "1533"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fUCLOgden%2fUCLOgden.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fUCLOgden%2fUCLOgden.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3029,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/UCLOgden/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fUCLOgden%2fUCLOgden.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fUCLOgden%2fUCLOgden.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3041,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/UCLOgden/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fUCLOgden%2fUCLOgden.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fUCLOgden%2fUCLOgden.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3029,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/UCLOgden/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fUCLOgden%2fUCLOgden.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fUCLOgden%2fUCLOgden.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3041,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/UCLOgden/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fUCLOgden%2fUCLOgden.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fUCLOgden%2fUCLOgden.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3029,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/UCLOgden/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonPA8550/manifest",
+      "@type": "sc:Manifest",
+      "label": "Philip Melanchthon, Selectarum declamationum (Strasbourg, 1564-67)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": "Strasbourg"
+        },
+        {
+          "label": "pageCount",
+          "value": "776"
+        },
+        {
+          "label": "Repository",
+          "value": "Princeton University Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "Princeton University Library"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000073570531\"\u003EGabriel Harvey\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "Selectarum declamationum (Strasbourg, 1564-67)"
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Harvey-corpus/Melanchthon\"\u003Ehttps://archaeologyofreading.org/bibliography/Harvey-corpus/Melanchthon\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "PA8550 .D43 1564"
+        },
+        {
+          "label": "Date",
+          "value": "1564 - 1567"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPA8550%2fPrincetonPA8550.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPA8550%2fPrincetonPA8550.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4780,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonPA8550/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPA8550%2fPrincetonPA8550.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPA8550%2fPrincetonPA8550.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4309,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonPA8550/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPA8550%2fPrincetonPA8550.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPA8550%2fPrincetonPA8550.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4672,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonPA8550/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPA8550%2fPrincetonPA8550.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPA8550%2fPrincetonPA8550.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4348,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonPA8550/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPA8550%2fPrincetonPA8550.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPA8550%2fPrincetonPA8550.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4731,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonPA8550/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP7831-1/manifest",
+      "@type": "sc:Manifest",
+      "label": "Antoine Mizauld, Planetologia (Leiden, 1551)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": ""
+        },
+        {
+          "label": "pageCount",
+          "value": "127"
+        },
+        {
+          "label": "Repository",
+          "value": "Royal College of Physicians"
+        },
+        {
+          "label": "Current Location",
+          "value": "Royal College of Physicians"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000122785193\"\u003EJohn Dee\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "Planetologia, rebus astronomicis, medicis et philosophicis erudite referta: ex qua, coelestium corporum cum humanis, et astronomiae cum medicina societas, et harmonia (quam prisci iatromathematiken perapposite nuncuparunt) paucis degustatur, et dilucide aperitur"
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Dee-corpus/Mizauld\"\u003Ehttps://archaeologyofreading.org/bibliography/Dee-corpus/Mizauld\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "7831-1 D1/45-c-20(1)"
+        },
+        {
+          "label": "Date",
+          "value": "1551"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7831-1%2fRCP7831-1.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7831-1%2fRCP7831-1.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3261,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP7831-1/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7831-1%2fRCP7831-1.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7831-1%2fRCP7831-1.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3256,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP7831-1/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7831-1%2fRCP7831-1.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7831-1%2fRCP7831-1.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3261,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP7831-1/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7831-1%2fRCP7831-1.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7831-1%2fRCP7831-1.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3256,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP7831-1/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7831-1%2fRCP7831-1.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP7831-1%2fRCP7831-1.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3261,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP7831-1/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/ChChWb512/manifest",
+      "@type": "sc:Manifest",
+      "label": "Geoffrey of Monmouth, Brittaniae vtriusque regum (Paris, 1517)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": ""
+        },
+        {
+          "label": "pageCount",
+          "value": "236"
+        },
+        {
+          "label": "Repository",
+          "value": "Christ Church College Library, Oxford"
+        },
+        {
+          "label": "Current Location",
+          "value": "Christ Church College Library, Oxford"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000122785193\"\u003EJohn Dee\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "Britanni[a]e vtriusq[ue] regu[m] et principum origo & gesta insignia ab Galfrido Monemutensi ex antiquissimis Britannici sermonis monumentis in Latinum traducta: & ab Ascensio rursus maiore accuratione impressa.."
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Dee-corpus/Monmouth\"\u003Ehttps://archaeologyofreading.org/bibliography/Dee-corpus/Monmouth\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "Wb.5.12"
+        },
+        {
+          "label": "Date",
+          "value": "1517"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fChChWb512%2fChChWb512.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fChChWb512%2fChChWb512.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4016,
+            "height": 4405
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/ChChWb512/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fChChWb512%2fChChWb512.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fChChWb512%2fChChWb512.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4098,
+            "height": 4426
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/ChChWb512/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fChChWb512%2fChChWb512.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fChChWb512%2fChChWb512.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4076,
+            "height": 4442
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/ChChWb512/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fChChWb512%2fChChWb512.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fChChWb512%2fChChWb512.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4017,
+            "height": 4460
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/ChChWb512/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fChChWb512%2fChChWb512.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fChChWb512%2fChChWb512.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4095,
+            "height": 4468
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/ChChWb512/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP9986-1/manifest",
+      "@type": "sc:Manifest",
+      "label": "Ovid, Amatoria (Paris, 1529)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": ""
+        },
+        {
+          "label": "pageCount",
+          "value": "860"
+        },
+        {
+          "label": "Repository",
+          "value": "Royal College of Physicians Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "Royal College of Physicians Library"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000122785193\"\u003EJohn Dee\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "P. Ouidii Nasonis Amatoria : Heroidum epistolae. Auli Sabini, vt creditur, epistolae tres. Elegiarum libri tres. De arte amandi, libri tres. De remedio amoris, libri tres. In ibin. Ad Liuiam, de morte Drusi. De Nuce. De medicamine faciei. Recens accessere. Fragmenta quaedam ex Epigrammatis Nasonis. Carmen ad Pisonem incerti authoris, elegantia tamen & eruditione iuxtà nobile"
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Dee-corpus/Ovid\"\u003Ehttps://archaeologyofreading.org/bibliography/Dee-corpus/Ovid\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "9986-1 D1/20-a-13(1)"
+        },
+        {
+          "label": "Date",
+          "value": "1529"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP9986-1%2fRCP9986-1.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP9986-1%2fRCP9986-1.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 2904,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP9986-1/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP9986-1%2fRCP9986-1.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP9986-1%2fRCP9986-1.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 2914,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP9986-1/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP9986-1%2fRCP9986-1.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP9986-1%2fRCP9986-1.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 2904,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP9986-1/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP9986-1%2fRCP9986-1.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP9986-1%2fRCP9986-1.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 2907,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP9986-1/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP9986-1%2fRCP9986-1.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP9986-1%2fRCP9986-1.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 2841,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP9986-1/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/BLC120b4/manifest",
+      "@type": "sc:Manifest",
+      "label": "Johannes Pantheus, Voarchadumia (Venice, 1530)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": ""
+        },
+        {
+          "label": "pageCount",
+          "value": "180"
+        },
+        {
+          "label": "Repository",
+          "value": "British Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "London, UK"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000122785193\"\u003EJohn Dee\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "Voarchadumia contra Alchimiam: ars distincta ab archimia, & sophia: cum additionibus: proportionibus: numeris: & figuris opportunis."
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Dee-corpus/Pantheus\"\u003Ehttps://archaeologyofreading.org/bibliography/Dee-corpus/Pantheus\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "C.120.b.4.(2.)"
+        },
+        {
+          "label": "Date",
+          "value": "1530"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fBLC120b4%2fBLC120b4.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fBLC120b4%2fBLC120b4.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4872,
+            "height": 6759
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/BLC120b4/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fBLC120b4%2fBLC120b4.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fBLC120b4%2fBLC120b4.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4666,
+            "height": 6459
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/BLC120b4/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fBLC120b4%2fBLC120b4.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fBLC120b4%2fBLC120b4.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4872,
+            "height": 6759
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/BLC120b4/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fBLC120b4%2fBLC120b4.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fBLC120b4%2fBLC120b4.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4698,
+            "height": 6459
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/BLC120b4/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fBLC120b4%2fBLC120b4.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fBLC120b4%2fBLC120b4.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4872,
+            "height": 6759
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/BLC120b4/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/NYSLWin189/manifest",
+      "@type": "sc:Manifest",
+      "label": "Paracelsus, Baderbuchlin (Mülhausen, 1562)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": ""
+        },
+        {
+          "label": "pageCount",
+          "value": "85"
+        },
+        {
+          "label": "Repository",
+          "value": "New York Society Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "New York"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000122785193\"\u003EJohn Dee\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "Baderbuchlin : Sechs kostliche Tractat, armen vnd reychen, nutzlich vnd notwendig, von Wasserbadern : Woher die selbige warm, vnd andere Wasser kalt, vnnd auss was Vrsach sy sollicher gewaltiger Krafften, das ihr Vrsprūng mit wachsender Arth ausz der Erdtglobel, gleich wie die Kreuter vnnd Bowme von ihrem Samen, mit schonem Bericht, wie mennigklich ihrs Brauchs sich Behelffen mag ... / durch den hocherfarnen Herren Theophrastum Paracelsum ; mit Fleyss vnd müe Doctor Adams von Bodenstein, zu guten neuwen jar publicirt."
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Dee-corpus/Paracelsus-Baderbuchlin\"\u003Ehttps://archaeologyofreading.org/bibliography/Dee-corpus/Paracelsus-Baderbuchlin\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "Win 189"
+        },
+        {
+          "label": "Date",
+          "value": "1562"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin189%2fNYSLWin189.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin189%2fNYSLWin189.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5271,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/NYSLWin189/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin189%2fNYSLWin189.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin189%2fNYSLWin189.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5174,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/NYSLWin189/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin189%2fNYSLWin189.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin189%2fNYSLWin189.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5321,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/NYSLWin189/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin189%2fNYSLWin189.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin189%2fNYSLWin189.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5174,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/NYSLWin189/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin189%2fNYSLWin189.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin189%2fNYSLWin189.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5315,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/NYSLWin189/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/NYSLWin188/manifest",
+      "@type": "sc:Manifest",
+      "label": "Paracelsus, Das buch meteororvm (Cologne, 1566)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": ""
+        },
+        {
+          "label": "pageCount",
+          "value": "235"
+        },
+        {
+          "label": "Repository",
+          "value": "New York Society Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "New York"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000122785193\"\u003EJohn Dee\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "Das Buch meteororvm / des Edlen vnd Hochgelerten Herrn Avreoli Theophrasti von Hohenheim Paracelsi genant ... ; Item: Liber qvartvs Paramiri de Matrice. Vor in Truck nie aussgangen."
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Dee-corpus/Paracelsus-Meteorum\"\u003Ehttps://archaeologyofreading.org/bibliography/Dee-corpus/Paracelsus-Meteorum\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "Win 188"
+        },
+        {
+          "label": "Date",
+          "value": "1566"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin188%2fNYSLWin188.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin188%2fNYSLWin188.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5527,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/NYSLWin188/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin188%2fNYSLWin188.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin188%2fNYSLWin188.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5481,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/NYSLWin188/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin188%2fNYSLWin188.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin188%2fNYSLWin188.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5527,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/NYSLWin188/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin188%2fNYSLWin188.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin188%2fNYSLWin188.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5481,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/NYSLWin188/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin188%2fNYSLWin188.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fNYSLWin188%2fNYSLWin188.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5532,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/NYSLWin188/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10653/manifest",
+      "@type": "sc:Manifest",
+      "label": "Matthew Paris, Flores Historiarum (London, 1570)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": "London, England"
+        },
+        {
+          "label": "pageCount",
+          "value": "966"
+        },
+        {
+          "label": "Repository",
+          "value": "Royal College of Physicians Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "London, England"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000122785193\"\u003EJohn Dee\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "Flores historiarum"
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Dee-corpus/Paris\"\u003Ehttps://archaeologyofreading.org/bibliography/Dee-corpus/Paris\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "10653 D1/19-e-7"
+        },
+        {
+          "label": "Date",
+          "value": "1570"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10653%2fRCP10653.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10653%2fRCP10653.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3109,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10653/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10653%2fRCP10653.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10653%2fRCP10653.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3099,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10653/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10653%2fRCP10653.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10653%2fRCP10653.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3109,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10653/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10653%2fRCP10653.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10653%2fRCP10653.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3099,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10653/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10653%2fRCP10653.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10653%2fRCP10653.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3109,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10653/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonPA6452/manifest",
+      "@type": "sc:Manifest",
+      "label": "Titus Livius, Romanae historiae principis (Basel, 1555)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": ""
+        },
+        {
+          "label": "pageCount",
+          "value": "1146"
+        },
+        {
+          "label": "Repository",
+          "value": "Princeton University Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "Princeton University Library"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000073570531\"\u003EGabriel Harvey\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "T. Liuii Patauini Romanae historiae principis decades tres (Basel, 1555)"
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Harvey-corpus/Livy\"\u003Ehttps://archaeologyofreading.org/bibliography/Harvey-corpus/Livy\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "PA6452 .A2 1555q"
+        },
+        {
+          "label": "Date",
+          "value": "1555"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPA6452%2fPrincetonPA6452.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPA6452%2fPrincetonPA6452.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4842,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonPA6452/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPA6452%2fPrincetonPA6452.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPA6452%2fPrincetonPA6452.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4793,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonPA6452/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPA6452%2fPrincetonPA6452.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPA6452%2fPrincetonPA6452.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4473,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonPA6452/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPA6452%2fPrincetonPA6452.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPA6452%2fPrincetonPA6452.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4765,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonPA6452/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPA6452%2fPrincetonPA6452.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPA6452%2fPrincetonPA6452.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 4788,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonPA6452/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP9978/manifest",
+      "@type": "sc:Manifest",
+      "label": "Pliny the Elder, Naturalis historiae (Würzburg, 1548)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": "Wurzburg"
+        },
+        {
+          "label": "pageCount",
+          "value": "78"
+        },
+        {
+          "label": "Repository",
+          "value": "Royal College of Physicians Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "London, England"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000122785193\"\u003EJohn Dee\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "In Caii Plinii Secvndi Natvralis historiae argutissimi Scriptoris I. & II. Cap: Libri XXX. Commentarius : Naturalis quidem Magiae compendiariam rationem, plenam mysterijs, profundissimamq[ue] rerum secretissimarum Contemplationem, Naturam ... totiusq[ue] Naturae cognitionem complectens ; Cvi Praeterea Adiecta Est De Fascinationibus Disputatio elegans & erudita, ad cognoscendosq[ue] Naturae scretiores effectus, mire vtilis & necessaria. Item de Icantatione, & Adiuratione, Colliq[ue] suspensione Epistola incerti Authoris, vnà cum Ioannis Tritemii Spancheymensis viri doctissimi ... in Libros suos Steganographi[a]e, Epistola apologetica ;In Plinianae lectionis Studiosorum gratiam"
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Dee-corpus/Pliny\"\u003Ehttps://archaeologyofreading.org/bibliography/Dee-corpus/Pliny\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "9978 D1/19-c-27"
+        },
+        {
+          "label": "Date",
+          "value": "1548"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP9978%2fRCP9978.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP9978%2fRCP9978.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3275,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP9978/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP9978%2fRCP9978.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP9978%2fRCP9978.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3454,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP9978/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP9978%2fRCP9978.001r.insert/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP9978%2fRCP9978.001r.insert",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3275,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP9978/001r.insert/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP9978%2fRCP9978.001v.insert/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP9978%2fRCP9978.001v.insert",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3454,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP9978/001v.insert/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP9978%2fRCP9978.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP9978%2fRCP9978.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3275,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP9978/002r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10601/manifest",
+      "@type": "sc:Manifest",
+      "label": "Guillaume Postel, De originibus (Basel, 1553)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": "Basel"
+        },
+        {
+          "label": "pageCount",
+          "value": "152"
+        },
+        {
+          "label": "Repository",
+          "value": "Royal College of Physicians Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "London, England"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000122785193\"\u003EJohn Dee\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "De originibus, seu, De uaria et potissimum orbi Latino ad hanc diem incognita, aut inco[n]syderata historia, quu[m] totius Orientis, tum maximè Tartarorum, Persarum, Turcarum, & omnium Abrahami & Noachi alumnorum origines, & mysteria Brachmanum retegente : quod ad gentium, literarumq́[ue] quib. utuntur, rationes attinet"
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Dee-corpus/Postel\"\u003Ehttps://archaeologyofreading.org/bibliography/Dee-corpus/Postel\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "10601 D1/20-d-12"
+        },
+        {
+          "label": "Date",
+          "value": "1553"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10601%2fRCP10601.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10601%2fRCP10601.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 2879,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10601/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10601%2fRCP10601.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10601%2fRCP10601.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 2923,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10601/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10601%2fRCP10601.001v.insert/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10601%2fRCP10601.001v.insert",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 2923,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10601/001v.insert/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10601%2fRCP10601.001r.insert/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10601%2fRCP10601.001r.insert",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 2879,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10601/001r.insert/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10601%2fRCP10601.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10601%2fRCP10601.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 2879,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10601/002r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10106/manifest",
+      "@type": "sc:Manifest",
+      "label": "Quintilian, Institutionum oratoriarum (Lyon, 1540)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": "Lyon"
+        },
+        {
+          "label": "pageCount",
+          "value": "644"
+        },
+        {
+          "label": "Repository",
+          "value": "Royal College of Physicians Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "London, England"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000122785193\"\u003EJohn Dee\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "M. Fabii Quintiliani Institutionum oratoriarum libri duodecim : declamationum eiusdem liber"
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Dee-corpus/Quintilian\"\u003Ehttps://archaeologyofreading.org/bibliography/Dee-corpus/Quintilian\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "10106 D1/20-b-3"
+        },
+        {
+          "label": "Date",
+          "value": "1540"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10106%2fRCP10106.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10106%2fRCP10106.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3155,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10106/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10106%2fRCP10106.001r.insert/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10106%2fRCP10106.001r.insert",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3155,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10106/001r.insert/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10106%2fRCP10106.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10106%2fRCP10106.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3219,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10106/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10106%2fRCP10106.001v.insert/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10106%2fRCP10106.001v.insert",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3219,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10106/001v.insert/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10106%2fRCP10106.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10106%2fRCP10106.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3155,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10106/002r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/CULR527/manifest",
+      "@type": "sc:Manifest",
+      "label": "Jacobo a Saa, De navigatione (Paris, 1549)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": ""
+        },
+        {
+          "label": "pageCount",
+          "value": "225"
+        },
+        {
+          "label": "Repository",
+          "value": "Cambridge University Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "Cambridge, England"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000122785193\"\u003EJohn Dee\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "De nauigatione libri tres : quibus mathematicae disciplinae explicantur / ab Iacobo à Saa ... nuper in lucem editi."
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Dee-corpus/Saa\"\u003Ehttps://archaeologyofreading.org/bibliography/Dee-corpus/Saa\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "CUL R*.5.27(F)"
+        },
+        {
+          "label": "Date",
+          "value": "1549"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fCULR527%2fCULR527.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fCULR527%2fCULR527.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 2604,
+            "height": 4581
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/CULR527/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fCULR527%2fCULR527.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fCULR527%2fCULR527.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 2527,
+            "height": 4609
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/CULR527/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fCULR527%2fCULR527.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fCULR527%2fCULR527.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 2604,
+            "height": 4581
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/CULR527/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fCULR527%2fCULR527.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fCULR527%2fCULR527.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 2527,
+            "height": 4609
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/CULR527/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fCULR527%2fCULR527.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fCULR527%2fCULR527.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 2534,
+            "height": 4581
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/CULR527/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonPE1137/manifest",
+      "@type": "sc:Manifest",
+      "label": "Thomas Smith, De linguæ Anglicæ (Paris, 1568)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": "Paris"
+        },
+        {
+          "label": "pageCount",
+          "value": "198"
+        },
+        {
+          "label": "Repository",
+          "value": "Princeton University Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "Princeton University Library"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000073570531\"\u003EGabriel Harvey\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "De recta & emendata linguæ Anglicæ scriptione dialogus (Paris, 1568)"
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Harvey-corpus/Smith\"\u003Ehttps://archaeologyofreading.org/bibliography/Harvey-corpus/Smith\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "PE1137.A2 S53 1568"
+        },
+        {
+          "label": "Date",
+          "value": "1568"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPE1137%2fPrincetonPE1137.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPE1137%2fPrincetonPE1137.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5154,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonPE1137/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPE1137%2fPrincetonPE1137.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPE1137%2fPrincetonPE1137.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5288,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonPE1137/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPE1137%2fPrincetonPE1137.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPE1137%2fPrincetonPE1137.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5055,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonPE1137/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPE1137%2fPrincetonPE1137.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPE1137%2fPrincetonPE1137.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5198,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonPE1137/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPE1137%2fPrincetonPE1137.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonPE1137%2fPrincetonPE1137.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5154,
+            "height": 7200
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonPE1137/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonRB16th99a/manifest",
+      "@type": "sc:Manifest",
+      "label": "Thomas Tusser, Pointes of good husbandrie (London, 1580)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": ""
+        },
+        {
+          "label": "pageCount",
+          "value": "190"
+        },
+        {
+          "label": "Repository",
+          "value": "Princeton University Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "Princeton University Library"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000073570531\"\u003EGabriel Harvey\u003C/a\u003E"
+        },
+        {
+          "label": "Title",
+          "value": "Fiue hundred pointes of good husbandrie : as well for the champion, or open countrie, as also for the woodland, or seuerall, mixed in eurie month with huswiferie, ouer and besides the booke of huswiferie, corrected, better ordered, and newly augmented to a fourth part more, with diuers other lessons, as a diet for the fermer ... : also a table of husbandrie ... and another of huswiferie ... for the better and easier finding of any matter conteined in the same / newly set forth by Thomas Tusser ..."
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Harvey-corpus/Tusser\"\u003Ehttps://archaeologyofreading.org/bibliography/Harvey-corpus/Tusser\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "Rare Books: South East (RB) (16th-99a)"
+        },
+        {
+          "label": "Date",
+          "value": "1580"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th99a%2fPrincetonRB16th99a.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th99a%2fPrincetonRB16th99a.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5359,
+            "height": 7285
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonRB16th99a/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th99a%2fPrincetonRB16th99a.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th99a%2fPrincetonRB16th99a.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5745,
+            "height": 7782
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonRB16th99a/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th99a%2fPrincetonRB16th99a.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th99a%2fPrincetonRB16th99a.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5359,
+            "height": 7285
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonRB16th99a/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th99a%2fPrincetonRB16th99a.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th99a%2fPrincetonRB16th99a.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5745,
+            "height": 7782
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonRB16th99a/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th99a%2fPrincetonRB16th99a.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fPrincetonRB16th99a%2fPrincetonRB16th99a.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 5359,
+            "height": 7285
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/PrincetonRB16th99a/003r/canvas"
+        }
+      ]
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10552-2/manifest",
+      "@type": "sc:Manifest",
+      "label": "Thomas Walsingham, Historia brevis (London, 1574) & Thomas Walsingham, Ypodigma (London, 1574)",
+      "metadata": [
+        {
+          "label": "Origin",
+          "value": "London, England"
+        },
+        {
+          "label": "pageCount",
+          "value": "716"
+        },
+        {
+          "label": "Repository",
+          "value": "Royal College of Physicians Library"
+        },
+        {
+          "label": "Current Location",
+          "value": "Royal College of Physicians Library"
+        },
+        {
+          "label": "Reader 1",
+          "value": "\u003Ca target=\"_blank\" href=\"http://www.isni.org/isni/0000000122785193\"\u003EJohn Dee\u003C/a\u003E"
+        },
+        {
+          "label": "Website",
+          "value": "\u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Dee-corpus/Walsingham-Historia\"\u003Ehttps://archaeologyofreading.org/bibliography/Dee-corpus/Walsingham-Historia\u003C/a\u003E, \u003Ca target=\"_blank\" href=\"https://archaeologyofreading.org/bibliography/Dee-corpus/Walsingham-Ypodigma\"\u003Ehttps://archaeologyofreading.org/bibliography/Dee-corpus/Walsingham-Ypodigma\u003C/a\u003E"
+        },
+        {
+          "label": "Shelfmark",
+          "value": "10552-2 D1/17-c-11"
+        },
+        {
+          "label": "Date",
+          "value": "1574"
+        }
+      ],
+      "thumbnail": [
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10552-2%2fRCP10552-2.001r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10552-2%2fRCP10552-2.001r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 2963,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10552-2/001r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10552-2%2fRCP10552-2.001v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10552-2%2fRCP10552-2.001v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3015,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10552-2/001v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10552-2%2fRCP10552-2.002r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10552-2%2fRCP10552-2.002r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 2896,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10552-2/002r/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10552-2%2fRCP10552-2.002v/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10552-2%2fRCP10552-2.002v",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 3015,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10552-2/002v/canvas"
+        },
+        {
+          "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10552-2%2fRCP10552-2.003r/full/!128,128/0/default.jpg",
+          "service": {
+            "@context": "http://iiif.io/api/image/2/context.json",
+            "@id": "https://image.library.jhu.edu/iiif/aor%2fRCP10552-2%2fRCP10552-2.003r",
+            "profile": "http://iiif.io/api/image/2/level2.json",
+            "width": 2896,
+            "height": 4500
+          },
+          "depicts": "https://jdm.library.jhu.edu/iiif-pres-aor/aor/RCP10552-2/003r/canvas"
+        }
+      ]
+    }
+  ]
+}

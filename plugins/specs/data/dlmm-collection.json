@@ -1,0 +1,25 @@
+{
+  "@context": "http://iiif.io/api/presentation/2/context.json",
+  "@id": "https://jdm.library.jhu.edu/iiif-pres-dlmm/dlmm/collection",
+  "@type": "sc:Collection",
+  "label": "Digital Library of Medieval Manuscripts",
+  "description": "Encompassing the Roman de la Rose Digital Library and the Christine de Pizan Digital Scriptorium, this collection of digitized manuscripts provides access to significant cultural material of the 13th-15th centuries, enabling users to experience medieval texts and images in their manuscript context.",
+  "service": {
+    "@context": "http://manuscriptlib.org/jhiff/search/context.json",
+    "@id": "https://jdm.library.jhu.edu/iiif-pres-dlmm/dlmm/collection/jhsearch",
+    "profile": "http://iiif.io/api/search/0/search",
+    "label": "Digital Library of Medieval Manuscripts"
+  },
+  "collections": [
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-dlmm/rose/collection",
+      "@type": "sc:Collection",
+      "label": "Roman de la Rose Digital Library"
+    },
+    {
+      "@id": "https://jdm.library.jhu.edu/iiif-pres-dlmm/pizan/collection",
+      "@type": "sc:Collection",
+      "label": "Christine de Pizan Digital Scriptorium"
+    }
+  ]
+}
